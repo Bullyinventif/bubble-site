@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bubble Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: linear-gradient(160deg, #5bc8ff 0%, #2e7dd4 35%, #1a3a8c 65%, #2d0a6e 100%);
+    min-height: 100vh;
+    font-family: 'Baloo 2', cursive;
+    color: white;
+    overflow-x: hidden;
+  }
+
+  /* Bubbles */
+  .bubble-bg {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .bbl {
+    position: absolute; border-radius: 50%;
+    animation: riseUp linear infinite;
+  }
+  @keyframes riseUp {
+    0%   { transform: translateY(110vh) translateX(0px); opacity: 0; }
+    8%   { opacity: 1; }
+    50%  { transform: translateY(50vh) translateX(15px); }
+    92%  { opacity: 0.6; }
+    100% { transform: translateY(-10vh) translateX(-8px); opacity: 0; }
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 58px;
+    background: rgba(20, 60, 160, 0.75);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center;
+    z-index: 1000; padding: 0 10px; gap: 7px;
+  }
+
+  .nav-logo {
+    width: 40px; height: 40px;
+    background: radial-gradient(circle at 38% 32%, #b8e0ff, #3a7ae0);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0; margin-right: 4px;
+    box-shadow: inset 0 -3px 6px rgba(0,0,80,0.3), 0 0 10px rgba(100,180,255,0.4);
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+
+  .nav-links { display: flex; flex: 1; gap: 6px; }
+
+  .nav-btn {
+    flex: 1; height: 42px;
+    border-radius: 12px; border: none;
+    font-family: 'Baloo 2', cursive;
+    font-size: 0.92rem; font-weight: 800;
+    color: white; cursor: pointer; text-decoration: none;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    transition: filter 0.15s, transform 0.15s;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.25), 0 2px 12px rgba(0,0,0,0.2);
+    letter-spacing: 0.2px;
+  }
+  .nav-btn:hover  { filter: brightness(1.12); transform: translateY(-2px); }
+  .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+  .nav-btn.red    { background: linear-gradient(180deg, #ff5252, #cc2020); }
+  .nav-btn.yellow { background: linear-gradient(180deg, #ffcc00, #cc9900); }
+  .nav-btn.gray   { background: linear-gradient(180deg, #6a7a8a, #4a5a6a); }
+  .nav-btn.green  { background: linear-gradient(180deg, #44d966, #1faa44); }
+  .nav-btn.active {
+    outline: 2.5px solid rgba(255,255,255,0.7);
+    outline-offset: 1px;
+  }
+
+  /* Profile bubble */
+  .nav-profile {
+    margin-left: 6px; flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer; text-decoration: none;
+    transition: transform 0.2s; padding-bottom: 2px;
+  }
+  .nav-profile:hover { transform: scale(1.05); }
+
+  .profile-bubble {
+    width: 78px; height: 78px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 28%, #c8e8ff, #4488cc 50%, #1a2a5c);
+    border: 3px solid rgba(255,255,255,0.5);
+    box-shadow:
+      0 0 0 1px rgba(100,160,255,0.3),
+      0 6px 20px rgba(0,0,80,0.4),
+      inset 0 -4px 8px rgba(0,0,80,0.3);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; margin-top: -20px; position: relative;
+  }
+  /* Shine */
+  .profile-bubble::after {
+    content: '';
+    position: absolute; top: 10%; left: 18%;
+    width: 32%; height: 20%;
+    background: rgba(255,255,255,0.35);
+    border-radius: 50%; transform: rotate(-35deg);
+    pointer-events: none;
+  }
+  .profile-bubble img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .profile-bubble-icon { font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,80,0.4)); }
+
+  .profile-name-nav {
+    font-size: 0.72rem; font-weight: 800; color: white;
+    text-align: center; margin-top: 3px; max-width: 90px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    text-shadow: 0 1px 4px rgba(0,0,80,0.5);
+  }
+  .profile-sub-nav {
+    font-size: 0.6rem; color: rgba(255,255,255,0.65);
+    font-family: 'Press Start 2P', monospace;
+    text-align: center; letter-spacing: 0.5px;
+  }
+
+  /* MAIN */
+  main {
+    position: relative; z-index: 1;
+    padding-top: 100px;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding-bottom: 80px;
+  }
+
+  /* Title — respects original colors from ref image */
+  .hero-title {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(3.2rem, 9vw, 6.5rem);
+    line-height: 1; letter-spacing: 1px;
+    filter: drop-shadow(2px 4px 0 rgba(0,0,60,0.3));
+    animation: fadeUp 0.7s ease both;
+  }
+  /* Exact colors from reference: cyan, orange, green, pink/red, yellow, gray + "site." dark */
+  .t-b { color: #3dd6f5; }
+  .t-u { color: #ff8c3a; }
+  .t-b2{ color: #44e87a; }
+  .t-b3{ color: #ff4499; }
+  .t-l { color: #ffe033; }
+  .t-e { color: #c8d0e0; }
+  .t-site {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.28em; color: rgba(20,40,80,0.85);
+    letter-spacing: 2px; display: inline-block;
+    vertical-align: middle; margin-left: 10px;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.2);
+  }
+
+  .hero-welcome {
+    margin-top: 22px;
+    font-size: 1.15rem; font-weight: 700;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.3px;
+    text-shadow: 0 2px 8px rgba(0,0,60,0.3);
+    animation: fadeUp 0.7s 0.15s ease both;
+  }
+  .hero-welcome span { color: white; }
+
+  /* Deco bubbles around title */
+  .deco-dot {
+    display: inline-block;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    margin: 0 6px; vertical-align: middle;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .deco-dot:nth-child(2) { animation-delay: 0.4s; width: 5px; height: 5px; }
+  .deco-dot:nth-child(3) { animation-delay: 0.8s; width: 10px; height: 10px; }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.9; transform: scale(1.3); }
+  }
+
+  .deco-row {
+    margin-top: 28px;
+    animation: fadeUp 0.7s 0.25s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 18px;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.72rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="bubble-bg" id="bubbleBg"></div>
+
+<nav>
+  <div class="nav-logo">🫧</div>
+  <div class="nav-links">
+    <a href="bubble_site_accueil.html" class="nav-btn red active">🏠 Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
+    <a href="#" class="nav-btn gray">🎮 Games</a>
+    <a href="#" class="nav-btn green">📜 Scans</a>
+  </div>
+  <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
+    <div class="profile-bubble" id="navAvatar">
+      <span class="profile-bubble-icon">🧙</span>
+    </div>
+    <div class="profile-name-nav" id="navName">Connexion</div>
+    <div class="profile-sub-nav" id="navSub">—</div>
+  </a>
+</nav>
+
+<main>
+  <div class="hero-title">
+    <span class="t-b">B</span><span class="t-u">u</span><span class="t-b2">b</span><span class="t-b3">b</span><span class="t-l">l</span><span class="t-e">e</span><span class="t-site">site.</span>
+  </div>
+  <div class="hero-welcome" id="welcomeMsg">
+    Bienvenue sur <span>Bubble Site</span> 🫧
+  </div>
+  <div class="deco-row">
+    <span class="deco-dot"></span>
+    <span class="deco-dot"></span>
+    <span class="deco-dot"></span>
+  </div>
+</main>
+
+<footer>© BUBBLE INC.</footer>
+
+<script defer>
+  // Bubbles
+  const bg = document.getElementById('bubbleBg');
+  for (let i = 0; i < 24; i++) {
+    const b = document.createElement('div');
+    b.className = 'bbl';
+    const size = 12 + Math.random() * 65;
+    // Colors matching gradient: sky blue → blue → violet
+    const hue = 190 + Math.random() * 90; // 190=cyan → 280=violet
+    const alpha = 0.08 + Math.random() * 0.18;
+    b.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      background: radial-gradient(circle at 35% 30%,
+        rgba(255,255,255,0.25),
+        hsla(${hue},80%,70%,${alpha}) 55%,
+        transparent
+      );
+      border: 1px solid hsla(${hue},70%,80%,0.15);
+      animation-duration:${10+Math.random()*18}s;
+      animation-delay:${Math.random()*14}s;
+    `;
+    bg.appendChild(b);
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain: "bubble-game-fa894.firebaseapp.com",
+    projectId: "bubble-game-fa894",
+    storageBucket: "bubble-game-fa894.firebasestorage.app",
+    messagingSenderId: "60256418096",
+    appId: "1:60256418096:web:dbdc555819793d8c20f0f5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      const pseudo = user.displayName || user.email.split('@')[0];
+      document.getElementById('navName').textContent = pseudo;
+      document.getElementById('navSub').textContent = 'BASIC';
+      if (user.photoURL) {
+        document.getElementById('navAvatar').innerHTML = `<img src="${user.photoURL}" alt="avatar">`;
+      }
+      document.getElementById('welcomeMsg').innerHTML = `Bienvenue, <span>${pseudo}</span> 👋`;
+    } else {
+      document.getElementById('navProfile').href = './login.html';
+      document.getElementById('navName').textContent = 'Connexion';
+      document.getElementById('navSub').textContent = '—';
+    }
+  });
+</script>
+
+</body>
+</html>
