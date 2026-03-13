@@ -242,11 +242,9 @@
 <script type="module">
   import { initializeApp }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut, updatePassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const app  = initializeApp({apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",authDomain:"bubble-game-fa894.firebaseapp.com",projectId:"bubble-game-fa894",storageBucket:"bubble-game-fa894.firebasestorage.app",messagingSenderId:"60256418096",appId:"1:60256418096:web:dbdc555819793d8c20f0f5"});
   const auth = getAuth(app);
-  const db   = getFirestore(app);
 
   const CATALOGUE = {
     "Classique": [
@@ -307,10 +305,8 @@
     const pseudo=user.displayName||user.email.split('@')[0];
     document.getElementById('navName').textContent=pseudo;
     document.getElementById('pseudoInput').value=pseudo;
-    try{
-      const snap=await getDoc(doc(db,'users',user.uid));
-      if(snap.exists()){const d=snap.data();userSubLevel=d.subscription||'basic';activeIconId=d.avatarId||'bully_1';}
-    }catch(e){}
+    userSubLevel = 'basic';
+    activeIconId = localStorage.getItem('bubble_avatar_'+user.uid) || 'bully_1';
     const lbl=SUB_LABELS[userSubLevel]||'BASIC';
     document.getElementById('navSub').textContent=lbl;
     document.getElementById('subName').textContent=lbl;
@@ -366,7 +362,7 @@
   window._confirmAvatar=async function(){
     if(!selectedIcon||!currentUser)return;
     try{
-      await setDoc(doc(db,'users',currentUser.uid),{avatarId:selectedIcon.id},{merge:true});
+      localStorage.setItem('bubble_avatar_'+currentUser.uid, selectedIcon.id);
       activeIconId=selectedIcon.id;
       setAvatarUI(selectedIcon.file,selectedIcon.name);
       _closePicker(); toast('✅ Icône mise à jour !');
