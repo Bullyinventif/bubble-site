@@ -18,7 +18,7 @@
     overflow-x: hidden;
   }
 
-  /* Bubbles */
+  /* ── Bubbles bg ── */
   .bubble-bg {
     position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
@@ -36,7 +36,9 @@
     100% { transform: translateY(-10vh) translateX(-8px); opacity: 0; }
   }
 
-  /* NAV */
+  /* ══════════════════════════════
+     NAV — desktop (≥ 601px)
+  ══════════════════════════════ */
   nav {
     position: fixed; top: 0; left: 0; right: 0;
     height: 58px;
@@ -55,7 +57,11 @@
     font-size: 1.3rem; flex-shrink: 0; margin-right: 4px;
     box-shadow: inset 0 -3px 6px rgba(0,0,80,0.3), 0 0 10px rgba(100,180,255,0.4);
     border: 2px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: transform .2s;
+    -webkit-tap-highlight-color: transparent;
   }
+  .nav-logo:hover { transform: scale(1.08); }
 
   .nav-links { display: flex; flex: 1; gap: 6px; }
 
@@ -69,6 +75,7 @@
     transition: filter 0.15s, transform 0.15s;
     box-shadow: 0 4px 0 rgba(0,0,0,0.25), 0 2px 12px rgba(0,0,0,0.2);
     letter-spacing: 0.2px;
+    -webkit-tap-highlight-color: transparent;
   }
   .nav-btn:hover  { filter: brightness(1.12); transform: translateY(-2px); }
   .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
@@ -87,6 +94,7 @@
     display: flex; flex-direction: column; align-items: center;
     cursor: pointer; text-decoration: none;
     transition: transform 0.2s; padding-bottom: 2px;
+    -webkit-tap-highlight-color: transparent;
   }
   .nav-profile:hover { transform: scale(1.05); }
 
@@ -101,7 +109,6 @@
     display: flex; align-items: center; justify-content: center;
     overflow: hidden; position: relative;
   }
-  /* Shine */
   .profile-bubble::after {
     content: '';
     position: absolute; top: 10%; left: 18%;
@@ -125,7 +132,71 @@
     text-align: center; letter-spacing: 0.5px;
   }
 
-  /* MAIN */
+  /* ══════════════════════════════
+     MOBILE MENU (≤ 600px)
+  ══════════════════════════════ */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 58px; left: 0; right: 0;
+    background: rgba(8, 22, 80, 0.97);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px 18px 24px;
+    z-index: 998;
+    border-bottom: 1px solid rgba(255,255,255,.15);
+    box-shadow: 0 12px 40px rgba(0,0,0,.5);
+  }
+  .mobile-menu.open {
+    display: flex;
+    animation: slideDown .22s ease;
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .mobile-menu .nav-btn {
+    width: 100%;
+    height: 54px;
+    font-size: 1.05rem;
+    border-radius: 16px;
+    flex: none;
+  }
+
+  /* Overlay pour fermer le menu en cliquant à côté */
+  .menu-overlay {
+    display: none;
+    position: fixed;
+    inset: 58px 0 0 0;
+    z-index: 997;
+    background: transparent;
+  }
+  .menu-overlay.open { display: block; }
+
+  /* ══════════════════════════════
+     RESPONSIVE RULES
+  ══════════════════════════════ */
+  @media (max-width: 600px) {
+    /* Cache les liens desktop */
+    .nav-links { display: none; }
+
+    /* Réduit le profil dans la nav mobile */
+    .nav-profile { margin-left: auto; }
+    .profile-bubble { width: 42px; height: 42px; }
+    .profile-bubble-icon { font-size: 1.4rem; }
+    .profile-name-nav { font-size: 0.62rem; max-width: 70px; }
+    .profile-sub-nav  { font-size: 0.5rem; }
+
+    /* Titre hero plus petit */
+    .hero-title {
+      font-size: clamp(2.6rem, 14vw, 4rem) !important;
+    }
+    .hero-welcome { font-size: 1rem; }
+  }
+
+  /* ── MAIN ── */
   main {
     position: relative; z-index: 1;
     padding-top: 100px;
@@ -135,7 +206,6 @@
     text-align: center; padding-bottom: 80px;
   }
 
-  /* Title — respects original colors from ref image */
   .hero-title {
     font-family: 'Permanent Marker', cursive;
     font-size: clamp(3.2rem, 9vw, 6.5rem);
@@ -143,7 +213,6 @@
     filter: drop-shadow(2px 4px 0 rgba(0,0,60,0.3));
     animation: fadeUp 0.7s ease both;
   }
-  /* Exact colors from reference: cyan, orange, green, pink/red, yellow, gray + "site." dark */
   .t-b { color: #3dd6f5; }
   .t-u { color: #ff8c3a; }
   .t-b2{ color: #44e87a; }
@@ -168,7 +237,6 @@
   }
   .hero-welcome span { color: white; }
 
-  /* Deco bubbles around title */
   .deco-dot {
     display: inline-block;
     width: 8px; height: 8px; border-radius: 50%;
@@ -208,14 +276,20 @@
 
 <div class="bubble-bg" id="bubbleBg"></div>
 
+<!-- NAV -->
 <nav>
-  <div class="nav-logo">🫧</div>
+  <!-- Logo = bouton menu sur mobile -->
+  <div class="nav-logo" id="menuToggle">🫧</div>
+
+  <!-- Liens desktop (cachés sur mobile) -->
   <div class="nav-links">
     <a href="index.html" class="nav-btn red active">🏠 Accueil</a>
     <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
     <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
     <a href="#" class="nav-btn green">📜 Scans</a>
   </div>
+
+  <!-- Profil (toujours visible) -->
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
     <div class="profile-bubble" id="navAvatar">
       <span class="profile-bubble-icon">🧙</span>
@@ -224,6 +298,16 @@
     <div class="profile-sub-nav" id="navSub">—</div>
   </a>
 </nav>
+
+<!-- Menu déroulant mobile -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"        class="nav-btn red active">🏠 Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
+  <a href="#"                 class="nav-btn green">📜 Scans</a>
+</div>
+<!-- Overlay transparent pour fermer le menu -->
+<div class="menu-overlay" id="menuOverlay"></div>
 
 <main>
   <div class="hero-title">
@@ -242,14 +326,13 @@
 <footer>© BUBBLE INC.</footer>
 
 <script defer>
-  // Bubbles
+  /* ── Bubbles ── */
   const bg = document.getElementById('bubbleBg');
   for (let i = 0; i < 24; i++) {
     const b = document.createElement('div');
     b.className = 'bbl';
     const size = 12 + Math.random() * 65;
-    // Colors matching gradient: sky blue → blue → violet
-    const hue = 190 + Math.random() * 90; // 190=cyan → 280=violet
+    const hue  = 190 + Math.random() * 90;
     const alpha = 0.08 + Math.random() * 0.18;
     b.style.cssText = `
       width:${size}px; height:${size}px;
@@ -265,14 +348,47 @@
     `;
     bg.appendChild(b);
   }
+
+  /* ── Menu mobile ── */
+  const toggle  = document.getElementById('menuToggle');
+  const menu    = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('menuOverlay');
+
+  function openMenu() {
+    menu.classList.add('open');
+    overlay.classList.add('open');
+    toggle.style.transform = 'scale(1.15) rotate(20deg)';
+  }
+  function closeMenu() {
+    menu.classList.remove('open');
+    overlay.classList.remove('open');
+    toggle.style.transform = '';
+  }
+
+  toggle.addEventListener('click', () => {
+    menu.classList.contains('open') ? closeMenu() : openMenu();
+  });
+  overlay.addEventListener('click', closeMenu);
+
+  // Ferme le menu si on passe en desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 600) closeMenu();
+  });
 </script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const app  = initializeApp({apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",authDomain:"bubble-game-fa894.firebaseapp.com",projectId:"bubble-game-fa894",storageBucket:"bubble-game-fa894.firebasestorage.app",messagingSenderId:"60256418096",appId:"1:60256418096:web:dbdc555819793d8c20f0f5"});
+  const app = initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
   const auth = getAuth(app);
   const db   = getFirestore(app);
 
@@ -283,15 +399,14 @@
       const pseudo = user.displayName || user.email.split('@')[0];
       document.getElementById('navName').textContent = pseudo;
       document.getElementById('welcomeMsg').innerHTML = `Bienvenue, <span>${pseudo}</span> 👋`;
-
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
         if (snap.exists()) {
           const d = snap.data();
-          const sub = d.subscription || 'basic';
-          const avatarId = d.avatarId || 'bully_1';
-          document.getElementById('navSub').textContent = SUB_LABELS[sub] || 'BASIC';
-          document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
+          const sub      = d.subscription || 'basic';
+          const avatarId = d.avatarId     || 'bully_1';
+          document.getElementById('navSub').textContent    = SUB_LABELS[sub] || 'BASIC';
+          document.getElementById('navAvatar').innerHTML   = `<img src="${avatarId}.png" alt="avatar">`;
         } else {
           document.getElementById('navSub').textContent = 'BASIC';
         }
@@ -299,9 +414,9 @@
         document.getElementById('navSub').textContent = 'BASIC';
       }
     } else {
-      document.getElementById('navProfile').href = './login.html';
-      document.getElementById('navName').textContent = 'Connexion';
-      document.getElementById('navSub').textContent = '—';
+      document.getElementById('navProfile').href          = './login.html';
+      document.getElementById('navName').textContent      = 'Connexion';
+      document.getElementById('navSub').textContent       = '—';
     }
   });
 </script>
