@@ -213,7 +213,7 @@
   <div class="nav-links">
     <a href="index.html" class="nav-btn red active">🏠 Accueil</a>
     <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
-    <a href="bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
+    <a href="#" class="nav-btn gray">🎮 Games</a>
     <a href="#" class="nav-btn green">📜 Scans</a>
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
@@ -270,28 +270,34 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
-    authDomain: "bubble-game-fa894.firebaseapp.com",
-    projectId: "bubble-game-fa894",
-    storageBucket: "bubble-game-fa894.firebasestorage.app",
-    messagingSenderId: "60256418096",
-    appId: "1:60256418096:web:dbdc555819793d8c20f0f5"
-  };
-
-  const app = initializeApp(firebaseConfig);
+  const app  = initializeApp({apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",authDomain:"bubble-game-fa894.firebaseapp.com",projectId:"bubble-game-fa894",storageBucket:"bubble-game-fa894.firebasestorage.app",messagingSenderId:"60256418096",appId:"1:60256418096:web:dbdc555819793d8c20f0f5"});
   const auth = getAuth(app);
+  const db   = getFirestore(app);
 
-  onAuthStateChanged(auth, user => {
+  const SUB_LABELS = {basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
+
+  onAuthStateChanged(auth, async user => {
     if (user) {
       const pseudo = user.displayName || user.email.split('@')[0];
       document.getElementById('navName').textContent = pseudo;
-      document.getElementById('navSub').textContent = 'BASIC';
-      if (user.photoURL) {
-        document.getElementById('navAvatar').innerHTML = `<img src="${user.photoURL}" alt="avatar">`;
-      }
       document.getElementById('welcomeMsg').innerHTML = `Bienvenue, <span>${pseudo}</span> 👋`;
+
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists()) {
+          const d = snap.data();
+          const sub = d.subscription || 'basic';
+          const avatarId = d.avatarId || 'bully_1';
+          document.getElementById('navSub').textContent = SUB_LABELS[sub] || 'BASIC';
+          document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
+        } else {
+          document.getElementById('navSub').textContent = 'BASIC';
+        }
+      } catch(e) {
+        document.getElementById('navSub').textContent = 'BASIC';
+      }
     } else {
       document.getElementById('navProfile').href = './login.html';
       document.getElementById('navName').textContent = 'Connexion';
