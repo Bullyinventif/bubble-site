@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion — Bubble Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:linear-gradient(160deg,#5bc8ff 0%,#2e7dd4 35%,#1a3a8c 65%,#2d0a6e 100%);
+    min-height:100vh; font-family:'Baloo 2',cursive; color:white;
+    overflow-x:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .bubble-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
+  .bbl{position:absolute;border-radius:50%;animation:riseUp linear infinite;}
+  @keyframes riseUp{0%{transform:translateY(110vh);opacity:0}8%{opacity:1}50%{transform:translateY(50vh) translateX(15px)}92%{opacity:.6}100%{transform:translateY(-10vh) translateX(-8px);opacity:0}}
+
+  .container {
+    position:relative; z-index:1;
+    width:min(420px, 94vw);
+    display:flex; flex-direction:column; align-items:center; gap:24px;
+    padding:20px 0 40px;
+  }
+
+  /* TITRE */
+  .logo {
+    font-family:'Permanent Marker',cursive;
+    font-size:clamp(2.8rem,10vw,4.2rem);
+    line-height:1; letter-spacing:1px;
+    filter:drop-shadow(2px 4px 0 rgba(0,0,60,.3));
+  }
+  .t-b{color:#3dd6f5} .t-u{color:#ff8c3a} .t-b2{color:#44e87a}
+  .t-b3{color:#ff4499} .t-l{color:#ffe033} .t-e{color:#c8d0e0}
+  .t-site{
+    font-family:'Press Start 2P',monospace; font-size:0.28em;
+    color:rgba(20,40,80,.85); letter-spacing:2px;
+    display:inline-block; vertical-align:middle; margin-left:8px;
+  }
+
+  /* CARD */
+  .card {
+    width:100%;
+    background:rgba(255,255,255,.12); backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.2); border-radius:24px;
+    padding:30px 28px;
+    box-shadow:0 12px 40px rgba(0,0,60,.3);
+    animation:fadeUp .5s ease both;
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+  .card-title {
+    font-family:'Press Start 2P',monospace; font-size:.65rem;
+    text-align:center; margin-bottom:24px;
+    color:rgba(255,255,255,.7); letter-spacing:1px;
+  }
+
+  /* TABS */
+  .tabs { display:flex; gap:8px; margin-bottom:24px; }
+  .tab {
+    flex:1; padding:10px; border-radius:12px; border:none;
+    font-family:'Baloo 2',cursive; font-size:.9rem; font-weight:800;
+    cursor:pointer; transition:all .2s;
+    background:rgba(255,255,255,.1); color:rgba(255,255,255,.5);
+    border:1.5px solid rgba(255,255,255,.15);
+  }
+  .tab.active {
+    background:rgba(255,255,255,.25); color:white;
+    border-color:rgba(255,255,255,.45);
+  }
+
+  /* FORM */
+  .form-group { margin-bottom:16px; }
+  .form-group label {
+    display:block; font-size:.7rem; font-weight:700;
+    color:rgba(255,255,255,.5); margin-bottom:6px;
+    letter-spacing:1px; text-transform:uppercase;
+  }
+  .form-group input {
+    width:100%; background:rgba(0,0,0,.2);
+    border:1.5px solid rgba(255,255,255,.2); border-radius:12px;
+    color:white; padding:12px 16px;
+    font-family:'Baloo 2',cursive; font-size:.95rem; font-weight:600;
+    transition:border-color .2s;
+  }
+  .form-group input:focus{outline:none;border-color:rgba(255,255,255,.5);}
+  .form-group input::placeholder{color:rgba(255,255,255,.25);}
+
+  .btn-submit {
+    width:100%; padding:13px;
+    background:linear-gradient(135deg,#44d966,#1faa44);
+    border:none; border-radius:14px; color:white;
+    font-family:'Baloo 2',cursive; font-size:1rem; font-weight:800;
+    cursor:pointer; transition:all .2s; margin-top:6px;
+    box-shadow:0 4px 0 rgba(0,80,0,.3);
+  }
+  .btn-submit:hover{filter:brightness(1.1);transform:translateY(-2px);}
+  .btn-submit:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,80,0,.3);}
+  .btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+  /* ERROR */
+  .error-msg {
+    background:rgba(255,60,60,.15); border:1px solid rgba(255,80,80,.35);
+    border-radius:10px; color:#ffaaaa;
+    padding:10px 14px; font-size:.82rem; font-weight:700;
+    margin-bottom:14px; display:none;
+  }
+  .error-msg.show{display:block;}
+
+  .form-panel { display:none; }
+  .form-panel.active { display:block; }
+
+  footer{
+    position:relative;z-index:1;
+    color:rgba(255,255,255,.25);font-size:.55rem;
+    font-family:'Press Start 2P',monospace;letter-spacing:1px;
+    margin-top:8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="bubble-bg" id="bubbleBg"></div>
+
+<div class="container">
+  <div class="logo">
+    <span class="t-b">B</span><span class="t-u">u</span><span class="t-b2">b</span><span class="t-b3">b</span><span class="t-l">l</span><span class="t-e">e</span><span class="t-site">site.</span>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🫧 Bienvenue !</div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Connexion</button>
+      <button class="tab" onclick="switchTab('register')">Inscription</button>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <!-- CONNEXION -->
+    <div class="form-panel active" id="panelLogin">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="ton@email.com">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="loginPwd" placeholder="••••••••">
+      </div>
+      <button class="btn-submit" id="btnLogin" onclick="handleLogin()">🚀 Se connecter</button>
+    </div>
+
+    <!-- INSCRIPTION -->
+    <div class="form-panel" id="panelRegister">
+      <div class="form-group">
+        <label>Pseudo</label>
+        <input type="text" id="regPseudo" placeholder="Ton pseudo...">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="ton@email.com">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="regPwd" placeholder="Minimum 6 caractères">
+      </div>
+      <button class="btn-submit" id="btnRegister" onclick="handleRegister()">✨ Créer mon compte</button>
+    </div>
+  </div>
+</div>
+
+<footer>© BUBBLE INC.</footer>
+
+<script>
+  const bg = document.getElementById('bubbleBg');
+  for(let i=0;i<24;i++){
+    const b=document.createElement('div'); b.className='bbl';
+    const size=12+Math.random()*65, hue=190+Math.random()*90, alpha=.08+Math.random()*.18;
+    b.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.25),hsla(${hue},80%,70%,${alpha}) 55%,transparent);border:1px solid hsla(${hue},70%,80%,.15);animation-duration:${10+Math.random()*18}s;animation-delay:${Math.random()*14}s;`;
+    bg.appendChild(b);
+  }
+
+  function switchTab(tab){
+    document.getElementById('panelLogin').classList.toggle('active', tab==='login');
+    document.getElementById('panelRegister').classList.toggle('active', tab==='register');
+    document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
+    hideError();
+  }
+
+  function showError(msg){
+    const el=document.getElementById('errorMsg');
+    el.textContent=msg; el.classList.add('show');
+  }
+  function hideError(){document.getElementById('errorMsg').classList.remove('show');}
+</script>
+
+<script type="module">
+  import { initializeApp }        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app  = initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  // Si déjà connecté → direct au profil
+  onAuthStateChanged(auth, user => {
+    if(user) window.location.href = './bubble_site_accueil.html';
+  });
+
+  const ERRORS = {
+    'auth/invalid-email':       '❌ Email invalide.',
+    'auth/user-not-found':      '❌ Aucun compte avec cet email.',
+    'auth/wrong-password':      '❌ Mot de passe incorrect.',
+    'auth/email-already-in-use':'❌ Cet email est déjà utilisé.',
+    'auth/weak-password':       '❌ Mot de passe trop faible (min. 6 caractères).',
+    'auth/too-many-requests':   '❌ Trop de tentatives. Réessaie plus tard.',
+    'auth/invalid-credential':  '❌ Email ou mot de passe incorrect.',
+  };
+
+  function errMsg(e){ return ERRORS[e.code] || '❌ '+e.message; }
+
+  function setLoading(btnId, loading){
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.textContent = loading ? '⏳ Chargement...' : (btnId==='btnLogin' ? '🚀 Se connecter' : '✨ Créer mon compte');
+  }
+
+  // Connexion
+  window.handleLogin = async function(){
+    hideError();
+    const email = document.getElementById('loginEmail').value.trim();
+    const pwd   = document.getElementById('loginPwd').value;
+    if(!email||!pwd){ showError('⚠️ Remplis tous les champs !'); return; }
+    setLoading('btnLogin', true);
+    try {
+      await signInWithEmailAndPassword(auth, email, pwd);
+      // onAuthStateChanged redirige automatiquement
+    } catch(e){
+      showError(errMsg(e));
+      setLoading('btnLogin', false);
+    }
+  };
+
+  // Inscription
+  window.handleRegister = async function(){
+    hideError();
+    const pseudo = document.getElementById('regPseudo').value.trim();
+    const email  = document.getElementById('regEmail').value.trim();
+    const pwd    = document.getElementById('regPwd').value;
+    if(!pseudo||!email||!pwd){ showError('⚠️ Remplis tous les champs !'); return; }
+    if(pwd.length < 6){ showError('❌ Minimum 6 caractères !'); return; }
+    setLoading('btnRegister', true);
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, pwd);
+      await updateProfile(cred.user, { displayName: pseudo });
+      // Créer le document Firestore
+      await setDoc(doc(db,'users',cred.user.uid), {
+        pseudo:       pseudo,
+        subscription: 'basic',
+        avatarId:     'bully_1'
+      });
+      // onAuthStateChanged redirige automatiquement
+    } catch(e){
+      showError(errMsg(e));
+      setLoading('btnRegister', false);
+    }
+  };
+</script>
+
+</body>
+</html>
