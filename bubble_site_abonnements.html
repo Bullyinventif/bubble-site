@@ -75,6 +75,28 @@
 
   @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
   footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255,255,255,.25);font-size:.6rem;border-top:1px solid rgba(255,255,255,.08);font-family:'Press Start 2P',monospace;letter-spacing:1px;}
+
+  /* ── MOBILE MENU ── */
+  .nav-logo{cursor:pointer;transition:transform .2s;-webkit-tap-highlight-color:transparent;}
+  .nav-logo:hover{transform:scale(1.08);}
+  .mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;background:rgba(8,22,80,.97);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);flex-direction:column;gap:12px;padding:20px 18px 24px;z-index:998;border-bottom:1px solid rgba(255,255,255,.15);box-shadow:0 12px 40px rgba(0,0,0,.5);}
+  .mobile-menu.open{display:flex;animation:slideDown .22s ease;}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+  .mobile-menu .nav-btn{width:100%;height:54px;font-size:1.05rem;border-radius:16px;flex:none;}
+  .menu-overlay{display:none;position:fixed;inset:58px 0 0 0;z-index:997;}
+  .menu-overlay.open{display:block;}
+
+  @media(max-width:600px){
+    .nav-links{display:none;}
+    .nav-profile{margin-left:auto;}
+    .profile-bubble{width:42px;height:42px;}
+    .profile-bubble-icon{font-size:1.4rem;}
+    .profile-name-nav{font-size:.62rem;max-width:70px;}
+    .profile-sub-nav{font-size:.5rem;}
+    main{padding:72px 12px 50px;}
+    .page-title{font-size:clamp(1.1rem,5vw,1.6rem);margin-bottom:20px;}
+    .plans-grid{grid-template-columns:1fr;}
+  }
 </style>
 </head>
 <body>
@@ -82,7 +104,7 @@
 <div class="bubble-bg" id="bubbleBg"></div>
 
 <nav>
-  <div class="nav-logo">🫧</div>
+  <div class="nav-logo" id="menuToggle">🫧</div>
   <div class="nav-links">
     <a href="index.html" class="nav-btn red">🏠 Accueil</a>
     <a href="bubble_site_abonnements.html" class="nav-btn yellow active">✨ Abonnements</a>
@@ -96,7 +118,14 @@
   </a>
 </nav>
 
-<main>
+<!-- Menu déroulant mobile -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" class="nav-btn red">🏠 Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow active">✨ Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
+  <a href="#" class="nav-btn green">📜 Scans</a>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
   <div class="page-title">✦ Choisissez l'abonnement qui vous correspond ! ✦</div>
 
   <div class="plans-grid">
@@ -270,6 +299,15 @@
     b.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.25),hsla(${hue},80%,70%,${alpha}) 55%,transparent);border:1px solid hsla(${hue},70%,80%,.15);animation-duration:${10+Math.random()*18}s;animation-delay:${Math.random()*14}s;`;
     bg.appendChild(b);
   }
+  /* ── Menu mobile ── */
+  const toggle=document.getElementById('menuToggle');
+  const menu=document.getElementById('mobileMenu');
+  const overlay=document.getElementById('menuOverlay');
+  function openMenu(){menu.classList.add('open');overlay.classList.add('open');toggle.style.transform='scale(1.15) rotate(20deg)';}
+  function closeMenu(){menu.classList.remove('open');overlay.classList.remove('open');toggle.style.transform='';}
+  toggle.addEventListener('click',()=>menu.classList.contains('open')?closeMenu():openMenu());
+  overlay.addEventListener('click',closeMenu);
+  window.addEventListener('resize',()=>{if(window.innerWidth>600)closeMenu();});
 </script>
 
 <script type="module">
