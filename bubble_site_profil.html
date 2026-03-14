@@ -9,10 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    background:linear-gradient(160deg,#5bc8ff 0%,#2e7dd4 35%,#1a3a8c 65%,#2d0a6e 100%);
-    min-height:100vh; font-family:'Baloo 2',cursive; color:white; overflow-x:hidden;
-  }
+  body { background:linear-gradient(160deg,#5bc8ff 0%,#2e7dd4 35%,#1a3a8c 65%,#2d0a6e 100%); min-height:100vh; font-family:'Baloo 2',cursive; color:white; overflow-x:hidden; }
   .bubble-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
   .bbl{position:absolute;border-radius:50%;animation:riseUp linear infinite;}
   @keyframes riseUp{0%{transform:translateY(110vh);opacity:0}8%{opacity:1}50%{transform:translateY(50vh) translateX(15px)}92%{opacity:.6}100%{transform:translateY(-10vh) translateX(-8px);opacity:0}}
@@ -41,7 +38,7 @@
   .card-title{font-family:'Press Start 2P',monospace;font-size:.62rem;font-weight:800;}
   .avatar-section{display:flex;align-items:center;gap:20px;}
   .big-avatar-wrap{position:relative;flex-shrink:0;}
-  .big-avatar{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:3px solid rgba(255,255,255,.5);box-shadow:0 0 25px rgba(100,160,255,.4);display:flex;align-items:center;justify-content:center;font-size:2.8rem;overflow:hidden;cursor:pointer;transition:transform .2s;}
+  .big-avatar{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:3px solid rgba(255,255,255,.5);box-shadow:0 0 25px rgba(100,160,255,.4);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;transition:transform .2s;}
   .big-avatar:hover{transform:scale(1.05);}
   .big-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
   .edit-badge{position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:#ffcc00;border:2px solid rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3);}
@@ -70,8 +67,6 @@
   .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(60,200,120,.25);border:1px solid rgba(60,200,120,.5);backdrop-filter:blur(12px);color:#88ffcc;padding:11px 26px;border-radius:25px;font-size:.88rem;font-weight:700;transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:9999;white-space:nowrap;}
   .toast.show{transform:translateX(-50%) translateY(0);}
   .toast.err{background:rgba(255,60,60,.2);border-color:rgba(255,80,80,.4);color:#ffaaaa;}
-
-  /* === PICKER OVERLAY === */
   .overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(5,15,40,.9);backdrop-filter:blur(10px);align-items:center;justify-content:center;}
   .overlay.open{display:flex;}
   .picker{background:linear-gradient(160deg,#0e2260,#1a0a45);border:1.5px solid rgba(255,255,255,.18);border-radius:24px;width:min(720px,96vw);max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.7);animation:popIn .3s cubic-bezier(.34,1.56,.64,1);}
@@ -105,7 +100,6 @@
   .icon-name{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .icon-item.selected .icon-name{color:rgba(255,200,0,.9);}
   .lock-badge{font-size:.42rem;font-family:'Press Start 2P',monospace;padding:2px 6px;border-radius:8px;margin-top:-2px;background:rgba(255,200,0,.15);border:1px solid rgba(255,200,0,.35);color:#ffe866;}
-
   @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
   footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255,255,255,.25);font-size:.6rem;border-top:1px solid rgba(255,255,255,.08);font-family:'Press Start 2P',monospace;letter-spacing:1px;}
 </style>
@@ -117,7 +111,7 @@
 <nav>
   <div class="nav-logo">🫧</div>
   <div class="nav-links">
-    <a href="bubble_site_accueil.html" class="nav-btn red">🏠 Accueil</a>
+    <a href="index.html" class="nav-btn red">🏠 Accueil</a>
     <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
     <a href="#" class="nav-btn gray">🎮 Games</a>
     <a href="#" class="nav-btn green">📜 Scans</a>
@@ -133,10 +127,7 @@
   <div class="page-title">✦ Mon Profil ✦</div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">🎭</span>
-      <span class="card-title">Icône de profil</span>
-    </div>
+    <div class="card-header"><span class="card-icon">🎭</span><span class="card-title">Icône de profil</span></div>
     <div class="avatar-section">
       <div class="big-avatar-wrap">
         <div class="big-avatar" id="bigAvatar" onclick="openPicker()"></div>
@@ -189,7 +180,6 @@
   </div>
 </main>
 
-<!-- PICKER -->
 <div class="overlay" id="overlay">
   <div class="picker">
     <div class="picker-top">
@@ -211,6 +201,7 @@
 <footer>© BUBBLE INC.</footer>
 
 <script>
+  /* ── Bubbles ── */
   const bg = document.getElementById('bubbleBg');
   for(let i=0;i<24;i++){
     const b=document.createElement('div'); b.className='bbl';
@@ -219,52 +210,53 @@
     bg.appendChild(b);
   }
 
-  function openPicker(){
-    if(typeof _openPicker==='function') _openPicker();
-  }
-  function closePicker(){
-    if(typeof _closePicker==='function') _closePicker();
-  }
-  function confirmAvatar(){
-    if(typeof _confirmAvatar==='function') _confirmAvatar();
-  }
-  function savePseudo(){
-    if(typeof _savePseudo==='function') _savePseudo();
-  }
-  function savePassword(){
-    if(typeof _savePassword==='function') _savePassword();
-  }
-  function handleLogout(){
-    if(typeof _handleLogout==='function') _handleLogout();
-  }
+  /* ── Wrappers appelés par les onclick HTML ── */
+  function openPicker()    { if(window._openPicker)    window._openPicker(); }
+  function closePicker()   { if(window._closePicker)   window._closePicker(); }
+  function confirmAvatar() { if(window._confirmAvatar) window._confirmAvatar(); }
+  function savePseudo()    { if(window._savePseudo)    window._savePseudo(); }
+  function savePassword()  { if(window._savePassword)  window._savePassword(); }
+  function handleLogout()  { if(window._handleLogout)  window._handleLogout(); }
 </script>
 
 <script type="module">
-  import { initializeApp }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut, updatePassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut, updatePassword, updateProfile, EmailAuthProvider, reauthenticateWithCredential }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const app  = initializeApp({apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",authDomain:"bubble-game-fa894.firebaseapp.com",projectId:"bubble-game-fa894",storageBucket:"bubble-game-fa894.firebasestorage.app",messagingSenderId:"60256418096",appId:"1:60256418096:web:dbdc555819793d8c20f0f5"});
+  const app  = initializeApp({
+    apiKey:            "AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:        "bubble-game-fa894.firebaseapp.com",
+    projectId:         "bubble-game-fa894",
+    storageBucket:     "bubble-game-fa894.firebasestorage.app",
+    messagingSenderId: "60256418096",
+    appId:             "1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
   const auth = getAuth(app);
+  const db   = getFirestore(app);
 
+  /* ── Catalogue ── */
   const CATALOGUE = {
     "Classique": [
-      {id:"bully_1",      file:"bully_1.png",       name:"Bully",         sub:"basic"},
-      {id:"anthony_1",    file:"anthony_1.png",      name:"Anthony",       sub:"basic"},
-      {id:"luna_1",       file:"luna_1.png",         name:"Luna",          sub:"basic"},
-      {id:"frosty_1",     file:"frosty_1.png",       name:"Frosty",        sub:"basic"},
-      {id:"zippy_1",      file:"zippy_1.png",        name:"Zippy",         sub:"basic"},
-      {id:"rocky_1",      file:"rocky_1.png",        name:"Rocky",         sub:"basic"},
+      {id:"bully_1",           file:"bully_1.png",           name:"Bully",           sub:"basic"},
+      {id:"anthony_1",         file:"anthony_1.png",         name:"Anthony",         sub:"basic"},
+      {id:"luna_1",            file:"luna_1.png",            name:"Luna",            sub:"basic"},
+      {id:"frosty_1",          file:"frosty_1.png",          name:"Frosty",          sub:"basic"},
+      {id:"zippy_1",           file:"zippy_1.png",           name:"Zippy",           sub:"basic"},
+      {id:"rocky_1",           file:"rocky_1.png",           name:"Rocky",           sub:"basic"},
     ],
     "Pixel": [
-      {id:"bully_pixel_1",     file:"bully_pixel_1.png",     name:"Bully Pixel",  sub:"basic"},
-      {id:"plant_pixel_1",     file:"plant_pixel_1.png",     name:"Plant",        sub:"plus"},
-      {id:"rock_pixel_1",      file:"rock_pixel_1.png",      name:"Rock",         sub:"plus"},
-      {id:"star_pixel_1",      file:"star_pixel_1.png",      name:"Étoile",       sub:"plus"},
-      {id:"snowflake_pixel_1", file:"snowflake_pixel_1.png", name:"Flocon",       sub:"x"},
-      {id:"sun_pixel_1",       file:"sun_pixel_1.png",       name:"Soleil",       sub:"x"},
+      {id:"bully_pixel_1",     file:"bully_pixel_1.png",     name:"Bully Pixel",     sub:"plus"},
+      {id:"plant_pixel_1",     file:"plant_pixel_1.png",     name:"Plant",           sub:"plus"},
+      {id:"rock_pixel_1",      file:"rock_pixel_1.png",      name:"Rock",            sub:"plus"},
+      {id:"star_pixel_1",      file:"star_pixel_1.png",      name:"Étoile",          sub:"plus"},
+      {id:"snowflake_pixel_1", file:"snowflake_pixel_1.png", name:"Flocon",          sub:"x"},
+      {id:"sun_pixel_1",       file:"sun_pixel_1.png",       name:"Soleil",          sub:"x"},
     ],
     "Bubble inc. Game IT!": [
-      {id:"bully_game_it_1",   file:"bully_game_it_1.png",   name:"Bully Game IT",   sub:"basic"},
+      {id:"bully_game_it_1",   file:"bully_game_it_1.png",   name:"Bully Game IT",   sub:"plus"},
       {id:"anthony_game_it_1", file:"anthony_game_it_1.png", name:"Anthony Game IT", sub:"plus"},
       {id:"luna_game_it_1",    file:"luna_game_it_1.png",    name:"Luna Game IT",    sub:"plus"},
       {id:"frosty_game_it_1",  file:"frosty_game_it_1.png",  name:"Frosty Game IT",  sub:"plus"},
@@ -273,77 +265,118 @@
     ]
   };
 
-  const SUB_ORDER  = {basic:0,plus:1,x:2,max:3};
-  const SUB_LABELS = {basic:"BASIC",plus:"BUBBLE+",x:"BUBBLE X",max:"BUBBLE MAX"};
+  const SUB_ORDER  = {basic:0, plus:1, x:2, max:3};
+  const SUB_LABELS = {basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
+  const SUB_DESCS  = {basic:"Accès gratuit", plus:"Abonné Bubble+", x:"Abonné Bubble X", max:"Abonné Bubble MAX"};
 
   let currentUser  = null;
   let userSubLevel = "basic";
   let selectedIcon = null;
   let activeIconId = "bully_1";
 
-  function toast(msg,err=false){
+  /* ── Helpers ── */
+  function toast(msg, err=false){
     const t=document.getElementById('toast');
     t.textContent=msg; t.className='toast'+(err?' err':'')+' show';
-    setTimeout(()=>t.classList.remove('show'),3000);
+    setTimeout(()=>t.classList.remove('show'),3200);
   }
-
-  function canUse(sub){return SUB_ORDER[userSubLevel]>=SUB_ORDER[sub];}
-
+  function canUse(sub){ return SUB_ORDER[userSubLevel] >= SUB_ORDER[sub]; }
   function findIcon(id){
     for(const cat of Object.values(CATALOGUE)) for(const ic of cat) if(ic.id===id) return ic;
     return null;
   }
-
-  function setAvatarUI(file,name){
-    document.getElementById('bigAvatar').innerHTML=`<img src="${file}" alt="${name}">`;
-    document.getElementById('navAvatar').innerHTML=`<img src="${file}" alt="${name}">`;
+  function setAvatarUI(file, name){
+    document.getElementById('bigAvatar').innerHTML  = `<img src="${file}" alt="${name}">`;
+    document.getElementById('navAvatar').innerHTML  = `<img src="${file}" alt="${name}">`;
+  }
+  function setSubUI(level){
+    const lbl  = SUB_LABELS[level] || 'BASIC';
+    const desc = SUB_DESCS[level]  || 'Accès gratuit';
+    document.getElementById('navSub').textContent   = lbl;
+    document.getElementById('subName').textContent  = lbl;
+    document.getElementById('subDesc').textContent  = desc;
+    document.getElementById('subBadge').textContent = lbl;
+    document.getElementById('subBadge').className   = 'sub-badge '+(level||'basic');
   }
 
-  onAuthStateChanged(auth,async user=>{
-    if(!user){window.location.href='./login.html';return;}
-    currentUser=user;
-    const pseudo=user.displayName||user.email.split('@')[0];
-    document.getElementById('navName').textContent=pseudo;
-    document.getElementById('pseudoInput').value=pseudo;
-    userSubLevel = 'basic';
-    activeIconId = localStorage.getItem('bubble_avatar_'+user.uid) || 'bully_1';
-    const lbl=SUB_LABELS[userSubLevel]||'BASIC';
-    document.getElementById('navSub').textContent=lbl;
-    document.getElementById('subName').textContent=lbl;
-    document.getElementById('subBadge').textContent=lbl;
-    document.getElementById('subBadge').className='sub-badge '+userSubLevel;
-    const ic=findIcon(activeIconId);
-    if(ic) setAvatarUI(ic.file,ic.name); else setAvatarUI('bully_1.png','Bully');
+  /* ── Auth ── */
+  onAuthStateChanged(auth, async user => {
+    if(!user){ window.location.href='./login.html'; return; }
+    currentUser = user;
+
+    const pseudo = user.displayName || user.email.split('@')[0];
+    document.getElementById('navName').textContent     = pseudo;
+    document.getElementById('pseudoInput').value       = pseudo;
+
+    /* Lecture Firestore */
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if(snap.exists()){
+        const d = snap.data();
+        userSubLevel = d.subscription || 'basic';
+        activeIconId = d.avatarId     || 'bully_1';
+      } else {
+        /* Premier login : on crée le document */
+        await setDoc(doc(db,'users',user.uid), {
+          subscription: 'basic',
+          avatarId:     'bully_1',
+          pseudo:       pseudo
+        });
+        userSubLevel = 'basic';
+        activeIconId = 'bully_1';
+      }
+    } catch(e) {
+      toast('⚠️ Connexion Firestore échouée : '+e.message, true);
+      userSubLevel = 'basic';
+      activeIconId = 'bully_1';
+    }
+
+    setSubUI(userSubLevel);
+    const ic = findIcon(activeIconId);
+    if(ic) setAvatarUI(ic.file, ic.name);
+    else   setAvatarUI('bully_1.png','Bully');
   });
 
-  window._openPicker=function(){
-    selectedIcon=findIcon(activeIconId)||Object.values(CATALOGUE)[0][0];
-    buildPicker(); updatePreview(selectedIcon);
+  /* ── Picker ── */
+  window._openPicker = function(){
+    selectedIcon = findIcon(activeIconId) || Object.values(CATALOGUE)[0][0];
+    buildPicker();
+    updatePreview(selectedIcon);
     document.getElementById('overlay').classList.add('open');
   };
-  window._closePicker=function(){document.getElementById('overlay').classList.remove('open');};
+
+  window._closePicker = function(){
+    document.getElementById('overlay').classList.remove('open');
+  };
 
   function buildPicker(){
-    const body=document.getElementById('pickerBody'); body.innerHTML='';
-    for(const[catName,icons] of Object.entries(CATALOGUE)){
-      const t=document.createElement('div'); t.className='cat-title'; t.textContent=catName; body.appendChild(t);
-      const grid=document.createElement('div'); grid.className='icons-grid';
+    const body = document.getElementById('pickerBody');
+    body.innerHTML = '';
+    for(const [catName, icons] of Object.entries(CATALOGUE)){
+      const t = document.createElement('div');
+      t.className = 'cat-title'; t.textContent = catName;
+      body.appendChild(t);
+      const grid = document.createElement('div');
+      grid.className = 'icons-grid';
       for(const icon of icons){
-        const locked=!canUse(icon.sub);
-        const item=document.createElement('div');
-        item.className='icon-item'+(locked?' locked':'')+(icon.id===selectedIcon?.id?' selected':'');
-        item.dataset.id=icon.id;
-        const bubble=document.createElement('div'); bubble.className='icon-bubble';
-        bubble.innerHTML=`<img src="${icon.file}" alt="${icon.name}">`;
-        if(locked) bubble.innerHTML+=`<div class="lock-overlay">🔒</div>`;
-        const name=document.createElement('div'); name.className='icon-name'; name.textContent=icon.name;
+        const locked = !canUse(icon.sub);
+        const item = document.createElement('div');
+        item.className = 'icon-item'+(locked?' locked':'')+(icon.id===selectedIcon?.id?' selected':'');
+        const bubble = document.createElement('div');
+        bubble.className = 'icon-bubble';
+        bubble.innerHTML = `<img src="${icon.file}" alt="${icon.name}">`;
+        if(locked) bubble.innerHTML += `<div class="lock-overlay">🔒</div>`;
+        const name = document.createElement('div');
+        name.className = 'icon-name'; name.textContent = icon.name;
         item.appendChild(bubble); item.appendChild(name);
         if(locked){
-          const badge=document.createElement('div'); badge.className='lock-badge';
-          badge.textContent=SUB_LABELS[icon.sub]; item.appendChild(badge);
+          const badge = document.createElement('div');
+          badge.className = 'lock-badge';
+          badge.textContent = SUB_LABELS[icon.sub];
+          item.appendChild(badge);
         } else {
-          item.addEventListener('click',()=>{
-            selectedIcon=icon; updatePreview(icon);
+          item.addEventListener('click', ()=>{
+            selectedIcon = icon; updatePreview(icon);
             body.querySelectorAll('.icon-item').forEach(el=>el.classList.remove('selected'));
             item.classList.add('selected');
           });
@@ -355,43 +388,75 @@
   }
 
   function updatePreview(icon){
-    document.getElementById('previewBubble').innerHTML=`<img src="${icon.file}" alt="${icon.name}">`;
-    document.getElementById('previewName').textContent=icon.name;
+    document.getElementById('previewBubble').innerHTML = `<img src="${icon.file}" alt="${icon.name}">`;
+    document.getElementById('previewName').textContent = icon.name;
   }
 
-  window._confirmAvatar=async function(){
-    if(!selectedIcon||!currentUser)return;
-    try{
-      localStorage.setItem('bubble_avatar_'+currentUser.uid, selectedIcon.id);
-      activeIconId=selectedIcon.id;
-      setAvatarUI(selectedIcon.file,selectedIcon.name);
-      _closePicker(); toast('✅ Icône mise à jour !');
-    }catch(e){toast('❌ '+e.message,true);}
+  window._confirmAvatar = async function(){
+    if(!selectedIcon || !currentUser) return;
+    try {
+      await setDoc(doc(db,'users',currentUser.uid), {avatarId: selectedIcon.id}, {merge:true});
+      activeIconId = selectedIcon.id;
+      setAvatarUI(selectedIcon.file, selectedIcon.name);
+      window._closePicker();
+      toast('✅ Icône mise à jour !');
+    } catch(e){ toast('❌ '+e.message, true); }
   };
 
-  window._savePseudo=async function(){
-    const p=document.getElementById('pseudoInput').value.trim();
-    if(!p){toast('⚠️ Entre un pseudo !',true);return;}
-    try{await updateProfile(currentUser,{displayName:p});document.getElementById('navName').textContent=p;toast('✅ Pseudo mis à jour !');}
-    catch(e){toast('❌ '+e.message,true);}
+  /* ── Pseudo ── */
+  window._savePseudo = async function(){
+    const p = document.getElementById('pseudoInput').value.trim();
+    if(!p){ toast('⚠️ Entre un pseudo !', true); return; }
+    try {
+      await updateProfile(currentUser, {displayName: p});
+      await setDoc(doc(db,'users',currentUser.uid), {pseudo: p}, {merge:true});
+      document.getElementById('navName').textContent = p;
+      toast('✅ Pseudo mis à jour !');
+    } catch(e){ toast('❌ '+e.message, true); }
   };
 
-  window._savePassword=async function(){
-    const p=document.getElementById('newPwd').value,c=document.getElementById('confirmPwd').value;
-    if(!p||!c){toast('⚠️ Remplis les deux champs !',true);return;}
-    if(p!==c){toast('❌ Les mots de passe ne correspondent pas !',true);return;}
-    if(p.length<6){toast('❌ Minimum 6 caractères !',true);return;}
-    try{
-      await updatePassword(currentUser,p);
-      document.getElementById('newPwd').value=''; document.getElementById('confirmPwd').value='';
+  /* ── Mot de passe ── */
+  window._savePassword = async function(){
+    const newPwd  = document.getElementById('newPwd').value;
+    const confirm = document.getElementById('confirmPwd').value;
+    if(!newPwd || !confirm){ toast('⚠️ Remplis les deux champs !', true); return; }
+    if(newPwd !== confirm)  { toast('❌ Les mots de passe ne correspondent pas !', true); return; }
+    if(newPwd.length < 6)   { toast('❌ Minimum 6 caractères !', true); return; }
+    try {
+      await updatePassword(currentUser, newPwd);
+      document.getElementById('newPwd').value = '';
+      document.getElementById('confirmPwd').value = '';
       toast('✅ Mot de passe changé !');
-    }catch(e){toast(e.code==='auth/requires-recent-login'?'❌ Reconnecte-toi d\'abord !':'❌ '+e.message,true);}
+    } catch(e){
+      if(e.code === 'auth/requires-recent-login'){
+        /* Re-authentification automatique */
+        const oldPwd = prompt('Entre ton mot de passe actuel pour confirmer :');
+        if(!oldPwd) return;
+        try {
+          const cred = EmailAuthProvider.credential(currentUser.email, oldPwd);
+          await reauthenticateWithCredential(currentUser, cred);
+          await updatePassword(currentUser, newPwd);
+          document.getElementById('newPwd').value = '';
+          document.getElementById('confirmPwd').value = '';
+          toast('✅ Mot de passe changé !');
+        } catch(e2){ toast('❌ '+e2.message, true); }
+      } else {
+        toast('❌ '+e.message, true);
+      }
+    }
   };
 
-  window._handleLogout=async function(){await signOut(auth);window.location.href='./login.html';};
+  /* ── Déconnexion ── */
+  window._handleLogout = async function(){
+    await signOut(auth);
+    window.location.href = './login.html';
+  };
 
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')_closePicker();});
-  document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))_closePicker();});
+  /* ── Fermer le picker ── */
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') window._closePicker && window._closePicker(); });
+  document.getElementById('overlay').addEventListener('click', e=>{
+    if(e.target===document.getElementById('overlay')) window._closePicker && window._closePicker();
+  });
 </script>
 </body>
 </html>

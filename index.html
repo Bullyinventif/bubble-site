@@ -91,15 +91,15 @@
   .nav-profile:hover { transform: scale(1.05); }
 
   .profile-bubble {
-    width: 78px; height: 78px; border-radius: 50%;
+    width: 52px; height: 52px; border-radius: 50%;
     background: radial-gradient(circle at 38% 28%, #c8e8ff, #4488cc 50%, #1a2a5c);
     border: 3px solid rgba(255,255,255,0.5);
     box-shadow:
       0 0 0 1px rgba(100,160,255,0.3),
-      0 6px 20px rgba(0,0,80,0.4),
-      inset 0 -4px 8px rgba(0,0,80,0.3);
+      0 4px 12px rgba(0,0,80,0.4),
+      inset 0 -3px 6px rgba(0,0,80,0.3);
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden; margin-top: -20px; position: relative;
+    overflow: hidden; position: relative;
   }
   /* Shine */
   .profile-bubble::after {
@@ -111,7 +111,7 @@
     pointer-events: none;
   }
   .profile-bubble img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-  .profile-bubble-icon { font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,80,0.4)); }
+  .profile-bubble-icon { font-size: 1.8rem; filter: drop-shadow(0 2px 4px rgba(0,0,80,0.4)); }
 
   .profile-name-nav {
     font-size: 0.72rem; font-weight: 800; color: white;
