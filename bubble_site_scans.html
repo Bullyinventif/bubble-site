@@ -341,94 +341,6 @@ main {
 .modal-close:hover { background:rgba(255,255,255,.2); }
 .modal-wrap { position:relative; }
 
-/* ── SCAN EN VEDETTE ── */
-.vedette {
-  position:relative;
-  width:100%;
-  min-height:340px;
-  display:flex; align-items:flex-end;
-  margin-bottom:28px;
-  overflow:hidden;
-}
-.vedette-bg {
-  position:absolute; inset:0;
-  background-size:cover; background-position:center top;
-  filter:brightness(.55);
-  transition:filter .3s;
-}
-.vedette::after {
-  content:'';
-  position:absolute; inset:0;
-  background:linear-gradient(to bottom,
-    transparent 0%,
-    transparent 40%,
-    rgba(30,122,30,.7) 75%,
-    #1e7a1e 100%
-  );
-}
-.vedette-content {
-  position:relative; z-index:2;
-  padding:24px 22px 28px;
-  width:100%;
-}
-.vedette-label {
-  font-family:'Press Start 2P',monospace;
-  font-size:.52rem; letter-spacing:3px;
-  color:rgba(255,255,255,.55);
-  margin-bottom:10px;
-  text-transform:uppercase;
-}
-.vedette-logo {
-  max-height:90px; max-width:70%;
-  object-fit:contain; display:block;
-  filter:drop-shadow(0 3px 14px rgba(0,0,0,.7));
-  margin-bottom:12px;
-}
-.vedette-logo-placeholder {
-  font-family:'Permanent Marker',cursive;
-  font-size:2.2rem; color:white;
-  margin-bottom:12px; line-height:1.1;
-  text-shadow:0 3px 10px rgba(0,0,0,.6);
-}
-.vedette-desc {
-  font-size:.88rem; color:rgba(255,255,255,.8);
-  line-height:1.6; max-width:520px;
-  margin-bottom:18px;
-  text-shadow:0 1px 6px rgba(0,0,0,.5);
-}
-.vedette-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-.vedette-btn-lecture {
-  padding:11px 28px;
-  background:linear-gradient(135deg,#44d966,#1faa44);
-  border:none; border-radius:25px;
-  color:white; font-family:'Baloo 2',cursive;
-  font-size:1rem; font-weight:800;
-  cursor:pointer; transition:all .2s;
-  box-shadow:0 4px 0 rgba(0,80,0,.4);
-  display:flex; align-items:center; gap:8px;
-}
-.vedette-btn-lecture:hover { filter:brightness(1.1); transform:translateY(-2px); }
-.vedette-btn-info {
-  padding:11px 22px;
-  background:rgba(255,255,255,.2);
-  border:1.5px solid rgba(255,255,255,.4);
-  border-radius:25px;
-  color:white; font-family:'Baloo 2',cursive;
-  font-size:1rem; font-weight:800;
-  cursor:pointer; transition:all .2s;
-}
-.vedette-btn-info:hover { background:rgba(255,255,255,.32); }
-.vedette-sub-logo {
-  height:32px; object-fit:contain;
-  filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));
-}
-@media(max-width:600px) {
-  .vedette { min-height:260px; }
-  .vedette-logo { max-height:65px; }
-  .vedette-logo-placeholder { font-size:1.7rem; }
-  .vedette-desc { font-size:.82rem; }
-}
-
 /* ── TOAST ── */
 .toast {
   position:fixed; bottom:28px; left:50%;
@@ -479,21 +391,6 @@ footer {
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <main>
-
-  <!-- ★ SCAN EN VEDETTE ★ -->
-  <div class="vedette" id="vedetteBlock">
-    <div class="vedette-bg" id="vedetteBg"></div>
-    <div class="vedette-content">
-      <div class="vedette-label">✦ En vedette</div>
-      <div id="vedetteLogoWrap"></div>
-      <div class="vedette-desc" id="vedetteDesc"></div>
-      <div class="vedette-actions">
-        <button class="vedette-btn-lecture" id="vedetteBtnLecture">▶ Lecture</button>
-        <button class="vedette-btn-info" id="vedetteBtnInfo">ℹ Plus d'infos</button>
-        <img class="vedette-sub-logo" id="vedetteSubLogo" src="" alt="" style="display:none">
-      </div>
-    </div>
-  </div>
 
   <!-- REPRENDRE LA LECTURE -->
   <div class="section" id="sectionResume" style="display:none">
@@ -549,12 +446,6 @@ footer {
    cover: chemin vers l'image de couverture
    logo: chemin vers le logo du titre (optionnel)
 ══════════════════════════ */
-/* ══════════════════════════
-   ★ SCAN EN VEDETTE ★
-   → Change l'id ici pour changer le scan affiché en haut !
-══════════════════════════ */
-const VEDETTE_ID = "av1"; // ← CHANGE JUSTE CET ID !
-
 const SCANS = {
   magazines: [
     {
@@ -590,8 +481,8 @@ const SCANS = {
 
 const SUB_ORDER  = {free:0, basic:0, plus:1, x:2, max:3};
 const SUB_LABELS = {free:"GRATUIT", basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
-var userSubLevel = "basic";
-var progress = JSON.parse(localStorage.getItem('bubble_progress') || '{}');
+let userSubLevel = "basic";
+let progress = JSON.parse(localStorage.getItem('bubble_progress') || '{}');
 
 /* ── Crée une carte scan ── */
 function makeCard(scan) {
@@ -679,13 +570,14 @@ function makeResumeCard(scan, prog) {
   card.appendChild(bar);
 
   card.addEventListener('click', () => {
-    // Reprendre = ouvre directement le lecteur sans passer par le modal
-    if(scan.pdf) {
+    const canRead = SUB_ORDER[userSubLevel] >= SUB_ORDER[scan.sub];
+    if(canRead && scan.pdf) {
       progress[scan.id] = (progress[scan.id] || 1);
       localStorage.setItem('bubble_progress', JSON.stringify(progress));
       window.location.href = `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
     } else {
-      openModal(scan, true);
+      // Abonnement insuffisant ou pas de PDF → ouvre le modal
+      openModal(scan, canRead);
     }
   });
   return card;
@@ -770,65 +662,6 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-/* ── Construit la vedette ── */
-function buildVedette() {
-  const allScans = [...SCANS.magazines, ...SCANS.aventures, ...SCANS.direct];
-  const scan = allScans.find(s => s.id === VEDETTE_ID);
-  if(!scan) return;
-
-  const canRead = SUB_ORDER[userSubLevel] >= SUB_ORDER[scan.sub];
-
-  // Fond
-  if(scan.cover) {
-    document.getElementById('vedetteBg').style.backgroundImage = `url('${scan.cover}')`;
-  } else {
-    document.getElementById('vedetteBg').style.background = 'linear-gradient(145deg,#062506,#0a3a0a)';
-  }
-
-  // Logo titre
-  const logoWrap = document.getElementById('vedetteLogoWrap');
-  if(scan.logo && scan.logo !== '#') {
-    logoWrap.innerHTML = `<img class="vedette-logo" src="${scan.logo}" alt="${scan.title}" onerror="this.outerHTML='<div class=vedette-logo-placeholder>${scan.title}</div>'">`;
-  } else {
-    logoWrap.innerHTML = `<div class="vedette-logo-placeholder">${scan.title}</div>`;
-  }
-
-  // Description
-  document.getElementById('vedetteDesc').textContent = scan.desc;
-
-  // Logo abo
-  const subLogoMap = { plus:'bubble_+_1.png', x:'bubble_x_croix_1.png', max:'bubble_max_1.png' };
-  const subLogoEl = document.getElementById('vedetteSubLogo');
-  if(subLogoMap[scan.sub]) {
-    subLogoEl.src = subLogoMap[scan.sub];
-    subLogoEl.style.display = '';
-  } else {
-    subLogoEl.style.display = 'none';
-  }
-
-  // Bouton lecture
-  const btnLecture = document.getElementById('vedetteBtnLecture');
-  if(canRead && scan.pdf) {
-    btnLecture.onclick = () => {
-      progress[scan.id] = (progress[scan.id] || 1);
-      localStorage.setItem('bubble_progress', JSON.stringify(progress));
-      buildResumeRow();
-      window.location.href = `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
-    };
-    btnLecture.textContent = '▶ Lecture';
-    btnLecture.disabled = false;
-  } else if(!canRead) {
-    btnLecture.textContent = '🔒 ' + SUB_LABELS[scan.sub];
-    btnLecture.onclick = () => { window.location.href = 'bubble_site_abonnements.html'; };
-  } else {
-    btnLecture.textContent = '⏳ Bientôt';
-    btnLecture.disabled = true;
-  }
-
-  // Bouton infos → ouvre le modal
-  document.getElementById('vedetteBtnInfo').onclick = () => openModal(scan, canRead);
-}
-
 /* ── Construit les rows ── */
 function buildRows() {
   const rows = {
@@ -842,7 +675,6 @@ function buildRows() {
       row.appendChild(makeCard(scan));
     }
   }
-  buildVedette();
   buildResumeRow();
 }
 
@@ -914,7 +746,7 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
         const avatarId = d.avatarId || 'bully_1';
         document.getElementById('navSub').textContent  = SUB_LABELS[sub] || 'BASIC';
         document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
-        window.userSubLevel = sub;
+        userSubLevel = sub;
       }
     } catch(e) {}
     buildRows();
