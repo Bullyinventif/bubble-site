@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
+html { zoom: 1.5; }
 * { margin:0; padding:0; box-sizing:border-box; }
 
 body {
@@ -569,17 +570,7 @@ function makeResumeCard(scan, prog) {
   bar.appendChild(fill);
   card.appendChild(bar);
 
-  card.addEventListener('click', () => {
-    const canRead = SUB_ORDER[userSubLevel] >= SUB_ORDER[scan.sub];
-    if(canRead && scan.pdf) {
-      progress[scan.id] = (progress[scan.id] || 1);
-      localStorage.setItem('bubble_progress', JSON.stringify(progress));
-      window.location.href = `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
-    } else {
-      // Abonnement insuffisant ou pas de PDF → ouvre le modal
-      openModal(scan, canRead);
-    }
-  });
+  card.addEventListener('click', () => openModal(scan, true));
   return card;
 }
 
