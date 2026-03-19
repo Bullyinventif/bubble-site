@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture — Bubble Site</title>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background:#111;
+  min-height:100vh;
+  font-family:'Baloo 2',cursive;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position:fixed; top:0; left:0; right:0; height:54px;
+  background:rgba(10,10,10,.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex; align-items:center;
+  z-index:1000; padding:0 14px; gap:10px;
+}
+.btn-back {
+  padding:7px 16px; border-radius:20px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  color:white; font-family:'Baloo 2',cursive;
+  font-size:.88rem; font-weight:700;
+  cursor:pointer; transition:all .2s;
+  text-decoration:none; display:flex; align-items:center; gap:6px;
+  white-space:nowrap;
+}
+.btn-back:hover { background:rgba(255,255,255,.2); }
+
+.topbar-title {
+  font-weight:800; font-size:.95rem;
+  flex:1; text-align:center;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  color:rgba(255,255,255,.8);
+}
+
+/* Boutons mode */
+.mode-btns { display:flex; gap:6px; flex-shrink:0; }
+.mode-btn {
+  padding:6px 14px; border-radius:20px;
+  border:1.5px solid rgba(255,255,255,.2);
+  background:transparent; color:rgba(255,255,255,.5);
+  font-family:'Baloo 2',cursive; font-size:.82rem; font-weight:700;
+  cursor:pointer; transition:all .2s;
+}
+.mode-btn.active {
+  background:rgba(255,255,255,.15);
+  color:white; border-color:rgba(255,255,255,.5);
+}
+
+/* ── VIEWER ── */
+#viewer {
+  padding-top:54px;
+  min-height:100vh;
+  display:flex; flex-direction:column;
+  align-items:center;
+}
+
+/* ── MODE DOUBLE PAGE ── */
+#doublePageView {
+  display:flex; flex-direction:column;
+  align-items:center; width:100%;
+}
+.double-spread {
+  display:flex; justify-content:center;
+  gap:4px; padding:20px 12px;
+  width:100%; max-width:1400px;
+}
+.double-spread canvas {
+  max-width:49%; height:auto;
+  border-radius:4px;
+  box-shadow:0 4px 20px rgba(0,0,0,.6);
+}
+
+/* ── MODE SCROLL VERTICAL ── */
+#scrollView {
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  width:100%; padding:20px 12px;
+  gap:6px;
+}
+#scrollView canvas {
+  width:100%; max-width:900px; height:auto;
+  display:block;
+}
+
+/* ── NAVIGATION DOUBLE PAGE ── */
+.nav-pages {
+  position:fixed; bottom:0; left:0; right:0;
+  height:58px;
+  background:rgba(10,10,10,.95);
+  backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.08);
+  display:flex; align-items:center; justify-content:center;
+  gap:16px; z-index:1000;
+}
+.btn-nav {
+  width:46px; height:46px; border-radius:50%;
+  background:rgba(255,255,255,.1);
+  border:1.5px solid rgba(255,255,255,.2);
+  color:white; font-size:1.2rem;
+  cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.btn-nav:hover { background:rgba(255,255,255,.25); }
+.btn-nav:disabled { opacity:.25; cursor:not-allowed; }
+.page-indicator {
+  font-family:'Press Start 2P',monospace;
+  font-size:.6rem; color:rgba(255,255,255,.5);
+  text-align:center; min-width:110px;
+}
+
+/* ── LOADING ── */
+#loadingScreen {
+  position:fixed; inset:0;
+  background:#111;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:18px; z-index:2000;
+}
+.loading-spinner {
+  width:48px; height:48px;
+  border:4px solid rgba(255,255,255,.1);
+  border-top-color:#44d966;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-text {
+  font-family:'Press Start 2P',monospace;
+  font-size:.6rem; color:rgba(255,255,255,.4);
+  letter-spacing:2px;
+}
+
+/* ── ERREUR ── */
+#errorScreen {
+  display:none; position:fixed; inset:0;
+  background:#111;
+  flex-direction:column; align-items:center; justify-content:center;
+  gap:14px; z-index:2000; padding:20px; text-align:center;
+}
+.error-icon { font-size:3rem; }
+.error-msg  { font-size:.9rem; color:rgba(255,255,255,.5); max-width:400px; }
+
+/* ── MOBILE ── */
+@media(max-width:600px) {
+  .topbar-title { font-size:.8rem; }
+  .mode-btn { padding:5px 10px; font-size:.75rem; }
+  .btn-back span { display:none; }
+  .double-spread { padding:12px 6px; gap:2px; }
+  .nav-pages { height:52px; gap:10px; }
+  .btn-nav { width:40px; height:40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Chargement...</div>
+</div>
+
+<!-- ERREUR -->
+<div id="errorScreen">
+  <div class="error-icon">😵</div>
+  <div class="error-msg" id="errorMsg">Le fichier PDF n'a pas pu être chargé.</div>
+  <a href="bubble_site_scans.html" class="btn-back" style="margin-top:10px">← Retour aux scans</a>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="bubble_site_scans.html" class="btn-back">← <span>Retour</span></a>
+  <div class="topbar-title" id="topbarTitle">Chargement...</div>
+  <div class="mode-btns">
+    <button class="mode-btn active" id="btnDouble" onclick="setMode('double')">📖 Double</button>
+    <button class="mode-btn" id="btnScroll" onclick="setMode('scroll')">📜 Scroll</button>
+  </div>
+</div>
+
+<!-- VIEWER -->
+<div id="viewer">
+  <!-- Mode double page -->
+  <div id="doublePageView">
+    <div class="double-spread" id="spread"></div>
+  </div>
+  <!-- Mode scroll vertical -->
+  <div id="scrollView" id="scrollViewEl"></div>
+</div>
+
+<!-- NAV DOUBLE PAGE -->
+<div class="nav-pages" id="navPages">
+  <button class="btn-nav" id="btnPrev" onclick="prevSpread()">‹</button>
+  <div class="page-indicator" id="pageIndicator">— / —</div>
+  <button class="btn-nav" id="btnNext" onclick="nextSpread()">›</button>
+</div>
+
+<script>
+  // PDF.js worker
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  // ── Récupère les params URL ──
+  const params   = new URLSearchParams(window.location.search);
+  const pdfUrl   = params.get('pdf');   // ex: ?pdf=game_it.pdf&title=Bubble Game IT
+  const title    = params.get('title') || 'Lecture';
+
+  document.getElementById('topbarTitle').textContent = title;
+  document.title = title + ' — Bubble Site';
+
+  let pdfDoc    = null;
+  let totalPages = 0;
+  let currentSpread = 0; // index de la double page (0 = pages 1-2, 1 = pages 3-4...)
+  let mode      = 'double';
+  const SCALE   = 1.8;
+
+  // ── Charge le PDF ──
+  async function loadPDF() {
+    if(!pdfUrl) {
+      showError('Aucun fichier PDF spécifié dans l\'URL.');
+      return;
+    }
+    try {
+      const loadingTask = pdfjsLib.getDocument(pdfUrl);
+      pdfDoc = await loadingTask.promise;
+      totalPages = pdfDoc.numPages;
+      document.getElementById('loadingScreen').style.display = 'none';
+      await renderDouble();
+      await renderAllScroll();
+    } catch(e) {
+      showError('Impossible de charger le PDF : ' + e.message);
+    }
+  }
+
+  // ── Render une page sur un canvas ──
+  async function renderPage(pageNum, canvas, scale) {
+    const page = await pdfDoc.getPage(pageNum);
+    const viewport = page.getViewport({ scale });
+    canvas.width  = viewport.width;
+    canvas.height = viewport.height;
+    const ctx = canvas.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport }).promise;
+  }
+
+  // ── Mode double page ──
+  async function renderDouble() {
+    const spread = document.getElementById('spread');
+    spread.innerHTML = '';
+    const p1 = currentSpread * 2 + 1;
+    const p2 = currentSpread * 2 + 2;
+
+    // Page gauche
+    if(p1 <= totalPages) {
+      const c1 = document.createElement('canvas');
+      spread.appendChild(c1);
+      await renderPage(p1, c1, SCALE);
+    }
+    // Page droite
+    if(p2 <= totalPages) {
+      const c2 = document.createElement('canvas');
+      spread.appendChild(c2);
+      await renderPage(p2, c2, SCALE);
+    }
+
+    updateNav();
+  }
+
+  // ── Mode scroll vertical ──
+  async function renderAllScroll() {
+    const sv = document.getElementById('scrollView');
+    sv.innerHTML = '';
+    for(let i = 1; i <= totalPages; i++) {
+      const c = document.createElement('canvas');
+      sv.appendChild(c);
+      await renderPage(i, c, SCALE);
+    }
+  }
+
+  // ── Navigation double page ──
+  function prevSpread() {
+    if(currentSpread > 0) { currentSpread--; renderDouble(); }
+  }
+  function nextSpread() {
+    const maxSpread = Math.ceil(totalPages / 2) - 1;
+    if(currentSpread < maxSpread) { currentSpread++; renderDouble(); }
+  }
+  function updateNav() {
+    const p1 = currentSpread * 2 + 1;
+    const p2 = Math.min(currentSpread * 2 + 2, totalPages);
+    document.getElementById('pageIndicator').textContent =
+      p1 === p2 ? `${p1} / ${totalPages}` : `${p1}-${p2} / ${totalPages}`;
+    document.getElementById('btnPrev').disabled = currentSpread === 0;
+    document.getElementById('btnNext').disabled = currentSpread >= Math.ceil(totalPages / 2) - 1;
+  }
+
+  // ── Changement de mode ──
+  function setMode(m) {
+    mode = m;
+    document.getElementById('doublePageView').style.display = m === 'double' ? 'flex' : 'none';
+    document.getElementById('scrollView').style.display     = m === 'scroll' ? 'flex' : 'none';
+    document.getElementById('navPages').style.display       = m === 'double' ? 'flex' : 'none';
+    document.getElementById('viewer').style.paddingBottom   = m === 'double' ? '58px' : '20px';
+    document.getElementById('btnDouble').classList.toggle('active', m === 'double');
+    document.getElementById('btnScroll').classList.toggle('active', m === 'scroll');
+  }
+
+  // ── Clavier ──
+  document.addEventListener('keydown', e => {
+    if(mode !== 'double') return;
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSpread();
+    if(e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevSpread();
+  });
+
+  // ── Erreur ──
+  function showError(msg) {
+    document.getElementById('loadingScreen').style.display = 'none';
+    const err = document.getElementById('errorScreen');
+    err.style.display = 'flex';
+    document.getElementById('errorMsg').textContent = msg;
+  }
+
+  // ── Lancement ──
+  loadPDF();
+</script>
+</body>
+</html>

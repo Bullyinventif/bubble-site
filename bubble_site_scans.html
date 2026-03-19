@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scans — Bubble Site</title>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #1e7a1e;
+  min-height: 100vh;
+  font-family: 'Baloo 2', cursive;
+  color: white;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0;
+  height: 58px;
+  background: rgba(20,60,160,.75);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,.15);
+  display: flex; align-items: center;
+  z-index: 1000; padding: 0 10px; gap: 7px;
+}
+.nav-logo {
+  width:40px; height:40px;
+  background: radial-gradient(circle at 38% 32%,#b8e0ff,#3a7ae0);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem; flex-shrink:0; margin-right:4px;
+  box-shadow: inset 0 -3px 6px rgba(0,0,80,.3);
+  border:2px solid rgba(255,255,255,.3);
+  cursor:pointer; transition:transform .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-logo:hover { transform:scale(1.08); }
+.nav-links { display:flex; flex:1; gap:6px; }
+.nav-btn {
+  flex:1; height:42px; border-radius:12px; border:none;
+  font-family:'Baloo 2',cursive; font-size:.92rem; font-weight:800;
+  color:white; cursor:pointer; text-decoration:none;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  transition:filter .15s,transform .15s;
+  box-shadow:0 4px 0 rgba(0,0,0,.25);
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-btn:hover  { filter:brightness(1.12); transform:translateY(-2px); }
+.nav-btn:active { transform:translateY(2px); }
+.nav-btn.red    { background:linear-gradient(180deg,#ff5252,#cc2020); }
+.nav-btn.yellow { background:linear-gradient(180deg,#ffcc00,#cc9900); }
+.nav-btn.gray   { background:linear-gradient(180deg,#6a7a8a,#4a5a6a); }
+.nav-btn.green  { background:linear-gradient(180deg,#44d966,#1faa44); }
+.nav-btn.active { outline:2.5px solid rgba(255,255,255,.7); outline-offset:1px; }
+
+.nav-profile {
+  margin-left:6px; flex-shrink:0;
+  display:flex; flex-direction:column; align-items:center;
+  cursor:pointer; text-decoration:none; transition:transform .2s;
+}
+.nav-profile:hover { transform:scale(1.05); }
+.profile-bubble {
+  width:52px; height:52px; border-radius:50%;
+  background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);
+  border:3px solid rgba(255,255,255,.5);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.profile-bubble img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.profile-bubble-icon { font-size:1.8rem; }
+.profile-name-nav { font-size:.72rem; font-weight:800; color:white; text-align:center; margin-top:3px; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.profile-sub-nav  { font-size:.6rem; color:rgba(255,255,255,.65); font-family:'Press Start 2P',monospace; }
+
+/* ── MOBILE MENU ── */
+.mobile-menu {
+  display:none; position:fixed; top:58px; left:0; right:0;
+  background:rgba(8,22,80,.97); backdrop-filter:blur(22px);
+  flex-direction:column; gap:12px; padding:20px 18px 24px;
+  z-index:998; border-bottom:1px solid rgba(255,255,255,.15);
+  box-shadow:0 12px 40px rgba(0,0,0,.5);
+}
+.mobile-menu.open { display:flex; animation:slideDown .22s ease; }
+@keyframes slideDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+.mobile-menu .nav-btn { width:100%; height:54px; font-size:1.05rem; border-radius:16px; flex:none; }
+.menu-overlay { display:none; position:fixed; inset:58px 0 0 0; z-index:997; }
+.menu-overlay.open { display:block; }
+@media(max-width:600px) {
+  .nav-links { display:none; }
+  .nav-profile { margin-left:auto; }
+  .profile-bubble { width:42px; height:42px; }
+  .profile-bubble-icon { font-size:1.4rem; }
+  .profile-name-nav { font-size:.62rem; max-width:70px; }
+  .profile-sub-nav  { font-size:.5rem; }
+}
+
+/* ── MAIN ── */
+main {
+  position:relative; z-index:1;
+  padding: 74px 0 60px;
+}
+
+/* ── SECTION ── */
+.section { margin-bottom:32px; }
+.section-title {
+  font-family:'Baloo 2',cursive;
+  font-size:1.25rem; font-weight:800;
+  padding: 0 20px 12px;
+  color:white;
+  text-shadow:0 2px 6px rgba(0,0,0,.3);
+  display:flex; align-items:center; gap:10px;
+}
+.section-title a {
+  font-size:.75rem; color:rgba(255,255,255,.6);
+  text-decoration:none; font-weight:700;
+  border:1px solid rgba(255,255,255,.3);
+  padding:3px 12px; border-radius:20px;
+  transition:all .2s; margin-left:auto;
+}
+.section-title a:hover { background:rgba(255,255,255,.15); color:white; }
+
+/* ── HORIZONTAL SCROLL ROW ── */
+.scroll-row {
+  display:flex; gap:12px;
+  overflow-x:auto; padding:0 20px 12px;
+  scrollbar-width:none;
+}
+.scroll-row::-webkit-scrollbar { display:none; }
+
+/* ── CARTE SCAN ── */
+.scan-card {
+  flex-shrink:0;
+  width:160px;
+  background:#0d4a0d;
+  border-radius:14px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform .2s, box-shadow .2s;
+  border:2px solid rgba(255,255,255,.07);
+  position:relative;
+}
+.scan-card:hover {
+  transform:scale(1.06) translateY(-4px);
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+  border-color:rgba(255,255,255,.25);
+}
+.scan-cover {
+  width:100%; aspect-ratio:3/4;
+  object-fit:cover; display:block;
+  background:#0a3a0a;
+}
+.scan-cover-placeholder {
+  width:100%; aspect-ratio:3/4;
+  background:linear-gradient(145deg,#0a3a0a,#062506);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem;
+}
+.scan-info { padding:8px 10px 10px; }
+.scan-name { font-size:.8rem; font-weight:800; line-height:1.2; }
+.scan-sub  { margin-top:4px; font-size:.55rem; font-family:'Press Start 2P',monospace; }
+
+/* Badge abonnement */
+.sub-badge {
+  position:absolute; top:8px; right:8px;
+  font-family:'Press Start 2P',monospace;
+  font-size:.42rem; padding:3px 7px;
+  border-radius:8px; letter-spacing:.5px;
+}
+.sub-badge.plus { background:rgba(255,200,0,.9); color:#3a2000; }
+.sub-badge.x    { background:rgba(0,200,255,.9); color:#001830; }
+.sub-badge.max  { background:linear-gradient(135deg,#cc44ff,#8800cc); color:white; }
+.sub-badge.free { background:rgba(255,255,255,.2); color:white; }
+
+/* Badge lock */
+.lock-overlay-card {
+  position:absolute; inset:0; border-radius:12px;
+  background:rgba(0,0,0,.55);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem;
+}
+
+/* ── CARTE REPRENDRE (avec progress) ── */
+.resume-card {
+  flex-shrink:0; width:200px;
+  background:#0d4a0d; border-radius:14px;
+  overflow:hidden; cursor:pointer;
+  transition:transform .2s, box-shadow .2s;
+  border:2px solid rgba(255,255,255,.07);
+  position:relative;
+}
+.resume-card:hover {
+  transform:scale(1.04) translateY(-3px);
+  box-shadow:0 10px 25px rgba(0,0,0,.4);
+}
+.resume-cover {
+  width:100%; height:120px; object-fit:cover; display:block;
+  background:#0a3a0a;
+}
+.resume-cover-placeholder {
+  width:100%; height:120px;
+  background:linear-gradient(145deg,#0a3a0a,#062506);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem;
+}
+.resume-info { padding:8px 10px 4px; }
+.resume-name { font-size:.8rem; font-weight:800; }
+.resume-ep   { font-size:.7rem; color:rgba(255,255,255,.55); margin-top:2px; }
+.progress-bar-wrap {
+  height:4px; background:rgba(255,255,255,.15);
+  margin:8px 0 0;
+}
+.progress-bar-fill {
+  height:100%; background:#ff3333; border-radius:2px;
+  transition:width .3s;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.82); backdrop-filter:blur(8px);
+  z-index:2000; align-items:center; justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open { display:flex; }
+
+.modal {
+  background:#1a1a1a;
+  border-radius:22px;
+  width:min(520px, 96vw);
+  max-height:90vh;
+  overflow-y:auto;
+  box-shadow:0 30px 80px rgba(0,0,0,.8);
+  animation:popIn .28s cubic-bezier(.34,1.56,.64,1);
+  scrollbar-width:none;
+}
+.modal::-webkit-scrollbar { display:none; }
+@keyframes popIn { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
+
+.modal-cover {
+  width:100%; aspect-ratio:16/9;
+  object-fit:cover; border-radius:22px 22px 0 0;
+  display:block; background:#111;
+}
+.modal-cover-placeholder {
+  width:100%; aspect-ratio:16/9;
+  background:linear-gradient(145deg,#111,#222);
+  border-radius:22px 22px 0 0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:4rem;
+}
+
+.modal-body { padding:22px 24px 28px; }
+
+.modal-logo {
+  max-height:70px; max-width:220px;
+  object-fit:contain; margin-bottom:14px;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));
+}
+.modal-logo-placeholder {
+  font-family:'Permanent Marker',cursive;
+  font-size:1.6rem; margin-bottom:14px;
+  color:white;
+}
+
+.modal-desc {
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px; padding:14px;
+  font-size:.88rem; color:rgba(255,255,255,.85);
+  line-height:1.6; margin-bottom:18px;
+}
+
+.modal-meta {
+  font-size:.8rem; color:rgba(255,255,255,.45);
+  margin-bottom:18px; line-height:1.8;
+}
+.modal-meta span { color:rgba(255,255,255,.7); }
+
+.modal-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+.btn-lecture {
+  padding:12px 28px;
+  background:linear-gradient(135deg,#44d966,#1faa44);
+  border:none; border-radius:25px;
+  color:white; font-family:'Baloo 2',cursive;
+  font-size:1rem; font-weight:800;
+  cursor:pointer; transition:all .2s;
+  box-shadow:0 4px 0 rgba(0,80,0,.35);
+  text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+}
+.btn-lecture:hover { filter:brightness(1.1); transform:translateY(-2px); }
+
+.btn-lecture.locked {
+  background:rgba(255,255,255,.1);
+  color:rgba(255,255,255,.4);
+  cursor:not-allowed; box-shadow:none;
+  border:1.5px solid rgba(255,255,255,.15);
+}
+
+.modal-sub-required {
+  font-size:.72rem; font-family:'Press Start 2P',monospace;
+  padding:6px 14px; border-radius:20px;
+}
+.modal-sub-required.plus { background:rgba(255,200,0,.2); color:#ffe866; border:1px solid rgba(255,200,0,.4); }
+.modal-sub-required.x   { background:rgba(0,200,255,.15); color:#88eeff; border:1px solid rgba(0,200,255,.35); }
+.modal-sub-required.max { background:rgba(180,80,255,.2); color:#dd99ff; border:1px solid rgba(180,80,255,.4); }
+
+.modal-close {
+  position:absolute; top:14px; right:18px;
+  font-size:1.6rem; cursor:pointer;
+  background:rgba(0,0,0,.5); border:none; color:white;
+  width:36px; height:36px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .2s; z-index:10;
+}
+.modal-close:hover { background:rgba(255,255,255,.2); }
+.modal-wrap { position:relative; }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:28px; left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:rgba(255,60,60,.25); border:1px solid rgba(255,80,80,.5);
+  backdrop-filter:blur(12px); color:#ffaaaa;
+  padding:11px 26px; border-radius:25px;
+  font-size:.88rem; font-weight:700;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  z-index:9999; white-space:nowrap;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+footer {
+  position:relative; z-index:1;
+  text-align:center; padding:18px;
+  color:rgba(255,255,255,.25); font-size:.6rem;
+  border-top:1px solid rgba(255,255,255,.1);
+  font-family:'Press Start 2P',monospace; letter-spacing:1px;
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" id="menuToggle">🫧</div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-btn red">🏠 Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
+    <a href="bubble_site_scans.html" class="nav-btn green active">📜 Scans</a>
+  </div>
+  <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
+    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🧙</span></div>
+    <div class="profile-name-nav" id="navName">...</div>
+    <div class="profile-sub-nav" id="navSub">—</div>
+  </a>
+</nav>
+
+<!-- Menu mobile -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" class="nav-btn red">🏠 Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
+  <a href="bubble_site_scans.html" class="nav-btn green active">📜 Scans</a>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<main>
+
+  <!-- REPRENDRE LA LECTURE -->
+  <div class="section" id="sectionResume" style="display:none">
+    <div class="section-title">Reprendre la lecture →</div>
+    <div class="scroll-row" id="resumeRow"></div>
+  </div>
+
+  <!-- MAGAZINES -->
+  <div class="section">
+    <div class="section-title">📰 Magazines</div>
+    <div class="scroll-row" id="rowMagazines"></div>
+  </div>
+
+  <!-- AVENTURES -->
+  <div class="section">
+    <div class="section-title">⚔️ Aventures</div>
+    <div class="scroll-row" id="rowAventures"></div>
+  </div>
+
+  <!-- BUBBLE DIRECT -->
+  <div class="section">
+    <div class="section-title">🫧 Bubble Direct</div>
+    <div class="scroll-row" id="rowDirect"></div>
+  </div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-wrap">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal" id="modal">
+      <div id="modalCover"></div>
+      <div class="modal-body">
+        <div id="modalLogo"></div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-meta" id="modalMeta"></div>
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>© BUBBLE INC.</footer>
+
+<script>
+/* ══════════════════════════
+   CATALOGUE DES SCANS
+   → Ajoute tes vrais scans ici !
+   sub: "free" | "plus" | "x" | "max"
+   cover: chemin vers l'image de couverture
+   logo: chemin vers le logo du titre (optionnel)
+══════════════════════════ */
+const SCANS = {
+  magazines: [
+    {
+      id:"mag1", title:"Bubble inc. — N°1",
+      cover:"", logo:"#",
+      desc:"Le magazine quotidient de Bubble inc.",
+      year:"2025", type:"Magazine", sub:"plus", emoji:"📰"
+    },
+  ],
+  aventures: [
+    {
+      id:"av1", title:"Bubble Game IT !", pdf:"game_it_pt_1.pdf",
+      cover:"game_it_cover_1.png", logo:"bubble_x_croix_1.png",
+      desc:"Découvrez tous les personnages de Bubble Inc. dans cette incroyable et déjantée aventure ! Bully et ses amis partent à la conquête du monde numérique.",
+      year:"2025", type:"Aventure, Fantastique", sub:"x", emoji:"🎮"
+    },
+    {
+      id:"av2", title:"La Fête Foraine",
+      cover:"", logo:"",
+      desc:"Enquête à la fête foraine — Bully et ses amis doivent savoir qui a volé le trophé dans le parc d'attractions !",
+      year:"2025", type:"Aventure, Mystère", sub:"plus", emoji:"🎡"
+    },
+  ],
+  direct: [
+    {
+      id:"dir1", title:"Bubble News #1",
+      cover:"", logo:"",
+      desc:"Le premier Bubble DIRECT !",
+      year:"2026", type:"News, Direct", sub:"basic", emoji:"📡"
+    },
+  ]
+};
+
+const SUB_ORDER  = {free:0, basic:0, plus:1, x:2, max:3};
+const SUB_LABELS = {free:"GRATUIT", basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
+let userSubLevel = "basic";
+let progress = JSON.parse(localStorage.getItem('bubble_progress') || '{}');
+
+/* ── Crée une carte scan ── */
+function makeCard(scan) {
+  const card = document.createElement('div');
+  card.className = 'scan-card';
+
+  const canRead = SUB_ORDER[userSubLevel] >= SUB_ORDER[scan.sub];
+
+  // Cover
+  if(scan.cover) {
+    const img = document.createElement('img');
+    img.className = 'scan-cover';
+    img.src = scan.cover;
+    img.alt = scan.title;
+    img.onerror = () => {
+      img.style.display = 'none';
+      const ph = document.createElement('div');
+      ph.className = 'scan-cover-placeholder';
+      ph.textContent = scan.emoji;
+      card.insertBefore(ph, img);
+    };
+    card.appendChild(img);
+  } else {
+    const ph = document.createElement('div');
+    ph.className = 'scan-cover-placeholder';
+    ph.textContent = scan.emoji;
+    card.appendChild(ph);
+  }
+
+  // Badge sub
+  if(scan.sub !== 'free') {
+    const badge = document.createElement('div');
+    badge.className = `sub-badge ${scan.sub}`;
+    badge.textContent = SUB_LABELS[scan.sub];
+    card.appendChild(badge);
+  }
+
+  // Lock overlay
+  if(!canRead) {
+    const lock = document.createElement('div');
+    lock.className = 'lock-overlay-card';
+    lock.textContent = '🔒';
+    card.appendChild(lock);
+  }
+
+  // Info
+  const info = document.createElement('div');
+  info.className = 'scan-info';
+  info.innerHTML = `<div class="scan-name">${scan.title}</div>`;
+  card.appendChild(info);
+
+  card.addEventListener('click', () => openModal(scan, canRead));
+  return card;
+}
+
+/* ── Crée une carte reprendre ── */
+function makeResumeCard(scan, prog) {
+  const card = document.createElement('div');
+  card.className = 'resume-card';
+
+  if(scan.cover) {
+    const img = document.createElement('img');
+    img.className = 'resume-cover';
+    img.src = scan.cover; img.alt = scan.title;
+    img.onerror = () => { img.replaceWith(makePh()); };
+    card.appendChild(img);
+  } else {
+    const ph = document.createElement('div');
+    ph.className = 'resume-cover-placeholder';
+    ph.textContent = scan.emoji;
+    card.appendChild(ph);
+  }
+
+  const info = document.createElement('div');
+  info.className = 'resume-info';
+  info.innerHTML = `<div class="resume-name">${scan.title}</div><div class="resume-ep">Page ${prog}</div>`;
+  card.appendChild(info);
+
+  const bar = document.createElement('div');
+  bar.className = 'progress-bar-wrap';
+  const fill = document.createElement('div');
+  fill.className = 'progress-bar-fill';
+  fill.style.width = Math.min(prog * 5, 100) + '%';
+  bar.appendChild(fill);
+  card.appendChild(bar);
+
+  card.addEventListener('click', () => openModal(scan, true));
+  return card;
+}
+
+/* ── Ouvre le modal ── */
+function openModal(scan, canRead) {
+  const canReadFinal = canRead || SUB_ORDER[userSubLevel] >= SUB_ORDER[scan.sub];
+
+  // Cover
+  const coverEl = document.getElementById('modalCover');
+  if(scan.cover) {
+    coverEl.innerHTML = `<img class="modal-cover" src="${scan.cover}" alt="${scan.title}" onerror="this.parentNode.innerHTML='<div class=modal-cover-placeholder>${scan.emoji}</div>'">`;
+  } else {
+    coverEl.innerHTML = `<div class="modal-cover-placeholder">${scan.emoji}</div>`;
+  }
+
+  // Logo
+  const logoEl = document.getElementById('modalLogo');
+  if(scan.logo) {
+    logoEl.innerHTML = `<img class="modal-logo" src="${scan.logo}" alt="${scan.title}" onerror="this.style.display='none'">`;
+  } else {
+    logoEl.innerHTML = `<div class="modal-logo-placeholder">${scan.title}</div>`;
+  }
+
+  // Desc
+  document.getElementById('modalDesc').textContent = scan.desc;
+
+  // Meta
+  document.getElementById('modalMeta').innerHTML =
+    `Créé en : <span>${scan.year}</span><br>Type : <span>${scan.type}</span>`;
+
+  // Actions
+  const actions = document.getElementById('modalActions');
+  if(canReadFinal) {
+    actions.innerHTML = `
+      <button class="btn-lecture" onclick="startReading('${scan.id}')">
+        Lecture →
+      </button>`;
+  } else {
+    actions.innerHTML = `
+      <button class="btn-lecture locked" disabled>🔒 Lecture</button>
+      <span class="modal-sub-required ${scan.sub}">Nécessite ${SUB_LABELS[scan.sub]}</span>
+      <a href="bubble_site_abonnements.html" style="font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:underline;margin-left:6px;">Voir les offres →</a>`;
+  }
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function startReading(id) {
+  // Trouve le scan dans le catalogue
+  const allScans = [...SCANS.magazines, ...SCANS.aventures, ...SCANS.direct];
+  const scan = allScans.find(s => s.id === id);
+  if(!scan) return;
+
+  // Sauvegarde la progression
+  progress[id] = (progress[id] || 0) + 1;
+  localStorage.setItem('bubble_progress', JSON.stringify(progress));
+  buildResumeRow();
+  closeModal();
+
+  // Ouvre le lecteur si un PDF est défini
+  if(scan.pdf) {
+    window.location.href = `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
+  } else {
+    showToast('📖 PDF bientôt disponible !');
+  }
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ── Construit les rows ── */
+function buildRows() {
+  const rows = {
+    magazines: document.getElementById('rowMagazines'),
+    aventures: document.getElementById('rowAventures'),
+    direct:    document.getElementById('rowDirect'),
+  };
+  for(const [key, row] of Object.entries(rows)) {
+    row.innerHTML = '';
+    for(const scan of SCANS[key]) {
+      row.appendChild(makeCard(scan));
+    }
+  }
+  buildResumeRow();
+}
+
+function buildResumeRow() {
+  const row = document.getElementById('resumeRow');
+  const section = document.getElementById('sectionResume');
+  row.innerHTML = '';
+  const allScans = [...SCANS.magazines, ...SCANS.aventures, ...SCANS.direct];
+  const inProgress = allScans.filter(s => progress[s.id]);
+  if(inProgress.length > 0) {
+    section.style.display = '';
+    for(const scan of inProgress) {
+      row.appendChild(makeResumeCard(scan, progress[scan.id]));
+    }
+  } else {
+    section.style.display = 'none';
+  }
+}
+
+/* ── Menu mobile ── */
+const toggle  = document.getElementById('menuToggle');
+const menu    = document.getElementById('mobileMenu');
+const overlay = document.getElementById('menuOverlay');
+toggle.addEventListener('click', () => {
+  const open = menu.classList.contains('open');
+  menu.classList.toggle('open', !open);
+  overlay.classList.toggle('open', !open);
+  toggle.style.transform = open ? '' : 'scale(1.15) rotate(20deg)';
+});
+overlay.addEventListener('click', () => {
+  menu.classList.remove('open');
+  overlay.classList.remove('open');
+  toggle.style.transform = '';
+});
+window.addEventListener('resize', () => { if(window.innerWidth > 600) { menu.classList.remove('open'); overlay.classList.remove('open'); toggle.style.transform=''; }});
+
+/* ── Fermer modal ── */
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target === document.getElementById('modalOverlay')) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+</script>
+
+<script type="module">
+  import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const SUB_LABELS = {basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
+
+  onAuthStateChanged(auth, async user => {
+    if(!user) { window.location.href='./login.html'; return; }
+    const pseudo = user.displayName || user.email.split('@')[0];
+    document.getElementById('navName').textContent = pseudo;
+    try {
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if(snap.exists()) {
+        const d = snap.data();
+        const sub = d.subscription || 'basic';
+        const avatarId = d.avatarId || 'bully_1';
+        document.getElementById('navSub').textContent  = SUB_LABELS[sub] || 'BASIC';
+        document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
+        userSubLevel = sub;
+      }
+    } catch(e) {}
+    buildRows();
+  });
+</script>
+
+</body>
+</html>
