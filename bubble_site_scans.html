@@ -474,7 +474,7 @@ footer {
       <div class="vedette-actions">
         <button class="vedette-btn-lecture" id="vedetteBtnLecture">▶ Lecture</button>
         <button class="vedette-btn-info" id="vedetteBtnInfo">ℹ Plus d'infos</button>
-        <img class="vedette-sub-logo" id="vedetteSubLogo" src="" alt="" style="display:none">
+        <img class="vedette-sub-logo" id="vedetteSubLogo" src="#" alt="#" style="display:none">
       </div>
     </div>
   </div>
@@ -544,13 +544,19 @@ const SCANS = {
   ],
   aventures: [
     {
-      id:"av1", title:"Bubble Game IT !", pdf:"scans/game_it_pt_1.pdf",
+      id:"gi2", title:"Bubble inc. Game IT Pt.2 !", pdf:"scans/game_it_pt_2.pdf",
+      cover:"game_it_cover_2.png", logo:"game_it_logo_1.png",
+      desc:"Découvrez tous les personnages de Bubble Inc. dans cette incroyable et déjantée aventure ! Bully et ses amis partent à la conquête du monde numérique.",
+      year:"2025", type:"Aventure, Fantastique", sub:"x", emoji:"🎮"
+    },
+    {
+      id:"gi1", title:"Bubble inc. Game IT !", pdf:"scans/game_it_pt_1.pdf",
       cover:"game_it_cover_1.png", logo:"game_it_logo_1.png",
       desc:"Découvrez tous les personnages de Bubble Inc. dans cette incroyable et déjantée aventure ! Bully et ses amis partent à la conquête du monde numérique.",
       year:"2025", type:"Aventure, Fantastique", sub:"x", emoji:"🎮"
     },
     {
-      id:"av2", title:"Enquete a la Fête Foraine", pdf:"scans/game_it_pt_2.pdf",
+      id:"eff1", title:"Enquete a la Fête Foraine", pdf:"scans/game_it_pt_2.pdf",
       cover:"enquete_ff_cover_1.png", logo:"#",
       desc:"Bully et ses amis doivent savoir qui a volé le trophé dans le parc d'attractions !",
       year:"2025", type:"Aventure, Mystère", sub:"plus", emoji:"🎡"
@@ -558,7 +564,7 @@ const SCANS = {
   ],
   direct: [
     {
-      id:"dir1", title:"Bubble News #1",
+      id:"bd1", title:"Bubble News #1",
       cover:"", logo:"",
       desc:"Le premier Bubble DIRECT !",
       year:"2026", type:"News, Direct", sub:"basic", emoji:"📡"
@@ -570,7 +576,7 @@ const SCANS = {
    ★ SCAN EN VEDETTE ★
    → Change l'id ici pour changer le scan affiché en haut !
 ══════════════════════════ */
-const VEDETTE_ID = "av1"; // ← CHANGE JUSTE CET ID !
+const VEDETTE_ID = "gi1"; // ← CHANGE JUSTE CET ID !
 
 const SUB_ORDER  = {free:0, basic:0, plus:1, x:2, max:3};
 const SUB_LABELS = {free:"GRATUIT", basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
