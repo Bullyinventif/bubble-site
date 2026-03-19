@@ -127,8 +127,13 @@ main {
   display:flex; gap:12px;
   overflow-x:auto; padding:0 20px 12px;
   scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:x mandatory;
+  cursor:grab;
 }
+.scroll-row:active { cursor:grabbing; }
 .scroll-row::-webkit-scrollbar { display:none; }
+.scan-card, .resume-card { scroll-snap-align:start; }
 
 /* ── CARTE SCAN ── */
 .scan-card {
