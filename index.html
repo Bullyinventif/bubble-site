@@ -92,9 +92,9 @@
   /* Profile bubble */
   .nav-profile {
     margin-left: 6px; flex-shrink: 0;
-    display: flex; flex-direction: column; align-items: center;
+    display: flex; flex-direction: column; align-items: center;  justify-content: center;
     cursor: pointer; text-decoration: none;
-    transition: transform 0.2s; padding-bottom: 2px;
+    transition: transform 0.2s;
     -webkit-tap-highlight-color: transparent;
   }
   .nav-profile:hover { transform: scale(1.05); }
@@ -121,17 +121,7 @@
   .profile-bubble img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
   .profile-bubble-icon { font-size: 1.8rem; filter: drop-shadow(0 2px 4px rgba(0,0,80,0.4)); }
 
-  .profile-name-nav {
-    font-size: 0.72rem; font-weight: 800; color: white;
-    text-align: center; margin-top: 3px; max-width: 90px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    text-shadow: 0 1px 4px rgba(0,0,80,0.5);
-  }
-  .profile-sub-nav {
-    font-size: 0.6rem; color: rgba(255,255,255,0.65);
-    font-family: 'Press Start 2P', monospace;
-    text-align: center; letter-spacing: 0.5px;
-  }
+
 
   /* ══════════════════════════════
      MOBILE MENU (≤ 600px)
@@ -183,12 +173,9 @@
     /* Cache les liens desktop */
     .nav-links { display: none; }
 
-    /* Réduit le profil dans la nav mobile */
-    .nav-profile { margin-left: auto; }
-    .profile-bubble { width: 42px; height: 42px; }
-    .profile-bubble-icon { font-size: 1.4rem; }
-    .profile-name-nav { font-size: 0.62rem; max-width: 70px; }
-    .profile-sub-nav  { font-size: 0.5rem; }
+    .nav-profile { margin-left: auto; padding-bottom: 0; }
+    .profile-bubble { width: 38px; height: 38px; border-width: 2px; }
+    .profile-bubble-icon { font-size: 1.3rem; }
 
     /* Titre hero plus petit */
     .hero-title {
@@ -295,8 +282,7 @@
     <div class="profile-bubble" id="navAvatar">
       <span class="profile-bubble-icon">🪪</span>
     </div>
-    <div class="profile-name-nav" id="navName">Connexion</div>
-    <div class="profile-sub-nav" id="navSub">—</div>
+
   </a>
 </nav>
 
@@ -399,7 +385,6 @@
   onAuthStateChanged(auth, async user => {
     if (user) {
       const pseudo = user.displayName || user.email.split('@')[0];
-      document.getElementById('navName').textContent = pseudo;
       document.getElementById('welcomeMsg').innerHTML = `Bienvenue, <span>${pseudo}</span> 👋`;
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
@@ -407,18 +392,14 @@
           const d = snap.data();
           const sub      = d.subscription || 'basic';
           const avatarId = d.avatarId     || 'bully_1';
-          document.getElementById('navSub').textContent    = SUB_LABELS[sub] || 'BASIC';
           document.getElementById('navAvatar').innerHTML   = `<img src="${avatarId}.png" alt="avatar">`;
         } else {
-          document.getElementById('navSub').textContent = 'BASIC';
         }
       } catch(e) {
         document.getElementById('navSub').textContent = 'BASIC';
       }
     } else {
       document.getElementById('navProfile').href          = './login.html';
-      document.getElementById('navName').textContent      = 'Connexion';
-      document.getElementById('navSub').textContent       = '—';
     }
   });
 </script>
