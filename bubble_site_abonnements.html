@@ -24,7 +24,7 @@
   .nav-btn.gray{background:linear-gradient(180deg,#6a7a8a,#4a5a6a);}
   .nav-btn.green{background:linear-gradient(180deg,#44d966,#1faa44);}
   .nav-btn.active{outline:2.5px solid rgba(255,255,255,.7);outline-offset:1px;}
-  .nav-profile{margin-left:6px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;transition:transform .2s;padding-bottom:2px;}
+  .nav-profile{margin-left:6px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;transition:transform .2s;}
   .nav-profile:hover{transform:scale(1.05);}
   .profile-bubble{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:3px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;}
   .profile-bubble img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
@@ -114,8 +114,6 @@
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
     <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🧙</span></div>
-    <div class="profile-name-nav" id="navName">...</div>
-    <div class="profile-sub-nav" id="navSub">—</div>
   </a>
 </nav>
 
@@ -326,7 +324,6 @@
   onAuthStateChanged(auth,async user=>{
     if(!user){window.location.href='./login.html';return;}
     const pseudo=user.displayName||user.email.split('@')[0];
-    document.getElementById('navName').textContent=pseudo;
     let sub='basic';
     try{
       const snap=await getDoc(doc(db,'users',user.uid));
@@ -338,7 +335,6 @@
       }
     }catch(e){}
 
-    document.getElementById('navSub').textContent=SUB_LABELS[sub]||'BASIC';
 
     // Badge actuel
     const badge=document.getElementById('badge-'+sub);

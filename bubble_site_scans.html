@@ -453,8 +453,6 @@ footer {
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
     <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🧙</span></div>
-    <div class="profile-name-nav" id="navName">...</div>
-    <div class="profile-sub-nav" id="navSub">—</div>
   </a>
 </nav>
 
@@ -890,7 +888,6 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
         const d = snap.data();
         const sub = d.subscription || 'basic';
         const avatarId = d.avatarId || 'bully_1';
-        document.getElementById('navSub').textContent  = SUB_LABELS[sub] || 'BASIC';
         document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
         window.userSubLevel = sub;
       }
