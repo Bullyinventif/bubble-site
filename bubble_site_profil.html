@@ -351,7 +351,6 @@
   function setSubUI(level){
     const lbl  = SUB_LABELS[level] || 'BASIC';
     const desc = SUB_DESCS[level]  || 'Accès gratuit';
-    document.getElementById('navSub').textContent   = lbl;
     document.getElementById('subName').textContent  = lbl;
     document.getElementById('subDesc').textContent  = desc;
     document.getElementById('subBadge').textContent = lbl;
@@ -364,7 +363,6 @@
     currentUser = user;
 
     const pseudo = user.displayName || user.email.split('@')[0];
-    document.getElementById('navName').textContent     = pseudo;
     document.getElementById('pseudoInput').value       = pseudo;
 
     /* Lecture Firestore */
@@ -469,7 +467,6 @@
     try {
       await updateProfile(currentUser, {displayName: p});
       await setDoc(doc(db,'users',currentUser.uid), {pseudo: p}, {merge:true});
-      document.getElementById('navName').textContent = p;
       toast('✅ Pseudo mis à jour !');
     } catch(e){ toast('❌ '+e.message, true); }
   };
