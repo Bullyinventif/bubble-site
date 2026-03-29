@@ -65,13 +65,13 @@ nav {
 }
 .nav-profile:hover { transform:scale(1.05); }
 .profile-bubble {
-  width:52px; height:52px; border-radius:50%;
+  width:38px; height:38px; border-radius:50%;
   background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);
-  border:3px solid rgba(255,255,255,.5);
+  border:2px solid rgba(255,255,255,.5);
   display:flex; align-items:center; justify-content:center; overflow:hidden;
 }
 .profile-bubble img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
-.profile-bubble-icon { font-size:1.8rem; }
+.profile-bubble-icon { font-size:1.3rem; }
 .profile-name-nav { font-size:.72rem; font-weight:800; color:white; text-align:center; margin-top:3px; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .profile-sub-nav  { font-size:.6rem; color:rgba(255,255,255,.65); font-family:'Press Start 2P',monospace; }
 
@@ -91,8 +91,8 @@ nav {
 @media(max-width:600px) {
   .nav-links { display:none; }
   .nav-profile { margin-left:auto; }
-  .profile-bubble { width:42px; height:42px; }
-  .profile-bubble-icon { font-size:1.4rem; }
+  .profile-bubble { width:38px; height:38px; }
+  .profile-bubble-icon { font-size:1.3rem; }
   .profile-name-nav { font-size:.62rem; max-width:70px; }
   .profile-sub-nav  { font-size:.5rem; }
 }
@@ -888,11 +888,59 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
         const sub = d.subscription || 'basic';
         const avatarId = d.avatarId || 'bully_1';
         document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
+        const _xp = d.xp || 0;
+        applyFrame(sub, _getLevel(_xp, sub));
         window.userSubLevel = sub;
       }
     } catch(e) {}
     buildRows();
   });
+
+  const _LEVEL_CFG = {
+    basic:{maxLevel:3,xpPerLevel:100},
+    plus:{maxLevel:20,xpPerLevel:200},
+    x:{maxLevel:20,xpPerLevel:300},
+    max:{maxLevel:25,xpPerLevel:400},
+  };
+  function _getLevel(xp,sub){
+    const cfg=_LEVEL_CFG[sub]||_LEVEL_CFG.basic;
+    return Math.min(Math.floor(xp/cfg.xpPerLevel)+1,cfg.maxLevel);
+  }
+
+  /* ── Cadre animé ── */
+  function applyFrame(sub, level) {
+    if (!document.getElementById('bubble-frame-css')) {
+      const s = document.createElement('style');
+      s.id = 'bubble-frame-css';
+      s.textContent = `
+        @keyframes frame-pulse-basic{0%,100%{box-shadow:0 0 8px rgba(91,200,255,.4),0 0 16px rgba(46,125,212,.2)}50%{box-shadow:0 0 18px rgba(91,200,255,.9),0 0 30px rgba(46,125,212,.5)}}
+        @keyframes frame-pulse-plus{0%,100%{box-shadow:0 0 8px rgba(255,200,0,.5),0 0 16px rgba(230,168,0,.3)}50%{box-shadow:0 0 18px rgba(255,200,0,.95),0 0 32px rgba(230,168,0,.6)}}
+        @keyframes frame-shimmer-plus{0%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}50%{box-shadow:0 0 22px rgba(255,230,0,1),0 0 44px rgba(255,200,0,.7);border-color:rgba(255,240,100,1)}100%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}}
+        @keyframes frame-pulse-x{0%,100%{box-shadow:0 0 8px rgba(68,204,255,.5),0 0 16px rgba(0,153,221,.3)}50%{box-shadow:0 0 18px rgba(68,204,255,.95),0 0 32px rgba(0,153,221,.6)}}
+        @keyframes frame-shimmer-x{0%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}50%{box-shadow:0 0 24px rgba(100,230,255,1),0 0 48px rgba(68,204,255,.7);border-color:rgba(150,240,255,1)}100%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}}
+        @keyframes frame-pulse-max{0%,100%{box-shadow:0 0 12px rgba(204,68,255,.6),0 0 24px rgba(136,0,204,.4)}50%{box-shadow:0 0 24px rgba(204,68,255,1),0 0 44px rgba(136,0,204,.7)}}
+        @keyframes frame-shimmer-max{0%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6);border-color:rgba(220,100,255,.95)}25%{box-shadow:0 0 26px rgba(255,100,255,1),0 0 52px rgba(180,0,255,.8);border-color:rgba(255,150,255,1)}75%{box-shadow:0 0 30px rgba(255,80,220,1),0 0 60px rgba(200,0,255,.8);border-color:rgba(255,120,240,1)}100%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6);border-color:rgba(220,100,255,.95)}}
+      `;
+      document.head.appendChild(s);
+    }
+    const frames = {
+      basic: `frame-pulse-basic 2.5s ease-in-out infinite`,
+      plus:  level >= 10 ? `frame-shimmer-plus 2s linear infinite` : `frame-pulse-plus 2.5s ease-in-out infinite`,
+      x:     level >= 10 ? `frame-shimmer-x 2s linear infinite`    : `frame-pulse-x 2.5s ease-in-out infinite`,
+      max:   level >= 15 ? `frame-shimmer-max 2s linear infinite`   : `frame-pulse-max 2.5s ease-in-out infinite`,
+    };
+    const borders = {
+      basic: `3px solid rgba(91,200,255,${0.4+(level/3)*0.5})`,
+      plus:  `3px solid rgba(255,200,0,${0.4+(level/20)*0.6})`,
+      x:     `3px solid rgba(68,204,255,${0.4+(level/20)*0.6})`,
+      max:   `3px solid rgba(204,68,255,${0.5+(level/25)*0.5})`,
+    };
+    document.querySelectorAll('.profile-bubble').forEach(b => {
+      b.style.border    = borders[sub] || borders.basic;
+      b.style.animation = frames[sub]  || frames.basic;
+    });
+  }
+
 </script>
 
 </body>

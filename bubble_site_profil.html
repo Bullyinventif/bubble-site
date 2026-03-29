@@ -25,9 +25,9 @@
   .nav-btn.green{background:linear-gradient(180deg,#44d966,#1faa44);}
   .nav-profile{margin-left:6px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;transition:transform .2s;}
   .nav-profile:hover{transform:scale(1.05);}
-  .profile-bubble{width:78px;height:78px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:3px solid rgba(255,255,255,.5);box-shadow:0 0 0 1px rgba(100,160,255,.3),0 6px 20px rgba(0,0,80,.4);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-top:-20px;position:relative;}
+  .profile-bubble{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;}
   .profile-bubble img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-  .profile-bubble-icon{font-size:2.2rem;}
+  .profile-bubble-icon{font-size:1.3rem;}
   .profile-name-nav{font-size:.72rem;font-weight:800;color:white;text-align:center;margin-top:3px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .profile-sub-nav{font-size:.6rem;color:rgba(255,255,255,.65);font-family:'Press Start 2P',monospace;}
   main{position:relative;z-index:1;padding:90px 16px 60px;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px;}
@@ -117,8 +117,8 @@
   @media(max-width:600px){
     .nav-links{display:none;}
     .nav-profile{margin-left:auto;}
-    .profile-bubble{width:42px!important;height:42px!important;margin-top:-10px!important;}
-    .profile-bubble-icon{font-size:1.4rem!important;}
+    .profile-bubble{width:38px!important;height:38px!important;}
+    .profile-bubble-icon{font-size:1.3rem!important;}
     .profile-name-nav{font-size:.62rem;max-width:70px;}
     .profile-sub-nav{font-size:.5rem;}
     main{padding:72px 12px 50px;}
@@ -126,6 +126,30 @@
     .picker-actions{width:100%;justify-content:flex-end;}
     .icons-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr));}
   }
+
+  /* ── SYSTÈME DE NIVEAUX ── */
+  .level-section{margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);}
+  .level-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .level-title{font-family:'Press Start 2P',monospace;font-size:.58rem;color:rgba(255,255,255,.45);letter-spacing:1px;}
+  .level-num{font-family:'Press Start 2P',monospace;font-size:.75rem;color:white;}
+  .level-num span{font-size:.5rem;color:rgba(255,255,255,.4);margin-left:4px;}
+  .level-symbols{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;min-height:24px;}
+  .lvl-symbol{font-size:1rem;transition:all .2s;line-height:1;}
+  .lvl-symbol.inactive{opacity:.18;filter:grayscale(1);}
+  .lvl-symbol.active{filter:drop-shadow(0 0 4px rgba(255,255,255,.5));}
+  .lvl-symbol.plus{color:#ffcc00;filter:drop-shadow(0 0 5px rgba(255,200,0,.8));font-style:normal;font-size:.9rem;}
+  .lvl-symbol.x-sym{color:#44ccff;filter:drop-shadow(0 0 5px rgba(68,204,255,.8));font-size:.9rem;}
+  .lvl-symbol.max-sym{filter:drop-shadow(0 0 6px rgba(204,68,255,.9));font-size:1rem;}
+  .xp-bar-wrap{height:8px;background:rgba(255,255,255,.1);border-radius:20px;overflow:hidden;margin-bottom:6px;}
+  .xp-bar-fill{height:100%;border-radius:20px;transition:width .6s cubic-bezier(.34,1.56,.64,1);}
+  .xp-bar-fill.basic{background:linear-gradient(90deg,#5bc8ff,#2e7dd4);}
+  .xp-bar-fill.plus{background:linear-gradient(90deg,#ffcc00,#e6a800);}
+  .xp-bar-fill.x{background:linear-gradient(90deg,#44ccff,#0099dd);}
+  .xp-bar-fill.max{background:linear-gradient(90deg,#cc44ff,#8800cc);}
+  .xp-info{display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.4);}
+  .xp-info span{font-weight:700;color:rgba(255,255,255,.65);}
+  .level-max-badge{font-family:'Press Start 2P',monospace;font-size:.48rem;padding:4px 10px;border-radius:20px;background:rgba(255,215,0,.2);border:1px solid rgba(255,215,0,.4);color:#ffd700;margin-top:6px;display:inline-block;}
+
 </style>
 </head>
 <body>
@@ -172,6 +196,23 @@
         <p>Choisis ton icône parmi le catalogue Bubble inc. 🫧<br>Certaines icônes sont réservées aux abonnés.</p>
         <button class="btn-change-avatar" onclick="openPicker()">🎭 Changer d'icône</button>
       </div>
+    </div>
+
+    <!-- 🌟 SECTION NIVEAU -->
+    <div class="level-section">
+      <div class="level-header">
+        <span class="level-title">Niveau</span>
+        <span class="level-num" id="levelNum">1 <span>/ —</span></span>
+      </div>
+      <div class="level-symbols" id="levelSymbols"></div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-fill basic" id="xpBarFill" style="width:0%"></div>
+      </div>
+      <div class="xp-info">
+        <span id="xpCurrent">0 XP</span>
+        <span id="xpNext">— XP pour le niveau suivant</span>
+      </div>
+      <div id="levelMaxBadge" style="display:none" class="level-max-badge">🏆 NIVEAU MAX !</div>
     </div>
   </div>
 
@@ -351,6 +392,7 @@
   function setSubUI(level){
     const lbl  = SUB_LABELS[level] || 'BASIC';
     const desc = SUB_DESCS[level]  || 'Accès gratuit';
+    document.getElementById('navSub').textContent   = lbl;
     document.getElementById('subName').textContent  = lbl;
     document.getElementById('subDesc').textContent  = desc;
     document.getElementById('subBadge').textContent = lbl;
@@ -358,12 +400,98 @@
   }
 
   /* ── Auth ── */
+  /* ── CONFIG NIVEAUX ── */
+  const LEVEL_CONFIG = {
+    basic: { maxLevel:3,  xpPerLevel:100, symbol:'🫧', colors:['#5bc8ff','#2e7dd4'] },
+    plus:  { maxLevel:20, xpPerLevel:200, symbol:'✦',  colors:['#ffcc00','#e6a800'] },
+    x:     { maxLevel:20, xpPerLevel:300, symbol:'✕',  colors:['#44ccff','#0099dd'] },
+    max:   { maxLevel:25, xpPerLevel:400, symbol:'🫧',  colors:['#cc44ff','#8800cc'] },
+  };
+
+  function getLevel(xp, sub) {
+    const cfg = LEVEL_CONFIG[sub] || LEVEL_CONFIG.basic;
+    const level = Math.min(Math.floor(xp / cfg.xpPerLevel) + 1, cfg.maxLevel);
+    const curXP  = (level - 1) * cfg.xpPerLevel;
+    const nxtXP  = level < cfg.maxLevel ? level * cfg.xpPerLevel : curXP + cfg.xpPerLevel;
+    const prog   = ((xp - curXP) / (nxtXP - curXP)) * 100;
+    return { level, progress: Math.min(prog, 100), xpNeeded: Math.max(nxtXP - xp, 0), cfg, isMax: level >= cfg.maxLevel };
+  }
+
+  function renderLevelUI(xp, sub) {
+    const { level, progress, xpNeeded, cfg, isMax } = getLevel(xp, sub);
+
+    /* Numéro de niveau */
+    document.getElementById('levelNum').innerHTML = `${level} <span>/ ${cfg.maxLevel}</span>`;
+
+    /* Symboles */
+    const symEl = document.getElementById('levelSymbols');
+    let html = '';
+    if (sub === 'basic') {
+      for (let i = 1; i <= cfg.maxLevel; i++)
+        html += `<span class="lvl-symbol ${i <= level ? 'active' : 'inactive'}">🫧</span>`;
+    } else if (sub === 'plus') {
+      for (let i = 1; i <= Math.min(level, cfg.maxLevel); i++)
+        html += `<span class="lvl-symbol active plus">✦</span>`;
+    } else if (sub === 'x') {
+      for (let i = 1; i <= Math.min(level, cfg.maxLevel); i++)
+        html += `<span class="lvl-symbol active x-sym">✕</span>`;
+    } else if (sub === 'max') {
+      for (let i = 1; i <= Math.min(level, cfg.maxLevel); i++)
+        html += `<span class="lvl-symbol active max-sym">🫧</span>`;
+    }
+    symEl.innerHTML = html;
+
+    /* Barre XP */
+    const bar = document.getElementById('xpBarFill');
+    bar.className = `xp-bar-fill ${sub}`;
+    bar.style.width = progress + '%';
+    document.getElementById('xpCurrent').textContent = xp + ' XP';
+    document.getElementById('xpNext').textContent = isMax ? '🏆 Niveau max atteint !' : xpNeeded + ' XP pour le niveau suivant';
+    document.getElementById('levelMaxBadge').style.display = isMax ? 'inline-block' : 'none';
+
+    /* Cadre animé */
+    applyFrame(sub, level);
+  }
+
+  function applyFrame(sub, level) {
+    if (!document.getElementById('bubble-frame-css')) {
+      const s = document.createElement('style');
+      s.id = 'bubble-frame-css';
+      s.textContent = `
+        @keyframes frame-pulse-basic{0%,100%{box-shadow:0 0 8px rgba(91,200,255,.4),0 0 16px rgba(46,125,212,.2)}50%{box-shadow:0 0 18px rgba(91,200,255,.9),0 0 30px rgba(46,125,212,.5)}}
+        @keyframes frame-pulse-plus{0%,100%{box-shadow:0 0 8px rgba(255,200,0,.5),0 0 16px rgba(230,168,0,.3)}50%{box-shadow:0 0 18px rgba(255,200,0,.95),0 0 32px rgba(230,168,0,.6)}}
+        @keyframes frame-shimmer-plus{0%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}33%{box-shadow:0 0 22px rgba(255,230,0,1),0 0 44px rgba(255,200,0,.7);border-color:rgba(255,240,100,1)}66%{box-shadow:0 0 14px rgba(255,180,0,.8),0 0 28px rgba(200,140,0,.5);border-color:rgba(255,180,0,.9)}100%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}}
+        @keyframes frame-pulse-x{0%,100%{box-shadow:0 0 8px rgba(68,204,255,.5),0 0 16px rgba(0,153,221,.3)}50%{box-shadow:0 0 18px rgba(68,204,255,.95),0 0 32px rgba(0,153,221,.6)}}
+        @keyframes frame-shimmer-x{0%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}33%{box-shadow:0 0 24px rgba(100,230,255,1),0 0 48px rgba(68,204,255,.7);border-color:rgba(150,240,255,1)}66%{box-shadow:0 0 14px rgba(0,180,255,.8),0 0 28px rgba(0,120,200,.5);border-color:rgba(0,200,255,.9)}100%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}}
+        @keyframes frame-pulse-max{0%,100%{box-shadow:0 0 12px rgba(204,68,255,.6),0 0 24px rgba(136,0,204,.4)}50%{box-shadow:0 0 24px rgba(204,68,255,1),0 0 44px rgba(136,0,204,.7)}}
+        @keyframes frame-shimmer-max{0%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6),0 0 48px rgba(180,80,255,.3);border-color:rgba(220,100,255,.95)}25%{box-shadow:0 0 26px rgba(255,100,255,1),0 0 52px rgba(180,0,255,.8),0 0 68px rgba(220,80,255,.4);border-color:rgba(255,150,255,1)}50%{box-shadow:0 0 20px rgba(180,0,255,.9),0 0 40px rgba(100,0,200,.7),0 0 56px rgba(150,0,220,.3);border-color:rgba(200,80,255,.95)}75%{box-shadow:0 0 30px rgba(255,80,220,1),0 0 60px rgba(200,0,255,.8),0 0 76px rgba(255,100,255,.4);border-color:rgba(255,120,240,1)}100%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6),0 0 48px rgba(180,80,255,.3);border-color:rgba(220,100,255,.95)}}
+      `;
+      document.head.appendChild(s);
+    }
+    const frames = {
+      basic: `frame-pulse-basic 2.5s ease-in-out infinite`,
+      plus:  level >= 10 ? `frame-shimmer-plus 2s linear infinite` : `frame-pulse-plus 2.5s ease-in-out infinite`,
+      x:     level >= 10 ? `frame-shimmer-x 2s linear infinite`    : `frame-pulse-x 2.5s ease-in-out infinite`,
+      max:   level >= 15 ? `frame-shimmer-max 2s linear infinite`   : `frame-pulse-max 2.5s ease-in-out infinite`,
+    };
+    const borders = {
+      basic: `3px solid rgba(91,200,255,${0.4 + (level/3)*0.5})`,
+      plus:  `3px solid rgba(255,200,0,${0.4 + (level/20)*0.6})`,
+      x:     `3px solid rgba(68,204,255,${0.4 + (level/20)*0.6})`,
+      max:   `3px solid rgba(204,68,255,${0.5 + (level/25)*0.5})`,
+    };
+    document.querySelectorAll('.profile-bubble, .big-avatar').forEach(b => {
+      b.style.border    = borders[sub] || borders.basic;
+      b.style.animation = frames[sub]  || frames.basic;
+    });
+  }
+
   onAuthStateChanged(auth, async user => {
     if(!user){ window.location.href='./login.html'; return; }
     currentUser = user;
 
     const pseudo = user.displayName || user.email.split('@')[0];
-    document.getElementById('pseudoInput').value       = pseudo;
+    document.getElementById('pseudoInput').value = pseudo;
 
     /* Lecture Firestore */
     try {
@@ -372,20 +500,19 @@
         const d = snap.data();
         userSubLevel = d.subscription || 'basic';
         activeIconId = d.avatarId     || 'bully_1';
+        const xp     = d.xp           || 0;
+        renderLevelUI(xp, userSubLevel);
       } else {
-        /* Premier login : on crée le document */
-        await setDoc(doc(db,'users',user.uid), {
-          subscription: 'basic',
-          avatarId:     'bully_1',
-          pseudo:       pseudo
-        });
+        await setDoc(doc(db,'users',user.uid), { subscription:'basic', avatarId:'bully_1', pseudo, xp:0 });
         userSubLevel = 'basic';
         activeIconId = 'bully_1';
+        renderLevelUI(0, 'basic');
       }
     } catch(e) {
       toast('⚠️ Connexion Firestore échouée : '+e.message, true);
       userSubLevel = 'basic';
       activeIconId = 'bully_1';
+      renderLevelUI(0, 'basic');
     }
 
     setSubUI(userSubLevel);
@@ -467,6 +594,7 @@
     try {
       await updateProfile(currentUser, {displayName: p});
       await setDoc(doc(db,'users',currentUser.uid), {pseudo: p}, {merge:true});
+      document.getElementById('navName').textContent = p;
       toast('✅ Pseudo mis à jour !');
     } catch(e){ toast('❌ '+e.message, true); }
   };
