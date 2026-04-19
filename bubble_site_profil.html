@@ -150,6 +150,58 @@
   .xp-info span{font-weight:700;color:rgba(255,255,255,.65);}
   .level-max-badge{font-family:'Press Start 2P',monospace;font-size:.48rem;padding:4px 10px;border-radius:20px;background:rgba(255,215,0,.2);border:1px solid rgba(255,215,0,.4);color:#ffd700;margin-top:6px;display:inline-block;}
 
+
+  /* ── MISSIONS ── */
+  .missions-card { margin-top:0; }
+  .mission-tabs { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
+  .mission-tab {
+    padding:7px 14px; border-radius:20px; border:1.5px solid rgba(255,255,255,.15);
+    background:rgba(255,255,255,.07); color:rgba(255,255,255,.5);
+    font-family:'Baloo 2',cursive; font-size:.82rem; font-weight:800;
+    cursor:pointer; transition:all .2s; -webkit-tap-highlight-color:transparent;
+  }
+  .mission-tab.active { background:rgba(255,255,255,.18); color:white; border-color:rgba(255,255,255,.4); }
+  .mission-panel { display:none; flex-direction:column; gap:10px; }
+  .mission-panel.active { display:flex; }
+  .mission-item {
+    display:flex; align-items:center; gap:12px;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+    border-radius:14px; padding:12px 14px;
+    transition:all .2s;
+  }
+  .mission-item.done { opacity:.55; }
+  .mission-item.done .mission-name { text-decoration:line-through; }
+  .mission-icon { font-size:1.4rem; flex-shrink:0; }
+  .mission-info { flex:1; }
+  .mission-name { font-size:.88rem; font-weight:800; line-height:1.2; }
+  .mission-desc { font-size:.72rem; color:rgba(255,255,255,.45); margin-top:2px; }
+  .mission-xp {
+    font-family:'Press Start 2P',monospace; font-size:.55rem;
+    padding:4px 10px; border-radius:20px; flex-shrink:0;
+    background:rgba(255,255,255,.1); color:rgba(255,255,255,.6);
+    white-space:nowrap;
+  }
+  .mission-xp.earned { background:rgba(68,217,102,.2); color:#44d966; }
+  .mission-check {
+    width:24px; height:24px; border-radius:50%; flex-shrink:0;
+    border:2px solid rgba(255,255,255,.25);
+    display:flex; align-items:center; justify-content:center;
+    font-size:.9rem;
+  }
+  .mission-check.done { background:#44d966; border-color:#44d966; }
+  .mission-progress-wrap { height:4px; background:rgba(255,255,255,.1); border-radius:20px; margin-top:6px; }
+  .mission-progress-fill { height:100%; border-radius:20px; background:linear-gradient(90deg,#44d966,#1faa44); transition:width .4s; }
+  .mission-count { font-size:.68rem; color:rgba(255,255,255,.4); margin-top:3px; }
+  .mission-google-btn {
+    width:100%; padding:11px; border-radius:14px;
+    background:white; color:#333; border:none;
+    font-family:'Baloo 2',cursive; font-size:.95rem; font-weight:800;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
+    transition:all .2s; margin-top:4px;
+  }
+  .mission-google-btn:hover { filter:brightness(.95); transform:scale(1.01); }
+  .mission-google-btn.done { background:rgba(68,217,102,.15); color:#44d966; border:1.5px solid rgba(68,217,102,.4); cursor:default; }
+
 </style>
 </head>
 <body>
@@ -254,6 +306,165 @@
     <div class="card-header"><span class="card-icon">🚪</span><span class="card-title">Session</span></div>
     <button class="btn-logout" onclick="handleLogout()">🚪 Se déconnecter</button>
   </div>
+
+  <!-- 🎯 MISSIONS -->
+  <div class="card missions-card">
+    <div class="card-header"><span class="card-icon">🎯</span><span class="card-title">Missions</span></div>
+
+    <div class="mission-tabs">
+      <button class="mission-tab active" onclick="switchMissionTab('general')">🌍 Général</button>
+      <button class="mission-tab" onclick="switchMissionTab('scans')">📜 Scans</button>
+      <button class="mission-tab" onclick="switchMissionTab('jeux')">🎮 Jeux Vidéos</button>
+      <button class="mission-tab" onclick="switchMissionTab('autres')">✨ Autres</button>
+    </div>
+
+    <!-- GÉNÉRAL -->
+    <div class="mission-panel active" id="panel-general">
+      <div class="mission-item" id="m-daily">
+        <div class="mission-check" id="chk-daily"></div>
+        <div class="mission-icon">📅</div>
+        <div class="mission-info">
+          <div class="mission-name">Connexion quotidienne</div>
+          <div class="mission-desc">Se connecter chaque jour</div>
+        </div>
+        <div class="mission-xp" id="xp-daily">+20 XP</div>
+      </div>
+      <div class="mission-item" id="m-pseudo">
+        <div class="mission-check" id="chk-pseudo"></div>
+        <div class="mission-icon">✍️</div>
+        <div class="mission-info">
+          <div class="mission-name">Personnalisation</div>
+          <div class="mission-desc">Modifier son pseudo</div>
+        </div>
+        <div class="mission-xp" id="xp-pseudo">+10 XP</div>
+      </div>
+      <div class="mission-item" id="m-avatar">
+        <div class="mission-check" id="chk-avatar"></div>
+        <div class="mission-icon">🎭</div>
+        <div class="mission-info">
+          <div class="mission-name">Style unique</div>
+          <div class="mission-desc">Changer son icône de profil</div>
+        </div>
+        <div class="mission-xp" id="xp-avatar">+10 XP</div>
+      </div>
+    </div>
+
+    <!-- SCANS -->
+    <div class="mission-panel" id="panel-scans">
+      <div class="mission-item" id="m-scan1">
+        <div class="mission-check" id="chk-scan1"></div>
+        <div class="mission-icon">📖</div>
+        <div class="mission-info">
+          <div class="mission-name">Premier scan !</div>
+          <div class="mission-desc">Lire un scan pour la 1ère fois</div>
+        </div>
+        <div class="mission-xp" id="xp-scan1">+50 XP</div>
+      </div>
+      <div class="mission-item" id="m-scan3">
+        <div class="mission-check" id="chk-scan3"></div>
+        <div class="mission-icon">📚</div>
+        <div class="mission-info">
+          <div class="mission-name">Lecteur assidu</div>
+          <div class="mission-desc">Lire 3 scans différents</div>
+          <div class="mission-progress-wrap"><div class="mission-progress-fill" id="prog-scan3" style="width:0%"></div></div>
+          <div class="mission-count" id="count-scan3">0 / 3</div>
+        </div>
+        <div class="mission-xp" id="xp-scan3">+100 XP</div>
+      </div>
+      <div class="mission-item" id="m-scanall">
+        <div class="mission-check" id="chk-scanall"></div>
+        <div class="mission-icon">🏆</div>
+        <div class="mission-info">
+          <div class="mission-name">Collectionneur</div>
+          <div class="mission-desc">Lire tous les scans disponibles</div>
+          <div class="mission-progress-wrap"><div class="mission-progress-fill" id="prog-scanall" style="width:0%"></div></div>
+          <div class="mission-count" id="count-scanall">0 / ?</div>
+        </div>
+        <div class="mission-xp" id="xp-scanall">+300 XP</div>
+      </div>
+    </div>
+
+    <!-- JEUX VIDÉOS -->
+    <div class="mission-panel" id="panel-jeux">
+      <div class="mission-item" id="m-game1">
+        <div class="mission-check" id="chk-game1"></div>
+        <div class="mission-icon">🕹️</div>
+        <div class="mission-info">
+          <div class="mission-name">Premier lancement !</div>
+          <div class="mission-desc">Jouer à un jeu pour la 1ère fois</div>
+        </div>
+        <div class="mission-xp" id="xp-game1">+30 XP</div>
+      </div>
+      <div class="mission-item" id="m-gamedaily">
+        <div class="mission-check" id="chk-gamedaily"></div>
+        <div class="mission-icon">📅</div>
+        <div class="mission-info">
+          <div class="mission-name">Joueur du jour</div>
+          <div class="mission-desc">Jouer à un jeu aujourd'hui</div>
+        </div>
+        <div class="mission-xp" id="xp-gamedaily">+20 XP</div>
+      </div>
+      <div class="mission-item" id="m-gameall">
+        <div class="mission-check" id="chk-gameall"></div>
+        <div class="mission-icon">🎯</div>
+        <div class="mission-info">
+          <div class="mission-name">Explorateur</div>
+          <div class="mission-desc">Essayer tous les jeux Bubble</div>
+          <div class="mission-progress-wrap"><div class="mission-progress-fill" id="prog-gameall" style="width:0%"></div></div>
+          <div class="mission-count" id="count-gameall">0 / 3</div>
+        </div>
+        <div class="mission-xp" id="xp-gameall">+150 XP</div>
+      </div>
+      <div style="margin-top:6px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:12px;border:1px dashed rgba(255,255,255,.1);">
+        <div style="font-size:.72rem;color:rgba(255,255,255,.35);font-family:'Press Start 2P',monospace;letter-spacing:1px;margin-bottom:8px;">MISSIONS IN-GAME</div>
+        <div class="mission-item" id="m-ing1" style="background:transparent;border:none;padding:8px 0;">
+          <div class="mission-check" id="chk-ing1"></div>
+          <div class="mission-icon">🐟</div>
+          <div class="mission-info">
+            <div class="mission-name">Fishing Time — Pêcheur débutant</div>
+            <div class="mission-desc">Attraper ton premier poisson</div>
+          </div>
+          <div class="mission-xp" id="xp-ing1">+25 XP</div>
+        </div>
+        <div class="mission-item" id="m-ing2" style="background:transparent;border:none;padding:8px 0;">
+          <div class="mission-check" id="chk-ing2"></div>
+          <div class="mission-icon">⛏️</div>
+          <div class="mission-info">
+            <div class="mission-name">BubbleCraft — Premier bloc</div>
+            <div class="mission-desc">Miner ton premier bloc</div>
+          </div>
+          <div class="mission-xp" id="xp-ing2">+25 XP</div>
+        </div>
+        <div class="mission-item" id="m-ing3" style="background:transparent;border:none;padding:8px 0;">
+          <div class="mission-check" id="chk-ing3"></div>
+          <div class="mission-icon">🏃</div>
+          <div class="mission-info">
+            <div class="mission-name">Bully 2D — Premier saut</div>
+            <div class="mission-desc">Sauter pour la première fois</div>
+          </div>
+          <div class="mission-xp" id="xp-ing3">+25 XP</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTRES -->
+    <div class="mission-panel" id="panel-autres">
+      <div class="mission-item" id="m-google">
+        <div class="mission-check" id="chk-google"></div>
+        <div class="mission-icon">🔗</div>
+        <div class="mission-info">
+          <div class="mission-name">Compte lié</div>
+          <div class="mission-desc">Associer son compte Google</div>
+        </div>
+        <div class="mission-xp" id="xp-google">+50 XP</div>
+      </div>
+      <button class="mission-google-btn" id="linkGoogleBtn" onclick="linkGoogle()">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5.1l-6.2-5.2C29.3 35.2 26.8 36 24 36c-5.3 0-9.6-2.9-11.3-7H6.1C9.5 39.6 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.3-2.4 4.2-4.5 5.5l6.2 5.2C40.9 35.2 44 30 44 24c0-1.3-.1-2.7-.4-4z"/></svg>
+        Lier mon compte Google
+      </button>
+    </div>
+  </div>
+
 </main>
 
 <div class="overlay" id="overlay">
@@ -309,7 +520,7 @@
   import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut, updatePassword, updateProfile, EmailAuthProvider, reauthenticateWithCredential }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc }
+  import { getFirestore, doc, getDoc, setDoc, increment }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const app  = initializeApp({
@@ -502,6 +713,8 @@
         activeIconId = d.avatarId     || 'bully_1';
         const xp     = d.xp           || 0;
         renderLevelUI(xp, userSubLevel);
+        renderMissions(d);
+        await checkDailyLogin(db, currentUser.uid, d);
       } else {
         await setDoc(doc(db,'users',user.uid), { subscription:'basic', avatarId:'bully_1', pseudo, xp:0 });
         userSubLevel = 'basic';
@@ -635,6 +848,121 @@
     await signOut(auth);
     window.location.href = './login.html';
   };
+
+
+  /* ══════════════════════════
+     MISSIONS
+  ══════════════════════════ */
+  const TOTAL_SCANS = 3; // Met à jour quand tu ajoutes des scans
+  const TOTAL_GAMES = 3; // Fishing Time, BubbleCraft, Bully 2D
+
+  function switchMissionTab(tab) {
+    document.querySelectorAll('.mission-tab').forEach((t,i) => {
+      t.classList.toggle('active', ['general','scans','jeux','autres'][i] === tab);
+    });
+    document.querySelectorAll('.mission-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
+
+  function setCheck(id, done) {
+    const el = document.getElementById('chk-' + id);
+    const item = document.getElementById('m-' + id);
+    const xp = document.getElementById('xp-' + id);
+    if (!el) return;
+    el.textContent = done ? '✓' : '';
+    el.classList.toggle('done', done);
+    if (item) item.classList.toggle('done', done);
+    if (xp && done) xp.classList.add('earned');
+  }
+
+  function setProgress(id, val, max) {
+    const prog = document.getElementById('prog-' + id);
+    const count = document.getElementById('count-' + id);
+    if (prog) prog.style.width = Math.min(val/max*100, 100) + '%';
+    if (count) count.textContent = val + ' / ' + max;
+  }
+
+  function renderMissions(d) {
+    const missions = d.missions || {};
+    const scansRead = Object.keys(d.scansRead || {}).length;
+    const gamesPlayed = Object.keys(d.gamesPlayed || {}).length;
+    const today = new Date().toDateString();
+
+    // Général
+    setCheck('daily', missions.daily === today);
+    setCheck('pseudo', missions.pseudo);
+    setCheck('avatar', missions.avatar);
+
+    // Scans
+    setCheck('scan1', scansRead >= 1);
+    setCheck('scan3', scansRead >= 3);
+    setProgress('scan3', Math.min(scansRead, 3), 3);
+    setCheck('scanall', scansRead >= TOTAL_SCANS);
+    setProgress('scanall', Math.min(scansRead, TOTAL_SCANS), TOTAL_SCANS);
+
+    // Jeux
+    setCheck('game1', gamesPlayed >= 1);
+    setCheck('gamedaily', missions.gamedaily === today);
+    setCheck('gameall', gamesPlayed >= TOTAL_GAMES);
+    setProgress('gameall', Math.min(gamesPlayed, TOTAL_GAMES), TOTAL_GAMES);
+
+    // In-game
+    setCheck('ing1', missions.ing_fishing);
+    setCheck('ing2', missions.ing_bubblecraft);
+    setCheck('ing3', missions.ing_bully2d);
+
+    // Autres
+    const isLinked = currentUser && currentUser.providerData.some(p => p.providerId === 'google.com');
+    setCheck('google', isLinked);
+    const btn = document.getElementById('linkGoogleBtn');
+    if (btn && isLinked) {
+      btn.textContent = '✅ Compte Google lié !';
+      btn.className = 'mission-google-btn done';
+    }
+  }
+
+  /* ── Connexion quotidienne ── */
+  async function checkDailyLogin(db, userId, d) {
+    const today = new Date().toDateString();
+    if ((d.missions || {}).daily !== today) {
+      await setDoc(doc(db,'users',userId), {
+        missions: { daily: today },
+        xp: increment(20)
+      }, { merge: true });
+      showToastLevel('📅 +20 XP — Connexion du jour !');
+      return true;
+    }
+    return false;
+  }
+
+  /* ── Lier Google ── */
+  window.linkGoogle = async function() {
+    const { GoogleAuthProvider, linkWithPopup } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    try {
+      const provider = new GoogleAuthProvider();
+      await linkWithPopup(currentUser, provider);
+      await setDoc(doc(db,'users',currentUser.uid), { xp: increment(50), missions:{google:true} }, { merge: true });
+      toast('✅ Compte Google lié ! +50 XP 🎉');
+      document.getElementById('chk-google').textContent = '✓';
+      document.getElementById('chk-google').classList.add('done');
+      document.getElementById('m-google').classList.add('done');
+      const btn = document.getElementById('linkGoogleBtn');
+      btn.textContent = '✅ Compte Google lié !';
+      btn.className = 'mission-google-btn done';
+    } catch(e) {
+      if (e.code === 'auth/credential-already-in-use') toast('⚠️ Ce compte Google est déjà utilisé.', true);
+      else if (e.code !== 'auth/popup-closed-by-user') toast('❌ Erreur : ' + e.message, true);
+    }
+  };
+
+  function showToastLevel(msg) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.className = 'toast show';
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
 
   /* ── Fermer le picker ── */
   document.addEventListener('keydown', e=>{ if(e.key==='Escape') window._closePicker && window._closePicker(); });
