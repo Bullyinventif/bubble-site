@@ -297,22 +297,37 @@ main{position:relative;z-index:1;padding:76px 16px 60px;max-width:960px;margin:0
   100%{transform:scale(1) rotate(0);opacity:1}
 }
 
-/* ── HISTORIQUE ── */
-.history-section{
+/* ── COLLECTION ── */
+.collection-section{
   background:rgba(255,255,255,.07);backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.12);border-radius:20px;
-  padding:20px 22px;animation:fadeUp .5s .3s ease both;
+  padding:20px 22px;animation:fadeUp .5s .35s ease both;
+  margin-top:20px;
 }
-.history-title{font-family:'Press Start 2P',monospace;font-size:.58rem;color:rgba(255,255,255,.4);letter-spacing:2px;margin-bottom:14px;}
-.history-list{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;scrollbar-width:none;}
-.history-list::-webkit-scrollbar{display:none;}
-.history-item{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);font-size:.82rem;animation:fadeUp .3s ease both;}
-.history-icon{font-size:1.4rem;flex-shrink:0;}
-.history-rarity-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.history-info{flex:1;}
-.history-name{font-weight:800;}
-.history-sub{font-size:.68rem;color:rgba(255,255,255,.4);}
-.history-empty{color:rgba(255,255,255,.3);font-size:.8rem;text-align:center;padding:14px 0;}
+.collection-title{font-family:'Press Start 2P',monospace;font-size:.58rem;color:rgba(255,255,255,.4);letter-spacing:2px;margin-bottom:14px;}
+.collection-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:8px;
+}
+.collection-card{
+  aspect-ratio:1;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:2.5rem;border:2px solid rgba(255,255,255,.2);
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+}
+.collection-card.obtained{
+  animation:fadeUp .3s ease both;
+}
+.collection-card.empty{
+  background:rgba(0,0,0,.2);border:2px dashed rgba(255,255,255,.15);
+  opacity:.4;cursor:default;
+}
+.collection-card:not(.empty):hover{
+  transform:scale(1.1);border-color:rgba(255,255,255,.5);
+  box-shadow:0 0 20px rgba(255,255,255,.2);
+}
+.collection-card-rarity{
+  position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;
+  box-shadow:0 0 8px currentColor;
+}
 
 footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255,255,255,.25);font-size:.6rem;border-top:1px solid rgba(255,255,255,.08);font-family:'Press Start 2P',monospace;letter-spacing:1px;}
 
@@ -336,7 +351,7 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
     <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
     <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
     <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-    <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Coffres</a>
+    <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Gacha (BETA)</a>
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
     <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🧙</span></div>
@@ -348,12 +363,12 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
   <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
   <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
   <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-  <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Coffres</a>
+  <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Gacha (BETA)</a>
 </div>
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <main>
-  <div class="page-title">🎁 Coffres Bubble</div>
+  <div class="page-title">🎁 Bubble GACHA</div>
   <div class="page-subtitle">Ouvre des coffres pour découvrir des icônes et récompenses exclusives !</div>
 
   <div class="chests-grid" id="chestsGrid">
@@ -365,17 +380,7 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
       <div class="chest-visual">
         <div class="chest-glow"></div>
         <div class="lock-icon" id="lock-standard" style="display:none">🔒</div>
-        <svg class="chest-svg" id="svg-standard" viewBox="0 0 100 100">
-          <rect x="10" y="52" width="80" height="42" rx="8" fill="#8B6914" stroke="#5a4008" stroke-width="1.5"/>
-          <rect x="18" y="60" width="64" height="28" rx="5" fill="#B8860B"/>
-          <rect x="36" y="64" width="28" height="14" rx="5" fill="#D4AF37" stroke="#a0800a" stroke-width="1"/>
-          <circle cx="50" cy="71" r="4" fill="#FFD700" stroke="#a0800a" stroke-width="1"/>
-          <g class="chest-lid-anim" id="lid-standard">
-            <rect x="10" y="28" width="80" height="28" rx="8" fill="#B8860B" stroke="#5a4008" stroke-width="1.5"/>
-            <rect x="18" y="34" width="64" height="18" rx="5" fill="#D4AF37"/>
-            <rect x="10" y="50" width="80" height="6" rx="3" fill="#8B6914"/>
-          </g>
-        </svg>
+        <img class="chest-svg" id="img-standard" src="./img_chests/chest_+.png" alt="Coffre Standard">
       </div>
       <div class="chest-rates">
         <div class="rate-row"><span class="rate-dot" style="background:#888"></span><span class="rate-name">Commun</span><span class="rate-pct">50%</span></div>
@@ -396,20 +401,7 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
       <div class="chest-visual">
         <div class="chest-glow"></div>
         <div class="lock-icon" id="lock-stellaire" style="display:none">🔒</div>
-        <svg class="chest-svg" id="svg-stellaire" viewBox="0 0 100 100">
-          <rect x="10" y="52" width="80" height="42" rx="8" fill="#0a4a7a" stroke="#003060" stroke-width="1.5"/>
-          <rect x="18" y="60" width="64" height="28" rx="5" fill="#1565a0"/>
-          <rect x="36" y="64" width="28" height="14" rx="5" fill="#44aadd" stroke="#007acc" stroke-width="1"/>
-          <circle cx="50" cy="71" r="4" fill="#88ddff" stroke="#007acc" stroke-width="1"/>
-          <!-- Étoiles déco -->
-          <text x="20" y="46" font-size="8" fill="rgba(100,220,255,.7)">✦</text>
-          <text x="68" y="44" font-size="6" fill="rgba(100,220,255,.5)">✦</text>
-          <g id="lid-stellaire">
-            <rect x="10" y="28" width="80" height="28" rx="8" fill="#1565a0" stroke="#003060" stroke-width="1.5"/>
-            <rect x="18" y="34" width="64" height="18" rx="5" fill="#44aadd"/>
-            <rect x="10" y="50" width="80" height="6" rx="3" fill="#0a4a7a"/>
-          </g>
-        </svg>
+        <img class="chest-svg" id="img-stellaire" src="./img_chests/chest_x.png" alt="Coffre Stellaire">
       </div>
       <div class="chest-rates">
         <div class="rate-row"><span class="rate-dot" style="background:#888"></span><span class="rate-name">Commun</span><span class="rate-pct">25%</span></div>
@@ -430,19 +422,7 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
       <div class="chest-visual">
         <div class="chest-glow"></div>
         <div class="lock-icon" id="lock-mega" style="display:none">🔒</div>
-        <svg class="chest-svg" id="svg-mega" viewBox="0 0 100 100">
-          <rect x="10" y="52" width="80" height="42" rx="8" fill="#3a0870" stroke="#1a0040" stroke-width="1.5"/>
-          <rect x="18" y="60" width="64" height="28" rx="5" fill="#5a1090"/>
-          <rect x="36" y="64" width="28" height="14" rx="5" fill="#aa44ee" stroke="#7700bb" stroke-width="1"/>
-          <circle cx="50" cy="71" r="4" fill="#dd88ff" stroke="#7700bb" stroke-width="1"/>
-          <!-- Couronne -->
-          <text x="38" y="26" font-size="18" fill="rgba(220,180,255,.9)">👑</text>
-          <g id="lid-mega">
-            <rect x="10" y="28" width="80" height="28" rx="8" fill="#5a1090" stroke="#1a0040" stroke-width="1.5"/>
-            <rect x="18" y="34" width="64" height="18" rx="5" fill="#aa44ee"/>
-            <rect x="10" y="50" width="80" height="6" rx="3" fill="#3a0870"/>
-          </g>
-        </svg>
+        <img class="chest-svg" id="img-mega" src="./img_chests/chest_MAX.png" alt="Coffre Mega">
       </div>
       <div class="chest-rates">
         <div class="rate-row"><span class="rate-dot" style="background:#44aaff"></span><span class="rate-name">Rare</span><span class="rate-pct">30%</span></div>
@@ -456,12 +436,10 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
 
   </div>
 
-  <!-- HISTORIQUE -->
-  <div class="history-section">
-    <div class="history-title">✦ Derniers tirages</div>
-    <div class="history-list" id="historyList">
-      <div class="history-empty">Aucun tirage pour l'instant…</div>
-    </div>
+  <!-- COLLECTION -->
+  <div class="collection-section">
+    <div class="collection-title">📚 Ta Collection</div>
+    <div class="collection-grid" id="collectionGrid"></div>
   </div>
 </main>
 
@@ -474,7 +452,7 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
   <div id="animCenter">
     <div id="animChest">
       <div id="animGlow"></div>
-      <svg id="animChestSvg" viewBox="0 0 100 100"></svg>
+      <div id="animChestSvg"></div>
     </div>
 
     <div id="cardReveal">
@@ -506,12 +484,12 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
    → Les chances varient selon la rareté et le type de coffre
 ══════════════════════════ */
 const CARD_POOL = [
-  {rarity:"Commun",     color:"#555",    bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", icon:"🪨", name:"Pierre Grise",      desc:"Solide et fiable, comme Rocky."},
-  {rarity:"Peu commun", color:"#22aa44",  bgGrad:"linear-gradient(145deg,#0a3a1a,#052010)", icon:"🌿", name:"Herbe de Bubble",    desc:"Pousse dans tous les niveaux."},
-  {rarity:"Rare",       color:"#2288ee",  bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", icon:"💧", name:"Gemme d'Eau",         desc:"Froide au toucher, toujours."},
-  {rarity:"Épique",     color:"#9944ee",  bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", icon:"⚡", name:"Éclat de Foudre",    desc:"Encore chargé d'électricité !"},
-  {rarity:"Super rare", color:"#ee4422",  bgGrad:"linear-gradient(145deg,#4a0a08,#250404)", icon:"🔮", name:"Orbe Mystérieuse",   desc:"Personne ne sait d'où elle vient."},
-  {rarity:"Légendaire", color:"#FFD700",  bgGrad:"linear-gradient(145deg,#4a3800,#2a1c00)", icon:"👑", name:"Couronne de Bully",  desc:"On raconte que Bully la portait jadis."},
+  {id:1, rarity:"Commun",     color:"#555",    bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", icon:"🪨", name:"Pierre Grise",      desc:"Solide et fiable, comme Rocky."},
+  {id:2, rarity:"Peu commun", color:"#22aa44",  bgGrad:"linear-gradient(145deg,#0a3a1a,#052010)", icon:"🌿", name:"Herbe de Bubble",    desc:"Pousse dans tous les niveaux."},
+  {id:3, rarity:"Rare",       color:"#2288ee",  bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", icon:"💧", name:"Gemme d'Eau",         desc:"Froide au toucher, toujours."},
+  {id:4, rarity:"Épique",     color:"#9944ee",  bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", icon:"⚡", name:"Éclat de Foudre",    desc:"Encore chargé d'électricité !"},
+  {id:5, rarity:"Super rare", color:"#ee4422",  bgGrad:"linear-gradient(145deg,#4a0a08,#250404)", icon:"🔮", name:"Orbe Mystérieuse",   desc:"Personne ne sait d'où elle vient."},
+  {id:6, rarity:"Légendaire", color:"#FFD700",  bgGrad:"linear-gradient(145deg,#4a3800,#2a1c00)", icon:"👑", name:"Couronne de Bully",  desc:"On raconte que Bully la portait jadis."},
 ];
 
 /* Configuration des chances par coffre et par rareté */
@@ -542,6 +520,13 @@ const RARITY_WEIGHTS = {
   }
 };
 
+/* Images des coffres (remplace les chemins par tes images) */
+const CHEST_IMAGES = {
+  standard: './img_chests/chest_+.png',
+  stellaire: './img_chests/chest_x.png',
+  mega: './img_chests/chest_MAX.png'
+};
+
 /* Couleurs de fond overlay selon rareté */
 const RARITY_BG = {
   "Commun":     "rgba(5,8,20,.96)",
@@ -557,7 +542,58 @@ const SUB_ORDER = {basic:0,plus:1,x:2,max:3};
 let currentChestType = null;
 let isAnimating = false;
 let history = JSON.parse(localStorage.getItem('bubble_gacha_history')||'[]');
-renderHistory();
+let collection = JSON.parse(localStorage.getItem('bubble_gacha_collection')||'[]');
+renderCollection();
+
+/* ── Ajouter une carte à la collection ── */
+function addToCollection(cardId){
+  if(!collection.includes(cardId)) {
+    collection.push(cardId);
+    localStorage.setItem('bubble_gacha_collection', JSON.stringify(collection));
+    console.log('Carte ajoutée:', cardId, 'Collection:', collection);
+    renderCollection();
+  }
+}
+
+/* ── Afficher la collection ── */
+function renderCollection(){
+  const grid = document.getElementById('collectionGrid');
+  const title = document.querySelector('.collection-title');
+  
+  if(!grid) {
+    console.warn('Grid de collection non trouvée');
+    return;
+  }
+  
+  grid.innerHTML = '';
+  
+  const progress = collection.length;
+  const total = CARD_POOL.length;
+  if(title) {
+    title.textContent = `📚 Ta Collection (${progress}/${total})`;
+  }
+  
+  CARD_POOL.forEach(card => {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'collection-card';
+    
+    if(collection.includes(card.id)) {
+      /* Carte obtenue */
+      cardDiv.classList.add('obtained');
+      cardDiv.innerHTML = `
+        ${card.icon}
+        <div class="collection-card-rarity" style="background:${card.color}"></div>
+      `;
+      cardDiv.title = `${card.name} - ${card.rarity}`;
+    } else {
+      /* Carte vide */
+      cardDiv.classList.add('empty');
+      cardDiv.innerHTML = '?';
+    }
+    
+    grid.appendChild(cardDiv);
+  });
+}
 
 /* ── Obtenir une carte aléatoire selon le type de coffre ── */
 function getRandomCard(chestType){
@@ -602,10 +638,17 @@ function openChest(type){
   const overlay = document.getElementById('openOverlay');
   const bg = document.getElementById('overlayBg');
 
-  /* Prépare le coffre SVG dans l'overlay */
-  const srcSvg = document.getElementById('svg-'+type);
+  /* Prépare le coffre (image) dans l'overlay */
+  const animChest = document.getElementById('animChest');
   const animSvg = document.getElementById('animChestSvg');
-  animSvg.innerHTML = srcSvg.innerHTML;
+  
+  /* Crée l'image du coffre */
+  animSvg.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = CHEST_IMAGES[type];
+  img.style.cssText = 'width:100%;height:100%;object-fit:contain;';
+  animSvg.appendChild(img);
+  
   animSvg.style.transform = 'scale(1)';
   animSvg.style.opacity = '1';
   animSvg.style.transition = '';
@@ -824,6 +867,9 @@ function closeOverlay(){
   document.getElementById('cardReveal').style.display='none';
   document.getElementById('btnReplay').style.display='none';
   document.getElementById('rays').style.opacity='0';
+  
+  /* Met à jour la collection à la fermeture */
+  renderCollection();
 }
 
 /* ── Historique ── */
@@ -836,25 +882,9 @@ function addToHistory(item, chestType){
   history.unshift(entry);
   if(history.length>20) history.pop();
   localStorage.setItem('bubble_gacha_history', JSON.stringify(history));
-  renderHistory();
-}
-
-function renderHistory(){
-  const list = document.getElementById('historyList');
-  if(!history.length){
-    list.innerHTML='<div class="history-empty">Aucun tirage pour l\'instant…</div>';
-    return;
-  }
-  list.innerHTML = history.slice(0,8).map(e=>`
-    <div class="history-item">
-      <span class="history-icon">${e.icon}</span>
-      <span class="history-rarity-dot" style="background:${e.color}"></span>
-      <div class="history-info">
-        <div class="history-name">${e.name}</div>
-        <div class="history-sub">${e.rarity} · Coffre ${e.chest} · ${e.time}</div>
-      </div>
-    </div>
-  `).join('');
+  
+  /* Ajoute la carte à la collection */
+  if(item.id) addToCollection(item.id);
 }
 
 /* ── Clic sur le coffre pour l'ouvrir ── */
