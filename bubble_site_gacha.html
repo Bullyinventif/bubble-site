@@ -165,11 +165,16 @@ main{position:relative;z-index:1;padding:76px 16px 60px;max-width:960px;margin:0
 
 /* Coffre en animation */
 #animChest{
-  position:relative;width:160px;height:160px;
+  position:relative;width:clamp(180px,30vw,280px);height:clamp(180px,30vw,280px);
   display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:transform .2s;
+}
+#animChest:hover{
+  transform:scale(1.08);
 }
 #animChestSvg{
-  width:140px;height:140px;
+  width:clamp(160px,25vw,250px);height:clamp(160px,25vw,250px);
   filter:drop-shadow(0 0 30px rgba(255,255,255,.2));
   transform-origin:center center;
 }
@@ -185,12 +190,12 @@ main{position:relative;z-index:1;padding:76px 16px 60px;max-width:960px;margin:0
   display:none;perspective:1000px;
 }
 #cardInner{
-  width:220px;height:290px;
+  width:clamp(220px,35vw,380px);height:clamp(290px,46vw,500px);
   position:relative;
   transform-style:preserve-3d;
   transform:rotateY(180deg) scale(0.5);
   transition:transform 0.7s cubic-bezier(.4,0,.2,1);
-  border-radius:20px;
+  border-radius:clamp(20px,2.5vw,40px);
 }
 #cardInner.flipped{transform:rotateY(0deg) scale(1);}
 
@@ -214,14 +219,14 @@ main{position:relative;z-index:1;padding:76px 16px 60px;max-width:960px;margin:0
 }
 .card-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:10px;}
 .card-rarity-badge{
-  font-family:'Press Start 2P',monospace;font-size:.5rem;
-  padding:5px 14px;border-radius:20px;letter-spacing:.5px;
+  font-family:'Press Start 2P',monospace;font-size:clamp(.4rem,.8vw,.6rem);
+  padding:clamp(4px,0.5vw,8px) clamp(10px,1vw,16px);border-radius:20px;letter-spacing:.5px;
   background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.3);
   color:white;
 }
-.card-item-icon{font-size:4rem;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));}
-.card-item-name{font-family:'Permanent Marker',cursive;font-size:1.3rem;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.5);}
-.card-item-desc{font-size:.75rem;color:rgba(255,255,255,.7);text-align:center;line-height:1.4;}
+.card-item-icon{font-size:clamp(3rem,6vw,5rem);filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));}
+.card-item-name{font-family:'Permanent Marker',cursive;font-size:clamp(1rem,2vw,1.5rem);text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+.card-item-desc{font-size:clamp(.65rem,1.2vw,.9rem);color:rgba(255,255,255,.7);text-align:center;line-height:1.4;}
 
 /* Shine animé sur la card */
 .card-shine{
@@ -496,32 +501,45 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
 
 <script>
 /* ══════════════════════════
-   POOLS DE RÉCOMPENSES
-   → Remplace les items par tes vrais avatars Bubble Inc. !
+   POOL UNIQUE DE CARTES
+   → Toutes les cartes sont accessibles dans tous les coffres
+   → Les chances varient selon la rareté et le type de coffre
 ══════════════════════════ */
-const POOLS = {
-  standard: [
-    {rarity:"Commun",     weight:50, color:"#555",    bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", icon:"🪨", name:"Pierre Grise",      desc:"Solide et fiable, comme Rocky."},
-    {rarity:"Peu commun", weight:25, color:"#22aa44",  bgGrad:"linear-gradient(145deg,#0a3a1a,#052010)", icon:"🌿", name:"Herbe de Bubble",    desc:"Pousse dans tous les niveaux."},
-    {rarity:"Rare",       weight:14, color:"#2288ee",  bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", icon:"💧", name:"Gemme d'Eau",         desc:"Froide au toucher, toujours."},
-    {rarity:"Épique",     weight:8,  color:"#9944ee",  bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", icon:"⚡", name:"Éclat de Foudre",    desc:"Encore chargé d'électricité !"},
-    {rarity:"Super rare", weight:2,  color:"#ee4422",  bgGrad:"linear-gradient(145deg,#4a0a08,#250404)", icon:"🔮", name:"Orbe Mystérieuse",   desc:"Personne ne sait d'où elle vient."},
-    {rarity:"Légendaire", weight:1,  color:"#FFD700",  bgGrad:"linear-gradient(145deg,#4a3800,#2a1c00)", icon:"👑", name:"Couronne de Bully",  desc:"On raconte que Bully la portait jadis."},
-  ],
-  stellaire: [
-    {rarity:"Commun",     weight:25, color:"#555",    bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", icon:"🌊", name:"Vague Stellaire",     desc:"Une éclaboussure venue des étoiles."},
-    {rarity:"Peu commun", weight:25, color:"#22aa44",  bgGrad:"linear-gradient(145deg,#0a3a1a,#052010)", icon:"🌙", name:"Éclat de Lune",        desc:"Tombe rarement sur Terre."},
-    {rarity:"Rare",       weight:22, color:"#2288ee",  bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", icon:"🧊", name:"Cristal Glacé",        desc:"Frosty serait jaloux."},
-    {rarity:"Épique",     weight:16, color:"#9944ee",  bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", icon:"🌀", name:"Portail Stellaire",   desc:"Vers d'autres dimensions."},
-    {rarity:"Super rare", weight:8,  color:"#ee4422",  bgGrad:"linear-gradient(145deg,#4a0a08,#250404)", icon:"☄️", name:"Météorite X",          desc:"Une seule chance sur mille."},
-    {rarity:"Légendaire", weight:4,  color:"#FFD700",  bgGrad:"linear-gradient(145deg,#4a3800,#2a1c00)", icon:"⭐", name:"Étoile de Bubble Inc.",desc:"Le trésor ultime du cosmos."},
-  ],
-  mega: [
-    {rarity:"Rare",       weight:30, color:"#2288ee",  bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", icon:"🧿", name:"Œil du Destin",       desc:"Te regarde, toi, en ce moment."},
-    {rarity:"Épique",     weight:28, color:"#9944ee",  bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", icon:"🪄", name:"Baguette de Triss",    desc:"Fabriquée en bois de minuit."},
-    {rarity:"Super rare", weight:25, color:"#ee4422",  bgGrad:"linear-gradient(145deg,#4a0a08,#250404)", icon:"💎", name:"Diamant de Kai",       desc:"Aussi rare que ses moments calmes."},
-    {rarity:"Légendaire", weight:17, color:"#FFD700",  bgGrad:"linear-gradient(145deg,#4a3800,#2a1c00)", icon:"🏆", name:"Trophée MEGA MAX",     desc:"Seuls les abonnés MAX peuvent l'obtenir."},
-  ],
+const CARD_POOL = [
+  {rarity:"Commun",     color:"#555",    bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", icon:"🪨", name:"Pierre Grise",      desc:"Solide et fiable, comme Rocky."},
+  {rarity:"Peu commun", color:"#22aa44",  bgGrad:"linear-gradient(145deg,#0a3a1a,#052010)", icon:"🌿", name:"Herbe de Bubble",    desc:"Pousse dans tous les niveaux."},
+  {rarity:"Rare",       color:"#2288ee",  bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", icon:"💧", name:"Gemme d'Eau",         desc:"Froide au toucher, toujours."},
+  {rarity:"Épique",     color:"#9944ee",  bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", icon:"⚡", name:"Éclat de Foudre",    desc:"Encore chargé d'électricité !"},
+  {rarity:"Super rare", color:"#ee4422",  bgGrad:"linear-gradient(145deg,#4a0a08,#250404)", icon:"🔮", name:"Orbe Mystérieuse",   desc:"Personne ne sait d'où elle vient."},
+  {rarity:"Légendaire", color:"#FFD700",  bgGrad:"linear-gradient(145deg,#4a3800,#2a1c00)", icon:"👑", name:"Couronne de Bully",  desc:"On raconte que Bully la portait jadis."},
+];
+
+/* Configuration des chances par coffre et par rareté */
+const RARITY_WEIGHTS = {
+  standard: {
+    "Commun": 50,
+    "Peu commun": 25,
+    "Rare": 14,
+    "Épique": 8,
+    "Super rare": 2,
+    "Légendaire": 1
+  },
+  stellaire: {
+    "Commun": 25,
+    "Peu commun": 25,
+    "Rare": 22,
+    "Épique": 16,
+    "Super rare": 8,
+    "Légendaire": 4
+  },
+  mega: {
+    "Commun": 0,
+    "Peu commun": 0,
+    "Rare": 30,
+    "Épique": 28,
+    "Super rare": 25,
+    "Légendaire": 17
+  }
 };
 
 /* Couleurs de fond overlay selon rareté */
@@ -541,12 +559,20 @@ let isAnimating = false;
 let history = JSON.parse(localStorage.getItem('bubble_gacha_history')||'[]');
 renderHistory();
 
-/* ── Weighted random ── */
-function weightedRandom(pool){
-  const total = pool.reduce((s,i)=>s+i.weight,0);
-  let r = Math.random()*total;
-  for(const item of pool){ r-=item.weight; if(r<=0) return item; }
-  return pool[pool.length-1];
+/* ── Obtenir une carte aléatoire selon le type de coffre ── */
+function getRandomCard(chestType){
+  const weights = RARITY_WEIGHTS[chestType];
+  
+  // Crée un tableau pondéré
+  const weighted = [];
+  CARD_POOL.forEach(card => {
+    const weight = weights[card.rarity] || 0;
+    for(let i = 0; i < weight; i++) {
+      weighted.push(card);
+    }
+  });
+  
+  return weighted[Math.floor(Math.random() * weighted.length)];
 }
 
 /* ── Débloque les coffres selon l'abo ── */
@@ -570,10 +596,9 @@ function unlockChests(sub){
 ════════════════════ */
 function openChest(type){
   if(isAnimating) return;
-  isAnimating = true;
   currentChestType = type;
 
-  const item = weightedRandom(POOLS[type]);
+  const item = getRandomCard(type);
   const overlay = document.getElementById('openOverlay');
   const bg = document.getElementById('overlayBg');
 
@@ -584,6 +609,9 @@ function openChest(type){
   animSvg.style.transform = 'scale(1)';
   animSvg.style.opacity = '1';
   animSvg.style.transition = '';
+
+  /* Stocke l'item pour usage lors du clic */
+  window.currentItem = item;
 
   /* Couleurs du glow selon le coffre */
   const glowColors = {
@@ -604,6 +632,17 @@ function openChest(type){
 
   /* Ouvre l'overlay */
   overlay.classList.add('active');
+  document.getElementById('animChest').style.display = 'flex';
+
+}
+
+/* Fonction appelée au clic sur le coffre */
+function startChestAnimation(){
+  if(isAnimating) return;
+  isAnimating = true;
+  
+  const item = window.currentItem;
+  const animSvg = document.getElementById('animChestSvg');
 
   /* ─── ÉTAPE 1 : TREMBLEMENT ─── */
   animSvg.style.animation = 'chestShake 0.5s ease';
@@ -630,6 +669,8 @@ function openChest(type){
           animSvg.style.opacity = '0';
 
           /* Fond change selon la rareté */
+          const overlay = document.getElementById('openOverlay');
+          const bg = overlay.querySelector('#overlayBg');
           bg.style.transition = 'background .5s';
           bg.style.background = RARITY_BG[item.rarity] || RARITY_BG["Commun"];
 
@@ -815,6 +856,9 @@ function renderHistory(){
     </div>
   `).join('');
 }
+
+/* ── Clic sur le coffre pour l'ouvrir ── */
+document.getElementById('animChest').addEventListener('click', startChestAnimation);
 
 /* ── Fermer overlay en cliquant ailleurs ── */
 document.getElementById('openOverlay').addEventListener('click', e=>{
