@@ -541,17 +541,18 @@ const SUB_ORDER = {basic:0,plus:1,x:2,max:3};
 
 let currentChestType = null;
 let isAnimating = false;
-let history = JSON.parse(localStorage.getItem('bubble_gacha_history')||'[]');
-let collection = JSON.parse(localStorage.getItem('bubble_gacha_collection')||'[]');
-renderCollection();
+let history = [];
+let collection = [];
+/* Firebase sera injecté par le script module ci-dessous */
+let _fbSaveGacha = null;
 
 /* ── Ajouter une carte à la collection ── */
 function addToCollection(cardId){
-  if(!collection.includes(cardId)) {
-    collection.push(cardId);
-    localStorage.setItem('bubble_gacha_collection', JSON.stringify(collection));
-    console.log('Carte ajoutée:', cardId, 'Collection:', collection);
+  const id = String(cardId);
+  if(!collection.includes(id)){
+    collection.push(id);
     renderCollection();
+    if(_fbSaveGacha) _fbSaveGacha();
   }
 }
 
@@ -754,7 +755,7 @@ function startChestAnimation(){
             }, 80);
 
             /* Sauvegarde l'historique */
-            addToHistory(item, type);
+            addToHistory(item, currentChestType);
 
           }, 400);
         }, 550);
@@ -881,10 +882,9 @@ function addToHistory(item, chestType){
   };
   history.unshift(entry);
   if(history.length>20) history.pop();
-  localStorage.setItem('bubble_gacha_history', JSON.stringify(history));
   
   /* Ajoute la carte à la collection */
-  if(item.id) addToCollection(item.id);
+  addToCollection(item.id);
 }
 
 /* ── Clic sur le coffre pour l'ouvrir ── */
@@ -916,28 +916,55 @@ for(let i=0;i<24;i++){
 }
 </script>
 
+
 <script type="module">
 import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",authDomain:"bubble-game-fa894.firebaseapp.com",projectId:"bubble-game-fa894",storageBucket:"bubble-game-fa894.firebasestorage.app",messagingSenderId:"60256418096",appId:"1:60256418096:web:dbdc555819793d8c20f0f5"});
 const auth=getAuth(app);
 const db=getFirestore(app);
 
-onAuthStateChanged(auth,async user=>{
-  if(!user){window.location.href='./login.html';return;}
+let currentUid = null;
+
+/* ── Sauvegarde collection + historique dans Firestore ── */
+window._fbSaveGacha = async function(){
+  if(!currentUid) return;
   try{
-    const snap=await getDoc(doc(db,'users',user.uid));
+    await setDoc(doc(db,'users',currentUid), {
+      gachaCollection: collection,
+      gachaHistory: history.slice(0,20),
+    }, {merge:true});
+  }catch(e){ console.warn('Firestore save error:', e); }
+};
+
+onAuthStateChanged(auth, async user=>{
+  if(!user){ window.location.href='./login.html'; return; }
+  currentUid = user.uid;
+
+  try{
+    const snap = await getDoc(doc(db,'users',user.uid));
     if(snap.exists()){
-      const d=snap.data();
-      const sub=d.subscription||'basic';
-      const avatarId=d.avatarId||'bully_1';
-      document.getElementById('navAvatar').innerHTML=`<img src="${avatarId}.png" alt="avatar">`;
+      const d = snap.data();
+      const sub      = d.subscription || 'basic';
+      const avatarId = d.avatarId     || 'bully_1';
+
+      /* Avatar nav */
+      document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
+
+      /* Charge collection et historique depuis Firestore */
+      collection = (d.gachaCollection || []).map(String);
+      history    = d.gachaHistory || [];
+
+      /* Affiche la collection avec les données chargées */
+      renderCollection();
+
+      /* Débloque les coffres */
       window.unlockChests(sub);
-      applyFrame(sub,getLevel(d.xp||0,sub));
+      applyFrame(sub, getLevel(d.xp||0, sub));
     }
-  }catch(e){console.warn(e);}
+  }catch(e){ console.warn(e); }
 });
 
 function getLevel(xp,sub){
