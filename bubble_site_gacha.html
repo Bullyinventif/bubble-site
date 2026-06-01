@@ -484,12 +484,18 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
    → Les chances varient selon la rareté et le type de coffre
 ══════════════════════════ */
 const CARD_POOL = [
-  {id:1, rarity:"Commun",     color:"#555",    bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", icon:"🪨", name:"Pierre Grise",      desc:"Solide et fiable, comme Rocky."},
-  {id:2, rarity:"Peu commun", color:"#22aa44",  bgGrad:"linear-gradient(145deg,#0a3a1a,#052010)", icon:"🌿", name:"Herbe de Bubble",    desc:"Pousse dans tous les niveaux."},
-  {id:3, rarity:"Rare",       color:"#2288ee",  bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", icon:"💧", name:"Gemme d'Eau",         desc:"Froide au toucher, toujours."},
-  {id:4, rarity:"Épique",     color:"#9944ee",  bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", icon:"⚡", name:"Éclat de Foudre",    desc:"Encore chargé d'électricité !"},
-  {id:5, rarity:"Super rare", color:"#ee4422",  bgGrad:"linear-gradient(145deg,#4a0a08,#250404)", icon:"🔮", name:"Orbe Mystérieuse",   desc:"Personne ne sait d'où elle vient."},
-  {id:6, rarity:"Légendaire", color:"#FFD700",  bgGrad:"linear-gradient(145deg,#4a3800,#2a1c00)", icon:"👑", name:"Couronne de Bully",  desc:"On raconte que Bully la portait jadis."},
+  /* ══ REMPLACE img:"cartes/xxx.png" par tes vraies images ══ */
+  {id:1, rarity:"Commun",     color:"#888780", bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", img:"cartes/apple_1.png", name:"Pomme Rouge",  desc:"Ce rouge si... appétissant..."},
+  {id:2, rarity:"Commun",     color:"#888780", bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", img:"cartes/apple_2.png", name:"Pomme Verte",  desc:"Cette couleur est si apaisante."},
+  {id:3, rarity:"Peu commun", color:"#22aa44", bgGrad:"linear-gradient(145deg,#0a3a1a,#052010)", img:"cartes/bomb.png", name:"Une Bombe",  desc:"Une bombe littéralement !"},
+  {id:4, rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", img:"cartes/bacon.png", name:"Plat de Bacon",  desc:"Mmmmm du bacon."},
+  {id:5, rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", img:"cartes/apple_pie.png", name:"Tarte à la Pomme",  desc:"Ca fait beaucoup de pommes !"},
+  {id:6, rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", img:"cartes/burger.png", name:"Burger",  desc:"Le roi du fast-food !"},
+  {id:7, rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", img:"cartes/cookie.png", name:"Cookies",  desc:"Le meilleur gouter pour tous !"},
+  {id:8, rarity:"Épique",     color:"#9944ee", bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", img:"cartes/sword.png", name:"Une Épée",  desc:"Idéal pour trancher des légumes..."},
+  {id:9, rarity:"Épique",     color:"#9944ee", bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", img:"cartes/dragon_sword.png", name:"L'Épée Dragon",  desc:"Elle referme le pouvoir draconique..."},
+  {id:10, rarity:"Super rare", color:"#ee4422", bgGrad:"linear-gradient(145deg,#4a0a08,#250404)", img:"cartes/emerald.png", name:"Emeraude",  desc:"Tres recherché par les vilagois, hawwww."},
+  {id:11,rarity:"Légendaire", color:"#FFD700", bgGrad:"linear-gradient(145deg,#4a3800,#2a1c00)", img:"cartes/star_collier.png",name:"Collier des étoiles", desc:"Ce collier est acompagné d'une forme avec 5 pointes..."},
 ];
 
 /* Configuration des chances par coffre et par rareté */
@@ -579,15 +585,16 @@ function renderCollection(){
     if(collection.includes(String(card.id))) {
       /* Carte obtenue */
       cardDiv.classList.add('obtained');
+      cardDiv.style.background = card.bgGrad;
       cardDiv.innerHTML = `
-        ${card.icon}
+        <img src="${card.img}" alt="${card.name}" style="width:85%;height:85%;object-fit:contain;border-radius:8px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));">
         <div class="collection-card-rarity" style="background:${card.color}"></div>
       `;
-      cardDiv.title = `${card.name} - ${card.rarity}`;
+      cardDiv.title = `${card.name} — ${card.rarity}`;
     } else {
-      /* Carte vide */
+      /* Carte non obtenue */
       cardDiv.classList.add('empty');
-      cardDiv.innerHTML = '?';
+      cardDiv.innerHTML = '<span style="font-size:1.4rem;opacity:.3">?</span>';
     }
     
     grid.appendChild(cardDiv);
@@ -729,7 +736,7 @@ function startChestAnimation(){
             /* Config de la card */
             document.getElementById('cardBg').style.background = item.bgGrad;
             document.getElementById('cardRarityBadge').textContent = item.rarity;
-            document.getElementById('cardIcon').textContent = item.icon;
+            document.getElementById('cardIcon').innerHTML = `<img src="${item.img}" alt="${item.name}" style="width:clamp(80px,12vw,130px);height:clamp(80px,12vw,130px);object-fit:contain;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6));border-radius:12px;">`;
             document.getElementById('cardName').textContent = item.name;
             document.getElementById('cardDesc').textContent = item.desc;
 
@@ -920,55 +927,52 @@ import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/fireb
 const app = initializeApp({apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",authDomain:"bubble-game-fa894.firebaseapp.com",projectId:"bubble-game-fa894",storageBucket:"bubble-game-fa894.firebasestorage.app",messagingSenderId:"60256418096",appId:"1:60256418096:web:dbdc555819793d8c20f0f5"});
 const auth = getAuth(app);
 const db   = getFirestore(app);
-
 let _uid = null;
 
-/* Sauvegarde collection + historique dans Firestore */
 window._fbSaveGacha = async function(){
   if(!_uid) return;
   try {
-    await setDoc(doc(db, 'users', _uid), {
+    await setDoc(doc(db,'users',_uid), {
       gachaCollection: collection,
-      gachaHistory:    history.slice(0, 20),
-    }, { merge: true });
-  } catch(e) { console.warn('Firestore save error:', e); }
+      gachaHistory:    history.slice(0,20),
+    }, { merge:true });
+  } catch(e){ console.warn('Firestore save error:',e); }
 };
 
 onAuthStateChanged(auth, async user => {
-  if(!user){ window.location.href = './login.html'; return; }
+  if(!user){ window.location.href='./login.html'; return; }
   _uid = user.uid;
   try {
-    const snap = await getDoc(doc(db, 'users', user.uid));
+    const snap = await getDoc(doc(db,'users',user.uid));
     if(snap.exists()){
       const d = snap.data();
       const sub      = d.subscription || 'basic';
       const avatarId = d.avatarId     || 'bully_1';
       document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
-      /* Charge collection + historique depuis Firestore */
       collection = (d.gachaCollection || []).map(String);
       history    = d.gachaHistory || [];
       renderCollection();
       window.unlockChests(sub);
-      applyFrame(sub, getLevel(d.xp || 0, sub));
+      applyFrame(sub, getLevel(d.xp||0, sub));
     }
   } catch(e){ console.warn(e); }
 });
 
-function getLevel(xp, sub){
-  const cfg = {basic:{maxLevel:3,xpPerLevel:100},plus:{maxLevel:20,xpPerLevel:200},x:{maxLevel:20,xpPerLevel:300},max:{maxLevel:25,xpPerLevel:400}};
-  const c = cfg[sub] || cfg.basic;
-  return Math.min(Math.floor(xp / c.xpPerLevel) + 1, c.maxLevel);
+function getLevel(xp,sub){
+  const cfg={basic:{maxLevel:3,xpPerLevel:100},plus:{maxLevel:20,xpPerLevel:200},x:{maxLevel:20,xpPerLevel:300},max:{maxLevel:25,xpPerLevel:400}};
+  const c=cfg[sub]||cfg.basic;
+  return Math.min(Math.floor(xp/c.xpPerLevel)+1,c.maxLevel);
 }
 
-function applyFrame(sub, level){
+function applyFrame(sub,level){
   if(!document.getElementById('bubble-frame-css')){
-    const s = document.createElement('style'); s.id = 'bubble-frame-css';
-    s.textContent = `@keyframes frame-pulse-basic{0%,100%{box-shadow:0 0 8px rgba(91,200,255,.4),0 0 16px rgba(46,125,212,.2)}50%{box-shadow:0 0 18px rgba(91,200,255,.9),0 0 30px rgba(46,125,212,.5)}}@keyframes frame-pulse-plus{0%,100%{box-shadow:0 0 8px rgba(255,200,0,.5),0 0 16px rgba(230,168,0,.3)}50%{box-shadow:0 0 18px rgba(255,200,0,.95),0 0 32px rgba(230,168,0,.6)}}@keyframes frame-pulse-x{0%,100%{box-shadow:0 0 8px rgba(68,204,255,.5),0 0 16px rgba(0,153,221,.3)}50%{box-shadow:0 0 18px rgba(68,204,255,.95),0 0 32px rgba(0,153,221,.6)}}@keyframes frame-pulse-max{0%,100%{box-shadow:0 0 12px rgba(204,68,255,.6),0 0 24px rgba(136,0,204,.4)}50%{box-shadow:0 0 24px rgba(204,68,255,1),0 0 44px rgba(136,0,204,.7)}}`;
+    const s=document.createElement('style'); s.id='bubble-frame-css';
+    s.textContent=`@keyframes frame-pulse-basic{0%,100%{box-shadow:0 0 8px rgba(91,200,255,.4),0 0 16px rgba(46,125,212,.2)}50%{box-shadow:0 0 18px rgba(91,200,255,.9),0 0 30px rgba(46,125,212,.5)}}@keyframes frame-pulse-plus{0%,100%{box-shadow:0 0 8px rgba(255,200,0,.5),0 0 16px rgba(230,168,0,.3)}50%{box-shadow:0 0 18px rgba(255,200,0,.95),0 0 32px rgba(230,168,0,.6)}}@keyframes frame-pulse-x{0%,100%{box-shadow:0 0 8px rgba(68,204,255,.5),0 0 16px rgba(0,153,221,.3)}50%{box-shadow:0 0 18px rgba(68,204,255,.95),0 0 32px rgba(0,153,221,.6)}}@keyframes frame-pulse-max{0%,100%{box-shadow:0 0 12px rgba(204,68,255,.6),0 0 24px rgba(136,0,204,.4)}50%{box-shadow:0 0 24px rgba(204,68,255,1),0 0 44px rgba(136,0,204,.7)}}`;
     document.head.appendChild(s);
   }
-  const frames  = {basic:`frame-pulse-basic 2.5s ease-in-out infinite`,plus:`frame-pulse-plus 2.5s ease-in-out infinite`,x:`frame-pulse-x 2.5s ease-in-out infinite`,max:`frame-pulse-max 2.5s ease-in-out infinite`};
-  const borders = {basic:`3px solid rgba(91,200,255,${0.4+(level/3)*0.5})`,plus:`3px solid rgba(255,200,0,${0.4+(level/20)*0.6})`,x:`3px solid rgba(68,204,255,${0.4+(level/20)*0.6})`,max:`3px solid rgba(204,68,255,${0.5+(level/25)*0.5})`};
-  document.querySelectorAll('.profile-bubble').forEach(b => { b.style.border = borders[sub]||borders.basic; b.style.animation = frames[sub]||frames.basic; });
+  const frames={basic:`frame-pulse-basic 2.5s ease-in-out infinite`,plus:`frame-pulse-plus 2.5s ease-in-out infinite`,x:`frame-pulse-x 2.5s ease-in-out infinite`,max:`frame-pulse-max 2.5s ease-in-out infinite`};
+  const borders={basic:`3px solid rgba(91,200,255,${0.4+(level/3)*0.5})`,plus:`3px solid rgba(255,200,0,${0.4+(level/20)*0.6})`,x:`3px solid rgba(68,204,255,${0.4+(level/20)*0.6})`,max:`3px solid rgba(204,68,255,${0.5+(level/25)*0.5})`};
+  document.querySelectorAll('.profile-bubble').forEach(b=>{b.style.border=borders[sub]||borders.basic;b.style.animation=frames[sub]||frames.basic;});
 }
 </script>
 
