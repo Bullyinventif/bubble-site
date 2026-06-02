@@ -547,22 +547,33 @@ const SUB_ORDER = {basic:0,plus:1,x:2,max:3};
 
 let currentChestType = null;
 let isAnimating = false;
-let history = [];
-let collection = [];
+
+/* Rend les variables globales pour Firebase */
+window.history = [];
+window.collection = [];
+
+/* Alias locaux pour faciliter l'accès */
+let history = window.history;
+let collection = window.collection;
 
 /* ── Ajouter une carte à la collection ── */
 function addToCollection(cardId){
   const id = String(cardId);
-  if(!collection.includes(id)){
-    collection.push(id);
+  
+  /* Utilise la référence globale */
+  if(!window.collection) window.collection = [];
+  
+  if(!window.collection.includes(id)){
+    window.collection.push(id);
+    collection = window.collection; /* Met à jour l'alias local */
     
     /* Sauvegarde dans localStorage */
-    localStorage.setItem('bubble_gacha_collection', JSON.stringify(collection));
-    console.log('📚 Carte ajoutée à la collection:', id, '| Collection:', collection);
+    localStorage.setItem('bubble_gacha_collection', JSON.stringify(window.collection));
+    console.log('📚 Carte ajoutée à la collection:', id, '| Collection:', window.collection);
     
     renderCollection();
     
-    /* Sauvegarde dans Firestore (async, avec retry) */
+    /* Sauvegarde dans Firestore (async) */
     if(window._fbSaveGacha) {
       console.log('Tentative de sauvegarde Firestore...');
       window._fbSaveGacha().catch(err => {
@@ -586,7 +597,9 @@ function renderCollection(){
   
   grid.innerHTML = '';
   
-  const progress = collection.length;
+  /* Utilise les données globales */
+  const collData = window.collection || [];
+  const progress = collData.length;
   const total = CARD_POOL.length;
   if(title) {
     title.textContent = `📚 Ta Collection (${progress}/${total})`;
@@ -596,12 +609,12 @@ function renderCollection(){
     const cardDiv = document.createElement('div');
     cardDiv.className = 'collection-card';
     
-    if(collection.includes(String(card.id))) {
+    if(collData.includes(String(card.id))) {
       /* Carte obtenue */
       cardDiv.classList.add('obtained');
       cardDiv.style.background = card.bgGrad;
       cardDiv.innerHTML = `
-        <img src="${card.img}" alt="${card.name}" style="width:85%;height:85%;object-fit:contain;border-radius:8px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));">
+        <span style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));">${card.icon}</span>
         <div class="collection-card-rarity" style="background:${card.color}"></div>
       `;
       cardDiv.title = `${card.name} — ${card.rarity}`;
@@ -948,14 +961,23 @@ window._fbSaveGacha = async function(){
     console.warn('❌ Impossible de sauvegarder: _uid non défini. Utilisateur pas connecté?');
     return;
   }
+  
   try {
+    /* Récupère les données globales */
+    const collectionData = window.collection || [];
+    const historyData = window.history || [];
+    
+    /* Filtre les valeurs undefined */
+    const cleanCollection = collectionData.filter(c => c !== undefined && c !== null);
+    const cleanHistory = historyData.filter(h => h !== undefined && h !== null).slice(0, 20);
+    
     console.log('💾 Sauvegarde Firestore pour UID:', _uid);
-    console.log('   - Collection:', collection);
-    console.log('   - Histoire:', history.slice(0,5));
+    console.log('   - Collection:', cleanCollection);
+    console.log('   - Histoire (count):', cleanHistory.length);
     
     await setDoc(doc(db,'users',_uid), {
-      gachaCollection: collection,
-      gachaHistory:    history.slice(0,20),
+      gachaCollection: cleanCollection,
+      gachaHistory: cleanHistory,
     }, { merge:true });
     
     console.log('✅ Sauvegarde Firestore réussie!');
@@ -978,17 +1000,25 @@ onAuthStateChanged(auth, async user => {
       
       document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
       
-      /* Charge la collection depuis Firestore */
-      collection = (d.gachaCollection || []).map(String);
-      history    = d.gachaHistory || [];
+      /* Charge la collection depuis Firestore (mise à jour globale) */
+      window.collection = (d.gachaCollection || []).map(String);
+      window.history = d.gachaHistory || [];
       
-      console.log('📚 Collection chargée de Firestore:', collection);
+      /* Met à jour les alias locaux */
+      collection = window.collection;
+      history = window.history;
+      
+      console.log('📚 Collection chargée de Firestore:', window.collection);
       
       renderCollection();
       window.unlockChests(sub);
       applyFrame(sub, getLevel(d.xp||0, sub));
     } else {
       console.log('✨ Nouvel utilisateur (pas de données Firestore encore)');
+      window.collection = [];
+      window.history = [];
+      collection = window.collection;
+      history = window.history;
     }
   } catch(e){ console.error('Erreur chargement Firestore:', e); }
 });
