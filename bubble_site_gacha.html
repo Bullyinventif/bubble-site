@@ -552,10 +552,6 @@ let isAnimating = false;
 window.history = [];
 window.collection = [];
 
-/* Alias locaux pour faciliter l'accès */
-let history = window.history;
-let collection = window.collection;
-
 /* ── Ajouter une carte à la collection ── */
 function addToCollection(cardId){
   const id = String(cardId);
@@ -591,7 +587,7 @@ function renderCollection(){
   const title = document.querySelector('.collection-title');
   
   if(!grid) {
-    console.warn('Grid de collection non trouvée');
+    console.warn('⚠️ Grid de collection non trouvée');
     return;
   }
   
@@ -605,6 +601,8 @@ function renderCollection(){
     title.textContent = `📚 Ta Collection (${progress}/${total})`;
   }
   
+  console.log('🎨 Rendu collection avec', collData.length, 'cartes sur', total);
+  
   CARD_POOL.forEach(card => {
     const cardDiv = document.createElement('div');
     cardDiv.className = 'collection-card';
@@ -613,10 +611,19 @@ function renderCollection(){
       /* Carte obtenue */
       cardDiv.classList.add('obtained');
       cardDiv.style.background = card.bgGrad;
-      cardDiv.innerHTML = `
-        <span style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));">${card.icon}</span>
-        <div class="collection-card-rarity" style="background:${card.color}"></div>
-      `;
+      
+      /* Affiche l'image si elle existe, sinon l'icône */
+      if(card.img) {
+        cardDiv.innerHTML = `
+          <img src="${card.img}" alt="${card.name}" style="width:85%;height:85%;object-fit:contain;border-radius:8px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));">
+          <div class="collection-card-rarity" style="background:${card.color}"></div>
+        `;
+      } else if(card.icon) {
+        cardDiv.innerHTML = `
+          <span style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));">${card.icon}</span>
+          <div class="collection-card-rarity" style="background:${card.color}"></div>
+        `;
+      }
       cardDiv.title = `${card.name} — ${card.rarity}`;
     } else {
       /* Carte non obtenue */
@@ -912,8 +919,16 @@ function addToHistory(item, chestType){
     color:item.color, chest:chestType,
     time: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
   };
-  history.unshift(entry);
-  if(history.length>20) history.pop();
+  
+  /* Utilise la variable globale */
+  if(!window.history) window.history = [];
+  window.history.unshift(entry);
+  if(window.history.length>20) window.history.pop();
+  
+  /* Sauvegarde locale */
+  localStorage.setItem('bubble_gacha_history', JSON.stringify(window.history));
+  
+  /* Ajoute à la collection */
   addToCollection(item.id);
 }
 
@@ -998,27 +1013,26 @@ onAuthStateChanged(auth, async user => {
       const sub      = d.subscription || 'basic';
       const avatarId = d.avatarId     || 'bully_1';
       
+      console.log('📋 Données utilisateur:', {sub, avatarId, gachaCollectionCount: (d.gachaCollection||[]).length});
+      
       document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
       
       /* Charge la collection depuis Firestore (mise à jour globale) */
       window.collection = (d.gachaCollection || []).map(String);
       window.history = d.gachaHistory || [];
       
-      /* Met à jour les alias locaux */
-      collection = window.collection;
-      history = window.history;
-      
-      console.log('📚 Collection chargée de Firestore:', window.collection);
+      console.log('📚 Collection chargée:', window.collection);
+      console.log('💼 Abonnement chargé:', sub);
       
       renderCollection();
-      window.unlockChests(sub);
+      unlockChests(sub);
       applyFrame(sub, getLevel(d.xp||0, sub));
     } else {
       console.log('✨ Nouvel utilisateur (pas de données Firestore encore)');
       window.collection = [];
       window.history = [];
-      collection = window.collection;
-      history = window.history;
+      renderCollection();
+      unlockChests('basic');
     }
   } catch(e){ console.error('Erreur chargement Firestore:', e); }
 });
