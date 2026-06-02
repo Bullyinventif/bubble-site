@@ -555,8 +555,22 @@ function addToCollection(cardId){
   const id = String(cardId);
   if(!collection.includes(id)){
     collection.push(id);
+    
+    /* Sauvegarde dans localStorage */
+    localStorage.setItem('bubble_gacha_collection', JSON.stringify(collection));
+    console.log('📚 Carte ajoutée à la collection:', id, '| Collection:', collection);
+    
     renderCollection();
-    if(window._fbSaveGacha) window._fbSaveGacha();
+    
+    /* Sauvegarde dans Firestore (async, avec retry) */
+    if(window._fbSaveGacha) {
+      console.log('Tentative de sauvegarde Firestore...');
+      window._fbSaveGacha().catch(err => {
+        console.error('Erreur Firestore:', err);
+      });
+    } else {
+      console.log('⚠️ _fbSaveGacha pas encore disponible');
+    }
   }
 }
 
@@ -930,32 +944,53 @@ const db   = getFirestore(app);
 let _uid = null;
 
 window._fbSaveGacha = async function(){
-  if(!_uid) return;
+  if(!_uid) {
+    console.warn('❌ Impossible de sauvegarder: _uid non défini. Utilisateur pas connecté?');
+    return;
+  }
   try {
+    console.log('💾 Sauvegarde Firestore pour UID:', _uid);
+    console.log('   - Collection:', collection);
+    console.log('   - Histoire:', history.slice(0,5));
+    
     await setDoc(doc(db,'users',_uid), {
       gachaCollection: collection,
       gachaHistory:    history.slice(0,20),
     }, { merge:true });
-  } catch(e){ console.warn('Firestore save error:',e); }
+    
+    console.log('✅ Sauvegarde Firestore réussie!');
+  } catch(e){ 
+    console.error('❌ Erreur Firestore:', e);
+  }
 };
 
 onAuthStateChanged(auth, async user => {
   if(!user){ window.location.href='./login.html'; return; }
   _uid = user.uid;
+  console.log('👤 Utilisateur connecté:', _uid);
+  
   try {
     const snap = await getDoc(doc(db,'users',user.uid));
     if(snap.exists()){
       const d = snap.data();
       const sub      = d.subscription || 'basic';
       const avatarId = d.avatarId     || 'bully_1';
+      
       document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
+      
+      /* Charge la collection depuis Firestore */
       collection = (d.gachaCollection || []).map(String);
       history    = d.gachaHistory || [];
+      
+      console.log('📚 Collection chargée de Firestore:', collection);
+      
       renderCollection();
       window.unlockChests(sub);
       applyFrame(sub, getLevel(d.xp||0, sub));
+    } else {
+      console.log('✨ Nouvel utilisateur (pas de données Firestore encore)');
     }
-  } catch(e){ console.warn(e); }
+  } catch(e){ console.error('Erreur chargement Firestore:', e); }
 });
 
 function getLevel(xp,sub){
