@@ -561,7 +561,6 @@ function addToCollection(cardId){
   
   if(!window.collection.includes(id)){
     window.collection.push(id);
-    collection = window.collection; /* Met à jour l'alias local */
     
     /* Sauvegarde dans localStorage */
     localStorage.setItem('bubble_gacha_collection', JSON.stringify(window.collection));
@@ -571,9 +570,9 @@ function addToCollection(cardId){
     
     /* Sauvegarde dans Firestore (async) */
     if(window._fbSaveGacha) {
-      console.log('Tentative de sauvegarde Firestore...');
+      console.log('💾 Sauvegarde Firestore...');
       window._fbSaveGacha().catch(err => {
-        console.error('Erreur Firestore:', err);
+        console.error('❌ Erreur Firestore:', err);
       });
     } else {
       console.log('⚠️ _fbSaveGacha pas encore disponible');
@@ -986,6 +985,34 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 let _uid = null;
 
+/* Initialise UNIQUEMENT les données gacha (coffres et cartes) */
+window._fbInitUser = async function(uid){
+  try {
+    const snap = await getDoc(doc(db, 'users', uid));
+    if(!snap.exists()){
+      console.log('📝 Création des données gacha...');
+      await setDoc(doc(db, 'users', uid), {
+        gachaCollection: [],
+        gachaHistory: []
+      });
+      console.log('✅ Données gacha créées!');
+    } else {
+      /* Vérifie que les champs gacha existent */
+      const data = snap.data();
+      const updates = {};
+      if(!Array.isArray(data.gachaCollection)) updates.gachaCollection = [];
+      if(!Array.isArray(data.gachaHistory)) updates.gachaHistory = [];
+      
+      if(Object.keys(updates).length > 0){
+        console.log('🔧 Réparation des données gacha:', Object.keys(updates));
+        await setDoc(doc(db, 'users', uid), updates, { merge: true });
+      }
+    }
+  } catch(e){
+    console.error('❌ Erreur initialisation:', e);
+  }
+};
+
 window._fbSaveGacha = async function(){
   if(!_uid) {
     console.warn('❌ Impossible de sauvegarder: _uid non défini. Utilisateur pas connecté?');
@@ -997,9 +1024,24 @@ window._fbSaveGacha = async function(){
     const collectionData = window.collection || [];
     const historyData = window.gachaHistory || [];
     
-    /* Filtre les valeurs undefined */
-    const cleanCollection = collectionData.filter(c => c !== undefined && c !== null);
-    const cleanHistory = historyData.filter(h => h !== undefined && h !== null).slice(0, 20);
+    /* Filtre les valeurs undefined/null */
+    const cleanCollection = collectionData
+      .filter(c => c !== undefined && c !== null)
+      .map(c => String(c));
+    
+    const cleanHistory = historyData
+      .filter(h => h !== undefined && h !== null)
+      .map(h => {
+        /* Supprime les propriétés undefined de chaque objet */
+        const cleaned = {};
+        for(const key in h) {
+          if(h[key] !== undefined && h[key] !== null) {
+            cleaned[key] = h[key];
+          }
+        }
+        return cleaned;
+      })
+      .slice(0, 20);
     
     console.log('💾 Sauvegarde Firestore pour UID:', _uid);
     console.log('   - Collection:', cleanCollection);
@@ -1022,6 +1064,9 @@ onAuthStateChanged(auth, async user => {
   console.log('👤 Utilisateur connecté:', _uid);
   
   try {
+    /* Initialise le document s'il manque des champs */
+    await window._fbInitUser(_uid);
+    
     const snap = await getDoc(doc(db,'users',user.uid));
     if(snap.exists()){
       const d = snap.data();
