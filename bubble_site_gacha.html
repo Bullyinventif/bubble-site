@@ -549,7 +549,7 @@ let currentChestType = null;
 let isAnimating = false;
 
 /* Rend les variables globales pour Firebase */
-window.history = [];
+window.gachaHistory = [];
 window.collection = [];
 
 /* ── Ajouter une carte à la collection ── */
@@ -587,7 +587,8 @@ function renderCollection(){
   const title = document.querySelector('.collection-title');
   
   if(!grid) {
-    console.warn('⚠️ Grid de collection non trouvée');
+    console.error('❌ ERREUR: Grid de collection non trouvée! Cherche #collectionGrid');
+    console.log('   DOM actuel:', document.body.innerHTML.slice(0, 500));
     return;
   }
   
@@ -597,11 +598,13 @@ function renderCollection(){
   const collData = window.collection || [];
   const progress = collData.length;
   const total = CARD_POOL.length;
+  
+  console.log(`🎨 Rendu collection: ${progress}/${total} cartes`);
+  console.log('   Cartes obtenues:', collData);
+  
   if(title) {
     title.textContent = `📚 Ta Collection (${progress}/${total})`;
   }
-  
-  console.log('🎨 Rendu collection avec', collData.length, 'cartes sur', total);
   
   CARD_POOL.forEach(card => {
     const cardDiv = document.createElement('div');
@@ -654,15 +657,27 @@ function getRandomCard(chestType){
 /* ── Débloque les coffres selon l'abo ── */
 function unlockChests(sub){
   const lvl = SUB_ORDER[sub]||0;
+  console.log('🔓 Déverrouillage des coffres - Niveau abonnement:', sub, '(', lvl, ')');
+  
   ['standard','stellaire','mega'].forEach((type,i)=>{
     const required = i===0?1:i===1?2:3;
     const card = document.getElementById('card-'+type);
     const btn = document.getElementById('btn-'+type);
-    if(lvl>=required){
-      card.classList.remove('locked-card');
-      btn.disabled = false;
-      const labels = ['✨ Ouvrir !','❄️ Ouvrir !','👑 Ouvrir !'];
-      btn.textContent = labels[i];
+    
+    console.log(`  ${type}: requis=${required}, lvl=${lvl}, trouvé=${!!card && !!btn}`);
+    
+    if(card && btn) {
+      if(lvl>=required){
+        card.classList.remove('locked-card');
+        btn.disabled = false;
+        const labels = ['✨ Ouvrir !','❄️ Ouvrir !','👑 Ouvrir !'];
+        btn.textContent = labels[i];
+        console.log(`    ✅ ${type} déverrouillé!`);
+      } else {
+        console.log(`    🔒 ${type} verrouillé (lvl ${lvl} < ${required})`);
+      }
+    } else {
+      console.warn(`    ⚠️ Éléments non trouvés pour ${type}`);
     }
   });
 }
@@ -921,12 +936,12 @@ function addToHistory(item, chestType){
   };
   
   /* Utilise la variable globale */
-  if(!window.history) window.history = [];
-  window.history.unshift(entry);
-  if(window.history.length>20) window.history.pop();
+  if(!window.gachaHistory) window.gachaHistory = [];
+  window.gachaHistory.unshift(entry);
+  if(window.gachaHistory.length>20) window.gachaHistory.pop();
   
   /* Sauvegarde locale */
-  localStorage.setItem('bubble_gacha_history', JSON.stringify(window.history));
+  localStorage.setItem('bubble_gacha_history', JSON.stringify(window.gachaHistory));
   
   /* Ajoute à la collection */
   addToCollection(item.id);
@@ -980,7 +995,7 @@ window._fbSaveGacha = async function(){
   try {
     /* Récupère les données globales */
     const collectionData = window.collection || [];
-    const historyData = window.history || [];
+    const historyData = window.gachaHistory || [];
     
     /* Filtre les valeurs undefined */
     const cleanCollection = collectionData.filter(c => c !== undefined && c !== null);
@@ -1019,20 +1034,26 @@ onAuthStateChanged(auth, async user => {
       
       /* Charge la collection depuis Firestore (mise à jour globale) */
       window.collection = (d.gachaCollection || []).map(String);
-      window.history = d.gachaHistory || [];
+      window.gachaHistory = d.gachaHistory || [];
       
       console.log('📚 Collection chargée:', window.collection);
       console.log('💼 Abonnement chargé:', sub);
       
-      renderCollection();
-      unlockChests(sub);
-      applyFrame(sub, getLevel(d.xp||0, sub));
+      /* Attend que le DOM soit prêt */
+      setTimeout(() => {
+        renderCollection();
+        unlockChests(sub);
+        applyFrame(sub, getLevel(d.xp||0, sub));
+      }, 100);
     } else {
       console.log('✨ Nouvel utilisateur (pas de données Firestore encore)');
       window.collection = [];
-      window.history = [];
-      renderCollection();
-      unlockChests('basic');
+      window.gachaHistory = [];
+      
+      setTimeout(() => {
+        renderCollection();
+        unlockChests('basic');
+      }, 100);
     }
   } catch(e){ console.error('Erreur chargement Firestore:', e); }
 });
