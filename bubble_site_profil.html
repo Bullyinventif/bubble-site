@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<script src="bubble_effects.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:linear-gradient(160deg,#5bc8ff 0%,#2e7dd4 35%,#1a3a8c 65%,#2d0a6e 100%); min-height:100vh; font-family:'Baloo 2',cursive; color:white; overflow-x:hidden; }
@@ -26,11 +27,9 @@
   .nav-btn.purple{background:linear-gradient(180deg,#a855f7,#7c3aed);}
   .nav-profile{margin-left:6px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;transition:transform .2s;}
   .nav-profile:hover{transform:scale(1.05);}
-  .profile-bubble{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .profile-bubble{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
   .profile-bubble img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
   .profile-bubble-icon{font-size:1.3rem;}
-  .profile-name-nav{font-size:.72rem;font-weight:800;color:white;text-align:center;margin-top:3px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .profile-sub-nav{font-size:.6rem;color:rgba(255,255,255,.65);font-family:'Press Start 2P',monospace;}
   main{position:relative;z-index:1;padding:90px 16px 60px;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px;}
   .page-title{font-family:'Permanent Marker',cursive;font-size:2rem;text-align:center;text-shadow:2px 3px 0 rgba(0,0,60,.3);margin-bottom:4px;animation:fadeUp .5s ease both;}
   .card{background:rgba(255,255,255,.12);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:22px 24px;box-shadow:0 8px 30px rgba(0,0,60,.25);animation:fadeUp .5s ease both;}
@@ -40,7 +39,7 @@
   .card-title{font-family:'Press Start 2P',monospace;font-size:.62rem;font-weight:800;}
   .avatar-section{display:flex;align-items:center;gap:20px;}
   .big-avatar-wrap{position:relative;flex-shrink:0;}
-  .big-avatar{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:3px solid rgba(255,255,255,.5);box-shadow:0 0 25px rgba(100,160,255,.4);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;transition:transform .2s;}
+  .big-avatar{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:3px solid rgba(255,255,255,.5);box-shadow:0 0 25px rgba(100,160,255,.4);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;transition:transform .2s;position:relative;}
   .big-avatar:hover{transform:scale(1.05);}
   .big-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
   .edit-badge{position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:#ffcc00;border:2px solid rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3);}
@@ -74,7 +73,7 @@
   .picker{background:linear-gradient(160deg,#0e2260,#1a0a45);border:1.5px solid rgba(255,255,255,.18);border-radius:24px;width:min(720px,96vw);max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.7);animation:popIn .3s cubic-bezier(.34,1.56,.64,1);}
   @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
   .picker-top{display:flex;align-items:center;gap:20px;padding:22px 26px 18px;border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;}
-  .preview-bubble{width:84px;height:84px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:3px solid rgba(255,255,255,.5);box-shadow:0 0 24px rgba(100,160,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all .25s;}
+  .preview-bubble{width:84px;height:84px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:3px solid rgba(255,255,255,.5);box-shadow:0 0 24px rgba(100,160,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all .25s;position:relative;}
   .preview-bubble img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
   .picker-top-info{flex:1;}
   .picker-top-info h2{font-family:'Press Start 2P',monospace;font-size:.72rem;margin-bottom:8px;letter-spacing:1px;}
@@ -85,9 +84,14 @@
   .btn-picker.confirm:hover{filter:brightness(1.1);transform:translateY(-1px);}
   .btn-picker.cancel{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);border:1.5px solid rgba(255,255,255,.2);}
   .btn-picker.cancel:hover{background:rgba(255,255,255,.18);}
-  .picker-body{overflow-y:auto;padding:20px 26px 28px;flex:1;}
-  .picker-body::-webkit-scrollbar{width:5px;}
-  .picker-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px;}
+  /* Tabs picker */
+  .picker-tabs{display:flex;gap:6px;padding:12px 26px 0;flex-shrink:0;}
+  .picker-tab{padding:7px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);font-family:'Baloo 2',cursive;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;}
+  .picker-tab.active{background:rgba(255,255,255,.18);color:white;border-color:rgba(255,255,255,.4);}
+  .picker-panel{display:none;overflow-y:auto;padding:18px 26px 28px;flex:1;}
+  .picker-panel.active{display:block;}
+  .picker-panel::-webkit-scrollbar{width:5px;}
+  .picker-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px;}
   .cat-title{font-family:'Press Start 2P',monospace;font-size:.58rem;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin:20px 0 12px;}
   .cat-title:first-child{margin-top:0;}
   .icons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:14px;}
@@ -102,33 +106,22 @@
   .icon-name{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .icon-item.selected .icon-name{color:rgba(255,200,0,.9);}
   .lock-badge{font-size:.42rem;font-family:'Press Start 2P',monospace;padding:2px 6px;border-radius:8px;margin-top:-2px;background:rgba(255,200,0,.15);border:1px solid rgba(255,200,0,.35);color:#ffe866;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-  footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255,255,255,.25);font-size:.6rem;border-top:1px solid rgba(255,255,255,.08);font-family:'Press Start 2P',monospace;letter-spacing:1px;}
-
-  /* ── MOBILE MENU ── */
-  .nav-logo{cursor:pointer;transition:transform .2s;-webkit-tap-highlight-color:transparent;}
-  .nav-logo:hover{transform:scale(1.08);}
-  .mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;background:rgba(8,22,80,.97);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);flex-direction:column;gap:12px;padding:20px 18px 24px;z-index:998;border-bottom:1px solid rgba(255,255,255,.15);box-shadow:0 12px 40px rgba(0,0,0,.5);}
-  .mobile-menu.open{display:flex;animation:slideDown .22s ease;}
-  @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-  .mobile-menu .nav-btn{width:100%;height:54px;font-size:1.05rem;border-radius:16px;flex:none;}
-  .menu-overlay{display:none;position:fixed;inset:58px 0 0 0;z-index:997;}
-  .menu-overlay.open{display:block;}
-
-  @media(max-width:600px){
-    .nav-links{display:none;}
-    .nav-profile{margin-left:auto;}
-    .profile-bubble{width:38px!important;height:38px!important;}
-    .profile-bubble-icon{font-size:1.3rem!important;}
-    .profile-name-nav{font-size:.62rem;max-width:70px;}
-    .profile-sub-nav{font-size:.5rem;}
-    main{padding:72px 12px 50px;}
-    .picker-top{flex-wrap:wrap;gap:12px;padding:16px;}
-    .picker-actions{width:100%;justify-content:flex-end;}
-    .icons-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr));}
-  }
-
-  /* ── SYSTÈME DE NIVEAUX ── */
+  /* Effets grid */
+  .effects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px;margin-top:8px;}
+  .effect-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:12px 8px;border-radius:14px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);transition:all .2s;}
+  .effect-item:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);transform:translateY(-2px);}
+  .effect-item.selected{border-color:#ffcc00;background:rgba(255,200,0,.12);box-shadow:0 0 16px rgba(255,200,0,.3);}
+  .effect-item.locked{opacity:.4;cursor:not-allowed;}
+  .effect-item.locked:hover{transform:none;background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);}
+  .effect-preview{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:2px solid rgba(255,255,255,.3);position:relative;overflow:visible;display:flex;align-items:center;justify-content:center;}
+  .effect-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+  .effect-name{font-size:.62rem;font-weight:800;text-align:center;color:rgba(255,255,255,.7);}
+  .effect-item.selected .effect-name{color:#ffcc00;}
+  .effect-none-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:12px 8px;border-radius:14px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);transition:all .2s;}
+  .effect-none-item:hover{background:rgba(255,255,255,.12);}
+  .effect-none-item.selected{border-color:#ffcc00;background:rgba(255,200,0,.12);}
+  .effect-lock-hint{font-size:.5rem;font-family:'Press Start 2P',monospace;color:rgba(255,200,0,.5);text-align:center;margin-top:2px;}
+  /* Niveau */
   .level-section{margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);}
   .level-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
   .level-title{font-family:'Press Start 2P',monospace;font-size:.58rem;color:rgba(255,255,255,.45);letter-spacing:1px;}
@@ -138,9 +131,6 @@
   .lvl-symbol{font-size:1rem;transition:all .2s;line-height:1;}
   .lvl-symbol.inactive{opacity:.18;filter:grayscale(1);}
   .lvl-symbol.active{filter:drop-shadow(0 0 4px rgba(255,255,255,.5));}
-  .lvl-symbol.plus{color:#ffcc00;filter:drop-shadow(0 0 5px rgba(255,200,0,.8));font-style:normal;font-size:.9rem;}
-  .lvl-symbol.x-sym{color:#44ccff;filter:drop-shadow(0 0 5px rgba(68,204,255,.8));font-size:.9rem;}
-  .lvl-symbol.max-sym{filter:drop-shadow(0 0 6px rgba(204,68,255,.9));font-size:1rem;}
   .xp-bar-wrap{height:8px;background:rgba(255,255,255,.1);border-radius:20px;overflow:hidden;margin-bottom:6px;}
   .xp-bar-fill{height:100%;border-radius:20px;transition:width .6s cubic-bezier(.34,1.56,.64,1);}
   .xp-bar-fill.basic{background:linear-gradient(90deg,#5bc8ff,#2e7dd4);}
@@ -150,67 +140,28 @@
   .xp-info{display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.4);}
   .xp-info span{font-weight:700;color:rgba(255,255,255,.65);}
   .level-max-badge{font-family:'Press Start 2P',monospace;font-size:.48rem;padding:4px 10px;border-radius:20px;background:rgba(255,215,0,.2);border:1px solid rgba(255,215,0,.4);color:#ffd700;margin-top:6px;display:inline-block;}
-
-
-  /* ── MISSIONS ── */
-  .missions-card { margin-top:0; }
-  .mission-tabs { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
-  .mission-tab {
-    padding:7px 14px; border-radius:20px; border:1.5px solid rgba(255,255,255,.15);
-    background:rgba(255,255,255,.07); color:rgba(255,255,255,.5);
-    font-family:'Baloo 2',cursive; font-size:.82rem; font-weight:800;
-    cursor:pointer; transition:all .2s; -webkit-tap-highlight-color:transparent;
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255,255,255,.25);font-size:.6rem;border-top:1px solid rgba(255,255,255,.08);font-family:'Press Start 2P',monospace;letter-spacing:1px;}
+  .nav-logo{cursor:pointer;transition:transform .2s;}
+  .nav-logo:hover{transform:scale(1.08);}
+  .mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;background:rgba(8,22,80,.97);backdrop-filter:blur(22px);flex-direction:column;gap:12px;padding:20px 18px 24px;z-index:998;border-bottom:1px solid rgba(255,255,255,.15);box-shadow:0 12px 40px rgba(0,0,0,.5);}
+  .mobile-menu.open{display:flex;animation:slideDown .22s ease;}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+  .mobile-menu .nav-btn{width:100%;height:54px;font-size:1.05rem;border-radius:16px;flex:none;}
+  .menu-overlay{display:none;position:fixed;inset:58px 0 0 0;z-index:997;}
+  .menu-overlay.open{display:block;}
+  @media(max-width:600px){
+    .nav-links{display:none;}
+    .nav-profile{margin-left:auto;}
+    main{padding:72px 12px 50px;}
+    .picker-top{flex-wrap:wrap;gap:12px;padding:16px;}
+    .picker-actions{width:100%;justify-content:flex-end;}
+    .icons-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr));}
+    .effects-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr));}
   }
-  .mission-tab.active { background:rgba(255,255,255,.18); color:white; border-color:rgba(255,255,255,.4); }
-  .mission-panel { display:none; flex-direction:column; gap:10px; }
-  .mission-panel.active { display:flex; }
-  .mission-item {
-    display:flex; align-items:center; gap:12px;
-    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
-    border-radius:14px; padding:12px 14px;
-    transition:all .2s;
-  }
-  .mission-item.done { opacity:.55; }
-  .mission-item.done .mission-name { text-decoration:line-through; }
-  .mission-icon { font-size:1.4rem; flex-shrink:0; }
-  .mission-info { flex:1; }
-  .mission-name { font-size:.88rem; font-weight:800; line-height:1.2; }
-  .mission-desc { font-size:.72rem; color:rgba(255,255,255,.45); margin-top:2px; }
-  .mission-xp {
-    font-family:'Press Start 2P',monospace; font-size:.55rem;
-    padding:4px 10px; border-radius:20px; flex-shrink:0;
-    background:rgba(255,255,255,.1); color:rgba(255,255,255,.6);
-    white-space:nowrap;
-  }
-  .mission-xp.earned { background:rgba(68,217,102,.2); color:#44d966; }
-  .mission-check {
-    width:24px; height:24px; border-radius:50%; flex-shrink:0;
-    border:2px solid rgba(255,255,255,.25);
-    display:flex; align-items:center; justify-content:center;
-    font-size:.9rem;
-  }
-  .mission-check.done { background:#44d966; border-color:#44d966; }
-  .mission-progress-wrap { height:4px; background:rgba(255,255,255,.1); border-radius:20px; margin-top:6px; }
-  .mission-progress-fill { height:100%; border-radius:20px; background:linear-gradient(90deg,#44d966,#1faa44); transition:width .4s; }
-  .mission-count { font-size:.68rem; color:rgba(255,255,255,.4); margin-top:3px; }
-  .mission-google-btn {
-    width:100%; padding:11px; border-radius:14px;
-    background:white; color:#333; border:none;
-    font-family:'Baloo 2',cursive; font-size:.95rem; font-weight:800;
-    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
-    transition:all .2s; margin-top:4px;
-  }
-  .mission-google-btn:hover { filter:brightness(.95); transform:scale(1.01); }
-  .mission-google-btn.done { background:rgba(68,217,102,.15); color:#44d966; border:1.5px solid rgba(68,217,102,.4); cursor:default; }
-
 </style>
 </head>
 <body>
-
-<audio autoplay loop>
-  <source src="#" type="audio/mp3">
-</audio>
-
 
 <div class="bubble-bg" id="bubbleBg"></div>
 
@@ -221,7 +172,7 @@
     <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
     <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
     <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-    <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Gacha (BETA)</a>
+    <a href="bubble_site_gacha.html" class="nav-btn purple">🎁 Coffres</a>
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
     <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🧙</span></div>
@@ -233,9 +184,12 @@
   <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
   <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
   <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-  <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Gacha (BETA)</a>
+  <a href="bubble_site_gacha.html" class="nav-btn purple">🎁 Coffres</a>
+  <a href="install_APK.html" class="nav-btn gray">Installer l'app 📲</a>
 </div>
 <div class="menu-overlay" id="menuOverlay"></div>
+
+<main>
   <div class="page-title">✦ Mon Profil ✦</div>
 
   <div class="card">
@@ -246,12 +200,10 @@
         <div class="edit-badge" onclick="openPicker()">✏️</div>
       </div>
       <div class="avatar-info">
-        <p>Choisis ton icône parmi le catalogue Bubble inc. 🫧<br>Certaines icônes sont réservées aux abonnés.</p>
-        <button class="btn-change-avatar" onclick="openPicker()">🎭 Changer d'icône</button>
+        <p>Choisis ton icône et ton effet parmi le catalogue Bubble inc. 🫧<br>Les effets se débloquent en ouvrant des coffres !</p>
+        <button class="btn-change-avatar" onclick="openPicker()">🎭 Personnaliser</button>
       </div>
     </div>
-
-    <!-- 🌟 SECTION NIVEAU -->
     <div class="level-section">
       <div class="level-header">
         <span class="level-title">Niveau</span>
@@ -307,181 +259,31 @@
     <div class="card-header"><span class="card-icon">🚪</span><span class="card-title">Session</span></div>
     <button class="btn-logout" onclick="handleLogout()">🚪 Se déconnecter</button>
   </div>
-
-  <!-- 🎯 MISSIONS -->
-  <div class="card missions-card">
-    <div class="card-header"><span class="card-icon">🎯</span><span class="card-title">Missions</span></div>
-
-    <div class="mission-tabs">
-      <button class="mission-tab active" onclick="switchMissionTab('general')">🌍 Général</button>
-      <button class="mission-tab" onclick="switchMissionTab('scans')">📜 Scans</button>
-      <button class="mission-tab" onclick="switchMissionTab('jeux')">🎮 Jeux Vidéos</button>
-      <button class="mission-tab" onclick="switchMissionTab('autres')">✨ Autres</button>
-    </div>
-
-    <!-- GÉNÉRAL -->
-    <div class="mission-panel active" id="panel-general">
-      <div class="mission-item" id="m-daily">
-        <div class="mission-check" id="chk-daily"></div>
-        <div class="mission-icon">📅</div>
-        <div class="mission-info">
-          <div class="mission-name">Connexion quotidienne</div>
-          <div class="mission-desc">Se connecter chaque jour</div>
-        </div>
-        <div class="mission-xp" id="xp-daily">+20 XP</div>
-      </div>
-      <div class="mission-item" id="m-pseudo">
-        <div class="mission-check" id="chk-pseudo"></div>
-        <div class="mission-icon">✍️</div>
-        <div class="mission-info">
-          <div class="mission-name">Personnalisation</div>
-          <div class="mission-desc">Modifier son pseudo</div>
-        </div>
-        <div class="mission-xp" id="xp-pseudo">+10 XP</div>
-      </div>
-      <div class="mission-item" id="m-avatar">
-        <div class="mission-check" id="chk-avatar"></div>
-        <div class="mission-icon">🎭</div>
-        <div class="mission-info">
-          <div class="mission-name">Style unique</div>
-          <div class="mission-desc">Changer son icône de profil</div>
-        </div>
-        <div class="mission-xp" id="xp-avatar">+10 XP</div>
-      </div>
-    </div>
-
-    <!-- SCANS -->
-    <div class="mission-panel" id="panel-scans">
-      <div class="mission-item" id="m-scan1">
-        <div class="mission-check" id="chk-scan1"></div>
-        <div class="mission-icon">📖</div>
-        <div class="mission-info">
-          <div class="mission-name">Premier scan !</div>
-          <div class="mission-desc">Lire un scan pour la 1ère fois</div>
-        </div>
-        <div class="mission-xp" id="xp-scan1">+50 XP</div>
-      </div>
-      <div class="mission-item" id="m-scan3">
-        <div class="mission-check" id="chk-scan3"></div>
-        <div class="mission-icon">📚</div>
-        <div class="mission-info">
-          <div class="mission-name">Lecteur assidu</div>
-          <div class="mission-desc">Lire 3 scans différents</div>
-          <div class="mission-progress-wrap"><div class="mission-progress-fill" id="prog-scan3" style="width:0%"></div></div>
-          <div class="mission-count" id="count-scan3">0 / 3</div>
-        </div>
-        <div class="mission-xp" id="xp-scan3">+100 XP</div>
-      </div>
-      <div class="mission-item" id="m-scanall">
-        <div class="mission-check" id="chk-scanall"></div>
-        <div class="mission-icon">🏆</div>
-        <div class="mission-info">
-          <div class="mission-name">Collectionneur</div>
-          <div class="mission-desc">Lire tous les scans disponibles</div>
-          <div class="mission-progress-wrap"><div class="mission-progress-fill" id="prog-scanall" style="width:0%"></div></div>
-          <div class="mission-count" id="count-scanall">0 / ?</div>
-        </div>
-        <div class="mission-xp" id="xp-scanall">+300 XP</div>
-      </div>
-    </div>
-
-    <!-- JEUX VIDÉOS -->
-    <div class="mission-panel" id="panel-jeux">
-      <div class="mission-item" id="m-game1">
-        <div class="mission-check" id="chk-game1"></div>
-        <div class="mission-icon">🕹️</div>
-        <div class="mission-info">
-          <div class="mission-name">Premier lancement !</div>
-          <div class="mission-desc">Jouer à un jeu pour la 1ère fois</div>
-        </div>
-        <div class="mission-xp" id="xp-game1">+30 XP</div>
-      </div>
-      <div class="mission-item" id="m-gamedaily">
-        <div class="mission-check" id="chk-gamedaily"></div>
-        <div class="mission-icon">📅</div>
-        <div class="mission-info">
-          <div class="mission-name">Joueur du jour</div>
-          <div class="mission-desc">Jouer à un jeu aujourd'hui</div>
-        </div>
-        <div class="mission-xp" id="xp-gamedaily">+20 XP</div>
-      </div>
-      <div class="mission-item" id="m-gameall">
-        <div class="mission-check" id="chk-gameall"></div>
-        <div class="mission-icon">🎯</div>
-        <div class="mission-info">
-          <div class="mission-name">Explorateur</div>
-          <div class="mission-desc">Essayer tous les jeux Bubble</div>
-          <div class="mission-progress-wrap"><div class="mission-progress-fill" id="prog-gameall" style="width:0%"></div></div>
-          <div class="mission-count" id="count-gameall">0 / 3</div>
-        </div>
-        <div class="mission-xp" id="xp-gameall">+150 XP</div>
-      </div>
-      <div style="margin-top:6px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:12px;border:1px dashed rgba(255,255,255,.1);">
-        <div style="font-size:.72rem;color:rgba(255,255,255,.35);font-family:'Press Start 2P',monospace;letter-spacing:1px;margin-bottom:8px;">MISSIONS IN-GAME</div>
-        <div class="mission-item" id="m-ing1" style="background:transparent;border:none;padding:8px 0;">
-          <div class="mission-check" id="chk-ing1"></div>
-          <div class="mission-icon">🐟</div>
-          <div class="mission-info">
-            <div class="mission-name">Fishing Time — Pêcheur débutant</div>
-            <div class="mission-desc">Attraper ton premier poisson</div>
-          </div>
-          <div class="mission-xp" id="xp-ing1">+25 XP</div>
-        </div>
-        <div class="mission-item" id="m-ing2" style="background:transparent;border:none;padding:8px 0;">
-          <div class="mission-check" id="chk-ing2"></div>
-          <div class="mission-icon">⛏️</div>
-          <div class="mission-info">
-            <div class="mission-name">BubbleCraft — Premier bloc</div>
-            <div class="mission-desc">Miner ton premier bloc</div>
-          </div>
-          <div class="mission-xp" id="xp-ing2">+25 XP</div>
-        </div>
-        <div class="mission-item" id="m-ing3" style="background:transparent;border:none;padding:8px 0;">
-          <div class="mission-check" id="chk-ing3"></div>
-          <div class="mission-icon">🏃</div>
-          <div class="mission-info">
-            <div class="mission-name">Bully 2D — Premier saut</div>
-            <div class="mission-desc">Sauter pour la première fois</div>
-          </div>
-          <div class="mission-xp" id="xp-ing3">+25 XP</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- AUTRES -->
-    <div class="mission-panel" id="panel-autres">
-      <div class="mission-item" id="m-google">
-        <div class="mission-check" id="chk-google"></div>
-        <div class="mission-icon">🔗</div>
-        <div class="mission-info">
-          <div class="mission-name">Compte lié</div>
-          <div class="mission-desc">Associer son compte Google</div>
-        </div>
-        <div class="mission-xp" id="xp-google">+50 XP</div>
-      </div>
-      <button class="mission-google-btn" id="linkGoogleBtn" onclick="linkGoogle()">
-        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5.1l-6.2-5.2C29.3 35.2 26.8 36 24 36c-5.3 0-9.6-2.9-11.3-7H6.1C9.5 39.6 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.3-2.4 4.2-4.5 5.5l6.2 5.2C40.9 35.2 44 30 44 24c0-1.3-.1-2.7-.4-4z"/></svg>
-        Lier mon compte Google
-      </button>
-    </div>
-  </div>
-
 </main>
 
+<!-- PICKER -->
 <div class="overlay" id="overlay">
   <div class="picker">
     <div class="picker-top">
       <div class="preview-bubble" id="previewBubble"></div>
       <div class="picker-top-info">
-        <h2>Icône de profil</h2>
-        <p id="previewName">Sélectionne une icône</p>
+        <h2 id="pickerTitle">Personnalisation</h2>
+        <p id="previewName">Sélectionne une icône ou un effet</p>
       </div>
       <div class="picker-actions">
-        <button class="btn-picker confirm" onclick="confirmAvatar()">Enregistrer</button>
+        <button class="btn-picker confirm" onclick="confirmSelection()">Enregistrer</button>
         <button class="btn-picker cancel" onclick="closePicker()">Annuler</button>
       </div>
     </div>
-    <div class="picker-body" id="pickerBody"></div>
+    <!-- Tabs -->
+    <div class="picker-tabs">
+      <button class="picker-tab active" onclick="switchPickerTab('icons')">🎭 Icônes</button>
+      <button class="picker-tab" onclick="switchPickerTab('effects')">✨ Effets</button>
+    </div>
+    <!-- Panel icônes -->
+    <div class="picker-panel active" id="panel-icons"></div>
+    <!-- Panel effets -->
+    <div class="picker-panel" id="panel-effects"></div>
   </div>
 </div>
 
@@ -489,7 +291,6 @@
 <footer>© BUBBLE INC.</footer>
 
 <script>
-  /* ── Bubbles ── */
   const bg = document.getElementById('bubbleBg');
   for(let i=0;i<24;i++){
     const b=document.createElement('div'); b.className='bbl';
@@ -497,45 +298,46 @@
     b.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.25),hsla(${hue},80%,70%,${alpha}) 55%,transparent);border:1px solid hsla(${hue},70%,80%,.15);animation-duration:${10+Math.random()*18}s;animation-delay:${Math.random()*14}s;`;
     bg.appendChild(b);
   }
-
-  /* ── Menu mobile ── */
-  const toggle=document.getElementById('menuToggle');
-  const menu=document.getElementById('mobileMenu');
-  const overlay=document.getElementById('menuOverlay');
-  function openMenu(){menu.classList.add('open');overlay.classList.add('open');toggle.style.transform='scale(1.15) rotate(20deg)';}
-  function closeMenu(){menu.classList.remove('open');overlay.classList.remove('open');toggle.style.transform='';}
+  const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
+  function openMenu(){menu.classList.add('open');ov.classList.add('open');toggle.style.transform='scale(1.15) rotate(20deg)';}
+  function closeMenu(){menu.classList.remove('open');ov.classList.remove('open');toggle.style.transform='';}
   toggle.addEventListener('click',()=>menu.classList.contains('open')?closeMenu():openMenu());
-  overlay.addEventListener('click',closeMenu);
+  ov.addEventListener('click',closeMenu);
   window.addEventListener('resize',()=>{if(window.innerWidth>600)closeMenu();});
 
-  /* ── Wrappers appelés par les onclick HTML ── */
+  /* Wrappers onclick HTML */
   function openPicker()    { if(window._openPicker)    window._openPicker(); }
   function closePicker()   { if(window._closePicker)   window._closePicker(); }
-  function confirmAvatar() { if(window._confirmAvatar) window._confirmAvatar(); }
+  function confirmSelection(){ if(window._confirmSelection) window._confirmSelection(); }
   function savePseudo()    { if(window._savePseudo)    window._savePseudo(); }
   function savePassword()  { if(window._savePassword)  window._savePassword(); }
   function handleLogout()  { if(window._handleLogout)  window._handleLogout(); }
+
+  function switchPickerTab(tab){
+    document.querySelectorAll('.picker-tab').forEach((t,i)=>t.classList.toggle('active',['icons','effects'][i]===tab));
+    document.querySelectorAll('.picker-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+tab).classList.add('active');
+  }
 </script>
 
 <script type="module">
   import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut, updatePassword, updateProfile, EmailAuthProvider, reauthenticateWithCredential }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, increment }
+  import { getFirestore, doc, getDoc, setDoc }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const app  = initializeApp({
-    apiKey:            "AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
-    authDomain:        "bubble-game-fa894.firebaseapp.com",
-    projectId:         "bubble-game-fa894",
-    storageBucket:     "bubble-game-fa894.firebasestorage.app",
-    messagingSenderId: "60256418096",
-    appId:             "1:60256418096:web:dbdc555819793d8c20f0f5"
+  const app = initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
   });
   const auth = getAuth(app);
   const db   = getFirestore(app);
 
-  /* ── Catalogue ── */
   const CATALOGUE = {
     "Classique": [
       {id:"bully_1",           file:"bully_1.png",           name:"Bully",           sub:"basic"},
@@ -548,7 +350,7 @@
     "Pixel": [
       {id:"bully_pixel_1",     file:"bully_pixel_1.png",     name:"Bully Pixel",     sub:"plus"},
       {id:"plant_pixel_1",     file:"plant_pixel_1.png",     name:"Plant",           sub:"plus"},
-      {id:"rock_pixel_1",      file:"rock_pixel_1.png",      name:"Roche",            sub:"plus"},
+      {id:"rock_pixel_1",      file:"rock_pixel_1.png",      name:"Roche",           sub:"plus"},
       {id:"star_pixel_1",      file:"star_pixel_1.png",      name:"Étoile",          sub:"plus"},
       {id:"snowflake_pixel_1", file:"snowflake_pixel_1.png", name:"Flocon",          sub:"plus"},
       {id:"sun_pixel_1",       file:"sun_pixel_1.png",       name:"Soleil",          sub:"plus"},
@@ -562,413 +364,290 @@
       {id:"rocky_game_it_1",   file:"rocky_game_it_1.png",   name:"Rocky Game IT",   sub:"x"},
     ],
     "Rigolo": [
-      {id:"bully_funny_1",     file:"bully_funny_1.png",     name:"Bully Rigolo",    sub:"plus"},
-      {id:"anthony_funny_1",   file:"anthony_funny_1.png",   name:"Anthony Rigolo",  sub:"plus"},
-      {id:"luna_funny_1",      file:"luna_funny_1.png",      name:"Luna Rigolo",     sub:"plus"},
-      {id:"frosty_funny_1",    file:"frosty_funny_1.png",    name:"Frosty Rigolo",   sub:"plus"},
-      {id:"zippy_funny_1",     file:"zippy_funny_1.png",     name:"Zippy Rigolo",    sub:"plus"},
-      {id:"rocky_funny_1",     file:"rocky_funny_1.png",     name:"Rocky Rigolo",    sub:"plus"},
+      {id:"bully_funny_1",   file:"bully_funny_1.png",   name:"Bully Rigolo",   sub:"plus"},
+      {id:"anthony_funny_1", file:"anthony_funny_1.png", name:"Anthony Rigolo", sub:"plus"},
+      {id:"luna_funny_1",    file:"luna_funny_1.png",    name:"Luna Rigolo",    sub:"plus"},
+      {id:"frosty_funny_1",  file:"frosty_funny_1.png",  name:"Frosty Rigolo",  sub:"plus"},
+      {id:"zippy_funny_1",   file:"zippy_funny_1.png",   name:"Zippy Rigolo",   sub:"plus"},
+      {id:"rocky_funny_1",   file:"rocky_funny_1.png",   name:"Rocky Rigolo",   sub:"plus"},
     ],
     "Enquete a la fete foraine": [
-      {id:"bully_ff_1",     file:"bully_ff_1.png",     name:"Bully Enquéteur",    sub:"plus"},
-      {id:"bulle_ff_1",     file:"bulle_ff_1.png",     name:"Bulle Enquéteuse",    sub:"plus"},
-      {id:"loop_ff_1",     file:"loop_ff_1.png",     name:"Une loupe",    sub:"plus"},
+      {id:"bully_ff_1",  file:"bully_ff_1.png",  name:"Bully Enquéteur",  sub:"plus"},
+      {id:"bulle_ff_1",  file:"bulle_ff_1.png",  name:"Bulle Enquéteuse", sub:"plus"},
+      {id:"loop_ff_1",   file:"loop_ff_1.png",   name:"Une loupe",        sub:"plus"},
     ],
-
   };
 
-  const SUB_ORDER  = {basic:0, plus:1, x:2, max:3};
-  const SUB_LABELS = {basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
-  const SUB_DESCS  = {basic:"Accès gratuit", plus:"Abonné Bubble+", x:"Abonné Bubble X", max:"Abonné Bubble MAX"};
+  /* Les effets disponibles — doivent correspondre aux types dans bubble_effects.js */
+  const ALL_EFFECTS = [
+    {type:"bubbles",   label:"✦ Bulles",          color:"#5bc8ff",  cardId:3},
+    {type:"snow",      label:"❄️ Neige",            color:"#aaeeff",  cardId:4},
+    {type:"sparkles",  label:"✨ Étincelles",       color:"#ffe066",  cardId:5},
+    {type:"fire",      label:"🔥 Flammes",          color:"#ff6622",  cardId:6},
+    {type:"leaves",    label:"🍃 Feuilles",         color:"#44cc66",  cardId:7},
+    {type:"lightning", label:"⚡ Éclairs",          color:"#ffe844",  cardId:8},
+    {type:"aura",      label:"🌀 Aura Violette",    color:"#cc44ff",  cardId:9},
+    {type:"aurora",    label:"🌈 Aurore",           color:"#00ffcc",  cardId:10},
+    {type:"portal",    label:"🌀 Portail Cosmique", color:"#FFD700",  cardId:11},
+  ];
+
+  const SUB_ORDER  = {basic:0,plus:1,x:2,max:3};
+  const SUB_LABELS = {basic:"BASIC",plus:"BUBBLE+",x:"BUBBLE X",max:"BUBBLE MAX"};
+  const SUB_DESCS  = {basic:"Accès gratuit",plus:"Abonné Bubble+",x:"Abonné Bubble X",max:"Abonné Bubble MAX"};
+  const LEVEL_CONFIG = {
+    basic:{maxLevel:3,xpPerLevel:100},
+    plus:{maxLevel:20,xpPerLevel:200},
+    x:{maxLevel:20,xpPerLevel:300},
+    max:{maxLevel:25,xpPerLevel:400},
+  };
 
   let currentUser  = null;
   let userSubLevel = "basic";
   let selectedIcon = null;
-  let activeIconId = "bully_1";
+  let selectedEffect = null; /* null = pas de changement, "none" = retirer l'effet */
+  let activeIconId   = "bully_1";
+  let activeEffect   = null;
+  let unlockedEffects = [];
 
   /* ── Helpers ── */
-  function toast(msg, err=false){
+  function toast(msg,err=false){
     const t=document.getElementById('toast');
-    t.textContent=msg; t.className='toast'+(err?' err':'')+' show';
+    t.textContent=msg;t.className='toast'+(err?' err':'')+' show';
     setTimeout(()=>t.classList.remove('show'),3200);
   }
-  function canUse(sub){ return SUB_ORDER[userSubLevel] >= SUB_ORDER[sub]; }
-  function findIcon(id){
-    for(const cat of Object.values(CATALOGUE)) for(const ic of cat) if(ic.id===id) return ic;
-    return null;
-  }
-  function setAvatarUI(file, name){
-    document.getElementById('bigAvatar').innerHTML  = `<img src="${file}" alt="${name}">`;
-    document.getElementById('navAvatar').innerHTML  = `<img src="${file}" alt="${name}">`;
+  function canUse(sub){return SUB_ORDER[userSubLevel]>=SUB_ORDER[sub];}
+  function findIcon(id){for(const cat of Object.values(CATALOGUE))for(const ic of cat)if(ic.id===id)return ic;return null;}
+
+  function setAvatarUI(file,name){
+    const html=`<img src="${file}" alt="${name}">`;
+    document.getElementById('bigAvatar').innerHTML=html;
+    document.getElementById('navAvatar').innerHTML=html;
   }
   function setSubUI(level){
-    const lbl  = SUB_LABELS[level] || 'BASIC';
-    const desc = SUB_DESCS[level]  || 'Accès gratuit';
-    document.getElementById('navSub').textContent   = lbl;
-    document.getElementById('subName').textContent  = lbl;
-    document.getElementById('subDesc').textContent  = desc;
-    document.getElementById('subBadge').textContent = lbl;
-    document.getElementById('subBadge').className   = 'sub-badge '+(level||'basic');
+    const lbl=SUB_LABELS[level]||'BASIC';
+    document.getElementById('subName').textContent=lbl;
+    document.getElementById('subDesc').textContent=SUB_DESCS[level]||'Accès gratuit';
+    document.getElementById('subBadge').textContent=lbl;
+    document.getElementById('subBadge').className='sub-badge '+(level||'basic');
+  }
+
+  function getLevel(xp,sub){
+    const cfg=LEVEL_CONFIG[sub]||LEVEL_CONFIG.basic;
+    const level=Math.min(Math.floor(xp/cfg.xpPerLevel)+1,cfg.maxLevel);
+    const curXP=(level-1)*cfg.xpPerLevel;
+    const nxtXP=level<cfg.maxLevel?level*cfg.xpPerLevel:curXP+cfg.xpPerLevel;
+    const prog=((xp-curXP)/(nxtXP-curXP))*100;
+    return{level,progress:Math.min(prog,100),xpNeeded:Math.max(nxtXP-xp,0),cfg,isMax:level>=cfg.maxLevel};
+  }
+
+  function renderLevelUI(xp,sub){
+    const{level,progress,xpNeeded,cfg,isMax}=getLevel(xp,sub);
+    document.getElementById('levelNum').innerHTML=`${level} <span>/ ${cfg.maxLevel}</span>`;
+    const symEl=document.getElementById('levelSymbols');
+    let html='';
+    if(sub==='basic'){for(let i=1;i<=cfg.maxLevel;i++)html+=`<span class="lvl-symbol ${i<=level?'active':'inactive'}">🫧</span>`;}
+    else if(sub==='plus'){for(let i=1;i<=Math.min(level,cfg.maxLevel);i++)html+=`<span class="lvl-symbol active" style="color:#ffcc00">✦</span>`;}
+    else if(sub==='x'){for(let i=1;i<=Math.min(level,cfg.maxLevel);i++)html+=`<span class="lvl-symbol active" style="color:#44ccff">✕</span>`;}
+    else if(sub==='max'){for(let i=1;i<=Math.min(level,cfg.maxLevel);i++)html+=`<span class="lvl-symbol active" style="filter:drop-shadow(0 0 6px rgba(204,68,255,.9))">🫧</span>`;}
+    symEl.innerHTML=html;
+    const bar=document.getElementById('xpBarFill');
+    bar.className=`xp-bar-fill ${sub}`;
+    bar.style.width=progress+'%';
+    document.getElementById('xpCurrent').textContent=xp+' XP';
+    document.getElementById('xpNext').textContent=isMax?'🏆 Niveau max atteint !':xpNeeded+' XP pour le niveau suivant';
+    document.getElementById('levelMaxBadge').style.display=isMax?'inline-block':'none';
   }
 
   /* ── Auth ── */
-  /* ── CONFIG NIVEAUX ── */
-  const LEVEL_CONFIG = {
-    basic: { maxLevel:3,  xpPerLevel:100, symbol:'🫧', colors:['#5bc8ff','#2e7dd4'] },
-    plus:  { maxLevel:20, xpPerLevel:200, symbol:'✦',  colors:['#ffcc00','#e6a800'] },
-    x:     { maxLevel:20, xpPerLevel:300, symbol:'✕',  colors:['#44ccff','#0099dd'] },
-    max:   { maxLevel:25, xpPerLevel:400, symbol:'🫧',  colors:['#cc44ff','#8800cc'] },
-  };
-
-  function getLevel(xp, sub) {
-    const cfg = LEVEL_CONFIG[sub] || LEVEL_CONFIG.basic;
-    const level = Math.min(Math.floor(xp / cfg.xpPerLevel) + 1, cfg.maxLevel);
-    const curXP  = (level - 1) * cfg.xpPerLevel;
-    const nxtXP  = level < cfg.maxLevel ? level * cfg.xpPerLevel : curXP + cfg.xpPerLevel;
-    const prog   = ((xp - curXP) / (nxtXP - curXP)) * 100;
-    return { level, progress: Math.min(prog, 100), xpNeeded: Math.max(nxtXP - xp, 0), cfg, isMax: level >= cfg.maxLevel };
-  }
-
-  function renderLevelUI(xp, sub) {
-    const { level, progress, xpNeeded, cfg, isMax } = getLevel(xp, sub);
-
-    /* Numéro de niveau */
-    document.getElementById('levelNum').innerHTML = `${level} <span>/ ${cfg.maxLevel}</span>`;
-
-    /* Symboles */
-    const symEl = document.getElementById('levelSymbols');
-    let html = '';
-    if (sub === 'basic') {
-      for (let i = 1; i <= cfg.maxLevel; i++)
-        html += `<span class="lvl-symbol ${i <= level ? 'active' : 'inactive'}">🫧</span>`;
-    } else if (sub === 'plus') {
-      for (let i = 1; i <= Math.min(level, cfg.maxLevel); i++)
-        html += `<span class="lvl-symbol active plus">✦</span>`;
-    } else if (sub === 'x') {
-      for (let i = 1; i <= Math.min(level, cfg.maxLevel); i++)
-        html += `<span class="lvl-symbol active x-sym">✕</span>`;
-    } else if (sub === 'max') {
-      for (let i = 1; i <= Math.min(level, cfg.maxLevel); i++)
-        html += `<span class="lvl-symbol active max-sym">🫧</span>`;
-    }
-    symEl.innerHTML = html;
-
-    /* Barre XP */
-    const bar = document.getElementById('xpBarFill');
-    bar.className = `xp-bar-fill ${sub}`;
-    bar.style.width = progress + '%';
-    document.getElementById('xpCurrent').textContent = xp + ' XP';
-    document.getElementById('xpNext').textContent = isMax ? '🏆 Niveau max atteint !' : xpNeeded + ' XP pour le niveau suivant';
-    document.getElementById('levelMaxBadge').style.display = isMax ? 'inline-block' : 'none';
-
-    /* Cadre animé */
-    applyFrame(sub, level);
-  }
-
-  function applyFrame(sub, level) {
-    if (!document.getElementById('bubble-frame-css')) {
-      const s = document.createElement('style');
-      s.id = 'bubble-frame-css';
-      s.textContent = `
-        @keyframes frame-pulse-basic{0%,100%{box-shadow:0 0 8px rgba(91,200,255,.4),0 0 16px rgba(46,125,212,.2)}50%{box-shadow:0 0 18px rgba(91,200,255,.9),0 0 30px rgba(46,125,212,.5)}}
-        @keyframes frame-pulse-plus{0%,100%{box-shadow:0 0 8px rgba(255,200,0,.5),0 0 16px rgba(230,168,0,.3)}50%{box-shadow:0 0 18px rgba(255,200,0,.95),0 0 32px rgba(230,168,0,.6)}}
-        @keyframes frame-shimmer-plus{0%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}33%{box-shadow:0 0 22px rgba(255,230,0,1),0 0 44px rgba(255,200,0,.7);border-color:rgba(255,240,100,1)}66%{box-shadow:0 0 14px rgba(255,180,0,.8),0 0 28px rgba(200,140,0,.5);border-color:rgba(255,180,0,.9)}100%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}}
-        @keyframes frame-pulse-x{0%,100%{box-shadow:0 0 8px rgba(68,204,255,.5),0 0 16px rgba(0,153,221,.3)}50%{box-shadow:0 0 18px rgba(68,204,255,.95),0 0 32px rgba(0,153,221,.6)}}
-        @keyframes frame-shimmer-x{0%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}33%{box-shadow:0 0 24px rgba(100,230,255,1),0 0 48px rgba(68,204,255,.7);border-color:rgba(150,240,255,1)}66%{box-shadow:0 0 14px rgba(0,180,255,.8),0 0 28px rgba(0,120,200,.5);border-color:rgba(0,200,255,.9)}100%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}}
-        @keyframes frame-pulse-max{0%,100%{box-shadow:0 0 12px rgba(204,68,255,.6),0 0 24px rgba(136,0,204,.4)}50%{box-shadow:0 0 24px rgba(204,68,255,1),0 0 44px rgba(136,0,204,.7)}}
-        @keyframes frame-shimmer-max{0%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6),0 0 48px rgba(180,80,255,.3);border-color:rgba(220,100,255,.95)}25%{box-shadow:0 0 26px rgba(255,100,255,1),0 0 52px rgba(180,0,255,.8),0 0 68px rgba(220,80,255,.4);border-color:rgba(255,150,255,1)}50%{box-shadow:0 0 20px rgba(180,0,255,.9),0 0 40px rgba(100,0,200,.7),0 0 56px rgba(150,0,220,.3);border-color:rgba(200,80,255,.95)}75%{box-shadow:0 0 30px rgba(255,80,220,1),0 0 60px rgba(200,0,255,.8),0 0 76px rgba(255,100,255,.4);border-color:rgba(255,120,240,1)}100%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6),0 0 48px rgba(180,80,255,.3);border-color:rgba(220,100,255,.95)}}
-      `;
-      document.head.appendChild(s);
-    }
-    const frames = {
-      basic: `frame-pulse-basic 2.5s ease-in-out infinite`,
-      plus:  level >= 10 ? `frame-shimmer-plus 2s linear infinite` : `frame-pulse-plus 2.5s ease-in-out infinite`,
-      x:     level >= 10 ? `frame-shimmer-x 2s linear infinite`    : `frame-pulse-x 2.5s ease-in-out infinite`,
-      max:   level >= 15 ? `frame-shimmer-max 2s linear infinite`   : `frame-pulse-max 2.5s ease-in-out infinite`,
-    };
-    const borders = {
-      basic: `3px solid rgba(91,200,255,${0.4 + (level/3)*0.5})`,
-      plus:  `3px solid rgba(255,200,0,${0.4 + (level/20)*0.6})`,
-      x:     `3px solid rgba(68,204,255,${0.4 + (level/20)*0.6})`,
-      max:   `3px solid rgba(204,68,255,${0.5 + (level/25)*0.5})`,
-    };
-    document.querySelectorAll('.profile-bubble, .big-avatar').forEach(b => {
-      b.style.border    = borders[sub] || borders.basic;
-      b.style.animation = frames[sub]  || frames.basic;
-    });
-  }
-
-  onAuthStateChanged(auth, async user => {
-    if(!user){ window.location.href='./login.html'; return; }
-    currentUser = user;
-
-    const pseudo = user.displayName || user.email.split('@')[0];
-    document.getElementById('pseudoInput').value = pseudo;
-
-    /* Lecture Firestore */
-    try {
-      const snap = await getDoc(doc(db, 'users', user.uid));
+  onAuthStateChanged(auth,async user=>{
+    if(!user){window.location.href='./login.html';return;}
+    currentUser=user;
+    document.getElementById('pseudoInput').value=user.displayName||user.email.split('@')[0];
+    try{
+      const snap=await getDoc(doc(db,'users',user.uid));
       if(snap.exists()){
-        const d = snap.data();
-        userSubLevel = d.subscription || 'basic';
-        activeIconId = d.avatarId     || 'bully_1';
-        const xp     = d.xp           || 0;
-        renderLevelUI(xp, userSubLevel);
-        renderMissions(d);
-        await checkDailyLogin(db, currentUser.uid, d);
-      } else {
-        await setDoc(doc(db,'users',user.uid), { subscription:'basic', avatarId:'bully_1', pseudo, xp:0 });
-        userSubLevel = 'basic';
-        activeIconId = 'bully_1';
-        renderLevelUI(0, 'basic');
+        const d=snap.data();
+        userSubLevel=d.subscription||'basic';
+        activeIconId=d.avatarId||'bully_1';
+        activeEffect=d.activeEffect||null;
+        unlockedEffects=(d.gachaEffects||[]);
+        const xp=d.xp||0;
+        renderLevelUI(xp,userSubLevel);
+      }else{
+        await setDoc(doc(db,'users',user.uid),{subscription:'basic',avatarId:'bully_1',pseudo:user.displayName||'Joueur',xp:0},{merge:true});
+        userSubLevel='basic'; activeIconId='bully_1'; activeEffect=null; unlockedEffects=[];
+        renderLevelUI(0,'basic');
       }
-    } catch(e) {
-      toast('⚠️ Connexion Firestore échouée : '+e.message, true);
-      userSubLevel = 'basic';
-      activeIconId = 'bully_1';
-      renderLevelUI(0, 'basic');
-    }
-
+    }catch(e){toast('⚠️ '+e.message,true);}
     setSubUI(userSubLevel);
-    const ic = findIcon(activeIconId);
-    if(ic) setAvatarUI(ic.file, ic.name);
-    else   setAvatarUI('bully_1.png','Bully');
+    const ic=findIcon(activeIconId);
+    if(ic) setAvatarUI(ic.file,ic.name);
+    /* Applique l'effet actif */
+    if(window.applyAvatarEffect) window.applyAvatarEffect(activeEffect);
   });
 
   /* ── Picker ── */
-  window._openPicker = function(){
-    selectedIcon = findIcon(activeIconId) || Object.values(CATALOGUE)[0][0];
-    buildPicker();
-    updatePreview(selectedIcon);
+  window._openPicker=function(){
+    selectedIcon=findIcon(activeIconId)||Object.values(CATALOGUE)[0][0];
+    selectedEffect=activeEffect;
+    buildIconsPanel();
+    buildEffectsPanel();
+    updatePreview(selectedIcon,selectedEffect);
     document.getElementById('overlay').classList.add('open');
   };
-
-  window._closePicker = function(){
+  window._closePicker=function(){
     document.getElementById('overlay').classList.remove('open');
+    /* Annule la preview d'effet */
+    if(window.applyAvatarEffect) window.applyAvatarEffect(activeEffect);
   };
 
-  function buildPicker(){
-    const body = document.getElementById('pickerBody');
-    body.innerHTML = '';
-    for(const [catName, icons] of Object.entries(CATALOGUE)){
-      const t = document.createElement('div');
-      t.className = 'cat-title'; t.textContent = catName;
-      body.appendChild(t);
-      const grid = document.createElement('div');
-      grid.className = 'icons-grid';
+  function buildIconsPanel(){
+    const body=document.getElementById('panel-icons');
+    body.innerHTML='';
+    for(const[catName,icons]of Object.entries(CATALOGUE)){
+      const t=document.createElement('div');t.className='cat-title';t.textContent=catName;body.appendChild(t);
+      const grid=document.createElement('div');grid.className='icons-grid';
       for(const icon of icons){
-        const locked = !canUse(icon.sub);
-        const item = document.createElement('div');
-        item.className = 'icon-item'+(locked?' locked':'')+(icon.id===selectedIcon?.id?' selected':'');
-        const bubble = document.createElement('div');
-        bubble.className = 'icon-bubble';
-        bubble.innerHTML = `<img src="${icon.file}" alt="${icon.name}">`;
-        if(locked) bubble.innerHTML += `<div class="lock-overlay">🔒</div>`;
-        const name = document.createElement('div');
-        name.className = 'icon-name'; name.textContent = icon.name;
-        item.appendChild(bubble); item.appendChild(name);
-        if(locked){
-          const badge = document.createElement('div');
-          badge.className = 'lock-badge';
-          badge.textContent = SUB_LABELS[icon.sub];
-          item.appendChild(badge);
-        } else {
-          item.addEventListener('click', ()=>{
-            selectedIcon = icon; updatePreview(icon);
-            body.querySelectorAll('.icon-item').forEach(el=>el.classList.remove('selected'));
-            item.classList.add('selected');
-          });
-        }
+        const locked=!canUse(icon.sub);
+        const item=document.createElement('div');
+        item.className='icon-item'+(locked?' locked':'')+(icon.id===selectedIcon?.id?' selected':'');
+        const bubble=document.createElement('div');bubble.className='icon-bubble';
+        bubble.innerHTML=`<img src="${icon.file}" alt="${icon.name}">`;
+        if(locked) bubble.innerHTML+=`<div class="lock-overlay">🔒</div>`;
+        const name=document.createElement('div');name.className='icon-name';name.textContent=icon.name;
+        item.appendChild(bubble);item.appendChild(name);
+        if(locked){const badge=document.createElement('div');badge.className='lock-badge';badge.textContent=SUB_LABELS[icon.sub];item.appendChild(badge);}
+        else{item.addEventListener('click',()=>{selectedIcon=icon;updatePreview(icon,selectedEffect);body.querySelectorAll('.icon-item').forEach(el=>el.classList.remove('selected'));item.classList.add('selected');});}
         grid.appendChild(item);
       }
       body.appendChild(grid);
     }
   }
 
-  function updatePreview(icon){
-    document.getElementById('previewBubble').innerHTML = `<img src="${icon.file}" alt="${icon.name}">`;
-    document.getElementById('previewName').textContent = icon.name;
+  function buildEffectsPanel(){
+    const body=document.getElementById('panel-effects');
+    body.innerHTML='';
+    const t=document.createElement('div');t.className='cat-title';t.textContent='Effets débloqués via les coffres';body.appendChild(t);
+    const grid=document.createElement('div');grid.className='effects-grid';
+
+    /* Option "Aucun effet" */
+    const noneItem=document.createElement('div');
+    noneItem.className='effect-none-item'+(selectedEffect===null|selectedEffect==='none'?' selected':'');
+    noneItem.innerHTML=`<div class="effect-preview" style="font-size:1.6rem">🚫</div><div class="effect-name" style="color:rgba(255,255,255,.5)">Aucun</div>`;
+    noneItem.addEventListener('click',()=>{
+      selectedEffect='none';
+      updatePreview(selectedIcon,null);
+      grid.querySelectorAll('.effect-item,.effect-none-item').forEach(el=>el.classList.remove('selected'));
+      noneItem.classList.add('selected');
+    });
+    grid.appendChild(noneItem);
+
+    /* Effets disponibles */
+    ALL_EFFECTS.forEach(eff=>{
+      const unlocked=unlockedEffects.includes(eff.type);
+      const item=document.createElement('div');
+      item.className='effect-item'+(unlocked?'':' locked')+(selectedEffect===eff.type?' selected':'');
+
+      const preview=document.createElement('div');preview.className='effect-preview';
+      const ic=findIcon(activeIconId)||{file:'bully_1.png',name:'Bully'};
+      preview.innerHTML=`<img src="${ic.file}" alt="${ic.name}">`;
+
+      const name=document.createElement('div');name.className='effect-name';
+      name.textContent=eff.label;
+      name.style.color=unlocked?eff.color:'rgba(255,255,255,.3)';
+
+      item.appendChild(preview);item.appendChild(name);
+
+      if(!unlocked){
+        const hint=document.createElement('div');hint.className='effect-lock-hint';hint.textContent='Coffre 🎁';item.appendChild(hint);
+      }else{
+        item.addEventListener('click',()=>{
+          selectedEffect=eff.type;
+          updatePreview(selectedIcon,eff.type);
+          grid.querySelectorAll('.effect-item,.effect-none-item').forEach(el=>el.classList.remove('selected'));
+          item.classList.add('selected');
+        });
+      }
+      grid.appendChild(item);
+    });
+    body.appendChild(grid);
   }
 
-  window._confirmAvatar = async function(){
-    if(!selectedIcon || !currentUser) return;
-    try {
-      await setDoc(doc(db,'users',currentUser.uid), {avatarId: selectedIcon.id}, {merge:true});
-      activeIconId = selectedIcon.id;
-      setAvatarUI(selectedIcon.file, selectedIcon.name);
+  function updatePreview(icon,effectType){
+    const pb=document.getElementById('previewBubble');
+    pb.innerHTML=icon?`<img src="${icon.file}" alt="${icon.name}">`:'';
+    document.getElementById('previewName').textContent=icon?icon.name:'Sélectionne une icône';
+    /* Preview de l'effet sur la bulle de prévisualisation */
+    if(window.applyAvatarEffect) window.applyAvatarEffect(effectType||null);
+  }
+
+  /* ── Sauvegarde icône + effet ── */
+  window._confirmSelection=async function(){
+    if(!currentUser) return;
+    const updates={};
+    if(selectedIcon) updates.avatarId=selectedIcon.id;
+    if(selectedEffect!==null){
+      updates.activeEffect = selectedEffect==='none'?null:selectedEffect;
+    }
+    try{
+      await setDoc(doc(db,'users',currentUser.uid),updates,{merge:true});
+      if(selectedIcon){activeIconId=selectedIcon.id;setAvatarUI(selectedIcon.file,selectedIcon.name);}
+      if(selectedEffect!==null){activeEffect=selectedEffect==='none'?null:selectedEffect;}
+      if(window.applyAvatarEffect) window.applyAvatarEffect(activeEffect);
       window._closePicker();
-      toast('✅ Icône mise à jour !');
-    } catch(e){ toast('❌ '+e.message, true); }
+      toast('✅ Profil mis à jour !');
+    }catch(e){toast('❌ '+e.message,true);}
   };
 
   /* ── Pseudo ── */
-  window._savePseudo = async function(){
-    const p = document.getElementById('pseudoInput').value.trim();
-    if(!p){ toast('⚠️ Entre un pseudo !', true); return; }
-    try {
-      await updateProfile(currentUser, {displayName: p});
-      await setDoc(doc(db,'users',currentUser.uid), {pseudo: p}, {merge:true});
-      document.getElementById('navName').textContent = p;
+  window._savePseudo=async function(){
+    const p=document.getElementById('pseudoInput').value.trim();
+    if(!p){toast('⚠️ Entre un pseudo !',true);return;}
+    try{
+      await updateProfile(currentUser,{displayName:p});
+      await setDoc(doc(db,'users',currentUser.uid),{pseudo:p},{merge:true});
       toast('✅ Pseudo mis à jour !');
-    } catch(e){ toast('❌ '+e.message, true); }
+    }catch(e){toast('❌ '+e.message,true);}
   };
 
   /* ── Mot de passe ── */
-  window._savePassword = async function(){
-    const newPwd  = document.getElementById('newPwd').value;
-    const confirm = document.getElementById('confirmPwd').value;
-    if(!newPwd || !confirm){ toast('⚠️ Remplis les deux champs !', true); return; }
-    if(newPwd !== confirm)  { toast('❌ Les mots de passe ne correspondent pas !', true); return; }
-    if(newPwd.length < 6)   { toast('❌ Minimum 6 caractères !', true); return; }
-    try {
-      await updatePassword(currentUser, newPwd);
-      document.getElementById('newPwd').value = '';
-      document.getElementById('confirmPwd').value = '';
+  window._savePassword=async function(){
+    const newPwd=document.getElementById('newPwd').value;
+    const confirm=document.getElementById('confirmPwd').value;
+    if(!newPwd||!confirm){toast('⚠️ Remplis les deux champs !',true);return;}
+    if(newPwd!==confirm){toast('❌ Les mots de passe ne correspondent pas !',true);return;}
+    if(newPwd.length<6){toast('❌ Minimum 6 caractères !',true);return;}
+    try{
+      await updatePassword(currentUser,newPwd);
+      document.getElementById('newPwd').value='';
+      document.getElementById('confirmPwd').value='';
       toast('✅ Mot de passe changé !');
-    } catch(e){
-      if(e.code === 'auth/requires-recent-login'){
-        /* Re-authentification automatique */
-        const oldPwd = prompt('Entre ton mot de passe actuel pour confirmer :');
-        if(!oldPwd) return;
-        try {
-          const cred = EmailAuthProvider.credential(currentUser.email, oldPwd);
-          await reauthenticateWithCredential(currentUser, cred);
-          await updatePassword(currentUser, newPwd);
-          document.getElementById('newPwd').value = '';
-          document.getElementById('confirmPwd').value = '';
+    }catch(e){
+      if(e.code==='auth/requires-recent-login'){
+        const oldPwd=prompt('Entre ton mot de passe actuel pour confirmer :');
+        if(!oldPwd)return;
+        try{
+          const cred=EmailAuthProvider.credential(currentUser.email,oldPwd);
+          await reauthenticateWithCredential(currentUser,cred);
+          await updatePassword(currentUser,newPwd);
+          document.getElementById('newPwd').value='';
+          document.getElementById('confirmPwd').value='';
           toast('✅ Mot de passe changé !');
-        } catch(e2){ toast('❌ '+e2.message, true); }
-      } else {
-        toast('❌ '+e.message, true);
-      }
+        }catch(e2){toast('❌ '+e2.message,true);}
+      }else{toast('❌ '+e.message,true);}
     }
   };
 
   /* ── Déconnexion ── */
-  window._handleLogout = async function(){
+  window._handleLogout=async function(){
     await signOut(auth);
-    window.location.href = './login.html';
+    window.location.href='./login.html';
   };
 
-
-  /* ══════════════════════════
-     MISSIONS
-  ══════════════════════════ */
-  const TOTAL_SCANS = 3; // Met à jour quand tu ajoutes des scans
-  const TOTAL_GAMES = 3; // Fishing Time, BubbleCraft, Bully 2D
-
-  function switchMissionTab(tab) {
-    document.querySelectorAll('.mission-tab').forEach((t,i) => {
-      t.classList.toggle('active', ['general','scans','jeux','autres'][i] === tab);
-    });
-    document.querySelectorAll('.mission-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel-' + tab).classList.add('active');
-  }
-
-  function setCheck(id, done) {
-    const el = document.getElementById('chk-' + id);
-    const item = document.getElementById('m-' + id);
-    const xp = document.getElementById('xp-' + id);
-    if (!el) return;
-    el.textContent = done ? '✓' : '';
-    el.classList.toggle('done', done);
-    if (item) item.classList.toggle('done', done);
-    if (xp && done) xp.classList.add('earned');
-  }
-
-  function setProgress(id, val, max) {
-    const prog = document.getElementById('prog-' + id);
-    const count = document.getElementById('count-' + id);
-    if (prog) prog.style.width = Math.min(val/max*100, 100) + '%';
-    if (count) count.textContent = val + ' / ' + max;
-  }
-
-  function renderMissions(d) {
-    const missions = d.missions || {};
-    const scansRead = Object.keys(d.scansRead || {}).length;
-    const gamesPlayed = Object.keys(d.gamesPlayed || {}).length;
-    const today = new Date().toDateString();
-
-    // Général
-    setCheck('daily', missions.daily === today);
-    setCheck('pseudo', missions.pseudo);
-    setCheck('avatar', missions.avatar);
-
-    // Scans
-    setCheck('scan1', scansRead >= 1);
-    setCheck('scan3', scansRead >= 3);
-    setProgress('scan3', Math.min(scansRead, 3), 3);
-    setCheck('scanall', scansRead >= TOTAL_SCANS);
-    setProgress('scanall', Math.min(scansRead, TOTAL_SCANS), TOTAL_SCANS);
-
-    // Jeux
-    setCheck('game1', gamesPlayed >= 1);
-    setCheck('gamedaily', missions.gamedaily === today);
-    setCheck('gameall', gamesPlayed >= TOTAL_GAMES);
-    setProgress('gameall', Math.min(gamesPlayed, TOTAL_GAMES), TOTAL_GAMES);
-
-    // In-game
-    setCheck('ing1', missions.ing_fishing);
-    setCheck('ing2', missions.ing_bubblecraft);
-    setCheck('ing3', missions.ing_bully2d);
-
-    // Autres
-    const isLinked = currentUser && currentUser.providerData.some(p => p.providerId === 'google.com');
-    setCheck('google', isLinked);
-    const btn = document.getElementById('linkGoogleBtn');
-    if (btn && isLinked) {
-      btn.textContent = '✅ Compte Google lié !';
-      btn.className = 'mission-google-btn done';
-    }
-  }
-
-  /* ── Connexion quotidienne ── */
-  async function checkDailyLogin(db, userId, d) {
-    const today = new Date().toDateString();
-    if ((d.missions || {}).daily !== today) {
-      await setDoc(doc(db,'users',userId), {
-        missions: { daily: today },
-        xp: increment(20)
-      }, { merge: true });
-      showToastLevel('📅 +20 XP — Connexion du jour !');
-      return true;
-    }
-    return false;
-  }
-
-  /* ── Lier Google ── */
-  window.linkGoogle = async function() {
-    const { GoogleAuthProvider, linkWithPopup } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
-    try {
-      const provider = new GoogleAuthProvider();
-      await linkWithPopup(currentUser, provider);
-      await setDoc(doc(db,'users',currentUser.uid), { xp: increment(50), missions:{google:true} }, { merge: true });
-      toast('✅ Compte Google lié ! +50 XP 🎉');
-      document.getElementById('chk-google').textContent = '✓';
-      document.getElementById('chk-google').classList.add('done');
-      document.getElementById('m-google').classList.add('done');
-      const btn = document.getElementById('linkGoogleBtn');
-      btn.textContent = '✅ Compte Google lié !';
-      btn.className = 'mission-google-btn done';
-    } catch(e) {
-      if (e.code === 'auth/credential-already-in-use') toast('⚠️ Ce compte Google est déjà utilisé.', true);
-      else if (e.code !== 'auth/popup-closed-by-user') toast('❌ Erreur : ' + e.message, true);
-    }
-  };
-
-  function showToastLevel(msg) {
-    const t = document.getElementById('toast');
-    if (!t) return;
-    t.textContent = msg;
-    t.className = 'toast show';
-    setTimeout(() => t.classList.remove('show'), 3500);
-  }
-
-
-  /* ── Fermer le picker ── */
-  document.addEventListener('keydown', e=>{ if(e.key==='Escape') window._closePicker && window._closePicker(); });
-  document.getElementById('overlay').addEventListener('click', e=>{
-    if(e.target===document.getElementById('overlay')) window._closePicker && window._closePicker();
+  /* ── Fermer picker ── */
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')window._closePicker&&window._closePicker();});
+  document.getElementById('overlay').addEventListener('click',e=>{
+    if(e.target===document.getElementById('overlay'))window._closePicker&&window._closePicker();
   });
 </script>
 </body>

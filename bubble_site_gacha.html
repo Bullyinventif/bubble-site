@@ -465,6 +465,7 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
             <div class="card-item-icon" id="cardIcon">?</div>
             <div class="card-item-name" id="cardName">—</div>
             <div class="card-item-desc" id="cardDesc">—</div>
+          <div id="cardEffectBadge" style="display:none;font-family:'Press Start 2P',monospace;font-size:.45rem;padding:6px 14px;border-radius:20px;border:1px solid;margin-top:4px;text-align:center;letter-spacing:.5px;"></div>
           </div>
           <div class="card-shine" id="cardShine"></div>
         </div>
@@ -484,19 +485,26 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
    → Les chances varient selon la rareté et le type de coffre
 ══════════════════════════ */
 const CARD_POOL = [
-  /* ══ REMPLACE img:"cartes/xxx.png" par tes vraies images ══ */
-  {id:1, rarity:"Commun",     color:"#888780", bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", img:"cartes/apple_1.png", name:"Pomme Rouge",  desc:"Ce rouge si... appétissant..."},
-  {id:2, rarity:"Commun",     color:"#888780", bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", img:"cartes/apple_2.png", name:"Pomme Verte",  desc:"Cette couleur est si apaisante."},
-  {id:3, rarity:"Peu commun", color:"#22aa44", bgGrad:"linear-gradient(145deg,#0a3a1a,#052010)", img:"cartes/bomb.png", name:"Une Bombe",  desc:"Une bombe littéralement !"},
-  {id:4, rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", img:"cartes/bacon.png", name:"Plat de Bacon",  desc:"Mmmmm du bacon."},
-  {id:5, rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", img:"cartes/apple_pie.png", name:"Tarte à la Pomme",  desc:"Ca fait beaucoup de pommes !"},
-  {id:6, rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", img:"cartes/burger.png", name:"Burger",  desc:"Le roi du fast-food !"},
-  {id:7, rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", img:"cartes/cookie.png", name:"Cookies",  desc:"Le meilleur gouter pour tous !"},
-  {id:8, rarity:"Épique",     color:"#9944ee", bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", img:"cartes/sword.png", name:"Une Épée",  desc:"Idéal pour trancher des légumes..."},
-  {id:9, rarity:"Épique",     color:"#9944ee", bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", img:"cartes/dragon_sword.png", name:"L'Épée Dragon",  desc:"Elle referme le pouvoir draconique..."},
-  {id:10, rarity:"Super rare", color:"#ee4422", bgGrad:"linear-gradient(145deg,#4a0a08,#250404)", img:"cartes/emerald.png", name:"Emeraude",  desc:"Tres recherché par les vilagois, hawwww."},
-  {id:11,rarity:"Légendaire", color:"#FFD700", bgGrad:"linear-gradient(145deg,#4a3800,#2a1c00)", img:"cartes/star_collier.png",name:"Collier des étoiles", desc:"Ce collier est acompagné d'une forme avec 5 pointes..."},
+  /* ── COMMUN ── */
+  {id:1,  rarity:"Commun",     color:"#888780", bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", img:"cartes/apple_1.png",       name:"Pomme Rouge",        desc:"Ce rouge si... appétissant...",              effect:null},
+  {id:2,  rarity:"Commun",     color:"#888780", bgGrad:"linear-gradient(145deg,#2a2a2a,#1a1a1a)", img:"cartes/apple_2.png",       name:"Pomme Verte",         desc:"Cette couleur est si apaisante.",             effect:null},
+  /* ── PEU COMMUN ── */
+  {id:3,  rarity:"Peu commun", color:"#22aa44", bgGrad:"linear-gradient(145deg,#0a3a1a,#052010)", img:"cartes/bomb.png",          name:"Une Bombe",           desc:"Une bombe littéralement !",                   effect:{type:"bubbles",   label:"✦ Bulles",         color:"#5bc8ff"}},
+  /* ── RARE ── */
+  {id:4,  rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", img:"cartes/bacon.png",        name:"Plat de Bacon",       desc:"Mmmmm du bacon.",                             effect:{type:"snow",      label:"❄️ Neige",          color:"#aaeeff"}},
+  {id:5,  rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", img:"cartes/apple_pie.png",    name:"Tarte à la Pomme",    desc:"Ca fait beaucoup de pommes !",                 effect:{type:"sparkles",  label:"✨ Étincelles",     color:"#ffe066"}},
+  {id:6,  rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#0a2050,#050e2a)", img:"cartes/burger.png",       name:"Burger",              desc:"Le roi du fast-food !",                        effect:{type:"fire",      label:"🔥 Flammes",        color:"#ff6622"}},
+  {id:7,  rarity:"Rare",       color:"#2288ee", bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", img:"cartes/cookie.png",       name:"Cookies",             desc:"Le meilleur gouter pour tous !",               effect:{type:"leaves",    label:"🍃 Feuilles",       color:"#44cc66"}},
+  /* ── ÉPIQUE ── */
+  {id:8,  rarity:"Épique",     color:"#9944ee", bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", img:"cartes/sword.png",        name:"Une Épée",            desc:"Idéal pour trancher des légumes...",           effect:{type:"lightning",  label:"⚡ Éclairs",        color:"#ffe844"}},
+  {id:9,  rarity:"Épique",     color:"#9944ee", bgGrad:"linear-gradient(145deg,#2a0a50,#15052a)", img:"cartes/dragon_sword.png", name:"L'Épée Dragon",       desc:"Elle renferme le pouvoir draconique...",       effect:{type:"aura",      label:"🌀 Aura Violette",  color:"#cc44ff"}},
+  /* ── SUPER RARE ── */
+  {id:10, rarity:"Super rare", color:"#ee4422", bgGrad:"linear-gradient(145deg,#4a0a08,#250404)", img:"cartes/emerald.png",      name:"Emeraude",            desc:"Très recherché par les villageois...",         effect:{type:"aurora",    label:"🌈 Aurore",         color:"#00ffcc"}},
+  /* ── LÉGENDAIRE ── */
+  {id:11, rarity:"Légendaire", color:"#FFD700", bgGrad:"linear-gradient(145deg,#4a3800,#2a1c00)", img:"cartes/star_collier.png", name:"Collier des étoiles", desc:"Ce collier est accompagné d'une forme avec 5 pointes...", effect:{type:"portal",    label:"🌀 Portail Cosmique", color:"#FFD700"}},
 ];
+
+/* Configuration des chances
 
 /* Configuration des chances par coffre et par rareté */
 const RARITY_WEIGHTS = {
@@ -551,6 +559,7 @@ let isAnimating = false;
 /* Rend les variables globales pour Firebase */
 window.gachaHistory = [];
 window.collection = [];
+window.gachaEffects = []; /* effets débloqués */
 
 /* ── Ajouter une carte à la collection ── */
 function addToCollection(cardId){
@@ -561,22 +570,13 @@ function addToCollection(cardId){
   
   if(!window.collection.includes(id)){
     window.collection.push(id);
-    
-    /* Sauvegarde dans localStorage */
-    localStorage.setItem('bubble_gacha_collection', JSON.stringify(window.collection));
-    console.log('📚 Carte ajoutée à la collection:', id, '| Collection:', window.collection);
-    
-    renderCollection();
-    
-    /* Sauvegarde dans Firestore (async) */
-    if(window._fbSaveGacha) {
-      console.log('💾 Sauvegarde Firestore...');
-      window._fbSaveGacha().catch(err => {
-        console.error('❌ Erreur Firestore:', err);
-      });
-    } else {
-      console.log('⚠️ _fbSaveGacha pas encore disponible');
+    /* Vérifie si la carte débloque un effet */
+    const card = CARD_POOL.find(c => String(c.id) === id);
+    if(card && card.effect && !window.gachaEffects.includes(card.effect.type)){
+      window.gachaEffects.push(card.effect.type);
     }
+    renderCollection();
+    if(window._fbSaveGacha) window._fbSaveGacha().catch(e => console.error(e));
   }
 }
 
@@ -787,6 +787,17 @@ function startChestAnimation(){
             document.getElementById('cardIcon').innerHTML = `<img src="${item.img}" alt="${item.name}" style="width:clamp(80px,12vw,130px);height:clamp(80px,12vw,130px);object-fit:contain;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6));border-radius:12px;">`;
             document.getElementById('cardName').textContent = item.name;
             document.getElementById('cardDesc').textContent = item.desc;
+            /* Badge effet si la carte en débloque un */
+            const effectBadge = document.getElementById('cardEffectBadge');
+            if(item.effect){
+              effectBadge.textContent = '✦ Effet débloqué : ' + item.effect.label;
+              effectBadge.style.display = 'block';
+              effectBadge.style.background = item.effect.color + '33';
+              effectBadge.style.borderColor = item.effect.color + '88';
+              effectBadge.style.color = item.effect.color;
+            } else {
+              effectBadge.style.display = 'none';
+            }
 
             const reveal = document.getElementById('cardReveal');
             reveal.style.display = 'block';
@@ -939,10 +950,6 @@ function addToHistory(item, chestType){
   window.gachaHistory.unshift(entry);
   if(window.gachaHistory.length>20) window.gachaHistory.pop();
   
-  /* Sauvegarde locale */
-  localStorage.setItem('bubble_gacha_history', JSON.stringify(window.gachaHistory));
-  
-  /* Ajoute à la collection */
   addToCollection(item.id);
 }
 
@@ -1047,9 +1054,11 @@ window._fbSaveGacha = async function(){
     console.log('   - Collection:', cleanCollection);
     console.log('   - Histoire (count):', cleanHistory.length);
     
+    const cleanEffects = (window.gachaEffects || []).filter(e => e);
     await setDoc(doc(db,'users',_uid), {
       gachaCollection: cleanCollection,
-      gachaHistory: cleanHistory,
+      gachaHistory:    cleanHistory,
+      gachaEffects:    cleanEffects,
     }, { merge:true });
     
     console.log('✅ Sauvegarde Firestore réussie!');
@@ -1077,9 +1086,9 @@ onAuthStateChanged(auth, async user => {
       
       document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
       
-      /* Charge la collection depuis Firestore (mise à jour globale) */
-      window.collection = (d.gachaCollection || []).map(String);
+      window.collection   = (d.gachaCollection || []).map(String);
       window.gachaHistory = d.gachaHistory || [];
+      window.gachaEffects = d.gachaEffects || [];
       
       console.log('📚 Collection chargée:', window.collection);
       console.log('💼 Abonnement chargé:', sub);
