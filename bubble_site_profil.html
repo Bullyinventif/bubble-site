@@ -471,9 +471,24 @@
         activeIconId=d.avatarId||'bully_1';
         activeEffect=d.activeEffect||null;
         unlockedEffects=(d.gachaEffects||[]);
+        
+        /* Synchronise les effets avec les cartes obtenues */
+        const gachaCollection = (d.gachaCollection||[]);
+        const cardsObtainedMap = {};
+        gachaCollection.forEach(cardId => cardsObtainedMap[String(cardId)] = true);
+        
+        /* Ajoute les effets correspondant aux cartes déjà obtenues */
+        ALL_EFFECTS.forEach(eff => {
+          if(eff.cardId && cardsObtainedMap[String(eff.cardId)] && !unlockedEffects.includes(eff.type)){
+            console.log(`✨ Déblocage rétroactif de l'effet: ${eff.type} (carte #${eff.cardId} obtenue)`);
+            unlockedEffects.push(eff.type);
+          }
+        });
+        
         const xp=d.xp||0;
         console.log('🎨 Effets débloqués au profil:', unlockedEffects);
         console.log('✨ Effet actif:', activeEffect);
+        console.log('📚 Cartes obtenues:', gachaCollection);
         renderLevelUI(xp,userSubLevel);
       }else{
         await setDoc(doc(db,'users',user.uid),{subscription:'basic',avatarId:'bully_1',pseudo:user.displayName||'Joueur',xp:0,gachaEffects:[]},{merge:true});
@@ -597,6 +612,35 @@
     if(selectedEffect!==null){
       updates.activeEffect = selectedEffect==='none'?null:selectedEffect;
     }
+    
+    /* Synchronise les effets débloqués avec les cartes obtenues */
+    try{
+      const snap = await getDoc(doc(db,'users',currentUser.uid));
+      if(snap.exists()){
+        const d = snap.data();
+        const gachaCollection = (d.gachaCollection||[]);
+        const cardsObtainedMap = {};
+        gachaCollection.forEach(cardId => cardsObtainedMap[String(cardId)] = true);
+        
+        /* Recalcule les effets débloqués */
+        let syncedEffects = [...unlockedEffects];
+        ALL_EFFECTS.forEach(eff => {
+          if(eff.cardId && cardsObtainedMap[String(eff.cardId)] && !syncedEffects.includes(eff.type)){
+            syncedEffects.push(eff.type);
+          }
+        });
+        
+        /* Sauvegarde la liste mise à jour */
+        if(syncedEffects.length !== unlockedEffects.length || syncedEffects.some((e,i) => e !== unlockedEffects[i])){
+          console.log('🔄 Synchronisation des effets:', syncedEffects);
+          updates.gachaEffects = syncedEffects;
+          unlockedEffects = syncedEffects;
+        }
+      }
+    } catch(e){
+      console.error('Erreur sync effets:', e);
+    }
+    
     try{
       await setDoc(doc(db,'users',currentUser.uid),updates,{merge:true});
       if(selectedIcon){activeIconId=selectedIcon.id;setAvatarUI(selectedIcon.file,selectedIcon.name);}

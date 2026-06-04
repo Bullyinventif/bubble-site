@@ -297,6 +297,12 @@ main{position:relative;z-index:1;padding:76px 16px 60px;max-width:960px;margin:0
   100%{transform:scale(1) rotate(0);opacity:1}
 }
 
+/* Animation pulse pour nouveaux effets */
+@keyframes pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.7;transform:scale(1.05)}
+}
+
 /* ── COLLECTION ── */
 .collection-section{
   background:rgba(255,255,255,.07);backdrop-filter:blur(12px);
@@ -574,6 +580,7 @@ function addToCollection(cardId){
     const card = CARD_POOL.find(c => String(c.id) === id);
     if(card && card.effect && !window.gachaEffects.includes(card.effect.type)){
       window.gachaEffects.push(card.effect.type);
+      console.log(`🎨 NOUVEL EFFET DÉBLOQUÉ: ${card.effect.label} (${card.effect.type})`);
     }
     renderCollection();
     if(window._fbSaveGacha) window._fbSaveGacha().catch(e => console.error(e));
@@ -790,11 +797,23 @@ function startChestAnimation(){
             /* Badge effet si la carte en débloque un */
             const effectBadge = document.getElementById('cardEffectBadge');
             if(item.effect){
-              effectBadge.textContent = '✦ Effet débloqué : ' + item.effect.label;
+              /* Vérifie si c'est un NOUVEL effet */
+              const isNewEffect = !window.gachaEffects.includes(item.effect.type);
+              const badgeText = isNewEffect 
+                ? '🎉 NOUVEL EFFET : ' + item.effect.label
+                : '✦ Effet : ' + item.effect.label;
+              effectBadge.textContent = badgeText;
               effectBadge.style.display = 'block';
-              effectBadge.style.background = item.effect.color + '33';
-              effectBadge.style.borderColor = item.effect.color + '88';
+              effectBadge.style.background = isNewEffect 
+                ? item.effect.color + '55' 
+                : item.effect.color + '33';
+              effectBadge.style.borderColor = isNewEffect 
+                ? item.effect.color + 'cc' 
+                : item.effect.color + '88';
               effectBadge.style.color = item.effect.color;
+              if(isNewEffect) {
+                effectBadge.style.animation = 'pulse 0.6s ease-in-out 3';
+              }
             } else {
               effectBadge.style.display = 'none';
             }
