@@ -472,9 +472,11 @@
         activeEffect=d.activeEffect||null;
         unlockedEffects=(d.gachaEffects||[]);
         const xp=d.xp||0;
+        console.log('🎨 Effets débloqués au profil:', unlockedEffects);
+        console.log('✨ Effet actif:', activeEffect);
         renderLevelUI(xp,userSubLevel);
       }else{
-        await setDoc(doc(db,'users',user.uid),{subscription:'basic',avatarId:'bully_1',pseudo:user.displayName||'Joueur',xp:0},{merge:true});
+        await setDoc(doc(db,'users',user.uid),{subscription:'basic',avatarId:'bully_1',pseudo:user.displayName||'Joueur',xp:0,gachaEffects:[]},{merge:true});
         userSubLevel='basic'; activeIconId='bully_1'; activeEffect=null; unlockedEffects=[];
         renderLevelUI(0,'basic');
       }
@@ -482,8 +484,14 @@
     setSubUI(userSubLevel);
     const ic=findIcon(activeIconId);
     if(ic) setAvatarUI(ic.file,ic.name);
-    /* Applique l'effet actif */
-    if(window.applyAvatarEffect) window.applyAvatarEffect(activeEffect);
+    
+    /* Applique l'effet actif après un délai pour que le DOM soit prêt */
+    setTimeout(() => {
+      if(window.applyAvatarEffect) {
+        console.log('🎬 Application de l\'effet:', activeEffect);
+        window.applyAvatarEffect(activeEffect);
+      }
+    }, 100);
   });
 
   /* ── Picker ── */

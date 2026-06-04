@@ -1000,7 +1000,8 @@ window._fbInitUser = async function(uid){
       console.log('📝 Création des données gacha...');
       await setDoc(doc(db, 'users', uid), {
         gachaCollection: [],
-        gachaHistory: []
+        gachaHistory: [],
+        gachaEffects: []
       });
       console.log('✅ Données gacha créées!');
     } else {
@@ -1009,6 +1010,7 @@ window._fbInitUser = async function(uid){
       const updates = {};
       if(!Array.isArray(data.gachaCollection)) updates.gachaCollection = [];
       if(!Array.isArray(data.gachaHistory)) updates.gachaHistory = [];
+      if(!Array.isArray(data.gachaEffects)) updates.gachaEffects = [];
       
       if(Object.keys(updates).length > 0){
         console.log('🔧 Réparation des données gacha:', Object.keys(updates));
@@ -1091,6 +1093,7 @@ onAuthStateChanged(auth, async user => {
       window.gachaEffects = d.gachaEffects || [];
       
       console.log('📚 Collection chargée:', window.collection);
+      console.log('🎨 Effets débloqués:', window.gachaEffects);
       console.log('💼 Abonnement chargé:', sub);
       
       /* Attend que le DOM soit prêt */
