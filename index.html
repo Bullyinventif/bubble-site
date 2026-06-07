@@ -262,6 +262,7 @@
     letter-spacing: 1px;
   }
 </style>
+<script src="bubble_effects.js"></script>
 </head>
 <body>
 
@@ -397,6 +398,7 @@
           const sub      = d.subscription || 'basic';
           const avatarId = d.avatarId     || 'bully_1';
           document.getElementById('navAvatar').innerHTML   = `<img src="${avatarId}.png" alt="avatar">`;
+          if(window.applyTheme) window.applyTheme(d.activeEffect||null);
           const _xp = d.xp || 0;
           applyFrame(sub, _getLevel(_xp, sub));
         } else {

@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<script src="bubble_effects.js"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 
@@ -890,6 +891,7 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
         const sub = d.subscription || 'basic';
         const avatarId = d.avatarId || 'bully_1';
         document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
+        if(window.applyTheme) window.applyTheme(d.activeEffect||null);
         const _xp = d.xp || 0;
         applyFrame(sub, _getLevel(_xp, sub));
         window.userSubLevel = sub;
