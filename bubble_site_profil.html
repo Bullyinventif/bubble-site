@@ -502,9 +502,9 @@
     
     /* Applique l'effet actif après un délai pour que le DOM soit prêt */
     setTimeout(() => {
-      if(window.applyAvatarEffect) {
+      if(window.applyTheme) {
         console.log('🎬 Application de l\'effet:', activeEffect);
-        window.applyAvatarEffect(activeEffect);
+        window.applyTheme(activeEffect);
       }
     }, 100);
   });
@@ -521,7 +521,7 @@
   window._closePicker=function(){
     document.getElementById('overlay').classList.remove('open');
     /* Annule la preview d'effet */
-    if(window.applyAvatarEffect) window.applyAvatarEffect(activeEffect);
+    if(window.applyTheme) window.applyTheme(activeEffect);
   };
 
   function buildIconsPanel(){
@@ -601,7 +601,7 @@
     pb.innerHTML=icon?`<img src="${icon.file}" alt="${icon.name}">`:'';
     document.getElementById('previewName').textContent=icon?icon.name:'Sélectionne une icône';
     /* Preview de l'effet sur la bulle de prévisualisation */
-    if(window.applyAvatarEffect) window.applyAvatarEffect(effectType||null);
+    if(window.applyTheme) window.applyTheme(effectType||null);
   }
 
   /* ── Sauvegarde icône + effet ── */
@@ -645,7 +645,7 @@
       await setDoc(doc(db,'users',currentUser.uid),updates,{merge:true});
       if(selectedIcon){activeIconId=selectedIcon.id;setAvatarUI(selectedIcon.file,selectedIcon.name);}
       if(selectedEffect!==null){activeEffect=selectedEffect==='none'?null:selectedEffect;}
-      if(window.applyAvatarEffect) window.applyAvatarEffect(activeEffect);
+      if(window.applyTheme) window.applyTheme(activeEffect);
       window._closePicker();
       toast('✅ Profil mis à jour !');
     }catch(e){toast('❌ '+e.message,true);}

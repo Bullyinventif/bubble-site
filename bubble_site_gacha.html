@@ -38,7 +38,7 @@ nav{position:fixed;top:0;left:0;right:0;height:58px;background:rgba(20,60,160,.7
 .nav-btn.active{outline:2.5px solid rgba(255,255,255,.7);outline-offset:1px;}
 .nav-profile{margin-left:6px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;transition:transform .2s;}
 .nav-profile:hover{transform:scale(1.05);}
-.profile-bubble{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.profile-bubble{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:visible;position:relative;}
 .profile-bubble img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 .profile-bubble-icon{font-size:1.3rem;}
 
@@ -345,6 +345,7 @@ footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255
   #cardInner{width:180px;height:240px;}
 }
 </style>
+<script src="bubble_effects.js"></script>
 </head>
 <body>
 
@@ -1106,6 +1107,7 @@ onAuthStateChanged(auth, async user => {
       console.log('📋 Données utilisateur:', {sub, avatarId, gachaCollectionCount: (d.gachaCollection||[]).length});
       
       document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
+        if(window.applyTheme) window.applyTheme(d.activeEffect||null);
       
       window.collection   = (d.gachaCollection || []).map(String);
       window.gachaHistory = d.gachaHistory || [];
