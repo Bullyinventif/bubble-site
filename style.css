@@ -1,0 +1,84 @@
+/* ===================================================================
+   BUBBLE SITE - STYLE COMMUN
+   Basé sur index.html - Appliqué à TOUTES les pages
+   =================================================================== */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #F5F5F5;
+  min-height: 100vh;
+  font-family: 'Baloo 2', cursive;
+  color: #1a1a2e;
+  overflow-x: hidden;
+}
+
+/* BUBBLE BACKGROUND */
+.bubble-bg {
+  position: fixed; top:0; left:0;
+  width:100%; height:100%;
+  pointer-events:none; z-index:0;
+  overflow:hidden;
+}
+.bbl {
+  position:absolute; border-radius:50%;
+  animation: riseUp linear infinite;
+}
+@keyframes riseUp {
+  0%   { transform:translateY(110vh) translateX(0px); opacity:0; }
+  8%   { opacity:1; }
+  50%  { transform:translateY(50vh) translateX(15px); }
+  92%  { opacity:0.6; }
+  100% { transform:translateY(-10vh) translateX(-8px); opacity:0; }
+}
+
+/* NAVIGATION */
+nav {
+  position:fixed; top:0; left:0; right:0; height:58px;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(0,0,0,0.08);
+  display:flex; align-items:center;
+  z-index:1000; padding:0 10px; gap:7px;
+  box-shadow:0 2px 20px rgba(0,0,0,0.05);
+}
+.nav-logo {
+  width:40px; height:40px;
+  background:radial-gradient(circle at 38% 32%,#b8e0ff,#3a7ae0);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem; flex-shrink:0; margin-right:4px;
+  box-shadow:inset 0 -3px 6px rgba(0,0,80,0.3),0 0 10px rgba(100,180,255,0.4);
+  border:2px solid rgba(255,255,255,0.3);
+  cursor:pointer; transition:transform .2s;
+}
+.nav-logo:hover { transform:scale(1.08); }
+.nav-links { display:flex; flex:1; gap:6px; }
+.nav-btn {
+  flex:1; height:42px; border-radius:12px; border:none;
+  font-family:'Baloo 2',cursive; font-size:.92rem; font-weight:800;
+  color:#1a1a2e; cursor:pointer; text-decoration:none;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  transition:filter .15s,transform .15s;
+  box-shadow:0 4px 0 rgba(0,0,0,0.1),0 2px 12px rgba(0,0,0,0.08);
+  letter-spacing:0.2px; background:white; border:1px solid rgba(0,0,0,0.05);
+}
+.nav-btn:hover { filter:brightness(1.05); transform:translateY(-2px); box-shadow:0 6px 0 rgba(0,0,0,0.1),0 4px 16px rgba(0,0,0,0.12); }
+.nav-btn:active { transform:translateY(2px); box-shadow:0 2px 0 rgba(0,0,0,0.1); }
+.nav-btn.red { background:linear-gradient(180deg,#ff5252,#cc2020); color:white; border:none; }
+.nav-btn.yellow { background:linear-gradient(180deg,#ffcc00,#cc9900); color:#1a1a2e; border:none; }
+.nav-btn.gray { background:linear-gradient(180deg,#6a7a8a,#4a5a6a); color:white; border:none; }
+.nav-btn.green { background:linear-gradient(180deg,#44d966,#1faa44); color:white; border:none; }
+.nav-btn.purple { background:linear-gradient(180deg,#a855f7,#7c3aed); color:white; border:none; }
+.nav-btn.active { outline:2.5px solid rgba(255,255,255,0.7); outline-offset:1px; }
+
+.nav-profile { margin-left:6px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; cursor:pointer; text-decoration:none; transition:transform .2s; }
+.nav-profile:hover { transform:scale(1.05); }
+.profile-bubble {
+  width:38px; height:38px; border-radius:50%;
+  background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);
+  border:2px solid rgba(255,255,255,0.5);
+  box-shadow:0 0 0 1px rgba(100,160,255,0.3),0 4px 12px rgba(0,0,80,0.2),inset 0 -3px 6px rgba(0,0,80,0.3);
+  display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative;
+  transition:border-color .3s,box-shadow .3s;
+}
+.profile-bubble::after { content:''; position:absolute; top:10%; left:18%; width:32%; height:20%; background:rgba(255,255,255,0.35); border-radius:50%; transform:rotate(-35deg); pointer-events:none; }
