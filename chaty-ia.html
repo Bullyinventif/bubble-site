@@ -19,7 +19,7 @@
     overflow-x: hidden;
   }
 
-  /* ── Bubbles bg (identique à ton index.html) ── */
+  /* ── Bubbles bg ── */
   .bubble-bg {
     position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
@@ -37,7 +37,7 @@
     100% { transform: translateY(-10vh) translateX(-8px); opacity: 0; }
   }
 
-  /* NAV — desktop (≥ 601px) */
+  /* NAV */
   nav {
     position: fixed; top: 0; left: 0; right: 0;
     height: 58px;
@@ -47,7 +47,6 @@
     display: flex; align-items: center;
     z-index: 1000; padding: 0 10px; gap: 7px;
   }
-
   .nav-logo {
     width: 40px; height: 40px;
     background: radial-gradient(circle at 38% 32%, #b8e0ff, #3a7ae0);
@@ -58,12 +57,9 @@
     border: 2px solid rgba(255,255,255,0.3);
     cursor: pointer;
     transition: transform .2s;
-    -webkit-tap-highlight-color: transparent;
   }
   .nav-logo:hover { transform: scale(1.08); }
-
   .nav-links { display: flex; flex: 1; gap: 6px; }
-
   .nav-btn {
     flex: 1; height: 42px;
     border-radius: 12px; border: none;
@@ -74,7 +70,6 @@
     transition: filter 0.15s, transform 0.15s;
     box-shadow: 0 4px 0 rgba(0,0,0,0.25), 0 2px 12px rgba(0,0,0,0.2);
     letter-spacing: 0.2px;
-    -webkit-tap-highlight-color: transparent;
   }
   .nav-btn:hover  { filter: brightness(1.12); transform: translateY(-2px); }
   .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
@@ -83,85 +78,45 @@
   .nav-btn.gray   { background: linear-gradient(180deg, #6a7a8a, #4a5a6a); }
   .nav-btn.green  { background: linear-gradient(180deg, #44d966, #1faa44); }
   .nav-btn.purple { background: linear-gradient(180deg, #a855f7, #7c3aed); }
-  .nav-btn.active {
-    outline: 2.5px solid rgba(255,255,255,0.7);
-    outline-offset: 1px;
-  }
-
-  /* Profile bubble */
+  .nav-btn.active { outline: 2.5px solid rgba(255,255,255,0.7); outline-offset: 1px; }
   .nav-profile {
     margin-left: 6px; flex-shrink: 0;
-    display: flex; flex-direction: column; align-items: center;  justify-content: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
     cursor: pointer; text-decoration: none;
     transition: transform 0.2s;
-    -webkit-tap-highlight-color: transparent;
   }
   .nav-profile:hover { transform: scale(1.05); }
-
   .profile-bubble {
     width: 38px; height: 38px; border-radius: 50%;
     background: radial-gradient(circle at 38% 28%, #c8e8ff, #4488cc 50%, #1a2a5c);
     border: 2px solid rgba(255,255,255,0.5);
-    box-shadow:
-      0 0 0 1px rgba(100,160,255,0.3),
-      0 4px 12px rgba(0,0,80,0.4),
-      inset 0 -3px 6px rgba(0,0,80,0.3);
+    box-shadow: 0 0 0 1px rgba(100,160,255,0.3), 0 4px 12px rgba(0,0,80,0.4), inset 0 -3px 6px rgba(0,0,80,0.3);
     display: flex; align-items: center; justify-content: center;
     overflow: hidden; position: relative;
   }
   .profile-bubble::after {
-    content: '';
-    position: absolute; top: 10%; left: 18%;
-    width: 32%; height: 20%;
-    background: rgba(255,255,255,0.35);
-    border-radius: 50%; transform: rotate(-35deg);
-    pointer-events: none;
+    content: ''; position: absolute; top: 10%; left: 18%;
+    width: 32%; height: 20%; background: rgba(255,255,255,0.35);
+    border-radius: 50%; transform: rotate(-35deg); pointer-events: none;
   }
   .profile-bubble img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
   .profile-bubble-icon { font-size: 1.3rem; filter: drop-shadow(0 2px 4px rgba(0,0,80,0.4)); }
 
-  /* MOBILE MENU (≤ 600px) */
+  /* Mobile Menu */
   .mobile-menu {
-    display: none;
-    position: fixed;
-    top: 58px; left: 0; right: 0;
-    background: rgba(8, 22, 80, 0.97);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-    flex-direction: column;
-    gap: 12px;
-    padding: 20px 18px 24px;
-    z-index: 998;
-    border-bottom: 1px solid rgba(255,255,255,.15);
+    display: none; position: fixed; top: 58px; left: 0; right: 0;
+    background: rgba(8, 22, 80, 0.97); backdrop-filter: blur(22px);
+    flex-direction: column; gap: 12px; padding: 20px 18px 24px;
+    z-index: 998; border-bottom: 1px solid rgba(255,255,255,.15);
     box-shadow: 0 12px 40px rgba(0,0,0,.5);
   }
-  .mobile-menu.open {
-    display: flex;
-    animation: slideDown .22s ease;
-  }
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .mobile-menu .nav-btn {
-    width: 100%;
-    height: 54px;
-    font-size: 1.05rem;
-    border-radius: 16px;
-    flex: none;
-  }
-
-  /* Overlay pour fermer le menu */
-  .menu-overlay {
-    display: none;
-    position: fixed;
-    inset: 58px 0 0 0;
-    z-index: 997;
-    background: transparent;
-  }
+  .mobile-menu.open { display: flex; animation: slideDown .22s ease; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .mobile-menu .nav-btn { width: 100%; height: 54px; font-size: 1.05rem; border-radius: 16px; flex: none; }
+  .menu-overlay { display: none; position: fixed; inset: 58px 0 0 0; z-index: 997; background: transparent; }
   .menu-overlay.open { display: block; }
 
-  /* RESPONSIVE */
+  /* Responsive */
   @media (max-width: 600px) {
     .nav-links { display: none; }
     .nav-profile { margin-left: auto; }
@@ -172,13 +127,10 @@
   /* MAIN */
   main {
     position: relative; z-index: 1;
-    padding-top: 100px;
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center; padding-bottom: 80px;
+    padding-top: 100px; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding-bottom: 80px;
   }
-
   .hero-title {
     font-family: 'Permanent Marker', cursive;
     font-size: clamp(2.8rem, 8vw, 5rem);
@@ -190,36 +142,26 @@
   .hero-subtitle {
     font-size: 1.1rem; font-weight: 700;
     color: rgba(255,255,255,0.85);
-    letter-spacing: 0.3px;
-    text-shadow: 0 2px 8px rgba(0,0,60,0.3);
+    letter-spacing: 0.3px; text-shadow: 0 2px 8px rgba(0,0,60,0.3);
     animation: fadeUp 0.7s 0.15s ease both;
     margin-bottom: 20px;
   }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* NOUVEAU: CONTAINER CHAT + JEUX */
+  /* CONTAINER CHAT + JEUX */
   .chaty-container {
     display: flex; width: 90%; max-width: 1100px;
-    gap: 20px; margin-top: 10px;
-    flex-wrap: wrap; justify-content: center;
+    gap: 20px; margin-top: 10px; flex-wrap: wrap; justify-content: center;
   }
-  @media (max-width: 900px) {
-    .chaty-container { flex-direction: column; align-items: center; }
-  }
+  @media (max-width: 900px) { .chaty-container { flex-direction: column; align-items: center; } }
 
-  /* ----- SECTION CHAT ----- */
+  /* SECTION CHAT */
   .chat-section {
     flex: 1; min-width: 300px; max-width: 500px;
     background: rgba(20, 40, 80, 0.6);
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.1);
-    display: flex; flex-direction: column;
-    backdrop-filter: blur(10px);
-    overflow: hidden;
+    border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;
+    backdrop-filter: blur(10px); overflow: hidden;
   }
   .chat-header {
     padding: 15px; background: rgba(30, 60, 100, 0.5);
@@ -229,19 +171,14 @@
   }
   #chat-messages {
     flex: 1; padding: 15px; overflow-y: auto;
-    display: flex; flex-direction: column; gap: 12px;
-    max-height: 50vh;
+    display: flex; flex-direction: column; gap: 12px; max-height: 50vh;
   }
   .message {
     max-width: 85%; padding: 10px 14px; border-radius: 14px;
-    font-size: 0.95rem; line-height: 1.4;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    font-size: 0.95rem; line-height: 1.4; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     animation: fadeIn 0.3s ease;
   }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   .message.user {
     align-self: flex-end; background: linear-gradient(180deg, #ff5252, #cc2020);
     color: white; border-bottom-right-radius: 4px;
@@ -252,36 +189,30 @@
   }
   .chat-input {
     display: flex; padding: 12px; gap: 10px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    background: rgba(10, 20, 40, 0.4);
+    border-top: 1px solid rgba(255,255,255,0.1); background: rgba(10, 20, 40, 0.4);
   }
   #chat-input {
     flex: 1; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.2);
     border-radius: 20px; font-family: 'Baloo 2', cursive;
-    font-size: 0.95rem; color: white; background: rgba(255,255,255,0.05);
-    outline: none;
+    font-size: 0.95rem; color: white; background: rgba(255,255,255,0.05); outline: none;
   }
   #chat-input::placeholder { color: rgba(255,255,255,0.4); }
   #chat-send {
     width: 45px; height: 45px; border-radius: 50%;
     background: linear-gradient(180deg, #44d966, #1faa44);
-    color: white; border: none; cursor: pointer;
-    font-size: 1.2rem; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center;
+    color: white; border: none; cursor: pointer; font-size: 1.2rem;
+    transition: all 0.2s; display: flex; align-items: center; justify-content: center;
     box-shadow: 0 2px 8px rgba(68, 217, 102, 0.4);
   }
   #chat-send:hover { transform: scale(1.05); filter: brightness(1.1); }
 
-  /* ----- SECTION JEUX ----- */
+  /* SECTION JEUX */
   .games-section {
     flex: 1; min-width: 300px; max-width: 600px;
     background: rgba(20, 40, 80, 0.6);
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.1);
-    display: flex; flex-direction: column;
-    backdrop-filter: blur(10px);
-    overflow: hidden;
+    border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;
+    backdrop-filter: blur(10px); overflow: hidden;
   }
   .games-header {
     padding: 15px; background: rgba(30, 60, 100, 0.5);
@@ -291,8 +222,7 @@
   }
   .game-menu {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px; padding: 15px;
-    background: rgba(10, 20, 40, 0.2);
+    gap: 10px; padding: 15px; background: rgba(10, 20, 40, 0.2);
   }
   .game-btn {
     padding: 12px; background: rgba(255,255,255,0.1);
@@ -302,20 +232,12 @@
     transition: all 0.2s; text-align: center;
     display: flex; flex-direction: column; align-items: center; gap: 5px;
   }
-  .game-btn:hover {
-    background: rgba(255,255,255,0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  }
+  .game-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   .game-btn i { font-size: 1.5rem; }
-  #game-board {
-    flex: 1; padding: 15px; overflow-y: auto;
-    background: rgba(0, 0, 0, 0.1);
-  }
+  #game-board { flex: 1; padding: 15px; overflow-y: auto; background: rgba(0, 0, 0, 0.1); }
   #game-title {
     font-family: 'Baloo 2', cursive; font-size: 1.3rem;
-    color: rgba(255,255,255,0.9); margin-bottom: 15px;
-    text-align: center;
+    color: rgba(255,255,255,0.9); margin-bottom: 15px; text-align: center;
   }
   .game { display: none; }
   .game.active { display: block; }
@@ -329,8 +251,7 @@
     aspect-ratio: 1; background: rgba(255,255,255,0.1);
     border-radius: 8px; display: flex; align-items: center; justify-content: center;
     font-size: 2.5rem; font-weight: bold; cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.2);
-    transition: all 0.2s;
+    border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s;
   }
   .tictactoe-cell:hover { background: rgba(255,255,255,0.2); }
   .tictactoe-cell.x { color: #ff8c3a; }
@@ -338,8 +259,7 @@
 
   .puissance4-board {
     display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;
-    width: 100%; max-width: 350px; margin: 0 auto;
-    aspect-ratio: 7/6;
+    width: 100%; max-width: 350px; margin: 0 auto; aspect-ratio: 7/6;
   }
   .puissance4-col { display: flex; flex-direction: column-reverse; gap: 5px; }
   .puissance4-cell {
@@ -363,7 +283,6 @@
   .chess-square.light { background: rgba(240, 217, 181, 0.5); }
   .chess-square.dark { background: rgba(181, 136, 99, 0.5); }
   .chess-square.selected { background: rgba(255, 215, 0, 0.6) !important; }
-  .chess-square.possible { background: rgba(0, 255, 0, 0.3) !important; }
 
   #bubble-game-container {
     position: relative; width: 100%; height: 300px;
@@ -385,13 +304,10 @@
   }
 
   footer {
-    position: relative; z-index: 1;
-    text-align: center; padding: 18px;
-    color: rgba(255,255,255,0.3);
-    font-size: 0.72rem;
+    position: relative; z-index: 1; text-align: center; padding: 18px;
+    color: rgba(255,255,255,0.3); font-size: 0.72rem;
     border-top: 1px solid rgba(255,255,255,0.08);
-    font-family: 'Press Start 2P', monospace;
-    letter-spacing: 1px;
+    font-family: 'Press Start 2P', monospace; letter-spacing: 1px;
   }
 </style>
 <script src="bubble_effects.js"></script>
@@ -408,7 +324,7 @@
     <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
     <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
     <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-    <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Gacha (BETA)</a>
+    <a href="bubble_site_gacha.html" class="nav-btn purple">🎁 Gacha (BETA)</a>
     <a href="chaty-ia.html" class="nav-btn red active">🤖 Chaty IA</a>
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
@@ -456,19 +372,9 @@
       </div>
       <div id="game-board">
         <h2 id="game-title">Sélectionne un jeu pour commencer !</h2>
-        <!-- Tic-Tac-Toe -->
-        <div id="tictactoe-board" class="game">
-          <div class="tictactoe-board"></div>
-        </div>
-        <!-- Puissance 4 -->
-        <div id="puissance4-board" class="game">
-          <div class="puissance4-board"></div>
-        </div>
-        <!-- Échecs -->
-        <div id="chess-board" class="game">
-          <div id="chessboard"></div>
-        </div>
-        <!-- Bulles -->
+        <div id="tictactoe-board" class="game"><div class="tictactoe-board"></div></div>
+        <div id="puissance4-board" class="game"><div class="puissance4-board"></div></div>
+        <div id="chess-board" class="game"><div id="chessboard"></div></div>
         <div id="bubble-game" class="game">
           <div id="bubble-game-container"></div>
           <div id="bubble-score">Score: 0</div>
@@ -534,24 +440,22 @@
 <!-- Firebase + Logique Chaty IA -->
 <script type="module">
   // ======================
-  // FIREBASE (Profil)
+  // 1. FIREBASE (Profil)
   // ======================
   import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const app = initializeApp({
-    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
-    authDomain:"bubble-game-fa894.firebaseapp.com",
-    projectId:"bubble-game-fa894",
-    storageBucket:"bubble-game-fa894.firebasestorage.app",
-    messagingSenderId:"60256418096",
-    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+    apiKey: "AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain: "bubble-game-fa894.firebaseapp.com",
+    projectId: "bubble-game-fa894",
+    storageBucket: "bubble-game-fa894.firebasestorage.app",
+    messagingSenderId: "60256418096",
+    appId: "1:60256418096:web:dbdc555819793d8c20f0f5"
   });
   const auth = getAuth(app);
-  const db   = getFirestore(app);
-
-  const SUB_LABELS = {basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
+  const db = getFirestore(app);
 
   onAuthStateChanged(auth, async user => {
     if (user) {
@@ -561,10 +465,10 @@
         const snap = await getDoc(doc(db, 'users', user.uid));
         if (snap.exists()) {
           const d = snap.data();
-          const sub      = d.subscription || 'basic';
-          const avatarId = d.avatarId     || 'bully_1';
-          document.getElementById('navAvatar').innerHTML   = `<img src="${avatarId}.png" alt="avatar">`;
-          if(window.applyTheme) window.applyTheme(d.activeEffect||null);
+          const sub = d.subscription || 'basic';
+          const avatarId = d.avatarId || 'bully_1';
+          document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
+          if (window.applyTheme) window.applyTheme(d.activeEffect || null);
           const _xp = d.xp || 0;
           applyFrame(sub, _getLevel(_xp, sub));
         }
@@ -578,17 +482,16 @@
   });
 
   const _LEVEL_CFG = {
-    basic:{maxLevel:3,xpPerLevel:100},
-    plus:{maxLevel:20,xpPerLevel:200},
-    x:{maxLevel:20,xpPerLevel:300},
-    max:{maxLevel:25,xpPerLevel:400},
+    basic: { maxLevel: 3, xpPerLevel: 100 },
+    plus: { maxLevel: 20, xpPerLevel: 200 },
+    x: { maxLevel: 20, xpPerLevel: 300 },
+    max: { maxLevel: 25, xpPerLevel: 400 },
   };
-  function _getLevel(xp,sub){
-    const cfg=_LEVEL_CFG[sub]||_LEVEL_CFG.basic;
-    return Math.min(Math.floor(xp/cfg.xpPerLevel)+1,cfg.maxLevel);
+  function _getLevel(xp, sub) {
+    const cfg = _LEVEL_CFG[sub] || _LEVEL_CFG.basic;
+    return Math.min(Math.floor(xp / cfg.xpPerLevel) + 1, cfg.maxLevel);
   }
 
-  /* ── Cadre animé ── */
   function applyFrame(sub, level) {
     if (!document.getElementById('bubble-frame-css')) {
       const s = document.createElement('style');
@@ -606,56 +509,58 @@
     }
     const frames = {
       basic: `frame-pulse-basic 2.5s ease-in-out infinite`,
-      plus:  level >= 10 ? `frame-shimmer-plus 2s linear infinite` : `frame-pulse-plus 2.5s ease-in-out infinite`,
-      x:     level >= 10 ? `frame-shimmer-x 2s linear infinite`    : `frame-pulse-x 2.5s ease-in-out infinite`,
-      max:   level >= 15 ? `frame-shimmer-max 2s linear infinite`   : `frame-pulse-max 2.5s ease-in-out infinite`,
+      plus: level >= 10 ? `frame-shimmer-plus 2s linear infinite` : `frame-pulse-plus 2.5s ease-in-out infinite`,
+      x: level >= 10 ? `frame-shimmer-x 2s linear infinite` : `frame-pulse-x 2.5s ease-in-out infinite`,
+      max: level >= 15 ? `frame-shimmer-max 2s linear infinite` : `frame-pulse-max 2.5s ease-in-out infinite`,
     };
     const borders = {
-      basic: `3px solid rgba(91,200,255,${0.4+(level/3)*0.5})`,
-      plus:  `3px solid rgba(255,200,0,${0.4+(level/20)*0.6})`,
-      x:     `3px solid rgba(68,204,255,${0.4+(level/20)*0.6})`,
-      max:   `3px solid rgba(204,68,255,${0.5+(level/25)*0.5})`,
+      basic: `3px solid rgba(91,200,255,${0.4 + (level / 3) * 0.5})`,
+      plus: `3px solid rgba(255,200,0,${0.4 + (level / 20) * 0.6})`,
+      x: `3px solid rgba(68,204,255,${0.4 + (level / 20) * 0.6})`,
+      max: `3px solid rgba(204,68,255,${0.5 + (level / 25) * 0.5})`,
     };
     document.querySelectorAll('.profile-bubble').forEach(b => {
-      b.style.border    = borders[sub] || borders.basic;
-      b.style.animation = frames[sub]  || frames.basic;
+      b.style.border = borders[sub] || borders.basic;
+      b.style.animation = frames[sub] || frames.basic;
     });
   }
 
   // ======================
-  // LOGIQUE DU CHAT
+  // 2. VARIABLES GLOBALES
   // ======================
   const chatMessages = document.getElementById('chat-messages');
   const chatInput = document.getElementById('chat-input');
   const chatSend = document.getElementById('chat-send');
-
   let currentGame = null;
   let gameState = {};
   let isPlayerTurn = true;
-  let playerSymbol = 1; // 1 = X (Tic-Tac-Toe), 1 = Joueur (Puissance 4)
+  let selectedSquare = null;
+  let chessLoaded = false;
 
-  // Afficher un message dans le chat
-  function addMessage(sender, text) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${sender}`;
-    messageDiv.textContent = text;
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  // Envoyer un message à Mistral
+  // ======================
+  // 3. FONCTION POUR APPELER TON AGENT MISTRAL (CORRIGÉE)
+  // ======================
   async function sendToMistral(message) {
-    const apiKey = localStorage.setItem('mistral_api_key', '4NkNoRWbWF5WoCQ0fnYYeixQ9Rj1c8mE') || localStorage.getItem('mistral_api_key');
+    // 👇 Remplace par ta clé API (ou utilise localStorage)
+    const apiKey = localStorage.getItem('mistral_api_key') || prompt("Entrez votre clé API Mistral :");
     if (!apiKey) return null;
 
+    // 👇 ENDPOINT CORRECT POUR TON AGENT (avec ton ID d'agent dans le champ "model")
+    const url = "https://api.mistral.ai/v1/chat/completions";
+
     const requestBody = {
-      model: "ag:b903d54a:20250510:untitled-agent:695bcc1a",
-      messages: [{ role: "user", content: message }],
+      model: "ag:b903d54a:20250510:untitled-agent:695bcc1a", // 👈 Ton ID d'agent ici
+      messages: [
+        {
+          role: "user",
+          content: message
+        }
+      ],
       temperature: 0.3
     };
 
     try {
-      const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -664,25 +569,40 @@
         body: JSON.stringify(requestBody)
       });
 
-      if (!response.ok) throw new Error(`Erreur API: ${response.status}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Erreur API: ${response.status} - ${JSON.stringify(errorData)}`);
+      }
 
       const data = await response.json();
-      const content = data.choices[0].message.content;
 
-      // Parser la réponse JSON (ton agent doit retourner du JSON)
+      // 👇 PARSER LA RÉPONSE (ton agent doit retourner du JSON)
       try {
+        const content = data.choices[0].message.content;
         if (content.trim().startsWith('{')) {
           return JSON.parse(content);
         } else {
-          return { message: content, game: null, action: "chat", data: null };
+          // Si ce n'est pas du JSON, retourner un format compatible
+          return {
+            message: content,
+            game: null,
+            action: "chat",
+            data: null
+          };
         }
       } catch (e) {
-        return { message: content, game: null, action: "chat", data: null };
+        console.error("Erreur de parsing :", e);
+        return {
+          message: content || "Désolé, je n'ai pas compris.",
+          game: null,
+          action: "chat",
+          data: null
+        };
       }
     } catch (error) {
       console.error("Erreur avec Mistral :", error);
       return {
-        message: "Désolé, je n'arrive pas à contacter l'IA. Vérifie ta clé API ou ta connexion.",
+        message: `Erreur: ${error.message}. Vérifie ta clé API ou ton agent.`,
         game: null,
         action: "chat",
         data: null
@@ -690,7 +610,17 @@
     }
   }
 
-  // Gérer l'envoi d'un message
+  // ======================
+  // 4. FONCTIONS DU CHAT
+  // ======================
+  function addMessage(sender, text) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+    messageDiv.textContent = text;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
   async function handleSendMessage() {
     const message = chatInput.value.trim();
     if (!message) return;
@@ -719,77 +649,14 @@
     }
   }
 
-  // Écouteurs pour le chat
-  chatSend.addEventListener('click', handleSendMessage);
-  chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleSendMessage();
-  });
-
   // ======================
-  // LOGIQUE DES JEUX
+  // 5. FONCTIONS DES JEUX (définies AVANT d'être appelées)
   // ======================
-  function initGames() {
-    document.querySelectorAll('.game-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const game = btn.dataset.game;
-        startGame(game);
-      });
-    });
 
-    initTicTacToe();
-    initPuissance4();
-    initChess();
-    initBubbleGame();
-  }
-
-  function startGame(gameName) {
-    document.querySelectorAll('.game').forEach(g => g.classList.remove('active'));
-    document.getElementById(`${gameName}-board`).classList.add('active');
-
-    const titles = {
-      tictactoe: "Tic-Tac-Toe vs Chaty",
-      puissance4: "Puissance 4 vs Chaty",
-      echecs: "Échecs vs Chaty",
-      bulles: "Éclate les bulles !"
-    };
-    document.getElementById('game-title').textContent = titles[gameName];
-
-    currentGame = gameName;
-    gameState = {};
-    isPlayerTurn = true;
-
-    if (gameName === "tictactoe") {
-      gameState.grid = [[0,0,0],[0,0,0],[0,0,0]];
-      renderTicTacToe();
-    } else if (gameName === "puissance4") {
-      gameState.grid = Array(6).fill().map(() => Array(7).fill(0));
-      renderPuissance4();
-    } else if (gameName === "echecs") {
-      if (typeof Chess === 'undefined') {
-        addMessage('ai', "Chargement des échecs... Veuillez patienter.");
-        loadChessJS();
-      } else {
-        gameState.chess = new Chess();
-        renderChess();
-      }
-    } else if (gameName === "bulles") {
-      document.getElementById('bubble-game-container').innerHTML = '';
-      document.getElementById('bubble-score').textContent = "Score: 0";
-      document.getElementById('bubble-timer').textContent = "Temps: 30";
-    }
-
-    sendToMistral(`Lance une partie de ${gameName}. Je suis prêt ! État initial: ${JSON.stringify(gameState)}`);
-  }
-
-  function updateGameUI() {
-    if (currentGame === "tictactoe") renderTicTacToe();
-    else if (currentGame === "puissance4") renderPuissance4();
-    else if (currentGame === "echecs") renderChess();
-  }
-
-  // ===== TIC-TAC-TOE =====
+  // ----- TIC-TAC-TOE -----
   function initTicTacToe() {
     const board = document.querySelector('#tictactoe-board .tictactoe-board');
+    if (!board) return;
     board.innerHTML = '';
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
@@ -805,6 +672,7 @@
 
   function renderTicTacToe() {
     const cells = document.querySelectorAll('#tictactoe-board .tictactoe-cell');
+    if (!cells.length) return;
     cells.forEach(cell => {
       const row = parseInt(cell.dataset.row);
       const col = parseInt(cell.dataset.col);
@@ -843,9 +711,10 @@
     return null;
   }
 
-  // ===== PUISSANCE 4 =====
+  // ----- PUISSANCE 4 -----
   function initPuissance4() {
     const board = document.querySelector('#puissance4-board .puissance4-board');
+    if (!board) return;
     board.innerHTML = '';
     for (let col = 0; col < 7; col++) {
       const column = document.createElement('div');
@@ -865,6 +734,7 @@
 
   function renderPuissance4() {
     const cells = document.querySelectorAll('#puissance4-board .puissance4-cell');
+    if (!cells.length) return;
     cells.forEach(cell => {
       const row = parseInt(cell.dataset.row);
       const col = parseInt(cell.dataset.col);
@@ -925,8 +795,7 @@
     return null;
   }
 
-  // ===== ÉCHECS =====
-  let chessLoaded = false;
+  // ----- ÉCHECS -----
   function loadChessJS() {
     if (chessLoaded) return;
     const script = document.createElement('script');
@@ -941,9 +810,17 @@
     document.head.appendChild(script);
   }
 
+  function initChess() {
+    if (typeof Chess !== 'undefined') {
+      gameState.chess = new Chess();
+      renderChess();
+    }
+  }
+
   function renderChess() {
     if (!gameState.chess) return;
     const board = document.getElementById('chessboard');
+    if (!board) return;
     board.innerHTML = '';
     for (let row = 7; row >= 0; row--) {
       for (let col = 0; col < 8; col++) {
@@ -970,7 +847,6 @@
     return symbols[piece.type] || '';
   }
 
-  let selectedSquare = null;
   function handleChessClick(row, col) {
     if (!isPlayerTurn || !gameState.chess || currentGame !== "echecs") return;
     const square = `${String.fromCharCode(97 + col)}${8 - row}`;
@@ -1010,20 +886,25 @@
     }
   }
 
-  // ===== BULLES =====
+  // ----- BULLES -----
   function initBubbleGame() {
-    document.getElementById('bubble-game-container').addEventListener('click', handleBubbleClick);
+    const container = document.getElementById('bubble-game-container');
+    if (container) {
+      container.addEventListener('click', handleBubbleClick);
+    }
   }
 
   function startBubbleGame(data) {
     if (!data) data = { bubbles: [], time_left: 30, score: 0 };
     gameState = data;
     const container = document.getElementById('bubble-game-container');
+    if (!container) return;
     container.innerHTML = '';
 
     let timer = setInterval(() => {
       gameState.time_left--;
-      document.getElementById('bubble-timer').textContent = `Temps: ${gameState.time_left}`;
+      const timerEl = document.getElementById('bubble-timer');
+      if (timerEl) timerEl.textContent = `Temps: ${gameState.time_left}`;
       if (gameState.time_left <= 0) {
         clearInterval(timer);
         addMessage('ai', `Partie terminée ! Ton score: ${gameState.score} points.`);
@@ -1058,6 +939,7 @@
     }
 
     const container = document.getElementById('bubble-game-container');
+    if (!container) return;
     const bubbleElement = document.createElement('div');
     bubbleElement.className = 'bubble-in-game';
     bubbleElement.style.left = `${bubble.x}%`;
@@ -1082,7 +964,8 @@
     const color = bubble.dataset.color;
     const points = color === '#ff5252' ? 2 : 1;
     gameState.score += points;
-    document.getElementById('bubble-score').textContent = `Score: ${gameState.score}`;
+    const scoreEl = document.getElementById('bubble-score');
+    if (scoreEl) scoreEl.textContent = `Score: ${gameState.score}`;
     bubble.remove();
     sendToMistral(`J'ai éclaté une bulle ${color} ! Score: ${gameState.score}. Temps restant: ${gameState.time_left}`);
   }
@@ -1117,13 +1000,82 @@
         }
       } catch (e) {
         console.error("Coup invalide de l'IA :", e);
+        addMessage('ai', "Désolé, j'ai fait une erreur de coup. Recommence !");
       }
     }
   }
 
+  function updateGameUI() {
+    if (currentGame === "tictactoe") renderTicTacToe();
+    else if (currentGame === "puissance4") renderPuissance4();
+    else if (currentGame === "echecs") renderChess();
+  }
+
+  function startGame(gameName) {
+    document.querySelectorAll('.game').forEach(g => g.classList.remove('active'));
+    document.getElementById(`${gameName}-board`).classList.add('active');
+
+    const titles = {
+      tictactoe: "Tic-Tac-Toe vs Chaty",
+      puissance4: "Puissance 4 vs Chaty",
+      echecs: "Échecs vs Chaty",
+      bulles: "Éclate les bulles !"
+    };
+    document.getElementById('game-title').textContent = titles[gameName];
+
+    currentGame = gameName;
+    gameState = {};
+    isPlayerTurn = true;
+
+    if (gameName === "tictactoe") {
+      gameState.grid = [[0,0,0],[0,0,0],[0,0,0]];
+      renderTicTacToe();
+    } else if (gameName === "puissance4") {
+      gameState.grid = Array(6).fill().map(() => Array(7).fill(0));
+      renderPuissance4();
+    } else if (gameName === "echecs") {
+      if (typeof Chess === 'undefined') {
+        addMessage('ai', "Chargement des échecs... Veuillez patienter.");
+        loadChessJS();
+      } else {
+        gameState.chess = new Chess();
+        renderChess();
+      }
+    } else if (gameName === "bulles") {
+      const container = document.getElementById('bubble-game-container');
+      if (container) container.innerHTML = '';
+      const scoreEl = document.getElementById('bubble-score');
+      if (scoreEl) scoreEl.textContent = "Score: 0";
+      const timerEl = document.getElementById('bubble-timer');
+      if (timerEl) timerEl.textContent = "Temps: 30";
+    }
+
+    sendToMistral(`Lance une partie de ${gameName}. Je suis prêt ! État initial: ${JSON.stringify(gameState)}`);
+  }
+
+  function initGames() {
+    document.querySelectorAll('.game-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const game = btn.dataset.game;
+        startGame(game);
+      });
+    });
+
+    initTicTacToe();
+    initPuissance4();
+    initChess();
+    initBubbleGame();
+  }
+
   // ======================
-  // INITIALISATION
+  // 6. ÉCOUTEURS + INITIALISATION
   // ======================
+  chatSend.addEventListener('click', handleSendMessage);
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleSendMessage();
+  });
+
+  // Initialiser au chargement de la page
   document.addEventListener('DOMContentLoaded', () => {
     addMessage('ai', "Salut ! Je suis Chaty, ton partenaire de jeu. 😊\nVeux-tu discuter ou jouer à un jeu ? (Tic-Tac-Toe, Puissance 4, Échecs, Bulles)");
     initGames();
