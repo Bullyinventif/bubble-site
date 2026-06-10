@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jeux contre Chaty - Bubble Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: linear-gradient(160deg, #5bc8ff 0%, #2e7dd4 35%, #1a3a8c 65%, #2d0a6e 100%);
+    min-height: 100vh;
+    font-family: 'Baloo 2', cursive;
+    color: white;
+    overflow-x: hidden;
+  }
+
+  /* Bubbles bg (identique) */
+  .bubble-bg {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .bbl {
+    position: absolute; border-radius: 50%;
+    animation: riseUp linear infinite;
+  }
+  @keyframes riseUp {
+    0%   { transform: translateY(110vh) translateX(0px); opacity: 0; }
+    8%   { opacity: 1; }
+    50%  { transform: translateY(50vh) translateX(15px); }
+    92%  { opacity: 0.6; }
+    100% { transform: translateY(-10vh) translateX(-8px); opacity: 0; }
+  }
+
+  /* NAV (identique) */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 58px;
+    background: rgba(20, 60, 160, 0.75);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center;
+    z-index: 1000; padding: 0 10px; gap: 7px;
+  }
+  .nav-logo {
+    width: 40px; height: 40px;
+    background: radial-gradient(circle at 38% 32%, #b8e0ff, #3a7ae0);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0; margin-right: 4px;
+    box-shadow: inset 0 -3px 6px rgba(0,0,80,0.3), 0 0 10px rgba(100,180,255,0.4);
+    border: 2px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: transform .2s;
+  }
+  .nav-logo:hover { transform: scale(1.08); }
+  .nav-links { display: flex; flex: 1; gap: 6px; }
+  .nav-btn {
+    flex: 1; height: 42px;
+    border-radius: 12px; border: none;
+    font-family: 'Baloo 2', cursive;
+    font-size: 0.92rem; font-weight: 800;
+    color: white; cursor: pointer; text-decoration: none;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    transition: filter 0.15s, transform 0.15s;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.25), 0 2px 12px rgba(0,0,0,0.2);
+    letter-spacing: 0.2px;
+  }
+  .nav-btn:hover  { filter: brightness(1.12); transform: translateY(-2px); }
+  .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+  .nav-btn.red    { background: linear-gradient(180deg, #ff5252, #cc2020); }
+  .nav-btn.yellow { background: linear-gradient(180deg, #ffcc00, #cc9900); }
+  .nav-btn.gray   { background: linear-gradient(180deg, #6a7a8a, #4a5a6a); }
+  .nav-btn.green  { background: linear-gradient(180deg, #44d966, #1faa44); }
+  .nav-btn.purple { background: linear-gradient(180deg, #a855f7, #7c3aed); }
+  .nav-btn.active { outline: 2.5px solid rgba(255,255,255,0.7); outline-offset: 1px; }
+
+  .nav-profile {
+    margin-left: 6px; flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; text-decoration: none;
+    transition: transform 0.2s;
+  }
+  .nav-profile:hover { transform: scale(1.05); }
+  .profile-bubble {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 28%, #c8e8ff, #4488cc 50%, #1a2a5c);
+    border: 2px solid rgba(255,255,255,0.5);
+    box-shadow: 0 0 0 1px rgba(100,160,255,0.3), 0 4px 12px rgba(0,0,80,0.4), inset 0 -3px 6px rgba(0,0,80,0.3);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .profile-bubble::after {
+    content: ''; position: absolute; top: 10%; left: 18%;
+    width: 32%; height: 20%; background: rgba(255,255,255,0.35);
+    border-radius: 50%; transform: rotate(-35deg); pointer-events: none;
+  }
+  .profile-bubble img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .profile-bubble-icon { font-size: 1.3rem; filter: drop-shadow(0 2px 4px rgba(0,0,80,0.4)); }
+
+  /* Mobile Menu (identique) */
+  .mobile-menu {
+    display: none; position: fixed; top: 58px; left: 0; right: 0;
+    background: rgba(8, 22, 80, 0.97); backdrop-filter: blur(22px);
+    flex-direction: column; gap: 12px; padding: 20px 18px 24px;
+    z-index: 998; border-bottom: 1px solid rgba(255,255,255,.15);
+    box-shadow: 0 12px 40px rgba(0,0,0,.5);
+  }
+  .mobile-menu.open { display: flex; animation: slideDown .22s ease; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .mobile-menu .nav-btn { width: 100%; height: 54px; font-size: 1.05rem; border-radius: 16px; flex: none; }
+  .menu-overlay { display: none; position: fixed; inset: 58px 0 0 0; z-index: 997; background: transparent; }
+  .menu-overlay.open { display: block; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .nav-profile { margin-left: auto; }
+    .profile-bubble { width: 38px; height: 38px; border-width: 2px; }
+    .profile-bubble-icon { font-size: 1.3rem; }
+  }
+
+  /* MAIN */
+  main {
+    position: relative; z-index: 1;
+    padding-top: 100px; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding-bottom: 80px;
+  }
+
+  .hero-title {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(2.8rem, 8vw, 5rem);
+    line-height: 1; letter-spacing: 1px;
+    filter: drop-shadow(2px 4px 0 rgba(0,0,60,0.3));
+    animation: fadeUp 0.7s ease both;
+    margin-bottom: 15px;
+  }
+  .hero-subtitle {
+    font-size: 1.1rem; font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.3px; text-shadow: 0 2px 8px rgba(0,0,60,0.3);
+    animation: fadeUp 0.7s 0.15s ease both;
+    margin-bottom: 20px;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Menu des jeux */
+  .games-menu {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px; width: 90%; max-width: 900px; margin-bottom: 30px;
+  }
+  .game-card {
+    background: rgba(20, 40, 80, 0.5);
+    border-radius: 16px; padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s; cursor: pointer;
+    backdrop-filter: blur(10px);
+    text-align: center;
+  }
+  .game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.3);
+  }
+  .game-card-icon { font-size: 2.5rem; margin-bottom: 10px; }
+  .game-card-title {
+    font-family: 'Baloo 2', cursive; font-size: 1.3rem;
+    color: white; margin-bottom: 8px;
+  }
+  .game-card-desc {
+    font-size: 0.85rem; color: rgba(255,255,255,0.7);
+    line-height: 1.4;
+  }
+
+  /* Zone de jeu */
+  .game-container {
+    width: 90%; max-width: 800px;
+    background: rgba(20, 40, 80, 0.5);
+    border-radius: 16px; padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: none; backdrop-filter: blur(10px);
+  }
+  .game-container.active { display: block; }
+  .game-title {
+    font-family: 'Baloo 2', cursive; font-size: 1.5rem;
+    color: white; margin-bottom: 20px; text-align: center;
+  }
+  .back-btn {
+    background: linear-gradient(180deg, #ff5252, #cc2020);
+    color: white; border: none; padding: 8px 16px;
+    border-radius: 10px; cursor: pointer;
+    font-family: 'Baloo 2', cursive; font-weight: 800;
+    margin-bottom: 15px; display: block; width: fit-content;
+    box-shadow: 0 4px 12px rgba(255, 82, 82, 0.4);
+    transition: all 0.2s;
+  }
+  .back-btn:hover { filter: brightness(1.12); transform: translateY(-2px); }
+
+  /* Styles des jeux (identiques à chaty-ia.html) */
+  .tictactoe-board {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;
+    width: 100%; max-width: 280px; margin: 0 auto;
+  }
+  .tictactoe-cell {
+    aspect-ratio: 1; background: rgba(255,255,255,0.1);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem; font-weight: bold; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s;
+  }
+  .tictactoe-cell:hover { background: rgba(255,255,255,0.2); }
+  .tictactoe-cell.x { color: #ff8c3a; }
+  .tictactoe-cell.o { color: #44e87a; }
+
+  .puissance4-board {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;
+    width: 100%; max-width: 350px; margin: 0 auto; aspect-ratio: 7/6;
+  }
+  .puissance4-col { display: flex; flex-direction: column-reverse; gap: 5px; }
+  .puissance4-cell {
+    aspect-ratio: 1; border-radius: 50%;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .puissance4-cell:hover { transform: scale(1.05); }
+  .puissance4-cell.player { background: #ff8c3a; }
+  .puissance4-cell.ai { background: #44e87a; }
+
+  #chessboard {
+    width: 100%; max-width: 400px; height: 400px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
+    gap: 2px; border-radius: 8px; overflow: hidden;
+  }
+  .chess-square {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; cursor: pointer; transition: all 0.2s;
+  }
+  .chess-square.light { background: rgba(240, 217, 181, 0.5); }
+  .chess-square.dark { background: rgba(181, 136, 99, 0.5); }
+  .chess-square.selected { background: rgba(255, 215, 0, 0.6) !important; }
+
+  #bubble-game-container {
+    position: relative; width: 100%; height: 300px;
+    background: rgba(0, 0, 0, 0.1); border-radius: 8px;
+    overflow: hidden; margin: 0 auto;
+  }
+  .bubble-in-game {
+    position: absolute; border-radius: 50%;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .bubble-in-game:hover { transform: scale(1.15); }
+  #bubble-score {
+    font-family: 'Baloo 2', cursive; font-size: 1.2rem;
+    color: #ffe033; margin-top: 10px; text-align: center;
+  }
+  #bubble-timer {
+    font-size: 1rem; color: rgba(255,255,255,0.7);
+    text-align: center; margin-top: 5px;
+  }
+
+  footer {
+    position: relative; z-index: 1; text-align: center; padding: 18px;
+    color: rgba(255,255,255,0.3); font-size: 0.72rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-family: 'Press Start 2P', monospace; letter-spacing: 1px;
+  }
+</style>
+<script src="bubble_effects.js"></script>
+</head>
+<body>
+
+<div class="bubble-bg" id="bubbleBg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" id="menuToggle">🫧</div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-btn red">🏠 Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
+    <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
+    <a href="bubble_site_gacha.html" class="nav-btn purple">🎁 Gacha (BETA)</a>
+    <a href="chaty-ia.html" class="nav-btn red">🤖 Chaty IA</a>
+    <a href="jeux-ia.html" class="nav-btn purple active">♟️ Jeux vs IA</a>
+  </div>
+  <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
+    <div class="profile-bubble" id="navAvatar">
+      <span class="profile-bubble-icon">🪪</span>
+    </div>
+  </a>
+</nav>
+
+<!-- Menu déroulant mobile -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" class="nav-btn red">🏠 Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
+  <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
+  <a href="bubble_site_gacha.html" class="nav-btn purple">🎁 Gacha (BETA)</a>
+  <a href="chaty-ia.html" class="nav-btn red">🤖 Chaty IA</a>
+  <a href="jeux-ia.html" class="nav-btn purple active">♟️ Jeux vs IA</a>
+  <a href="install_APK.html" class="nav-btn gray">Installer l'app 📲</a>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<main>
+  <div class="hero-title">Jeux contre Chaty</div>
+  <div class="hero-subtitle" id="welcomeMsg">Choisis un jeu et défie-moi !</div>
+
+  <!-- Menu des jeux -->
+  <div class="games-menu">
+    <div class="game-card" data-game="tictactoe">
+      <div class="game-card-icon">🎲</div>
+      <h3 class="game-card-title">Tic-Tac-Toe</h3>
+      <p class="game-card-desc">Le classique morpion en 3x3. À toi de commencer !</p>
+    </div>
+    <div class="game-card" data-game="puissance4">
+      <div class="game-card-icon">🟡</div>
+      <h3 class="game-card-title">Puissance 4</h3>
+      <p class="game-card-desc">Aligne 4 jetons avant moi pour gagner !</p>
+    </div>
+    <div class="game-card" data-game="echecs">
+      <div class="game-card-icon">♟️</div>
+      <h3 class="game-card-title">Échecs</h3>
+      <p class="game-card-desc">Défie-moi aux échecs. Niveau adaptatif !</p>
+    </div>
+    <div class="game-card" data-game="bulles">
+      <div class="game-card-icon">🎈</div>
+      <h3 class="game-card-title">Éclater des bulles</h3>
+      <p class="game-card-desc">Éclate un max de bulles en 30 secondes !</p>
+    </div>
+  </div>
+
+  <!-- Zones de jeu (masquées par défaut) -->
+  <div id="tictactoe-container" class="game-container">
+    <button class="back-btn">← Retour</button>
+    <h2 class="game-title">Tic-Tac-Toe vs Chaty</h2>
+    <div id="tictactoe-board" class="tictactoe-board"></div>
+  </div>
+
+  <div id="puissance4-container" class="game-container">
+    <button class="back-btn">← Retour</button>
+    <h2 class="game-title">Puissance 4 vs Chaty</h2>
+    <div id="puissance4-board" class="puissance4-board"></div>
+  </div>
+
+  <div id="chess-container" class="game-container">
+    <button class="back-btn">← Retour</button>
+    <h2 class="game-title">Échecs vs Chaty</h2>
+    <div id="chessboard"></div>
+  </div>
+
+  <div id="bubble-container" class="game-container">
+    <button class="back-btn">← Retour</button>
+    <h2 class="game-title">Éclate les bulles !</h2>
+    <div id="bubble-game-container"></div>
+    <div id="bubble-score">Score: 0</div>
+    <div id="bubble-timer">Temps: 30</div>
+  </div>
+</main>
+
+<footer>© BUBBLE INC.</footer>
+
+<!-- Scripts pour les bulles et le menu mobile -->
+<script>
+  /* ── Bubbles ── */
+  const bg = document.getElementById('bubbleBg');
+  for (let i = 0; i < 24; i++) {
+    const b = document.createElement('div');
+    b.className = 'bbl';
+    const size = 12 + Math.random() * 65;
+    const hue  = 190 + Math.random() * 90;
+    const alpha = 0.08 + Math.random() * 0.18;
+    b.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      background: radial-gradient(circle at 35% 30%,
+        rgba(255,255,255,0.25),
+        hsla(${hue},80%,70%,${alpha}) 55%,
+        transparent
+      );
+      border: 1px solid hsla(${hue},70%,80%,0.15);
+      animation-duration:${10+Math.random()*18}s;
+      animation-delay:${Math.random()*14}s;
+    `;
+    bg.appendChild(b);
+  }
+
+  /* ── Menu mobile ── */
+  const toggle  = document.getElementById('menuToggle');
+  const menu    = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('menuOverlay');
+
+  function openMenu() {
+    menu.classList.add('open');
+    overlay.classList.add('open');
+    toggle.style.transform = 'scale(1.15) rotate(20deg)';
+  }
+  function closeMenu() {
+    menu.classList.remove('open');
+    overlay.classList.remove('open');
+    toggle.style.transform = '';
+  }
+
+  toggle.addEventListener('click', () => {
+    menu.classList.contains('open') ? closeMenu() : openMenu();
+  });
+  overlay.addEventListener('click', closeMenu);
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 600) closeMenu();
+  });
+</script>
+
+<!-- Firebase + Logique des Jeux -->
+<script type="module">
+  // ======================
+  // FIREBASE (Profil)
+  // ======================
+  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  onAuthStateChanged(auth, async user => {
+    if (user) {
+      const pseudo = user.displayName || user.email.split('@')[0];
+      document.getElementById('welcomeMsg').innerHTML = `Salut ${pseudo}, prêt à me battre ? 😈`;
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists()) {
+          const d = snap.data();
+          const sub      = d.subscription || 'basic';
+          const avatarId = d.avatarId     || 'bully_1';
+          document.getElementById('navAvatar').innerHTML   = `<img src="${avatarId}.png" alt="avatar">`;
+          if(window.applyTheme) window.applyTheme(d.activeEffect||null);
+          const _xp = d.xp || 0;
+          applyFrame(sub, _getLevel(_xp, sub));
+        }
+      } catch(e) {
+        console.error("Erreur Firebase :", e);
+      }
+    } else {
+      document.getElementById('welcomeMsg').textContent = 'Connecte-toi pour jouer contre Chaty !';
+      document.getElementById('navProfile').href = './login.html';
+    }
+  });
+
+  const _LEVEL_CFG = {
+    basic:{maxLevel:3,xpPerLevel:100},
+    plus:{maxLevel:20,xpPerLevel:200},
+    x:{maxLevel:20,xpPerLevel:300},
+    max:{maxLevel:25,xpPerLevel:400},
+  };
+  function _getLevel(xp,sub){
+    const cfg=_LEVEL_CFG[sub]||_LEVEL_CFG.basic;
+    return Math.min(Math.floor(xp/cfg.xpPerLevel)+1,cfg.maxLevel);
+  }
+
+  /* ── Cadre animé ── */
+  function applyFrame(sub, level) {
+    if (!document.getElementById('bubble-frame-css')) {
+      const s = document.createElement('style');
+      s.id = 'bubble-frame-css';
+      s.textContent = `
+        @keyframes frame-pulse-basic{0%,100%{box-shadow:0 0 8px rgba(91,200,255,.4),0 0 16px rgba(46,125,212,.2)}50%{box-shadow:0 0 18px rgba(91,200,255,.9),0 0 30px rgba(46,125,212,.5)}}
+        @keyframes frame-pulse-plus{0%,100%{box-shadow:0 0 8px rgba(255,200,0,.5),0 0 16px rgba(230,168,0,.3)}50%{box-shadow:0 0 18px rgba(255,200,0,.95),0 0 32px rgba(230,168,0,.6)}}
+        @keyframes frame-shimmer-plus{0%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}50%{box-shadow:0 0 22px rgba(255,230,0,1),0 0 44px rgba(255,200,0,.7);border-color:rgba(255,240,100,1)}100%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}}
+        @keyframes frame-pulse-x{0%,100%{box-shadow:0 0 8px rgba(68,204,255,.5),0 0 16px rgba(0,153,221,.3)}50%{box-shadow:0 0 18px rgba(68,204,255,.95),0 0 32px rgba(0,153,221,.6)}}
+        @keyframes frame-shimmer-x{0%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}50%{box-shadow:0 0 24px rgba(100,230,255,1),0 0 48px rgba(68,204,255,.7);border-color:rgba(150,240,255,1)}100%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}}
+        @keyframes frame-pulse-max{0%,100%{box-shadow:0 0 12px rgba(204,68,255,.6),0 0 24px rgba(136,0,204,.4)}50%{box-shadow:0 0 24px rgba(204,68,255,1),0 0 44px rgba(136,0,204,.7)}}
+        @keyframes frame-shimmer-max{0%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6);border-color:rgba(220,100,255,.95)}25%{box-shadow:0 0 26px rgba(255,100,255,1),0 0 52px rgba(180,0,255,.8);border-color:rgba(255,150,255,1)}75%{box-shadow:0 0 30px rgba(255,80,220,1),0 0 60px rgba(200,0,255,.8);border-color:rgba(255,120,240,1)}100%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6);border-color:rgba(220,100,255,.95)}}
+      `;
+      document.head.appendChild(s);
+    }
+    const frames = {
+      basic: `frame-pulse-basic 2.5s ease-in-out infinite`,
+      plus:  level >= 10 ? `frame-shimmer-plus 2s linear infinite` : `frame-pulse-plus 2.5s ease-in-out infinite`,
+      x:     level >= 10 ? `frame-shimmer-x 2s linear infinite`    : `frame-pulse-x 2.5s ease-in-out infinite`,
+      max:   level >= 15 ? `frame-shimmer-max 2s linear infinite`   : `frame-pulse-max 2.5s ease-in-out infinite`,
+    };
+    const borders = {
+      basic: `3px solid rgba(91,200,255,${0.4+(level/3)*0.5})`,
+      plus:  `3px solid rgba(255,200,0,${0.4+(level/20)*0.6})`,
+      x:     `3px solid rgba(68,204,255,${0.4+(level/20)*0.6})`,
+      max:   `3px solid rgba(204,68,255,${0.5+(level/25)*0.5})`,
+    };
+    document.querySelectorAll('.profile-bubble').forEach(b => {
+      b.style.border    = borders[sub] || borders.basic;
+      b.style.animation = frames[sub]  || frames.basic;
+    });
+  }
+
+  // ======================
+  // LOGIQUE DES JEUX
+  // ======================
+  let currentGame = null;
+  let gameState = {};
+  let isPlayerTurn = true;
+
+  // Initialiser les jeux
+  function initGames() {
+    // Boutons du menu des jeux
+    document.querySelectorAll('.game-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const game = card.dataset.game;
+        startGame(game);
+      });
+    });
+
+    // Boutons "Retour"
+    document.querySelectorAll('.back-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.game-container').forEach(c => c.classList.remove('active'));
+        document.querySelector('.games-menu').style.display = 'grid';
+      });
+    });
+
+    // Initialiser les plateaux
+    initTicTacToe();
+    initPuissance4();
+    initChess();
+    initBubbleGame();
+  }
+
+  function startGame(gameName) {
+    document.querySelector('.games-menu').style.display = 'none';
+    document.getElementById(`${gameName}-container`).classList.add('active');
+
+    currentGame = gameName;
+    gameState = {};
+    isPlayerTurn = true;
+
+    if (gameName === "tictactoe") {
+      gameState.grid = [[0,0,0],[0,0,0],[0,0,0]];
+      renderTicTacToe();
+    } else if (gameName === "puissance4") {
+      gameState.grid = Array(6).fill().map(() => Array(7).fill(0));
+      renderPuissance4();
+    } else if (gameName === "echecs") {
+      if (typeof Chess === 'undefined') {
+        loadChessJS();
+      } else {
+        gameState.chess = new Chess();
+        renderChess();
+      }
+    } else if (gameName === "bulles") {
+      document.getElementById('bubble-game-container').innerHTML = '';
+      document.getElementById('bubble-score').textContent = "Score: 0";
+      document.getElementById('bubble-timer').textContent = "Temps: 30";
+      startBubbleGame();
+    }
+  }
+
+  // ===== TIC-TAC-TOE =====
+  function initTicTacToe() {
+    const board = document.getElementById('tictactoe-board');
+    board.innerHTML = '';
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        const cell = document.createElement('div');
+        cell.className = 'tictactoe-cell';
+        cell.dataset.row = i;
+        cell.dataset.col = j;
+        cell.addEventListener('click', () => handleTicTacToeClick(i, j));
+        board.appendChild(cell);
+      }
+    }
+  }
+
+  function renderTicTacToe() {
+    const cells = document.querySelectorAll('#tictactoe-board .tictactoe-cell');
+    cells.forEach(cell => {
+      const row = parseInt(cell.dataset.row);
+      const col = parseInt(cell.dataset.col);
+      const value = gameState.grid ? gameState.grid[row][col] : 0;
+      cell.textContent = value === 1 ? '❌' : value === 2 ? '⭕' : '';
+      cell.className = 'tictactoe-cell';
+      if (value === 1) cell.classList.add('x');
+      if (value === 2) cell.classList.add('o');
+    });
+  }
+
+  function handleTicTacToeClick(row, col) {
+    if (!isPlayerTurn || !gameState.grid || gameState.grid[row][col] !== 0 || currentGame !== "tictactoe") return;
+    gameState.grid[row][col] = 1;
+    isPlayerTurn = false;
+    renderTicTacToe();
+    const winner = checkTicTacToeWinner(gameState.grid);
+    if (winner) {
+      setTimeout(() => alert(winner === 1 ? "Bravo ! Tu as gagné ! 🎉" : winner === 2 ? "J'ai gagné, désolé ! 😅" : "Match nul !"), 100);
+      return;
+    }
+    // Simuler l'IA (sans API)
+    setTimeout(() => {
+      let aiRow, aiCol;
+      do {
+        aiRow = Math.floor(Math.random() * 3);
+        aiCol = Math.floor(Math.random() * 3);
+      } while (gameState.grid[aiRow][aiCol] !== 0);
+      gameState.grid[aiRow][aiCol] = 2;
+      isPlayerTurn = true;
+      renderTicTacToe();
+      const winner = checkTicTacToeWinner(gameState.grid);
+      if (winner) {
+        setTimeout(() => alert(winner === 1 ? "Bravo ! Tu as gagné ! 🎉" : winner === 2 ? "J'ai gagné, désolé ! 😅" : "Match nul !"), 100);
+      }
+    }, 1000);
+  }
+
+  function checkTicTacToeWinner(grid) {
+    for (let i = 0; i < 3; i++) {
+      if (grid[i][0] !== 0 && grid[i][0] === grid[i][1] && grid[i][1] === grid[i][2]) return grid[i][0];
+    }
+    for (let j = 0; j < 3; j++) {
+      if (grid[0][j] !== 0 && grid[0][j] === grid[1][j] && grid[1][j] === grid[2][j]) return grid[0][j];
+    }
+    if (grid[0][0] !== 0 && grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2]) return grid[0][0];
+    if (grid[0][2] !== 0 && grid[0][2] === grid[1][1] && grid[1][1] === grid[2][0]) return grid[0][2];
+    if (grid.flat().every(cell => cell !== 0)) return "draw";
+    return null;
+  }
+
+  // ===== PUISSANCE 4 =====
+  function initPuissance4() {
+    const board = document.getElementById('puissance4-board');
+    board.innerHTML = '';
+    for (let col = 0; col < 7; col++) {
+      const column = document.createElement('div');
+      column.className = 'puissance4-col';
+      column.dataset.col = col;
+      column.addEventListener('click', () => handlePuissance4Click(col));
+      for (let row = 0; row < 6; row++) {
+        const cell = document.createElement('div');
+        cell.className = 'puissance4-cell';
+        cell.dataset.row = row;
+        cell.dataset.col = col;
+        column.appendChild(cell);
+      }
+      board.appendChild(column);
+    }
+  }
+
+  function renderPuissance4() {
+    const cells = document.querySelectorAll('#puissance4-board .puissance4-cell');
+    cells.forEach(cell => {
+      const row = parseInt(cell.dataset.row);
+      const col = parseInt(cell.dataset.col);
+      const value = gameState.grid ? gameState.grid[row][col] : 0;
+      cell.className = 'puissance4-cell';
+      if (value === 1) cell.classList.add('player');
+      if (value === 2) cell.classList.add('ai');
+    });
+  }
+
+  function handlePuissance4Click(col) {
+    if (!isPlayerTurn || !gameState.grid || currentGame !== "puissance4") return;
+    let row = 5;
+    while (row >= 0 && gameState.grid[row][col] !== 0) row--;
+    if (row < 0) return;
+    gameState.grid[row][col] = 1;
+    isPlayerTurn = false;
+    renderPuissance4();
+    const winner = checkPuissance4Winner(gameState.grid);
+    if (winner) {
+      setTimeout(() => alert(winner === 1 ? "Bravo ! Tu as gagné ! 🎉" : winner === 2 ? "J'ai gagné, désolé ! 😅" : "Match nul !"), 100);
+      return;
+    }
+    // Simuler l'IA
+    setTimeout(() => {
+      let aiCol;
+      do {
+        aiCol = Math.floor(Math.random() * 7);
+      } while (gameState.grid[0][aiCol] !== 0);
+      let aiRow = 5;
+      while (aiRow >= 0 && gameState.grid[aiRow][aiCol] !== 0) aiRow--;
+      if (aiRow >= 0) {
+        gameState.grid[aiRow][aiCol] = 2;
+        isPlayerTurn = true;
+        renderPuissance4();
+        const winner = checkPuissance4Winner(gameState.grid);
+        if (winner) {
+          setTimeout(() => alert(winner === 1 ? "Bravo ! Tu as gagné ! 🎉" : winner === 2 ? "J'ai gagné, désolé ! 😅" : "Match nul !"), 100);
+        }
+      }
+    }, 1000);
+  }
+
+  function checkPuissance4Winner(grid) {
+    for (let row = 0; row < 6; row++) {
+      for (let col = 0; col < 4; col++) {
+        if (grid[row][col] !== 0 && grid[row][col] === grid[row][col+1] && grid[row][col] === grid[row][col+2] && grid[row][col] === grid[row][col+3]) {
+          return grid[row][col];
+        }
+      }
+    }
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 7; col++) {
+        if (grid[row][col] !== 0 && grid[row][col] === grid[row+1][col] && grid[row][col] === grid[row+2][col] && grid[row][col] === grid[row+3][col]) {
+          return grid[row][col];
+        }
+      }
+    }
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 4; col++) {
+        if (grid[row][col] !== 0 && grid[row][col] === grid[row+1][col+1] && grid[row][col] === grid[row+2][col+2] && grid[row][col] === grid[row+3][col+3]) {
+          return grid[row][col];
+        }
+      }
+    }
+    for (let row = 3; row < 6; row++) {
+      for (let col = 0; col < 4; col++) {
+        if (grid[row][col] !== 0 && grid[row][col] === grid[row-1][col+1] && grid[row][col] === grid[row-2][col+2] && grid[row][col] === grid[row-3][col+3]) {
+          return grid[row][col];
+        }
+      }
+    }
+    if (grid.flat().every(cell => cell !== 0)) return "draw";
+    return null;
+  }
+
+  // ===== ÉCHECS =====
+  let chessLoaded = false;
+  function loadChessJS() {
+    if (chessLoaded) return;
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js';
+    script.onload = () => {
+      chessLoaded = true;
+      if (currentGame === "echecs") {
+        gameState.chess = new Chess();
+        renderChess();
+      }
+    };
+    document.head.appendChild(script);
+  }
+
+  function renderChess() {
+    if (!gameState.chess) return;
+    const board = document.getElementById('chessboard');
+    board.innerHTML = '';
+    for (let row = 7; row >= 0; row--) {
+      for (let col = 0; col < 8; col++) {
+        const square = document.createElement('div');
+        square.className = `chess-square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+        square.dataset.row = row;
+        square.dataset.col = col;
+        square.addEventListener('click', () => handleChessClick(row, col));
+        const piece = gameState.chess.get(`${String.fromCharCode(97 + col)}${8 - row}`);
+        if (piece) {
+          square.innerHTML = getChessSymbol(piece);
+          square.style.color = piece.color === 'w' ? 'white' : 'black';
+        }
+        board.appendChild(square);
+      }
+    }
+  }
+
+  function getChessSymbol(piece) {
+    const symbols = {
+      k: '♔', q: '♕', r: '♖', b: '♗', n: '♘', p: '♙',
+      K: '♚', Q: '♛', R: '♜', B: '♝', N: '♞', P: '♟'
+    };
+    return symbols[piece.type] || '';
+  }
+
+  let selectedSquare = null;
+  function handleChessClick(row, col) {
+    if (!isPlayerTurn || !gameState.chess || currentGame !== "echecs") return;
+    const square = `${String.fromCharCode(97 + col)}${8 - row}`;
+
+    if (selectedSquare) {
+      try {
+        const move = gameState.chess.move({ from: selectedSquare, to: square, promotion: 'q' });
+        if (move) {
+          selectedSquare = null;
+          isPlayerTurn = false;
+          renderChess();
+          if (gameState.chess.isGameOver()) {
+            setTimeout(() => alert(gameState.chess.isCheckmate() ? "Échec et mat ! Je gagne !" : "Match nul !"), 100);
+            return;
+          }
+          // Simuler l'IA
+          setTimeout(() => {
+            const moves = gameState.chess.moves();
+            if (moves.length > 0) {
+              const randomMove = moves[Math.floor(Math.random() * moves.length)];
+              gameState.chess.move(randomMove);
+              isPlayerTurn = true;
+              renderChess();
+              if (gameState.chess.isGameOver()) {
+                setTimeout(() => alert(gameState.chess.isCheckmate() ? "Échec et mat ! Je gagne !" : "Match nul !"), 100);
+              }
+            }
+          }, 1000);
+        } else {
+          selectedSquare = null;
+          renderChess();
+        }
+      } catch (e) {
+        selectedSquare = null;
+        renderChess();
+      }
+    } else {
+      const piece = gameState.chess.get(square);
+      if (piece && piece.color === gameState.chess.turn()) {
+        selectedSquare = square;
+        document.querySelectorAll('#chessboard .chess-square').forEach(s => {
+          s.classList.remove('selected');
+          if (s.dataset.row + s.dataset.col === `${row}${col}`) {
+            s.classList.add('selected');
+          }
+        });
+      }
+    }
+  }
+
+  // ===== BULLES =====
+  function initBubbleGame() {
+    document.getElementById('bubble-game-container').addEventListener('click', handleBubbleClick);
+  }
+
+  function startBubbleGame() {
+    gameState.score = 0;
+    gameState.time_left = 30;
+    document.getElementById('bubble-score').textContent = `Score: ${gameState.score}`;
+    document.getElementById('bubble-timer').textContent = `Temps: ${gameState.time_left}`;
+
+    const timer = setInterval(() => {
+      gameState.time_left--;
+      document.getElementById('bubble-timer').textContent = `Temps: ${gameState.time_left}`;
+      if (gameState.time_left <= 0) {
+        clearInterval(timer);
+        setTimeout(() => alert(`Partie terminée ! Ton score: ${gameState.score} points.`), 100);
+        document.querySelector('.games-menu').style.display = 'grid';
+        document.getElementById('bubble-container').classList.remove('active');
+      }
+    }, 1000);
+
+    const spawnInterval = setInterval(() => {
+      if (gameState.time_left <= 0) {
+        clearInterval(spawnInterval);
+        return;
+      }
+      spawnBubble();
+    }, 2000);
+
+    for (let i = 0; i < 3; i++) spawnBubble();
+  }
+
+  function spawnBubble() {
+    const bubble = {
+      id: Date.now(),
+      x: Math.random() * 80 + 10,
+      y: Math.random() * 80 + 10,
+      color: ['#ff5252', '#ffcc00', '#44d966', '#a855f7'][Math.floor(Math.random() * 4)],
+      size: 20 + Math.random() * 20
+    };
+
+    const container = document.getElementById('bubble-game-container');
+    const bubbleElement = document.createElement('div');
+    bubbleElement.className = 'bubble-in-game';
+    bubbleElement.style.left = `${bubble.x}%`;
+    bubbleElement.style.top = `${bubble.y}%`;
+    bubbleElement.style.width = `${bubble.size}px`;
+    bubbleElement.style.height = `${bubble.size}px`;
+    bubbleElement.style.backgroundColor = bubble.color;
+    bubbleElement.dataset.id = bubble.id;
+    container.appendChild(bubbleElement);
+
+    setTimeout(() => {
+      if (container.contains(bubbleElement)) {
+        container.removeChild(bubbleElement);
+      }
+    }, 5000);
+  }
+
+  function handleBubbleClick(e) {
+    if (currentGame !== "bulles" || !e.target.classList.contains('bubble-in-game')) return;
+    const bubble = e.target;
+    const color = bubble.dataset.color;
+    const points = color === '#ff5252' ? 2 : 1;
+    gameState.score += points;
+    document.getElementById('bubble-score').textContent = `Score: ${gameState.score}`;
+    bubble.remove();
+  }
+
+  // ======================
+  // INITIALISATION
+  // ======================
+  document.addEventListener('DOMContentLoaded', initGames);
+</script>
+</body>
+</html>
