@@ -541,74 +541,60 @@
   // 3. FONCTION POUR APPELER TON AGENT MISTRAL (CORRIGÉE)
   // ======================
   async function sendToMistral(message) {
-    // 👇 Remplace par ta clé API (ou utilise localStorage)
-    const apiKey = localStorage.getItem('mistral_api_key') || prompt("Entrez votre clé API Mistral :");
-    if (!apiKey) return null;
+  const apiKey = localStorage.getItem('mistral_api_key') || "4NkNoRWbWF5WoCQ0fnYYeixQ9Rj1c8mE"; // 👈 Ta nouvelle clé
+  if (!apiKey) return null;
 
-    // 👇 ENDPOINT CORRECT POUR TON AGENT (avec ton ID d'agent dans le champ "model")
-    const url = "https://api.mistral.ai/v1/chat/completions";
+  // 👇 ENDPOINT POUR LES AGENTS (avec ID encodé)
+  const agentId = "ag:b903d54a:20250510:untitled-agent:695bcc1a";
+  const encodedAgentId = encodeURIComponent(agentId); // Encode les ":" en "%3A"
+  const url = `https://api.mistral.ai/v1/agents/${encodedAgentId}/chat`;
 
-    const requestBody = {
-      model: "ag:b903d54a:20250510:untitled-agent:695bcc1a", // 👈 Ton ID d'agent ici
-      messages: [
-        {
-          role: "user",
-          content: message
-        }
-      ],
-      temperature: 0.3
-    };
+  const requestBody = {
+    input: message,  // Ton agent attend "input", pas "messages"
+    session_id: "chaty-ia-" + Date.now() // ID de session unique
+  };
 
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
-        body: JSON.stringify(requestBody)
-      });
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(requestBody)
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Erreur API: ${response.status} - ${JSON.stringify(errorData)}`);
-      }
-
-      const data = await response.json();
-
-      // 👇 PARSER LA RÉPONSE (ton agent doit retourner du JSON)
-      try {
-        const content = data.choices[0].message.content;
-        if (content.trim().startsWith('{')) {
-          return JSON.parse(content);
-        } else {
-          // Si ce n'est pas du JSON, retourner un format compatible
-          return {
-            message: content,
-            game: null,
-            action: "chat",
-            data: null
-          };
-        }
-      } catch (e) {
-        console.error("Erreur de parsing :", e);
-        return {
-          message: content || "Désolé, je n'ai pas compris.",
-          game: null,
-          action: "chat",
-          data: null
-        };
-      }
-    } catch (error) {
-      console.error("Erreur avec Mistral :", error);
-      return {
-        message: `Erreur: ${error.message}. Vérifie ta clé API ou ton agent.`,
-        game: null,
-        action: "chat",
-        data: null
-      };
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Erreur API: ${response.status} - ${JSON.stringify(errorData)}`);
     }
+
+    const data = await response.json();
+
+    // 👇 PARSER LA RÉPONSE (ton agent doit retourner du JSON)
+    try {
+      const output = data.output || data.choices?.[0]?.message?.content;
+      if (!output) throw new Error("Réponse vide");
+
+      if (typeof output === 'string' && output.trim().startsWith('{')) {
+        return JSON.parse(output);
+      } else {
+        return { message: output, game: null, action: "chat", data: null };
+      }
+    } catch (e) {
+      console.error("Erreur de parsing :", e);
+      return { message: "Désolé, je n'ai pas compris.", game: null, action: "chat", data: null };
+    }
+  } catch (error) {
+    console.error("Erreur avec Mistral :", error);
+    return {
+      message: `Erreur: ${error.message}. Vérifie que ton agent est déployé et que ton ID est correct.`,
+      game: null,
+      action: "chat",
+      data: null
+    };
   }
+}
 
   // ======================
   // 4. FONCTIONS DU CHAT
