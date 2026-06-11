@@ -541,59 +541,64 @@
   // 3. FONCTION POUR APPELER TON AGENT MISTRAL (CORRIGÉE)
   // ======================
   async function sendToMistral(message) {
-  const apiKey = localStorage.getItem('mistral_api_key') || "4NkNoRWbWF5WoCQ0fnYYeixQ9Rj1c8mE"; // 👈 Ta nouvelle clé
-  if (!apiKey) return null;
-
-  // 👇 ENDPOINT POUR LES AGENTS (avec ID encodé)
+  const apiKey = "qRIoAfC20FXU7HbdsHaCbGkpp83gQWRn";
   const agentId = "ag:b903d54a:20250510:untitled-agent:695bcc1a";
-  const encodedAgentId = encodeURIComponent(agentId); // Encode les ":" en "%3A"
-  const url = `https://api.mistral.ai/v1/agents/${encodedAgentId}/chat`;
+  const encodedAgentId = encodeURIComponent(agentId);
+  const apiUrl = `https://api.mistral.ai/v1/agents/${encodedAgentId}/chat`;
+
+  // 👇 ESSAIE CES 3 PROXYS (un par un)
+  const proxies = [
+    "https://thingproxy.freeboard.io/fetch/",  // ✅ Le plus fiable
+    "https://api.allorigins.win/raw?url=",      // ✅ Alternative
+    "https://cors-anywhere.herokuapp.com/"     // ⚠️ Peut être lent
+  ];
 
   const requestBody = {
-    input: message,  // Ton agent attend "input", pas "messages"
-    session_id: "chaty-ia-" + Date.now() // ID de session unique
+    input: message,
+    session_id: "chaty-ia-" + Date.now()
   };
 
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Erreur API: ${response.status} - ${JSON.stringify(errorData)}`);
-    }
-
-    const data = await response.json();
-
-    // 👇 PARSER LA RÉPONSE (ton agent doit retourner du JSON)
+  for (const proxy of proxies) {
     try {
-      const output = data.output || data.choices?.[0]?.message?.content;
+      const proxyUrl = proxy.endsWith("/") ? proxy : proxy + "/";
+      const fullUrl = proxyUrl + encodeURIComponent(apiUrl);
+
+      const response = await fetch(fullUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) continue; // Passe au proxy suivant si erreur
+
+      const data = await response.json();
+      const output = data.output || data.message || "";
+
       if (!output) throw new Error("Réponse vide");
 
       if (typeof output === 'string' && output.trim().startsWith('{')) {
         return JSON.parse(output);
-      } else {
-        return { message: output, game: null, action: "chat", data: null };
       }
-    } catch (e) {
-      console.error("Erreur de parsing :", e);
-      return { message: "Désolé, je n'ai pas compris.", game: null, action: "chat", data: null };
+      return { message: output, game: null, action: "chat", data: null };
+
+    } catch (error) {
+      console.warn(`⚠️ Proxy ${proxy} échoué :`, error.message);
+      continue; // Essaie le proxy suivant
     }
-  } catch (error) {
-    console.error("Erreur avec Mistral :", error);
-    return {
-      message: `Erreur: ${error.message}. Vérifie que ton agent est déployé et que ton ID est correct.`,
-      game: null,
-      action: "chat",
-      data: null
-    };
   }
+
+  // Si tous les proxys échouent
+  console.error("❌ Tous les proxys CORS ont échoué");
+  return {
+    message: "Désolé, je ne peux pas contacter l'IA à cause des restrictions CORS. Essaie depuis un autre domaine ou utilise la solution de secours.",
+    game: null,
+    action: "chat",
+    data: null
+  };
 }
 
   // ======================
