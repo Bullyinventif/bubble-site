@@ -588,10 +588,21 @@
   // ======================
   // 4. FONCTIONS DU CHAT
   // ======================
-  function addMessage(sender, text) {
+  function addMessage(sender, response) {
+    // 👇 Si response est un objet, extraire le message. Sinon, c'est déjà un string.
+    const messageText = typeof response === 'object' ? response.message : response;
+
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${sender}`;
-    messageDiv.textContent = text;
+    messageDiv.textContent = messageText; // 👈 Affiche SEULEMENT le texte
+
+    // 👇 Si c'est une réponse de jeu, mettre à jour l'UI
+    if (typeof response === 'object' && response.game) {
+      currentGame = response.game;
+      gameState = response.data || {};
+      updateGameUI();
+    }
+
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
@@ -600,20 +611,19 @@
     const message = chatInput.value.trim();
     if (!message) return;
 
-    // 👇 Affiche le message de l'utilisateur
-    addMessage('user', { message, game: null, action: "chat", data: null });
+    // 👇 Affiche le message de l'utilisateur (comme objet pour uniformiser)
+    addMessage('user', { message: message, game: null, action: "chat", data: null });
     chatInput.value = '';
 
-    // 👇 Ajoute le contexte du jeu si nécessaire
     let fullMessage = message;
     if (currentGame) {
       fullMessage += ` [Contexte: Jeu en cours: ${currentGame}. État: ${JSON.stringify(gameState)}]`;
     }
 
-    // 👇 Appelle l'IA et traite la réponse JSON
     const response = await sendToMistral(fullMessage);
     if (response) {
-      addMessage('ai', response); // 👈 Passe l'objet JSON complet
+      // 👇 Passe l'objet JSON complet à addMessage
+      addMessage('ai', response);
     }
   }
 
