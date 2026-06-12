@@ -542,65 +542,63 @@
   // ======================
   async function sendToMistral(message) {
   const apiKey = "qRIoAfC20FXU7HbdsHaCbGkpp83gQWRn";
-  const agentId = "ag:b903d54a:20250510:untitled-agent:695bcc1a";
-  const encodedAgentId = encodeURIComponent(agentId);
-  const apiUrl = `https://api.mistral.ai/v1/agents/${encodedAgentId}/chat`;
+  const url = "https://api.mistral.ai/v1/chat/completions";
 
-  // 👇 ESSAIE CES 3 PROXYS (un par un)
-  const proxies = [
-    "https://thingproxy.freeboard.io/fetch/",  // ✅ Le plus fiable
-    "https://api.allorigins.win/raw?url=",      // ✅ Alternative
-    "https://cors-anywhere.herokuapp.com/"     // ⚠️ Peut être lent
-  ];
+  // 👇 Ton prompt système intégré directement dans la requête
+  const systemPrompt = `Tu es Chaty, une IA ludique et compétitive sur Bubble Site.
+  RÈGLE ABSOLUE : TOUJOURS répondre en JSON valide avec cette structure :
+  {
+    "message": "ton message naturel en français",
+    "game": "nom_du_jeu | null",
+    "action": "start | move | spawn | hit | end | chat | invalid_move",
+    "data": { ... }
+  }
+  Jeux supportés : Tic-Tac-Toe, Puissance 4, Échecs, Bulles.
+  - Tic-Tac-Toe : grille 3x3 (0=vide, 1=X, 2=O). Exemple: {"game":"tictactoe","action":"move","data":{"grid":[[1,0,0],[0,2,0],[0,0,0]]}}
+  - Puissance 4 : grille 6x7 (0=vide, 1=joueur, 2=IA). Exemple: {"game":"puissance4","action":"move","data":{"grid":[[0,0,0,0,0,0,0],...],"last_column":3}}
+  - Échecs : notation FEN + coup algébrique. Exemple: {"game":"echecs","action":"move","data":{"fen":"rnbqkbnr/pppppppp/...","move":{"from":"e2","to":"e4"}}}
+  - Bulles : génère des bulles aléatoires. Exemple: {"game":"bulles","action":"spawn","data":{"bubbles":[{"id":1,"x":10,"y":20,"color":"red"}],"time_left":30,"score":0}}
+  Si l'utilisateur joue, joue ton tour et retourne le coup en JSON.`;
 
   const requestBody = {
-    input: message,
-    session_id: "chaty-ia-" + Date.now()
+    model: "mistral-tiny",  // 👈 Modèle standard (pas besoin d'agent)
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: message }
+    ],
+    temperature: 0.3
   };
 
-  for (const proxy of proxies) {
-    try {
-      const proxyUrl = proxy.endsWith("/") ? proxy : proxy + "/";
-      const fullUrl = proxyUrl + encodeURIComponent(apiUrl);
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(requestBody)
+    });
 
-      const response = await fetch(fullUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`,
-          "X-Requested-With": "XMLHttpRequest"
-        },
-        body: JSON.stringify(requestBody)
-      });
+    if (!response.ok) throw new Error(`Erreur API: ${response.status}`);
 
-      if (!response.ok) continue; // Passe au proxy suivant si erreur
+    const data = await response.json();
+    const content = data.choices[0].message.content;
 
-      const data = await response.json();
-      const output = data.output || data.message || "";
-
-      if (!output) throw new Error("Réponse vide");
-
-      if (typeof output === 'string' && output.trim().startsWith('{')) {
-        return JSON.parse(output);
-      }
-      return { message: output, game: null, action: "chat", data: null };
-
-    } catch (error) {
-      console.warn(`⚠️ Proxy ${proxy} échoué :`, error.message);
-      continue; // Essaie le proxy suivant
+    if (content.trim().startsWith('{')) {
+      return JSON.parse(content);
+    } else {
+      return { message: content, game: null, action: "chat", data: null };
     }
+  } catch (error) {
+    console.error("Erreur :", error);
+    return {
+      message: `⚠️ Erreur: ${error.message}. Mode hors-ligne activé.`,
+      game: null,
+      action: "chat",
+      data: null
+    };
   }
-
-  // Si tous les proxys échouent
-  console.error("❌ Tous les proxys CORS ont échoué");
-  return {
-    message: "Désolé, je ne peux pas contacter l'IA à cause des restrictions CORS. Essaie depuis un autre domaine ou utilise la solution de secours.",
-    game: null,
-    action: "chat",
-    data: null
-  };
 }
-
   // ======================
   // 4. FONCTIONS DU CHAT
   // ======================
