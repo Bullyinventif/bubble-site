@@ -541,64 +541,50 @@
   // 3. FONCTION POUR APPELER TON AGENT MISTRAL (CORRIGÉE)
   // ======================
   async function sendToMistral(message) {
-  const apiKey = "qRIoAfC20FXU7HbdsHaCbGkpp83gQWRn";
-  const url = "https://api.mistral.ai/v1/chat/completions";
+    const apiKey = "qRIoAfC20FXU7HbdsHaCbGkpp83gQWRn";
+    const url = "https://api.mistral.ai/v1/chat/completions";
 
-  // 👇 Ton prompt système intégré directement dans la requête
-  const systemPrompt = `Tu es Chaty, une IA ludique et compétitive sur Bubble Site.
-  RÈGLE ABSOLUE : TOUJOURS répondre en JSON valide avec cette structure :
-  {
-    "message": "ton message naturel en français",
-    "game": "nom_du_jeu | null",
-    "action": "start | move | spawn | hit | end | chat | invalid_move",
-    "data": { ... }
-  }
-  Jeux supportés : Tic-Tac-Toe, Puissance 4, Échecs, Bulles.
-  - Tic-Tac-Toe : grille 3x3 (0=vide, 1=X, 2=O). Exemple: {"game":"tictactoe","action":"move","data":{"grid":[[1,0,0],[0,2,0],[0,0,0]]}}
-  - Puissance 4 : grille 6x7 (0=vide, 1=joueur, 2=IA). Exemple: {"game":"puissance4","action":"move","data":{"grid":[[0,0,0,0,0,0,0],...],"last_column":3}}
-  - Échecs : notation FEN + coup algébrique. Exemple: {"game":"echecs","action":"move","data":{"fen":"rnbqkbnr/pppppppp/...","move":{"from":"e2","to":"e4"}}}
-  - Bulles : génère des bulles aléatoires. Exemple: {"game":"bulles","action":"spawn","data":{"bubbles":[{"id":1,"x":10,"y":20,"color":"red"}],"time_left":30,"score":0}}
-  Si l'utilisateur joue, joue ton tour et retourne le coup en JSON.`;
-
-  const requestBody = {
-    model: "mistral-tiny",  // 👈 Modèle standard (pas besoin d'agent)
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: message }
-    ],
-    temperature: 0.3
-  };
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) throw new Error(`Erreur API: ${response.status}`);
-
-    const data = await response.json();
-    const content = data.choices[0].message.content;
-
-    if (content.trim().startsWith('{')) {
-      return JSON.parse(content);
-    } else {
-      return { message: content, game: null, action: "chat", data: null };
-    }
-  } catch (error) {
-    console.error("Erreur :", error);
-    return {
-      message: `⚠️ Erreur: ${error.message}. Mode hors-ligne activé.`,
-      game: null,
-      action: "chat",
-      data: null
+    const requestBody = {
+      model: "mistral-tiny", // 👈 On utilise un modèle standard + ton prompt dans le message
+      messages: [
+        {
+          role: "system",
+          content: `Tu es Chaty, une IA ludique. RÈGLE: TOUJOURS répondre en JSON:
+          {"message": "ton message naturel", "game": "nom_du_jeu | null", "action": "start|move|chat|info", "data": {...}}.
+          Jeux: Tic-Tac-Toe (grille 3x3), Puissance 4 (grille 6x7), Échecs (FEN), Bulles (spawn).`
+        },
+        { role: "user", content: message }
+      ],
+      temperature: 0.3
     };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) throw new Error(`Erreur API: ${response.status}`);
+
+      const data = await response.json();
+      const content = data.choices[0].message.content;
+
+      // 👇 Parse le JSON (ton IA DOIT retourner du JSON)
+      if (content.trim().startsWith('{')) {
+        return JSON.parse(content);
+      } else {
+        // 👇 Si ce n'est pas du JSON, retourne un format compatible
+        return { message: content, game: null, action: "chat", data: null };
+      }
+    } catch (error) {
+      console.error("Erreur :", error);
+      return { message: `⚠️ Erreur: ${error.message}`, game: null, action: "chat", data: null };
+    }
   }
-}
   // ======================
   // 4. FONCTIONS DU CHAT
   // ======================
@@ -614,27 +600,20 @@
     const message = chatInput.value.trim();
     if (!message) return;
 
-    addMessage('user', message);
+    // 👇 Affiche le message de l'utilisateur
+    addMessage('user', { message, game: null, action: "chat", data: null });
     chatInput.value = '';
 
+    // 👇 Ajoute le contexte du jeu si nécessaire
     let fullMessage = message;
     if (currentGame) {
       fullMessage += ` [Contexte: Jeu en cours: ${currentGame}. État: ${JSON.stringify(gameState)}]`;
     }
 
+    // 👇 Appelle l'IA et traite la réponse JSON
     const response = await sendToMistral(fullMessage);
     if (response) {
-      addMessage('ai', response.message);
-      if (response.game) {
-        currentGame = response.game;
-        gameState = response.data || {};
-        updateGameUI();
-        if (response.action === "move") {
-          playAIMove(response);
-        } else if (response.action === "spawn" && currentGame === "bulles") {
-          startBubbleGame(response.data);
-        }
-      }
+      addMessage('ai', response); // 👈 Passe l'objet JSON complet
     }
   }
 
