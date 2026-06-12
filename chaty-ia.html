@@ -19,7 +19,7 @@
     overflow-x: hidden;
   }
 
-  /* ── Bubbles bg ── */
+  /* Bulles en fond (même que ton index.html) */
   .bubble-bg {
     position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
@@ -37,7 +37,7 @@
     100% { transform: translateY(-10vh) translateX(-8px); opacity: 0; }
   }
 
-  /* NAV */
+  /* NAV (même que ton index.html) */
   nav {
     position: fixed; top: 0; left: 0; right: 0;
     height: 58px;
@@ -116,7 +116,6 @@
   .menu-overlay { display: none; position: fixed; inset: 58px 0 0 0; z-index: 997; background: transparent; }
   .menu-overlay.open { display: block; }
 
-  /* Responsive */
   @media (max-width: 600px) {
     .nav-links { display: none; }
     .nav-profile { margin-left: auto; }
@@ -124,7 +123,6 @@
     .profile-bubble-icon { font-size: 1.3rem; }
   }
 
-  /* MAIN */
   main {
     position: relative; z-index: 1;
     padding-top: 100px; min-height: 100vh;
@@ -148,20 +146,16 @@
   }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* CONTAINER CHAT + JEUX */
-  .chaty-container {
-    display: flex; width: 90%; max-width: 1100px;
-    gap: 20px; margin-top: 10px; flex-wrap: wrap; justify-content: center;
-  }
-  @media (max-width: 900px) { .chaty-container { flex-direction: column; align-items: center; } }
-
-  /* SECTION CHAT */
-  .chat-section {
-    flex: 1; min-width: 300px; max-width: 500px;
+  /* CHAT */
+  .chat-container {
+    width: 90%; max-width: 600px;
     background: rgba(20, 40, 80, 0.6);
-    border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;
-    backdrop-filter: blur(10px); overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex; flex-direction: column;
+    backdrop-filter: blur(10px);
+    margin-top: 20px;
   }
   .chat-header {
     padding: 15px; background: rgba(30, 60, 100, 0.5);
@@ -171,11 +165,13 @@
   }
   #chat-messages {
     flex: 1; padding: 15px; overflow-y: auto;
-    display: flex; flex-direction: column; gap: 12px; max-height: 50vh;
+    display: flex; flex-direction: column; gap: 12px;
+    min-height: 400px; max-height: 60vh;
   }
   .message {
     max-width: 85%; padding: 10px 14px; border-radius: 14px;
-    font-size: 0.95rem; line-height: 1.4; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    font-size: 0.95rem; line-height: 1.4;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     animation: fadeIn 0.3s ease;
   }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -189,119 +185,25 @@
   }
   .chat-input {
     display: flex; padding: 12px; gap: 10px;
-    border-top: 1px solid rgba(255,255,255,0.1); background: rgba(10, 20, 40, 0.4);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    background: rgba(10, 20, 40, 0.4);
   }
   #chat-input {
     flex: 1; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.2);
     border-radius: 20px; font-family: 'Baloo 2', cursive;
-    font-size: 0.95rem; color: white; background: rgba(255,255,255,0.05); outline: none;
+    font-size: 0.95rem; color: white; background: rgba(255,255,255,0.05);
+    outline: none;
   }
   #chat-input::placeholder { color: rgba(255,255,255,0.4); }
   #chat-send {
     width: 45px; height: 45px; border-radius: 50%;
     background: linear-gradient(180deg, #44d966, #1faa44);
-    color: white; border: none; cursor: pointer; font-size: 1.2rem;
-    transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+    color: white; border: none; cursor: pointer;
+    font-size: 1.2rem; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
     box-shadow: 0 2px 8px rgba(68, 217, 102, 0.4);
   }
   #chat-send:hover { transform: scale(1.05); filter: brightness(1.1); }
-
-  /* SECTION JEUX */
-  .games-section {
-    flex: 1; min-width: 300px; max-width: 600px;
-    background: rgba(20, 40, 80, 0.6);
-    border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;
-    backdrop-filter: blur(10px); overflow: hidden;
-  }
-  .games-header {
-    padding: 15px; background: rgba(30, 60, 100, 0.5);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    font-family: 'Baloo 2', cursive; font-size: 1.2rem; font-weight: 800;
-    color: rgba(255,255,255,0.9);
-  }
-  .game-menu {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px; padding: 15px; background: rgba(10, 20, 40, 0.2);
-  }
-  .game-btn {
-    padding: 12px; background: rgba(255,255,255,0.1);
-    color: white; border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 10px; font-family: 'Baloo 2', cursive;
-    font-size: 0.9rem; font-weight: 800; cursor: pointer;
-    transition: all 0.2s; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-  }
-  .game-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-  .game-btn i { font-size: 1.5rem; }
-  #game-board { flex: 1; padding: 15px; overflow-y: auto; background: rgba(0, 0, 0, 0.1); }
-  #game-title {
-    font-family: 'Baloo 2', cursive; font-size: 1.3rem;
-    color: rgba(255,255,255,0.9); margin-bottom: 15px; text-align: center;
-  }
-  .game { display: none; }
-  .game.active { display: block; }
-
-  /* Styles des jeux */
-  .tictactoe-board {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;
-    width: 100%; max-width: 280px; margin: 0 auto;
-  }
-  .tictactoe-cell {
-    aspect-ratio: 1; background: rgba(255,255,255,0.1);
-    border-radius: 8px; display: flex; align-items: center; justify-content: center;
-    font-size: 2.5rem; font-weight: bold; cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s;
-  }
-  .tictactoe-cell:hover { background: rgba(255,255,255,0.2); }
-  .tictactoe-cell.x { color: #ff8c3a; }
-  .tictactoe-cell.o { color: #44e87a; }
-
-  .puissance4-board {
-    display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;
-    width: 100%; max-width: 350px; margin: 0 auto; aspect-ratio: 7/6;
-  }
-  .puissance4-col { display: flex; flex-direction: column-reverse; gap: 5px; }
-  .puissance4-cell {
-    aspect-ratio: 1; border-radius: 50%;
-    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-    cursor: pointer; transition: all 0.2s;
-  }
-  .puissance4-cell:hover { transform: scale(1.05); }
-  .puissance4-cell.player { background: #ff8c3a; }
-  .puissance4-cell.ai { background: #44e87a; }
-
-  #chessboard {
-    width: 100%; max-width: 400px; height: 400px; margin: 0 auto;
-    display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
-    gap: 2px; border-radius: 8px; overflow: hidden;
-  }
-  .chess-square {
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2rem; cursor: pointer; transition: all 0.2s;
-  }
-  .chess-square.light { background: rgba(240, 217, 181, 0.5); }
-  .chess-square.dark { background: rgba(181, 136, 99, 0.5); }
-  .chess-square.selected { background: rgba(255, 215, 0, 0.6) !important; }
-
-  #bubble-game-container {
-    position: relative; width: 100%; height: 300px;
-    background: rgba(0, 0, 0, 0.1); border-radius: 8px;
-    overflow: hidden; margin: 0 auto;
-  }
-  .bubble-in-game {
-    position: absolute; border-radius: 50%;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .bubble-in-game:hover { transform: scale(1.15); }
-  #bubble-score {
-    font-family: 'Baloo 2', cursive; font-size: 1.2rem;
-    color: #ffe033; margin-top: 10px; text-align: center;
-  }
-  #bubble-timer {
-    font-size: 1rem; color: rgba(255,255,255,0.7);
-    text-align: center; margin-top: 5px;
-  }
 
   footer {
     position: relative; z-index: 1; text-align: center; padding: 18px;
@@ -348,39 +250,14 @@
 
 <main>
   <div class="hero-title">Chaty IA</div>
-  <div class="hero-subtitle" id="welcomeMsg">Discute et joue avec ton IA préférée !</div>
+  <div class="hero-subtitle" id="welcomeMsg">Discute avec ton IA préférée !</div>
 
-  <div class="chaty-container">
-    <!-- SECTION CHAT -->
-    <div class="chat-section">
-      <div class="chat-header">💬 Chat avec Chaty</div>
-      <div id="chat-messages"></div>
-      <div class="chat-input">
-        <input type="text" id="chat-input" placeholder="Écris ton message ici...">
-        <button id="chat-send">▶</button>
-      </div>
-    </div>
-
-    <!-- SECTION JEUX -->
-    <div class="games-section">
-      <div class="games-header">🎮 Jeux</div>
-      <div class="game-menu">
-        <button class="game-btn" data-game="tictactoe"><i>🎲</i><span>Tic-Tac-Toe</span></button>
-        <button class="game-btn" data-game="puissance4"><i>🟡</i><span>Puissance 4</span></button>
-        <button class="game-btn" data-game="echecs"><i>♟️</i><span>Échecs</span></button>
-        <button class="game-btn" data-game="bulles"><i>🎈</i><span>Bulles</span></button>
-      </div>
-      <div id="game-board">
-        <h2 id="game-title">Sélectionne un jeu pour commencer !</h2>
-        <div id="tictactoe-board" class="game"><div class="tictactoe-board"></div></div>
-        <div id="puissance4-board" class="game"><div class="puissance4-board"></div></div>
-        <div id="chess-board" class="game"><div id="chessboard"></div></div>
-        <div id="bubble-game" class="game">
-          <div id="bubble-game-container"></div>
-          <div id="bubble-score">Score: 0</div>
-          <div id="bubble-timer">Temps: 30</div>
-        </div>
-      </div>
+  <div class="chat-container">
+    <div class="chat-header">💬 Chat avec Chaty</div>
+    <div id="chat-messages"></div>
+    <div class="chat-input">
+      <input type="text" id="chat-input" placeholder="Écris ton message ici...">
+      <button id="chat-send">▶</button>
     </div>
   </div>
 </main>
@@ -389,7 +266,7 @@
 
 <!-- Scripts pour les bulles et le menu mobile -->
 <script>
-  /* ── Bubbles ── */
+  /* Bulles en fond */
   const bg = document.getElementById('bubbleBg');
   for (let i = 0; i < 24; i++) {
     const b = document.createElement('div');
@@ -412,7 +289,7 @@
     bg.appendChild(b);
   }
 
-  /* ── Menu mobile ── */
+  /* Menu mobile */
   const toggle  = document.getElementById('menuToggle');
   const menu    = document.getElementById('mobileMenu');
   const overlay = document.getElementById('menuOverlay');
@@ -437,17 +314,15 @@
   });
 </script>
 
-<!-- Firebase + Logique Chaty IA -->
+<!-- Firebase + Chat (TEXTE SEULEMENT) -->
 <script type="module">
-  // ======================
-  // 1. FIREBASE (Profil)
-  // ======================
-  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  // Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const app = initializeApp({
-    apiKey: "4NkNoRWbWF5WoCQ0fnYYeixQ9Rj1c8mE",
+    apiKey: "AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
     authDomain: "bubble-game-fa894.firebaseapp.com",
     projectId: "bubble-game-fa894",
     storageBucket: "bubble-game-fa894.firebasestorage.app",
@@ -457,30 +332,28 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  // Mise à jour du message de bienvenue avec le pseudo
   onAuthStateChanged(auth, async user => {
     if (user) {
       const pseudo = user.displayName || user.email.split('@')[0];
-      document.getElementById('welcomeMsg').innerHTML = `Salut ${pseudo}, prêt à jouer ? 😊`;
+      document.getElementById('welcomeMsg').textContent = `Salut ${pseudo}, discute avec moi ! 😊`;
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
         if (snap.exists()) {
           const d = snap.data();
-          const sub = d.subscription || 'basic';
           const avatarId = d.avatarId || 'bully_1';
           document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
           if (window.applyTheme) window.applyTheme(d.activeEffect || null);
-          const _xp = d.xp || 0;
-          applyFrame(sub, _getLevel(_xp, sub));
+          applyFrame(d.subscription || 'basic', d.xp || 0);
         }
-      } catch(e) {
-        console.error("Erreur Firebase :", e);
-      }
+      } catch(e) { console.error("Erreur Firebase :", e); }
     } else {
-      document.getElementById('welcomeMsg').textContent = 'Bienvenue sur Chaty IA ! Connecte-toi pour jouer.';
+      document.getElementById('welcomeMsg').textContent = 'Bienvenue sur Chaty IA ! Connecte-toi pour discuter.';
       document.getElementById('navProfile').href = './login.html';
     }
   });
 
+  // Cadre animé du profil
   const _LEVEL_CFG = {
     basic: { maxLevel: 3, xpPerLevel: 100 },
     plus: { maxLevel: 20, xpPerLevel: 200 },
@@ -491,7 +364,6 @@
     const cfg = _LEVEL_CFG[sub] || _LEVEL_CFG.basic;
     return Math.min(Math.floor(xp / cfg.xpPerLevel) + 1, cfg.maxLevel);
   }
-
   function applyFrame(sub, level) {
     if (!document.getElementById('bubble-frame-css')) {
       const s = document.createElement('style');
@@ -525,37 +397,37 @@
     });
   }
 
-  // ======================
-  // 2. VARIABLES GLOBALES
-  // ======================
+  // CHAT (TEXTE SEULEMENT)
   const chatMessages = document.getElementById('chat-messages');
   const chatInput = document.getElementById('chat-input');
   const chatSend = document.getElementById('chat-send');
-  let currentGame = null;
-  let gameState = {};
-  let isPlayerTurn = true;
-  let selectedSquare = null;
-  let chessLoaded = false;
 
-  // ======================
-  // 3. FONCTION POUR APPELER TON AGENT MISTRAL (CORRIGÉE)
-  // ======================
+  // Affiche un message
+  function addMessage(sender, text) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+    messageDiv.textContent = text; // 👈 Affiche UNIQUEMENT le texte
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // Appelle Mistral (TEXTE SEULEMENT)
   async function sendToMistral(message) {
     const apiKey = "qRIoAfC20FXU7HbdsHaCbGkpp83gQWRn";
     const url = "https://api.mistral.ai/v1/chat/completions";
 
+    const systemPrompt = `Tu es Chaty, l’IA ludique du site Bubble Site.
+    Réponds en TEXTE BRUT (PAS DE JSON, PAS DE CODE).
+    Ton ton: drôle, malin, taquin, mais toujours gentil.
+    Si l’utilisateur demande un jeu (BubbleCraft, Fishing Time, Box Run), décris-le brièvement et donne le lien.`;
+
     const requestBody = {
-      model: "mistral-tiny", // 👈 On utilise un modèle standard + ton prompt dans le message
+      model: "mistral-tiny",
       messages: [
-        {
-          role: "system",
-          content: `Tu es Chaty, une IA ludique. RÈGLE: TOUJOURS répondre en JSON:
-          {"message": "ton message naturel", "game": "nom_du_jeu | null", "action": "start|move|chat|info", "data": {...}}.
-          Jeux: Tic-Tac-Toe (grille 3x3), Puissance 4 (grille 6x7), Échecs (FEN), Bulles (spawn).`
-        },
+        { role: "system", content: systemPrompt },
         { role: "user", content: message }
       ],
-      temperature: 0.3
+      temperature: 0.7
     };
 
     try {
@@ -571,492 +443,35 @@
       if (!response.ok) throw new Error(`Erreur API: ${response.status}`);
 
       const data = await response.json();
-      const content = data.choices[0].message.content;
+      return data.choices[0].message.content; // 👈 Retourne UNIQUEMENT le texte
 
-      // 👇 Parse le JSON (ton IA DOIT retourner du JSON)
-      if (content.trim().startsWith('{')) {
-        return JSON.parse(content);
-      } else {
-        // 👇 Si ce n'est pas du JSON, retourne un format compatible
-        return { message: content, game: null, action: "chat", data: null };
-      }
     } catch (error) {
       console.error("Erreur :", error);
-      return { message: `⚠️ Erreur: ${error.message}`, game: null, action: "chat", data: null };
+      return `⚠️ Erreur: ${error.message}. Réessaie plus tard.`;
     }
   }
-  // ======================
-  // 4. FONCTIONS DU CHAT
-  // ======================
-  function addMessage(sender, response) {
-    // 👇 Si response est un objet, extraire le message. Sinon, c'est déjà un string.
-    const messageText = typeof response === 'object' ? response.message : response;
 
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${sender}`;
-    messageDiv.textContent = messageText; // 👈 Affiche SEULEMENT le texte
-
-    // 👇 Si c'est une réponse de jeu, mettre à jour l'UI
-    if (typeof response === 'object' && response.game) {
-      currentGame = response.game;
-      gameState = response.data || {};
-      updateGameUI();
-    }
-
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
+  // Gère l'envoi d'un message
   async function handleSendMessage() {
     const message = chatInput.value.trim();
     if (!message) return;
 
-    // 👇 Affiche le message de l'utilisateur (comme objet pour uniformiser)
-    addMessage('user', { message: message, game: null, action: "chat", data: null });
+    addMessage('user', message);
     chatInput.value = '';
 
-    let fullMessage = message;
-    if (currentGame) {
-      fullMessage += ` [Contexte: Jeu en cours: ${currentGame}. État: ${JSON.stringify(gameState)}]`;
-    }
-
-    const response = await sendToMistral(fullMessage);
-    if (response) {
-      // 👇 Passe l'objet JSON complet à addMessage
-      addMessage('ai', response);
-    }
+    const response = await sendToMistral(message);
+    addMessage('ai', response); // 👈 Affiche le texte brut
   }
 
-  // ======================
-  // 5. FONCTIONS DES JEUX (définies AVANT d'être appelées)
-  // ======================
-
-  // ----- TIC-TAC-TOE -----
-  function initTicTacToe() {
-    const board = document.querySelector('#tictactoe-board .tictactoe-board');
-    if (!board) return;
-    board.innerHTML = '';
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
-        const cell = document.createElement('div');
-        cell.className = 'tictactoe-cell';
-        cell.dataset.row = i;
-        cell.dataset.col = j;
-        cell.addEventListener('click', () => handleTicTacToeClick(i, j));
-        board.appendChild(cell);
-      }
-    }
-  }
-
-  function renderTicTacToe() {
-    const cells = document.querySelectorAll('#tictactoe-board .tictactoe-cell');
-    if (!cells.length) return;
-    cells.forEach(cell => {
-      const row = parseInt(cell.dataset.row);
-      const col = parseInt(cell.dataset.col);
-      const value = gameState.grid ? gameState.grid[row][col] : 0;
-      cell.textContent = value === 1 ? '❌' : value === 2 ? '⭕' : '';
-      cell.className = 'tictactoe-cell';
-      if (value === 1) cell.classList.add('x');
-      if (value === 2) cell.classList.add('o');
-    });
-  }
-
-  function handleTicTacToeClick(row, col) {
-    if (!isPlayerTurn || !gameState.grid || gameState.grid[row][col] !== 0 || currentGame !== "tictactoe") return;
-    gameState.grid[row][col] = 1;
-    isPlayerTurn = false;
-    renderTicTacToe();
-    const winner = checkTicTacToeWinner(gameState.grid);
-    if (winner) {
-      addMessage('ai', winner === 1 ? "Bravo ! Tu as gagné ! 🎉" : winner === 2 ? "J'ai gagné, désolé ! 😅" : "Match nul !");
-      currentGame = null;
-      return;
-    }
-    sendToMistral(`Je joue en (${row},${col}) au Tic-Tac-Toe. Voici la grille: ${JSON.stringify(gameState.grid)}`);
-  }
-
-  function checkTicTacToeWinner(grid) {
-    for (let i = 0; i < 3; i++) {
-      if (grid[i][0] !== 0 && grid[i][0] === grid[i][1] && grid[i][1] === grid[i][2]) return grid[i][0];
-    }
-    for (let j = 0; j < 3; j++) {
-      if (grid[0][j] !== 0 && grid[0][j] === grid[1][j] && grid[1][j] === grid[2][j]) return grid[0][j];
-    }
-    if (grid[0][0] !== 0 && grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2]) return grid[0][0];
-    if (grid[0][2] !== 0 && grid[0][2] === grid[1][1] && grid[1][1] === grid[2][0]) return grid[0][2];
-    if (grid.flat().every(cell => cell !== 0)) return "draw";
-    return null;
-  }
-
-  // ----- PUISSANCE 4 -----
-  function initPuissance4() {
-    const board = document.querySelector('#puissance4-board .puissance4-board');
-    if (!board) return;
-    board.innerHTML = '';
-    for (let col = 0; col < 7; col++) {
-      const column = document.createElement('div');
-      column.className = 'puissance4-col';
-      column.dataset.col = col;
-      column.addEventListener('click', () => handlePuissance4Click(col));
-      for (let row = 0; row < 6; row++) {
-        const cell = document.createElement('div');
-        cell.className = 'puissance4-cell';
-        cell.dataset.row = row;
-        cell.dataset.col = col;
-        column.appendChild(cell);
-      }
-      board.appendChild(column);
-    }
-  }
-
-  function renderPuissance4() {
-    const cells = document.querySelectorAll('#puissance4-board .puissance4-cell');
-    if (!cells.length) return;
-    cells.forEach(cell => {
-      const row = parseInt(cell.dataset.row);
-      const col = parseInt(cell.dataset.col);
-      const value = gameState.grid ? gameState.grid[row][col] : 0;
-      cell.className = 'puissance4-cell';
-      if (value === 1) cell.classList.add('player');
-      if (value === 2) cell.classList.add('ai');
-    });
-  }
-
-  function handlePuissance4Click(col) {
-    if (!isPlayerTurn || !gameState.grid || currentGame !== "puissance4") return;
-    let row = 5;
-    while (row >= 0 && gameState.grid[row][col] !== 0) row--;
-    if (row < 0) return;
-    gameState.grid[row][col] = 1;
-    isPlayerTurn = false;
-    renderPuissance4();
-    const winner = checkPuissance4Winner(gameState.grid);
-    if (winner) {
-      addMessage('ai', winner === 1 ? "Bravo ! Tu as gagné ! 🎉" : winner === 2 ? "J'ai gagné, désolé ! 😅" : "Match nul !");
-      currentGame = null;
-      return;
-    }
-    sendToMistral(`Je joue en colonne ${col} au Puissance 4. Voici la grille: ${JSON.stringify(gameState.grid)}`);
-  }
-
-  function checkPuissance4Winner(grid) {
-    for (let row = 0; row < 6; row++) {
-      for (let col = 0; col < 4; col++) {
-        if (grid[row][col] !== 0 && grid[row][col] === grid[row][col+1] && grid[row][col] === grid[row][col+2] && grid[row][col] === grid[row][col+3]) {
-          return grid[row][col];
-        }
-      }
-    }
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 7; col++) {
-        if (grid[row][col] !== 0 && grid[row][col] === grid[row+1][col] && grid[row][col] === grid[row+2][col] && grid[row][col] === grid[row+3][col]) {
-          return grid[row][col];
-        }
-      }
-    }
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 4; col++) {
-        if (grid[row][col] !== 0 && grid[row][col] === grid[row+1][col+1] && grid[row][col] === grid[row+2][col+2] && grid[row][col] === grid[row+3][col+3]) {
-          return grid[row][col];
-        }
-      }
-    }
-    for (let row = 3; row < 6; row++) {
-      for (let col = 0; col < 4; col++) {
-        if (grid[row][col] !== 0 && grid[row][col] === grid[row-1][col+1] && grid[row][col] === grid[row-2][col+2] && grid[row][col] === grid[row-3][col+3]) {
-          return grid[row][col];
-        }
-      }
-    }
-    if (grid.flat().every(cell => cell !== 0)) return "draw";
-    return null;
-  }
-
-  // ----- ÉCHECS -----
-  function loadChessJS() {
-    if (chessLoaded) return;
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js';
-    script.onload = () => {
-      chessLoaded = true;
-      if (currentGame === "echecs") {
-        gameState.chess = new Chess();
-        renderChess();
-      }
-    };
-    document.head.appendChild(script);
-  }
-
-  function initChess() {
-    if (typeof Chess !== 'undefined') {
-      gameState.chess = new Chess();
-      renderChess();
-    }
-  }
-
-  function renderChess() {
-    if (!gameState.chess) return;
-    const board = document.getElementById('chessboard');
-    if (!board) return;
-    board.innerHTML = '';
-    for (let row = 7; row >= 0; row--) {
-      for (let col = 0; col < 8; col++) {
-        const square = document.createElement('div');
-        square.className = `chess-square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
-        square.dataset.row = row;
-        square.dataset.col = col;
-        square.addEventListener('click', () => handleChessClick(row, col));
-        const piece = gameState.chess.get(`${String.fromCharCode(97 + col)}${8 - row}`);
-        if (piece) {
-          square.innerHTML = getChessSymbol(piece);
-          square.style.color = piece.color === 'w' ? 'white' : 'black';
-        }
-        board.appendChild(square);
-      }
-    }
-  }
-
-  function getChessSymbol(piece) {
-    const symbols = {
-      k: '♔', q: '♕', r: '♖', b: '♗', n: '♘', p: '♙',
-      K: '♚', Q: '♛', R: '♜', B: '♝', N: '♞', P: '♟'
-    };
-    return symbols[piece.type] || '';
-  }
-
-  function handleChessClick(row, col) {
-    if (!isPlayerTurn || !gameState.chess || currentGame !== "echecs") return;
-    const square = `${String.fromCharCode(97 + col)}${8 - row}`;
-
-    if (selectedSquare) {
-      try {
-        const move = gameState.chess.move({ from: selectedSquare, to: square, promotion: 'q' });
-        if (move) {
-          selectedSquare = null;
-          isPlayerTurn = false;
-          renderChess();
-          if (gameState.chess.isGameOver()) {
-            addMessage('ai', gameState.chess.isCheckmate() ? "Échec et mat ! Je gagne !" : "Match nul !");
-            currentGame = null;
-            return;
-          }
-          sendToMistral(`Je joue ${move.from}-${move.to} aux échecs. FEN: ${gameState.chess.fen()}`);
-        } else {
-          selectedSquare = null;
-          renderChess();
-        }
-      } catch (e) {
-        selectedSquare = null;
-        renderChess();
-      }
-    } else {
-      const piece = gameState.chess.get(square);
-      if (piece && piece.color === gameState.chess.turn()) {
-        selectedSquare = square;
-        document.querySelectorAll('#chessboard .chess-square').forEach(s => {
-          s.classList.remove('selected');
-          if (s.dataset.row + s.dataset.col === `${row}${col}`) {
-            s.classList.add('selected');
-          }
-        });
-      }
-    }
-  }
-
-  // ----- BULLES -----
-  function initBubbleGame() {
-    const container = document.getElementById('bubble-game-container');
-    if (container) {
-      container.addEventListener('click', handleBubbleClick);
-    }
-  }
-
-  function startBubbleGame(data) {
-    if (!data) data = { bubbles: [], time_left: 30, score: 0 };
-    gameState = data;
-    const container = document.getElementById('bubble-game-container');
-    if (!container) return;
-    container.innerHTML = '';
-
-    let timer = setInterval(() => {
-      gameState.time_left--;
-      const timerEl = document.getElementById('bubble-timer');
-      if (timerEl) timerEl.textContent = `Temps: ${gameState.time_left}`;
-      if (gameState.time_left <= 0) {
-        clearInterval(timer);
-        addMessage('ai', `Partie terminée ! Ton score: ${gameState.score} points.`);
-        currentGame = null;
-      }
-    }, 1000);
-
-    const spawnInterval = setInterval(() => {
-      if (gameState.time_left <= 0) {
-        clearInterval(spawnInterval);
-        return;
-      }
-      spawnBubble();
-    }, 2000);
-
-    if (data.bubbles) {
-      data.bubbles.forEach(bubble => spawnBubble(bubble));
-    } else {
-      for (let i = 0; i < 3; i++) spawnBubble();
-    }
-  }
-
-  function spawnBubble(bubble = null) {
-    if (!bubble) {
-      bubble = {
-        id: Date.now(),
-        x: Math.random() * 80 + 10,
-        y: Math.random() * 80 + 10,
-        color: ['#ff5252', '#ffcc00', '#44d966', '#a855f7'][Math.floor(Math.random() * 4)],
-        size: 20 + Math.random() * 20
-      };
-    }
-
-    const container = document.getElementById('bubble-game-container');
-    if (!container) return;
-    const bubbleElement = document.createElement('div');
-    bubbleElement.className = 'bubble-in-game';
-    bubbleElement.style.left = `${bubble.x}%`;
-    bubbleElement.style.top = `${bubble.y}%`;
-    bubbleElement.style.width = `${bubble.size}px`;
-    bubbleElement.style.height = `${bubble.size}px`;
-    bubbleElement.style.backgroundColor = bubble.color;
-    bubbleElement.dataset.id = bubble.id;
-    bubbleElement.dataset.color = bubble.color;
-    container.appendChild(bubbleElement);
-
-    setTimeout(() => {
-      if (container.contains(bubbleElement)) {
-        container.removeChild(bubbleElement);
-      }
-    }, 5000);
-  }
-
-  function handleBubbleClick(e) {
-    if (currentGame !== "bulles" || !e.target.classList.contains('bubble-in-game')) return;
-    const bubble = e.target;
-    const color = bubble.dataset.color;
-    const points = color === '#ff5252' ? 2 : 1;
-    gameState.score += points;
-    const scoreEl = document.getElementById('bubble-score');
-    if (scoreEl) scoreEl.textContent = `Score: ${gameState.score}`;
-    bubble.remove();
-    sendToMistral(`J'ai éclaté une bulle ${color} ! Score: ${gameState.score}. Temps restant: ${gameState.time_left}`);
-  }
-
-  function playAIMove(response) {
-    if (currentGame === "tictactoe" && response.data && response.data.grid) {
-      gameState.grid = response.data.grid;
-      isPlayerTurn = true;
-      renderTicTacToe();
-      const winner = checkTicTacToeWinner(gameState.grid);
-      if (winner) {
-        addMessage('ai', winner === 1 ? "Bravo ! Tu as gagné ! 🎉" : winner === 2 ? "J'ai gagné, désolé ! 😅" : "Match nul !");
-        currentGame = null;
-      }
-    } else if (currentGame === "puissance4" && response.data && response.data.grid) {
-      gameState.grid = response.data.grid;
-      isPlayerTurn = true;
-      renderPuissance4();
-      const winner = checkPuissance4Winner(gameState.grid);
-      if (winner) {
-        addMessage('ai', winner === 1 ? "Bravo ! Tu as gagné ! 🎉" : winner === 2 ? "J'ai gagné, désolé ! 😅" : "Match nul !");
-        currentGame = null;
-      }
-    } else if (currentGame === "echecs" && response.data && response.data.move && gameState.chess) {
-      try {
-        gameState.chess.move(response.data.move);
-        isPlayerTurn = true;
-        renderChess();
-        if (gameState.chess.isGameOver()) {
-          addMessage('ai', gameState.chess.isCheckmate() ? "Échec et mat ! Je gagne !" : "Match nul !");
-          currentGame = null;
-        }
-      } catch (e) {
-        console.error("Coup invalide de l'IA :", e);
-        addMessage('ai', "Désolé, j'ai fait une erreur de coup. Recommence !");
-      }
-    }
-  }
-
-  function updateGameUI() {
-    if (currentGame === "tictactoe") renderTicTacToe();
-    else if (currentGame === "puissance4") renderPuissance4();
-    else if (currentGame === "echecs") renderChess();
-  }
-
-  function startGame(gameName) {
-    document.querySelectorAll('.game').forEach(g => g.classList.remove('active'));
-    document.getElementById(`${gameName}-board`).classList.add('active');
-
-    const titles = {
-      tictactoe: "Tic-Tac-Toe vs Chaty",
-      puissance4: "Puissance 4 vs Chaty",
-      echecs: "Échecs vs Chaty",
-      bulles: "Éclate les bulles !"
-    };
-    document.getElementById('game-title').textContent = titles[gameName];
-
-    currentGame = gameName;
-    gameState = {};
-    isPlayerTurn = true;
-
-    if (gameName === "tictactoe") {
-      gameState.grid = [[0,0,0],[0,0,0],[0,0,0]];
-      renderTicTacToe();
-    } else if (gameName === "puissance4") {
-      gameState.grid = Array(6).fill().map(() => Array(7).fill(0));
-      renderPuissance4();
-    } else if (gameName === "echecs") {
-      if (typeof Chess === 'undefined') {
-        addMessage('ai', "Chargement des échecs... Veuillez patienter.");
-        loadChessJS();
-      } else {
-        gameState.chess = new Chess();
-        renderChess();
-      }
-    } else if (gameName === "bulles") {
-      const container = document.getElementById('bubble-game-container');
-      if (container) container.innerHTML = '';
-      const scoreEl = document.getElementById('bubble-score');
-      if (scoreEl) scoreEl.textContent = "Score: 0";
-      const timerEl = document.getElementById('bubble-timer');
-      if (timerEl) timerEl.textContent = "Temps: 30";
-    }
-
-    sendToMistral(`Lance une partie de ${gameName}. Je suis prêt ! État initial: ${JSON.stringify(gameState)}`);
-  }
-
-  function initGames() {
-    document.querySelectorAll('.game-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const game = btn.dataset.game;
-        startGame(game);
-      });
-    });
-
-    initTicTacToe();
-    initPuissance4();
-    initChess();
-    initBubbleGame();
-  }
-
-  // ======================
-  // 6. ÉCOUTEURS + INITIALISATION
-  // ======================
+  // Écouteurs
   chatSend.addEventListener('click', handleSendMessage);
   chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleSendMessage();
   });
 
-  // Initialiser au chargement de la page
+  // Message de bienvenue
   document.addEventListener('DOMContentLoaded', () => {
-    addMessage('ai', "Salut ! Je suis Chaty, ton partenaire de jeu. 😊\nVeux-tu discuter ou jouer à un jeu ? (Tic-Tac-Toe, Puissance 4, Échecs, Bulles)");
-    initGames();
+    addMessage('ai', "Salut ! Je suis Chaty, ton IA préférée. Discutons ! 😊");
   });
 </script>
 </body>
