@@ -1,377 +1,388 @@
-/* ══════════════════════════════════════
-   bubble_effects.js — Thèmes Bubble Inc.
-   <script src="bubble_effects.js"></script> sur chaque page
-   Appeler : window.applyTheme(effectType) après Firebase
-══════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════
+   bubble_effects.js — Thèmes Bubble Inc. (version fond CLAIR)
+   Même API qu'avant : window.applyTheme(effectType)
+   Ce que ça fait :
+     1. teinte le fond de la page selon le thème
+     2. met à jour --accent / --accent-soft (utilisés par style.css)
+     3. dessine les particules du thème sur un canvas de fond
+   ══════════════════════════════════════════════════════════════════ */
 
-/* ── Couleurs de gradient de fond par thème ── */
+/* ── Fond dégradé clair par thème ── */
 const THEME_BG = {
-  null:      ['#5bc8ff','#2e7dd4','#1a3a8c','#2d0a6e'],
-  bubbles:   ['#5bc8ff','#2e7dd4','#1a3a8c','#2d0a6e'],
-  lightning: ['#1a0a3a','#2a0a5a','#0a0a2a','#1a0050'],
-  snow:      ['#0a1a3a','#0a2050','#081830','#050e20'],
-  fire:      ['#2a0a00','#4a1000','#1a0500','#0a0200'],
-  sparkles:  ['#0a0a2a','#1a1040','#0e0830','#050318'],
-  aura:      ['#1a0030','#2a0050','#150025','#0a0018'],
-  aurora:    ['#000a1a','#001020','#000818','#000510'],
-  portal:    ['#000000','#0a0010','#050008','#020005'],
-  leaves:    ['#0a1a08','#0e2a0a','#061408','#030a04'],
+  null:      ['#F2F8FF','#E7F1FC','#EFF4FA'],
+  bubbles:   ['#F2F8FF','#E7F1FC','#EFF4FA'],
+  lightning: ['#F6F2FF','#EDE6FC','#F3F0FB'],
+  snow:      ['#F4FAFF','#E8F4FD','#EFF6FC'],
+  fire:      ['#FFF6EF','#FFEDE0','#FDF2EA'],
+  sparkles:  ['#FFFBEE','#FFF5DC','#FCF7E8'],
+  aura:      ['#FAF4FF','#F2E7FD','#F6F0FC'],
+  aurora:    ['#F0FCFA','#E3F7F3','#EDF8F7'],
+  portal:    ['#FFF9EE','#FDEFDA','#FAF3E7'],
+  leaves:    ['#F3FBF1','#E8F6E4','#EFF7ED'],
 };
 
-/* ── Glow avatar par thème ── */
-const THEME_GLOW = {
-  null:      {color:'rgba(91,200,255,.8)',  shadow:'rgba(46,125,212,.6)',  border:'rgba(91,200,255,1)'},
-  bubbles:   {color:'rgba(91,200,255,.8)',  shadow:'rgba(46,125,212,.6)',  border:'rgba(91,200,255,1)'},
-  lightning: {color:'rgba(180,100,255,.9)', shadow:'rgba(255,240,80,.8)',  border:'rgba(255,240,80,1)'},
-  snow:      {color:'rgba(150,220,255,.9)', shadow:'rgba(100,200,255,.7)', border:'rgba(180,240,255,1)'},
-  fire:      {color:'rgba(255,120,0,.9)',   shadow:'rgba(255,60,0,.8)',    border:'rgba(255,180,0,1)'},
-  sparkles:  {color:'rgba(255,220,80,.9)',  shadow:'rgba(255,200,0,.7)',   border:'rgba(255,240,100,1)'},
-  aura:      {color:'rgba(180,60,255,.9)',  shadow:'rgba(140,0,255,.8)',   border:'rgba(220,100,255,1)'},
-  aurora:    {color:'rgba(0,255,180,.9)',   shadow:'rgba(0,200,255,.7)',   border:'rgba(100,255,220,1)'},
-  portal:    {color:'rgba(255,180,0,.9)',   shadow:'rgba(255,140,0,.8)',   border:'rgba(255,220,80,1)'},
-  leaves:    {color:'rgba(80,200,80,.9)',   shadow:'rgba(40,160,40,.7)',   border:'rgba(120,220,80,1)'},
+/* ── Couleur d'accent (boutons focus, icônes, cadres) ── */
+const THEME_ACCENT = {
+  null:      '#2BB7F2',
+  bubbles:   '#2BB7F2',
+  lightning: '#8B5CF6',
+  snow:      '#4BA8E8',
+  fire:      '#F97316',
+  sparkles:  '#E8A700',
+  aura:      '#A855F7',
+  aurora:    '#0FB5A0',
+  portal:    '#E09B00',
+  leaves:    '#3EAE55',
 };
 
-/* ════════════════════════════════
-   PARTICULES DE FOND
-════════════════════════════════ */
+/* ── Palette des particules (visibles sur fond clair) ── */
+const P = {
+  bubbles:   ['#4EC0F5','#7BD3F7','#2BB7F2'],
+  lightning: ['#8B5CF6','#A78BFA','#6D28D9'],
+  snow:      ['#7EC4EE','#A8D8F5','#5BA9DD'],
+  fire:      ['#F97316','#FB923C','#EA580C'],
+  sparkles:  ['#F0B400','#FFCE3D','#E0A011'],
+  aura:      ['#A855F7','#C084FC','#7E22CE'],
+  aurora:    ['#10B9A2','#22D3C4','#0E9488'],
+  portal:    ['#E09B00','#F5B942','#C77E00'],
+  leaves:    ['#3EAE55','#6CC77E','#2E8B45'],
+};
+
+/* ── Helpers ── */
+function rnd(min, max){ return min + Math.random() * (max - min); }
+function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+function hexA(hex, a){
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+}
 
 function createBgCanvas(){
-  const existing = document.getElementById('bubble-theme-canvas');
-  if(existing) existing.remove();
-  const canvas = document.createElement('canvas');
-  canvas.id = 'bubble-theme-canvas';
-  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;';
-  document.body.insertBefore(canvas, document.body.firstChild);
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight;
-  window.addEventListener('resize', ()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
-  return canvas;
+  const old = document.getElementById('bubble-theme-canvas');
+  if (old) old.remove();
+  const c = document.createElement('canvas');
+  c.id = 'bubble-theme-canvas';
+  c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;';
+  document.body.insertBefore(c, document.body.firstChild);
+  const fit = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
+  fit();
+  window.addEventListener('resize', fit);
+  return c;
 }
 
-/* Helpers */
-function rnd(min,max){return min+Math.random()*(max-min);}
+/* ══════════════ LES THÈMES ══════════════ */
 
 /* ── BULLES (défaut) ── */
-function initBubbles(w,h){
-  return [...Array(28)].map(()=>({
-    x:rnd(0,w), y:rnd(0,h), r:rnd(6,28), speed:rnd(.3,.9),
-    alpha:rnd(.06,.18), hue:rnd(190,260), ph:rnd(0,Math.PI*2)
+function initBubbles(w, h){
+  return [...Array(26)].map(() => ({
+    x: rnd(0, w), y: rnd(0, h), r: rnd(8, 34),
+    speed: rnd(.25, .75), alpha: rnd(.10, .26),
+    col: pick(P.bubbles), ph: rnd(0, Math.PI * 2)
   }));
 }
-function tickBubbles(p,ctx,w,h,dt){
-  ctx.clearRect(0,0,w,h);
-  p.forEach(b=>{
-    b.y-=b.speed; b.x+=Math.sin(b.ph+dt*.0005)*.8; b.ph+=.015;
-    if(b.y<-b.r*2){b.y=h+b.r;b.x=rnd(0,w);}
-    const g=ctx.createRadialGradient(b.x-b.r*.3,b.y-b.r*.3,0,b.x,b.y,b.r);
-    g.addColorStop(0,`rgba(255,255,255,${b.alpha*.6})`);
-    g.addColorStop(.5,`hsla(${b.hue},80%,70%,${b.alpha})`);
-    g.addColorStop(1,'transparent');
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
-    ctx.strokeStyle=`hsla(${b.hue},70%,80%,${b.alpha*.8})`; ctx.lineWidth=.8; ctx.stroke();
+function tickBubbles(p, ctx, w, h){
+  ctx.clearRect(0, 0, w, h);
+  p.forEach(b => {
+    b.y -= b.speed; b.x += Math.sin(b.ph) * .5; b.ph += .012;
+    if (b.y < -b.r * 2){ b.y = h + b.r; b.x = rnd(0, w); }
+    const g = ctx.createRadialGradient(b.x - b.r*.35, b.y - b.r*.35, 0, b.x, b.y, b.r);
+    g.addColorStop(0, hexA('#FFFFFF', b.alpha * .9));
+    g.addColorStop(.6, hexA(b.col, b.alpha * .55));
+    g.addColorStop(1, hexA(b.col, 0));
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI*2); ctx.fillStyle = g; ctx.fill();
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
+    ctx.strokeStyle = hexA(b.col, b.alpha * .7); ctx.lineWidth = 1.2; ctx.stroke();
   });
 }
 
 /* ── ÉCLAIRS ── */
-function initLightning(w,h){
-  return {bolts:[], timer:0, sparks:[...Array(40)].map(()=>({
-    x:rnd(0,w), y:rnd(0,h), vx:rnd(-1,1), vy:rnd(-1,1),
-    alpha:rnd(.1,.4), r:rnd(1,3), life:rnd(.3,1), maxLife:rnd(.3,1)
+function initLightning(w, h){
+  return { bolts: [], timer: 0, motes: [...Array(30)].map(() => ({
+    x: rnd(0, w), y: rnd(0, h), vx: rnd(-.3, .3), vy: rnd(-.3, .3),
+    r: rnd(1.5, 3.5), alpha: rnd(.15, .4), col: pick(P.lightning)
   }))};
 }
-function tickLightning(s,ctx,w,h,dt){
-  ctx.clearRect(0,0,w,h);
-  s.timer+=dt;
-  /* Éclairs principaux */
-  if(s.timer>rnd(800,2000)){
-    s.timer=0;
-    const nb=Math.floor(rnd(1,3));
-    for(let i=0;i<nb;i++){
-      const bolt={x:rnd(0,w),segs:[],life:1,alpha:rnd(.5,.9)};
-      let y=0;
-      while(y<h){bolt.segs.push({x:bolt.x+(rnd(-1,1)*20),y});y+=rnd(12,24);}
-      s.bolts.push(bolt);
-    }
+function tickLightning(s, ctx, w, h, dt){
+  ctx.clearRect(0, 0, w, h);
+  s.timer += dt;
+  if (s.timer > rnd(1100, 2600)){
+    s.timer = 0;
+    const bolt = { segs: [], life: 1 };
+    let x = rnd(w * .15, w * .85), y = 0;
+    while (y < h){ bolt.segs.push({ x: x + rnd(-16, 16), y }); y += rnd(16, 30); }
+    s.bolts.push(bolt);
   }
-  s.bolts=s.bolts.filter(b=>b.life>0);
-  s.bolts.forEach(b=>{
-    b.life-=.04;
+  s.bolts = s.bolts.filter(b => b.life > 0);
+  s.bolts.forEach(b => {
+    b.life -= .035;
     ctx.save();
-    ctx.shadowColor='rgba(200,150,255,.9)'; ctx.shadowBlur=18;
-    ctx.strokeStyle=`rgba(220,180,255,${b.life*b.alpha})`;
-    ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.moveTo(b.segs[0].x,0);
-    b.segs.forEach(s2=>ctx.lineTo(s2.x,s2.y));
+    ctx.strokeStyle = hexA('#7C3AED', b.life * .55);
+    ctx.lineWidth = 2.4; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(b.segs[0].x, 0);
+    b.segs.forEach(sg => ctx.lineTo(sg.x, sg.y));
     ctx.stroke();
-    /* Branche secondaire */
-    if(b.segs.length>3){
-      const si=Math.floor(b.segs.length/2);
-      ctx.strokeStyle=`rgba(200,150,255,${b.life*b.alpha*.5})`;
-      ctx.lineWidth=.8;
-      ctx.beginPath(); ctx.moveTo(b.segs[si].x,b.segs[si].y);
-      for(let j=si;j<b.segs.length;j++) ctx.lineTo(b.segs[j].x+(rnd(-1,1)*15),b.segs[j].y);
-      ctx.stroke();
-    }
+    ctx.strokeStyle = hexA('#C4B5FD', b.life * .8); ctx.lineWidth = .9; ctx.stroke();
     ctx.restore();
   });
-  /* Particules flottantes */
-  s.sparks.forEach(p=>{
-    p.x+=p.vx*.3; p.y+=p.vy*.3; p.life-=dt*.0003;
-    if(p.life<=0){p.x=rnd(0,w);p.y=rnd(0,h);p.life=p.maxLife;}
-    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(200,160,255,${p.life*p.alpha})`; ctx.fill();
+  s.motes.forEach(m => {
+    m.x += m.vx; m.y += m.vy;
+    if (m.x < 0) m.x = w; if (m.x > w) m.x = 0;
+    if (m.y < 0) m.y = h; if (m.y > h) m.y = 0;
+    ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI*2);
+    ctx.fillStyle = hexA(m.col, m.alpha); ctx.fill();
   });
 }
 
 /* ── NEIGE ── */
-function initSnow(w,h){
-  return [...Array(60)].map(()=>({
-    x:rnd(0,w), y:rnd(0,h), r:rnd(1.5,5), speed:rnd(.2,.7),
-    alpha:rnd(.2,.6), ph:rnd(0,Math.PI*2), rot:rnd(0,Math.PI)
+function initSnow(w, h){
+  return [...Array(55)].map(() => ({
+    x: rnd(0, w), y: rnd(0, h), r: rnd(2, 6), speed: rnd(.2, .6),
+    alpha: rnd(.18, .45), ph: rnd(0, Math.PI*2), rot: rnd(0, Math.PI), col: pick(P.snow)
   }));
 }
-function tickSnow(p,ctx,w,h,dt){
-  ctx.clearRect(0,0,w,h);
-  p.forEach(b=>{
-    b.y+=b.speed; b.x+=Math.sin(b.ph)*.4; b.ph+=.02; b.rot+=.01;
-    if(b.y>h+8){b.y=-8;b.x=rnd(0,w);}
-    ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.rot);
-    ctx.strokeStyle=`rgba(200,235,255,${b.alpha})`; ctx.lineWidth=.8;
-    for(let i=0;i<6;i++){
-      ctx.save(); ctx.rotate(i*Math.PI/3);
-      ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,b.r*2); ctx.stroke(); ctx.restore();
+function tickSnow(p, ctx, w, h){
+  ctx.clearRect(0, 0, w, h);
+  p.forEach(b => {
+    b.y += b.speed; b.x += Math.sin(b.ph) * .4; b.ph += .018; b.rot += .008;
+    if (b.y > h + 10){ b.y = -10; b.x = rnd(0, w); }
+    ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot);
+    ctx.strokeStyle = hexA(b.col, b.alpha); ctx.lineWidth = 1.3; ctx.lineCap = 'round';
+    for (let i = 0; i < 6; i++){
+      ctx.save(); ctx.rotate(i * Math.PI / 3);
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, b.r * 1.8); ctx.stroke();
+      ctx.restore();
     }
     ctx.restore();
   });
 }
 
-/* ── FEU ── */
-function initFire(w,h){
-  return [...Array(50)].map(()=>({
-    x:rnd(0,w), y:rnd(0,h), r:rnd(2,6), speed:rnd(.4,1.2),
-    life:rnd(.1,1), alpha:rnd(.3,.7)
+/* ── FEU (braises qui montent) ── */
+function initFire(w, h){
+  return [...Array(45)].map(() => ({
+    x: rnd(0, w), y: rnd(0, h), r: rnd(2.5, 7), speed: rnd(.4, 1.1),
+    life: rnd(.2, 1), alpha: rnd(.2, .5), col: pick(P.fire)
   }));
 }
-function tickFire(p,ctx,w,h,dt){
-  ctx.clearRect(0,0,w,h);
-  p.forEach(b=>{
-    b.y-=b.speed; b.x+=(Math.random()-.5)*.8; b.life-=.008;
-    if(b.life<=0||b.y<0){b.y=h+b.r;b.x=rnd(0,w);b.life=rnd(.4,1);}
-    const a=b.life*b.alpha;
-    const col=b.life>.6?`rgba(255,${Math.floor(b.life*160+40)},0,${a})`
-             :b.life>.3?`rgba(255,80,0,${a})`:`rgba(180,20,0,${a*.5})`;
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r*b.life,0,Math.PI*2);
-    ctx.fillStyle=col; ctx.fill();
+function tickFire(p, ctx, w, h){
+  ctx.clearRect(0, 0, w, h);
+  p.forEach(b => {
+    b.y -= b.speed; b.x += (Math.random() - .5) * .9; b.life -= .006;
+    if (b.life <= 0 || b.y < -10){ b.y = h + b.r; b.x = rnd(0, w); b.life = rnd(.5, 1); }
+    const a = b.life * b.alpha;
+    const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r * 2.2);
+    g.addColorStop(0, hexA(b.col, a));
+    g.addColorStop(1, hexA(b.col, 0));
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r * 2.2, 0, Math.PI*2); ctx.fillStyle = g; ctx.fill();
   });
 }
 
-/* ── ÉTINCELLES ── */
-function initSparkles(w,h){
-  return [...Array(55)].map(()=>({
-    x:rnd(0,w), y:rnd(0,h), r:rnd(1,4),
-    vx:rnd(-.3,.3), vy:rnd(-.5,-.1),
-    alpha:rnd(.1,.5), life:rnd(.3,1), maxLife:rnd(.4,1),
-    color:['#ffe066','#fff4aa','#ffcc00','#ffffff','#ffdd88'][Math.floor(rnd(0,5))]
+/* ── ÉTINCELLES (petites étoiles) ── */
+function initSparkles(w, h){
+  return [...Array(48)].map(() => ({
+    x: rnd(0, w), y: rnd(0, h), r: rnd(2, 6),
+    vx: rnd(-.25, .25), vy: rnd(-.45, -.1),
+    alpha: rnd(.15, .45), life: rnd(.3, 1), maxLife: rnd(.5, 1), col: pick(P.sparkles)
   }));
 }
-function tickSparkles(p,ctx,w,h,dt){
-  ctx.clearRect(0,0,w,h);
-  p.forEach(b=>{
-    b.x+=b.vx; b.y+=b.vy; b.life-=.005;
-    if(b.life<=0){b.x=rnd(0,w);b.y=rnd(h*.5,h);b.life=b.maxLife;}
-    ctx.save(); ctx.translate(b.x,b.y);
-    const a=b.life*b.alpha;
-    ctx.fillStyle=b.color+Math.floor(a*255).toString(16).padStart(2,'0');
+function tickSparkles(p, ctx, w, h){
+  ctx.clearRect(0, 0, w, h);
+  p.forEach(b => {
+    b.x += b.vx; b.y += b.vy; b.life -= .004;
+    if (b.life <= 0){ b.x = rnd(0, w); b.y = rnd(h * .4, h + 20); b.life = b.maxLife; }
+    ctx.save(); ctx.translate(b.x, b.y);
+    ctx.fillStyle = hexA(b.col, b.life * b.alpha);
     ctx.beginPath();
-    for(let i=0;i<5;i++){
-      const ang=i*Math.PI*2/5-Math.PI/2,ai=ang+Math.PI/5;
-      i===0?ctx.moveTo(Math.cos(ang)*b.r,Math.sin(ang)*b.r):ctx.lineTo(Math.cos(ang)*b.r,Math.sin(ang)*b.r);
-      ctx.lineTo(Math.cos(ai)*b.r*.4,Math.sin(ai)*b.r*.4);
+    for (let i = 0; i < 5; i++){
+      const a1 = i * Math.PI * 2 / 5 - Math.PI / 2, a2 = a1 + Math.PI / 5;
+      i === 0 ? ctx.moveTo(Math.cos(a1)*b.r, Math.sin(a1)*b.r)
+              : ctx.lineTo(Math.cos(a1)*b.r, Math.sin(a1)*b.r);
+      ctx.lineTo(Math.cos(a2)*b.r*.42, Math.sin(a2)*b.r*.42);
     }
     ctx.closePath(); ctx.fill(); ctx.restore();
   });
 }
 
-/* ── AURA ── */
-function initAura(w,h){ return {t:0,orbs:[...Array(12)].map(()=>({angle:rnd(0,Math.PI*2),r:rnd(.2,.45),speed:rnd(.2,.5),size:rnd(3,8),alpha:rnd(.15,.35)}))}; }
-function tickAura(s,ctx,w,h,dt){
-  ctx.clearRect(0,0,w,h);
-  s.t+=dt*.0004;
-  const cx=w/2,cy=h/2,maxR=Math.min(w,h)*.45;
-  /* Anneaux pulsants */
-  for(let i=0;i<4;i++){
-    const r=maxR*(.4+i*.18)+Math.sin(s.t*1.2+i)*20;
-    const g=ctx.createRadialGradient(cx,cy,r*.6,cx,cy,r);
-    g.addColorStop(0,'transparent');
-    g.addColorStop(.7,`rgba(150,40,255,${.04-i*.005})`);
-    g.addColorStop(1,`rgba(180,60,255,${.08-i*.01})`);
-    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+/* ── AURA (halos qui respirent) ── */
+function initAura(w, h){
+  return { t: 0, orbs: [...Array(10)].map(() => ({
+    angle: rnd(0, Math.PI*2), r: rnd(.22, .48), speed: rnd(.15, .4),
+    size: rnd(20, 46), alpha: rnd(.05, .13)
+  }))};
+}
+function tickAura(s, ctx, w, h, dt){
+  ctx.clearRect(0, 0, w, h);
+  s.t += dt * .0004;
+  const cx = w/2, cy = h/2, maxR = Math.min(w, h) * .48;
+  for (let i = 0; i < 3; i++){
+    const r = maxR * (.5 + i*.2) + Math.sin(s.t*1.1 + i) * 18;
+    const g = ctx.createRadialGradient(cx, cy, r*.65, cx, cy, r);
+    g.addColorStop(0, hexA('#A855F7', 0));
+    g.addColorStop(1, hexA('#A855F7', .05 - i*.012));
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fillStyle = g; ctx.fill();
   }
-  /* Orbes orbitaux */
-  s.orbs.forEach(o=>{
-    o.angle+=o.speed*dt*.0005;
-    const x=cx+Math.cos(o.angle)*maxR*o.r, y=cy+Math.sin(o.angle)*maxR*o.r;
-    const g=ctx.createRadialGradient(x,y,0,x,y,o.size*2);
-    g.addColorStop(0,`rgba(200,100,255,${o.alpha*1.5})`);
-    g.addColorStop(1,'transparent');
-    ctx.beginPath(); ctx.arc(x,y,o.size*2,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+  s.orbs.forEach(o => {
+    o.angle += o.speed * dt * .0004;
+    const x = cx + Math.cos(o.angle) * maxR * o.r;
+    const y = cy + Math.sin(o.angle) * maxR * o.r;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, o.size);
+    g.addColorStop(0, hexA('#C084FC', o.alpha * 2));
+    g.addColorStop(1, hexA('#C084FC', 0));
+    ctx.beginPath(); ctx.arc(x, y, o.size, 0, Math.PI*2); ctx.fillStyle = g; ctx.fill();
   });
 }
 
-/* ── AURORE ── */
-function initAurora(w,h){ return {t:0}; }
-function tickAurora(s,ctx,w,h,dt){
-  ctx.clearRect(0,0,w,h);
-  s.t+=dt*.0003;
-  const colors=['#00ffcc','#00aaff','#4400ff','#00ffaa','#0066ff'];
-  colors.forEach((col,i)=>{
-    const wave=Math.sin(s.t+i*.8)*h*.12;
-    const g=ctx.createLinearGradient(0,0,0,h);
-    g.addColorStop(0,'transparent');
-    g.addColorStop(.2+i*.06,col+(Math.floor(rnd(8,22)).toString(16).padStart(2,'0')));
-    g.addColorStop(.5,'transparent');
-    ctx.beginPath();
-    ctx.moveTo(0,0);
-    for(let x=0;x<=w;x+=8){
-      const y=h*.25+Math.sin(x*.005+s.t+i)*h*.1+wave+i*30;
-      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+/* ── AURORE (voiles ondulants) ── */
+function initAurora(){ return { t: 0 }; }
+function tickAurora(s, ctx, w, h, dt){
+  ctx.clearRect(0, 0, w, h);
+  s.t += dt * .00035;
+  const cols = ['#10B9A2','#22D3C4','#4EC0F5','#0E9488'];
+  cols.forEach((col, i) => {
+    const base = h * (.18 + i * .1);
+    const g = ctx.createLinearGradient(0, base - 90, 0, base + 150);
+    g.addColorStop(0, hexA(col, 0));
+    g.addColorStop(.45, hexA(col, .10));
+    g.addColorStop(1, hexA(col, 0));
+    ctx.beginPath(); ctx.moveTo(0, h);
+    for (let x = 0; x <= w; x += 10){
+      const y = base + Math.sin(x * .004 + s.t * (1 + i*.25) + i) * 42
+                     + Math.sin(x * .011 + s.t * 1.6) * 14;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     }
-    ctx.lineTo(w,0); ctx.closePath();
-    ctx.fillStyle=g; ctx.fill();
+    ctx.lineTo(w, base + 160); ctx.lineTo(0, base + 160); ctx.closePath();
+    ctx.fillStyle = g; ctx.fill();
   });
 }
 
-/* ── PORTAIL ── */
-function initPortal(w,h){ return {t:0,stars:[...Array(80)].map(()=>({x:rnd(0,w),y:rnd(0,h),r:rnd(.5,2.5),alpha:rnd(.1,.6),twinkle:rnd(0,Math.PI*2)}))}; }
-function tickPortal(s,ctx,w,h,dt){
-  ctx.clearRect(0,0,w,h);
-  s.t+=dt*.0005;
-  const cx=w/2,cy=h/2;
-  /* Étoiles */
-  s.stars.forEach(st=>{
-    st.twinkle+=dt*.001;
-    const a=st.alpha*(0.5+Math.sin(st.twinkle)*.5);
-    ctx.beginPath(); ctx.arc(st.x,st.y,st.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(255,220,180,${a})`; ctx.fill();
+/* ── PORTAIL (anneaux + poussière d'étoiles) ── */
+function initPortal(w, h){
+  return { t: 0, stars: [...Array(60)].map(() => ({
+    x: rnd(0, w), y: rnd(0, h), r: rnd(1, 3),
+    alpha: rnd(.12, .4), tw: rnd(0, Math.PI*2)
+  }))};
+}
+function tickPortal(s, ctx, w, h, dt){
+  ctx.clearRect(0, 0, w, h);
+  s.t += dt * .0005;
+  const cx = w/2, cy = h/2;
+  s.stars.forEach(st => {
+    st.tw += dt * .0012;
+    const a = st.alpha * (.45 + Math.sin(st.tw) * .55);
+    ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+    ctx.fillStyle = hexA('#E09B00', a); ctx.fill();
   });
-  /* Anneaux cosmiques */
-  for(let i=0;i<5;i++){
-    const r=80+i*60+Math.sin(s.t+i)*15;
+  for (let i = 0; i < 5; i++){
+    const r = 90 + i * 62 + Math.sin(s.t + i) * 14;
     ctx.beginPath();
-    ctx.arc(cx,cy,r,s.t*(1+i*.2),s.t*(1+i*.2)+Math.PI*(1.2+i*.1));
-    ctx.strokeStyle=`rgba(255,${160+i*18},0,${.06-i*.008})`;
-    ctx.lineWidth=1.5; ctx.stroke();
+    ctx.arc(cx, cy, r, s.t * (1 + i*.18), s.t * (1 + i*.18) + Math.PI * (1.1 + i*.12));
+    ctx.strokeStyle = hexA('#E09B00', .16 - i*.022);
+    ctx.lineWidth = 2.2; ctx.stroke();
   }
-  /* Nébuleuse centrale */
-  const g=ctx.createRadialGradient(cx,cy,0,cx,cy,200);
-  g.addColorStop(0,`rgba(100,0,200,${.04+Math.sin(s.t)*.02})`);
-  g.addColorStop(.5,`rgba(50,0,100,${.03})`);
-  g.addColorStop(1,'transparent');
-  ctx.beginPath(); ctx.arc(cx,cy,200,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
 }
 
 /* ── FEUILLES ── */
-function initLeaves(w,h){
-  return [...Array(35)].map(()=>({
-    x:rnd(0,w), y:rnd(0,h), vx:rnd(-.4,.4), vy:rnd(.2,.6),
-    r:rnd(4,10), rot:rnd(0,Math.PI*2), rs:rnd(-.03,.03),
-    alpha:rnd(.15,.45), g:Math.floor(rnd(140,210))
+function initLeaves(w, h){
+  return [...Array(30)].map(() => ({
+    x: rnd(0, w), y: rnd(0, h), vx: rnd(-.35, .35), vy: rnd(.2, .55),
+    r: rnd(5, 12), rot: rnd(0, Math.PI*2), rs: rnd(-.022, .022),
+    alpha: rnd(.14, .35), col: pick(P.leaves)
   }));
 }
-function tickLeaves(p,ctx,w,h,dt){
-  ctx.clearRect(0,0,w,h);
-  p.forEach(b=>{
-    b.y+=b.vy; b.x+=b.vx+Math.sin(b.rot)*.3; b.rot+=b.rs;
-    if(b.y>h+12){b.y=-12;b.x=rnd(0,w);}
-    if(b.x<-12)b.x=w+12; if(b.x>w+12)b.x=-12;
-    ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.rot);
-    ctx.beginPath(); ctx.ellipse(0,0,b.r*.6,b.r,0,0,Math.PI*2);
-    ctx.fillStyle=`rgba(40,${b.g},40,${b.alpha})`; ctx.fill();
+function tickLeaves(p, ctx, w, h){
+  ctx.clearRect(0, 0, w, h);
+  p.forEach(b => {
+    b.y += b.vy; b.x += b.vx + Math.sin(b.rot) * .35; b.rot += b.rs;
+    if (b.y > h + 14){ b.y = -14; b.x = rnd(0, w); }
+    if (b.x < -14) b.x = w + 14; if (b.x > w + 14) b.x = -14;
+    ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot);
+    ctx.beginPath(); ctx.ellipse(0, 0, b.r * .55, b.r, 0, 0, Math.PI*2);
+    ctx.fillStyle = hexA(b.col, b.alpha); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0, -b.r); ctx.lineTo(0, b.r);
+    ctx.strokeStyle = hexA('#FFFFFF', b.alpha * .8); ctx.lineWidth = .9; ctx.stroke();
     ctx.restore();
   });
 }
 
-/* ══ MAP thème → init/tick ══ */
+/* ── Table des thèmes ── */
 const THEMES = {
-  bubbles:   {init:initBubbles,   tick:tickBubbles},
-  lightning: {init:initLightning, tick:tickLightning},
-  snow:      {init:initSnow,      tick:tickSnow},
-  fire:      {init:initFire,      tick:tickFire},
-  sparkles:  {init:initSparkles,  tick:tickSparkles},
-  aura:      {init:initAura,      tick:tickAura},
-  aurora:    {init:initAurora,    tick:tickAurora},
-  portal:    {init:initPortal,    tick:tickPortal},
-  leaves:    {init:initLeaves,    tick:tickLeaves},
+  bubbles:   { init: initBubbles,   tick: tickBubbles },
+  lightning: { init: initLightning, tick: tickLightning },
+  snow:      { init: initSnow,      tick: tickSnow },
+  fire:      { init: initFire,      tick: tickFire },
+  sparkles:  { init: initSparkles,  tick: tickSparkles },
+  aura:      { init: initAura,      tick: tickAura },
+  aurora:    { init: initAurora,    tick: tickAurora },
+  portal:    { init: initPortal,    tick: tickPortal },
+  leaves:    { init: initLeaves,    tick: tickLeaves },
 };
 
-/* ══ GLOW AVATAR ══ */
-function applyAvatarGlow(effectType){
-  const g = THEME_GLOW[effectType] || THEME_GLOW['bubbles'];
-  const styleId = 'bubble-glow-css';
-  let s = document.getElementById(styleId);
-  if(!s){ s=document.createElement('style'); s.id=styleId; document.head.appendChild(s); }
-  s.textContent = `
-    .profile-bubble, .big-avatar {
-      border: 2.5px solid ${g.border} !important;
-      box-shadow: 0 0 12px ${g.color}, 0 0 28px ${g.shadow}, inset 0 0 8px rgba(255,255,255,.15) !important;
-      animation: glowPulse-${effectType||'base'} 2.5s ease-in-out infinite !important;
-    }
-    @keyframes glowPulse-${effectType||'base'} {
-      0%,100% { box-shadow: 0 0 10px ${g.color}, 0 0 22px ${g.shadow}; }
-      50%      { box-shadow: 0 0 22px ${g.color}, 0 0 45px ${g.shadow}, 0 0 70px ${g.shadow.replace(/[\d.]+\)$/,'0.3)')}; }
-    }
-  `;
-}
+/* ══════════════ MOTEUR ══════════════ */
+let _rafId = null;
+let _resizeHandler = null;
 
-/* ══ FOND DÉGRADÉ ══ */
-function applyBgGradient(effectType){
-  const cols = THEME_BG[effectType] || THEME_BG['bubbles'];
-  document.body.style.background = `linear-gradient(160deg,${cols[0]} 0%,${cols[1]} 35%,${cols[2]} 65%,${cols[3]} 100%)`;
+function applyBgGradient(type){
+  const c = THEME_BG[type] || THEME_BG.bubbles;
+  document.body.style.background =
+    `linear-gradient(165deg, ${c[0]} 0%, ${c[1]} 55%, ${c[2]} 100%)`;
+  document.body.style.backgroundAttachment = 'fixed';
   document.body.style.minHeight = '100vh';
 }
 
-/* ══ MOTEUR PRINCIPAL ══ */
-let _rafId = null;
+function applyAccent(type){
+  const a = THEME_ACCENT[type] || THEME_ACCENT.bubbles;
+  const n = parseInt(a.slice(1), 16);
+  document.documentElement.style.setProperty('--accent', a);
+  document.documentElement.style.setProperty('--accent-soft',
+    `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},.14)`);
+}
 
 function applyTheme(effectType){
-  /* Stop animation précédente */
-  if(_rafId){ cancelAnimationFrame(_rafId); _rafId=null; }
+  /* Les pages pas encore refaites (ancien design sombre) portent pas d'attribut
+     data-v2 : on ne touche ni à leur fond ni à leur canvas, sinon leur texte
+     blanc deviendrait illisible. À supprimer quand tout le site sera en v2. */
+  if (!document.body || document.body.dataset.v2 === undefined) return;
 
-  /* Fond dégradé */
-  applyBgGradient(effectType);
+  if (_rafId){ cancelAnimationFrame(_rafId); _rafId = null; }
+  if (_resizeHandler){ window.removeEventListener('resize', _resizeHandler); _resizeHandler = null; }
 
-  /* Glow avatar */
-  applyAvatarGlow(effectType);
+  const type = (!effectType || effectType === 'none') ? 'bubbles' : effectType;
 
-  /* Canvas de fond (remplace .bubble-bg) */
-  const bubbleBg = document.getElementById('bubbleBg');
-  if(bubbleBg) bubbleBg.style.display = 'none';
+  applyBgGradient(type);
+  applyAccent(type);
+  document.body.dataset.theme = type;
 
-  if(!effectType || effectType==='none' || !THEMES[effectType]){
-    /* Thème par défaut : réaffiche les bulles HTML */
-    if(bubbleBg) bubbleBg.style.display = '';
+  const theme = THEMES[type] || THEMES.bubbles;
+
+  /* Respecte "réduire les animations" du système */
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const old = document.getElementById('bubble-theme-canvas');
+    if (old) old.remove();
     return;
   }
 
   const canvas = createBgCanvas();
   const ctx = canvas.getContext('2d');
-  const w = ()=>canvas.width, h = ()=>canvas.height;
-  const theme = THEMES[effectType];
+  const w = () => canvas.width, h = () => canvas.height;
   let state = theme.init(w(), h());
 
-  window.addEventListener('resize', ()=>{ state = theme.init(w(), h()); });
+  _resizeHandler = () => { state = theme.init(w(), h()); };
+  window.addEventListener('resize', _resizeHandler);
 
   let last = 0;
   function loop(ts){
-    const dt = Math.min(ts-last, 50); last = ts;
+    const dt = Math.min(ts - last, 50); last = ts;
     theme.tick(state, ctx, w(), h(), dt);
     _rafId = requestAnimationFrame(loop);
   }
   _rafId = requestAnimationFrame(loop);
 }
 
-/* Compatibilité ancien nom */
+/* Compatibilité avec l'ancien nom */
 window.applyAvatarEffect = applyTheme;
 window.applyTheme = applyTheme;
+
+/* Thème par défaut dès le chargement (évite le fond blanc au 1er rendu) */
+if (document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', () => applyTheme(null));
+} else {
+  applyTheme(null);
+}

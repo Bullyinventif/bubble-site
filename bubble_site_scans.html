@@ -3,869 +3,372 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#EFF4FA">
 <title>Scans — Bubble Site</title>
 <link rel="icon" type="image/png" href="bully_icon_site_1.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <script src="bubble_effects.js"></script>
+<script src="bubble_frames.js"></script>
+<script src="bubble_data.js"></script>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
+  /* ── EN VEDETTE ── */
+  .vedette{
+    display:grid; grid-template-columns:300px 1fr; gap:0;
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-xl); overflow:hidden;
+    box-shadow:var(--shadow-2); margin-bottom:38px;
+  }
+  .vedette-cover{ position:relative; background:var(--surface-2); min-height:260px; }
+  .vedette-cover img{ width:100%; height:100%; object-fit:cover; object-position:center top; display:block; }
+  .vedette-cover .ph{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem; }
+  .vedette-body{ padding:26px 28px; display:flex; flex-direction:column; gap:12px; justify-content:center; }
+  .vedette-tag{
+    align-self:flex-start; padding:5px 13px; border-radius:999px;
+    background:var(--accent-soft); color:var(--accent);
+    font-size:.75rem; font-weight:800; letter-spacing:.5px;
+  }
+  .vedette-logo{ max-height:78px; max-width:80%; object-fit:contain; display:block; align-self:flex-start; }
+  .vedette-title{ font-size:clamp(1.5rem,3vw,2.1rem); font-weight:800; letter-spacing:-.5px; line-height:1.1; }
+  .vedette-desc{ font-size:.98rem; font-weight:600; color:var(--ink-soft); line-height:1.55; max-width:60ch; }
+  .vedette-meta{ font-size:.85rem; font-weight:700; color:var(--ink-soft); }
+  .vedette-actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:4px; }
 
-body {
-  background: #1e7a1e;
-  min-height: 100vh;
-  font-family: 'Baloo 2', cursive;
-  color: white;
-  overflow-x: hidden;
-}
+  /* ── RANGÉES ── */
+  .shelf{ margin-bottom:34px; }
+  .shelf-head{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .shelf-head h2{ font-size:1.25rem; font-weight:800; }
+  .shelf-head .count{ font-size:.85rem; font-weight:700; color:var(--ink-soft); }
+  .shelf-row{
+    display:flex; gap:16px; overflow-x:auto; padding:4px 2px 10px;
+    scroll-snap-type:x proximity; scrollbar-width:none;
+  }
+  .shelf-row::-webkit-scrollbar{ display:none; }
+  .shelf-row > *{ scroll-snap-align:start; }
 
-/* ── NAV ── */
-nav {
-  position: fixed; top:0; left:0; right:0;
-  height: 58px;
-  background: rgba(20,60,160,.75);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255,255,255,.15);
-  display: flex; align-items: center;
-  z-index: 1000; padding: 0 10px; gap: 7px;
-}
-.nav-logo {
-  width:40px; height:40px;
-  background: radial-gradient(circle at 38% 32%,#b8e0ff,#3a7ae0);
-  border-radius:50%; display:flex; align-items:center; justify-content:center;
-  font-size:1.3rem; flex-shrink:0; margin-right:4px;
-  box-shadow: inset 0 -3px 6px rgba(0,0,80,.3);
-  border:2px solid rgba(255,255,255,.3);
-  cursor:pointer; transition:transform .2s;
-  -webkit-tap-highlight-color: transparent;
-}
-.nav-logo:hover { transform:scale(1.08); }
-.nav-links { display:flex; flex:1; gap:6px; }
-.nav-btn {
-  flex:1; height:42px; border-radius:12px; border:none;
-  font-family:'Baloo 2',cursive; font-size:.92rem; font-weight:800;
-  color:white; cursor:pointer; text-decoration:none;
-  display:flex; align-items:center; justify-content:center; gap:7px;
-  transition:filter .15s,transform .15s;
-  box-shadow:0 4px 0 rgba(0,0,0,.25);
-  -webkit-tap-highlight-color: transparent;
-}
-.nav-btn:hover  { filter:brightness(1.12); transform:translateY(-2px); }
-.nav-btn:active { transform:translateY(2px); }
-.nav-btn.red    { background:linear-gradient(180deg,#ff5252,#cc2020); }
-.nav-btn.yellow { background:linear-gradient(180deg,#ffcc00,#cc9900); }
-.nav-btn.gray   { background:linear-gradient(180deg,#6a7a8a,#4a5a6a); }
-.nav-btn.green  { background:linear-gradient(180deg,#44d966,#1faa44); }
-.nav-btn.purple{background:linear-gradient(180deg,#a855f7,#7c3aed);}
-.nav-btn.active { outline:2.5px solid rgba(255,255,255,.7); outline-offset:1px; }
+  .scan-card{
+    flex-shrink:0; width:168px; cursor:pointer;
+    background:transparent; border:none; padding:0; text-align:left;
+    font-family:inherit; color:inherit;
+  }
+  .scan-poster{
+    position:relative; width:100%; aspect-ratio:3/4;
+    border-radius:var(--r-md); overflow:hidden;
+    background:var(--surface-2); border:2px solid var(--line);
+    box-shadow:var(--shadow-1);
+    transition:transform .18s, box-shadow .18s, border-color .18s;
+    display:flex; align-items:center; justify-content:center; font-size:2.6rem;
+  }
+  .scan-card:hover .scan-poster{ transform:translateY(-6px); box-shadow:var(--shadow-2); border-color:var(--accent); }
+  .scan-poster img{ width:100%; height:100%; object-fit:cover; }
+  .scan-lock{
+    position:absolute; inset:0; background:rgba(255,255,255,.72);
+    backdrop-filter:blur(2px);
+    display:flex; align-items:center; justify-content:center; font-size:2rem;
+  }
+  .scan-badge{
+    position:absolute; top:9px; right:9px;
+    padding:4px 10px; border-radius:999px;
+    font-size:.65rem; font-weight:800; letter-spacing:.3px;
+    box-shadow:0 2px 6px rgba(22,40,63,.2);
+  }
+  .scan-badge.plus{ background:var(--yellow); color:#4A3200; }
+  .scan-badge.x   { background:#38BDF8; color:#00263D; }
+  .scan-badge.max { background:var(--purple); color:#fff; }
+  .scan-badge.free,.scan-badge.basic{ background:var(--surface); color:var(--ink-soft); border:1px solid var(--line-strong); }
+  .scan-name{ margin-top:9px; font-size:.93rem; font-weight:800; line-height:1.25; }
+  .scan-meta{ font-size:.78rem; font-weight:700; color:var(--ink-soft); margin-top:1px; }
 
-.nav-profile {
-  margin-left:6px; flex-shrink:0;
-  display:flex; flex-direction:column; align-items:center;
-  cursor:pointer; text-decoration:none; transition:transform .2s;
-}
-.nav-profile:hover { transform:scale(1.05); }
-.profile-bubble {
-  width:38px; height:38px; border-radius:50%;
-  background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);
-  border:2px solid rgba(255,255,255,.5);
-  display:flex; align-items:center; justify-content:center; overflow:hidden;
-}
-.profile-bubble img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
-.profile-bubble-icon { font-size:1.3rem; }
-.profile-name-nav { font-size:.72rem; font-weight:800; color:white; text-align:center; margin-top:3px; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.profile-sub-nav  { font-size:.6rem; color:rgba(255,255,255,.65); font-family:'Press Start 2P',monospace; }
+  /* Carte reprendre */
+  .resume-card{ flex-shrink:0; width:214px; cursor:pointer; text-align:left; }
+  .resume-card .scan-poster{ aspect-ratio:16/10; }
+  .resume-bar{ height:6px; background:var(--surface-2); border:1px solid var(--line); border-radius:999px; overflow:hidden; margin-top:8px; }
+  .resume-bar i{ display:block; height:100%; background:var(--green); }
 
-/* ── MOBILE MENU ── */
-.mobile-menu {
-  display:none; position:fixed; top:58px; left:0; right:0;
-  background:rgba(8,22,80,.97); backdrop-filter:blur(22px);
-  flex-direction:column; gap:12px; padding:20px 18px 24px;
-  z-index:998; border-bottom:1px solid rgba(255,255,255,.15);
-  box-shadow:0 12px 40px rgba(0,0,0,.5);
-}
-.mobile-menu.open { display:flex; animation:slideDown .22s ease; }
-@keyframes slideDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
-.mobile-menu .nav-btn { width:100%; height:54px; font-size:1.05rem; border-radius:16px; flex:none; }
-.menu-overlay { display:none; position:fixed; inset:58px 0 0 0; z-index:997; }
-.menu-overlay.open { display:block; }
-@media(max-width:600px) {
-  .nav-links { display:none; }
-  .nav-profile { margin-left:auto; }
-  .profile-bubble { width:38px; height:38px; }
-  .profile-bubble-icon { font-size:1.3rem; }
-  .profile-name-nav { font-size:.62rem; max-width:70px; }
-  .profile-sub-nav  { font-size:.5rem; }
-}
+  /* ── MODALE ── */
+  .sheet-cover{ position:relative; height:210px; background:var(--surface-2); flex-shrink:0; }
+  .sheet-cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .sheet-cover .ph{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem; }
+  .sheet-close{
+    position:absolute; top:12px; right:12px;
+    width:36px; height:36px; border-radius:50%;
+    border:none; background:rgba(255,255,255,.92); color:var(--ink);
+    font-size:1rem; font-weight:800; cursor:pointer;
+    box-shadow:0 3px 10px rgba(22,40,63,.25);
+  }
+  .sheet-close:hover{ background:#fff; }
+  .sheet-body{ padding:20px 24px 26px; overflow-y:auto; display:flex; flex-direction:column; gap:14px; }
+  .sheet-title{ font-size:1.5rem; font-weight:800; letter-spacing:-.4px; }
+  .sheet-logo{ max-height:70px; max-width:70%; object-fit:contain; }
+  .sheet-desc{
+    background:var(--surface-2); border:2px solid var(--line);
+    border-radius:var(--r-md); padding:14px 16px;
+    font-size:.95rem; font-weight:600; color:var(--ink-soft); line-height:1.6;
+  }
+  .sheet-foot{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .sheet-meta{ font-size:.86rem; font-weight:700; color:var(--ink-soft); line-height:1.7; }
 
-/* ── MAIN ── */
-main {
-  position:relative; z-index:1;
-  padding: 74px 0 60px;
-}
-
-/* ── SECTION ── */
-.section { margin-bottom:32px; }
-.section-title {
-  font-family:'Baloo 2',cursive;
-  font-size:1.25rem; font-weight:800;
-  padding: 0 20px 12px;
-  color:white;
-  text-shadow:0 2px 6px rgba(0,0,0,.3);
-  display:flex; align-items:center; gap:10px;
-}
-.section-title a {
-  font-size:.75rem; color:rgba(255,255,255,.6);
-  text-decoration:none; font-weight:700;
-  border:1px solid rgba(255,255,255,.3);
-  padding:3px 12px; border-radius:20px;
-  transition:all .2s; margin-left:auto;
-}
-.section-title a:hover { background:rgba(255,255,255,.15); color:white; }
-
-/* ── HORIZONTAL SCROLL ROW ── */
-.scroll-row {
-  display:flex; gap:12px;
-  overflow-x:auto; padding:0 20px 12px;
-  scrollbar-width:none;
-  -webkit-overflow-scrolling:touch;
-  scroll-snap-type:x mandatory;
-  cursor:grab;
-}
-.scroll-row:active { cursor:grabbing; }
-.scroll-row::-webkit-scrollbar { display:none; }
-.scan-card, .resume-card { scroll-snap-align:start; }
-
-/* ── CARTE SCAN ── */
-.scan-card {
-  flex-shrink:0;
-  width:160px;
-  background:#0d4a0d;
-  border-radius:14px;
-  overflow:hidden;
-  cursor:pointer;
-  transition:transform .2s, box-shadow .2s;
-  border:2px solid rgba(255,255,255,.07);
-  position:relative;
-}
-.scan-card:hover {
-  transform:scale(1.06) translateY(-4px);
-  box-shadow:0 12px 30px rgba(0,0,0,.5);
-  border-color:rgba(255,255,255,.25);
-}
-.scan-cover {
-  width:100%; aspect-ratio:3/4;
-  object-fit:cover; display:block;
-  background:#0a3a0a;
-}
-.scan-cover-placeholder {
-  width:100%; aspect-ratio:3/4;
-  background:linear-gradient(145deg,#0a3a0a,#062506);
-  display:flex; align-items:center; justify-content:center;
-  font-size:2rem;
-}
-.scan-info { padding:8px 10px 10px; }
-.scan-name { font-size:.8rem; font-weight:800; line-height:1.2; }
-.scan-sub  { margin-top:4px; font-size:.55rem; font-family:'Press Start 2P',monospace; }
-
-/* Badge abonnement */
-.sub-badge {
-  position:absolute; top:8px; right:8px;
-  font-family:'Press Start 2P',monospace;
-  font-size:.42rem; padding:3px 7px;
-  border-radius:8px; letter-spacing:.5px;
-}
-.sub-badge.plus { background:rgba(255,200,0,.9); color:#3a2000; }
-.sub-badge.x    { background:rgba(0,200,255,.9); color:#001830; }
-.sub-badge.max  { background:linear-gradient(135deg,#cc44ff,#8800cc); color:white; }
-.sub-badge.free { background:rgba(255,255,255,.2); color:white; }
-
-/* Badge lock */
-.lock-overlay-card {
-  position:absolute; inset:0; border-radius:12px;
-  background:rgba(0,0,0,.55);
-  display:flex; align-items:center; justify-content:center;
-  font-size:2rem;
-}
-
-/* ── CARTE REPRENDRE (avec progress) ── */
-.resume-card {
-  flex-shrink:0; width:200px;
-  background:#0d4a0d; border-radius:14px;
-  overflow:hidden; cursor:pointer;
-  transition:transform .2s, box-shadow .2s;
-  border:2px solid rgba(255,255,255,.07);
-  position:relative;
-}
-.resume-card:hover {
-  transform:scale(1.04) translateY(-3px);
-  box-shadow:0 10px 25px rgba(0,0,0,.4);
-}
-.resume-cover {
-  width:100%; height:120px; object-fit:cover; display:block;
-  background:#0a3a0a;
-}
-.resume-cover-placeholder {
-  width:100%; height:120px;
-  background:linear-gradient(145deg,#0a3a0a,#062506);
-  display:flex; align-items:center; justify-content:center;
-  font-size:2rem;
-}
-.resume-info { padding:8px 10px 4px; }
-.resume-name { font-size:.8rem; font-weight:800; }
-.resume-ep   { font-size:.7rem; color:rgba(255,255,255,.55); margin-top:2px; }
-.progress-bar-wrap {
-  height:4px; background:rgba(255,255,255,.15);
-  margin:8px 0 0;
-}
-.progress-bar-fill {
-  height:100%; background:#ff3333; border-radius:2px;
-  transition:width .3s;
-}
-
-/* ── MODAL ── */
-.modal-overlay {
-  display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,.82); backdrop-filter:blur(8px);
-  z-index:2000; align-items:center; justify-content:center;
-  padding:20px;
-}
-.modal-overlay.open { display:flex; }
-
-.modal {
-  background:#1a1a1a;
-  border-radius:22px;
-  width:min(520px, 96vw);
-  max-height:90vh;
-  overflow-y:auto;
-  box-shadow:0 30px 80px rgba(0,0,0,.8);
-  animation:popIn .28s cubic-bezier(.34,1.56,.64,1);
-  scrollbar-width:none;
-}
-.modal::-webkit-scrollbar { display:none; }
-@keyframes popIn { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
-
-.modal-cover {
-  width:100%; aspect-ratio:16/9;
-  object-fit:cover; border-radius:20px 20px 0 0;
-  display:block;
-}
-.modal-cover-placeholder {
-  width:100%; aspect-ratio:16/9;
-  background:linear-gradient(145deg,#222,#333);
-  border-radius:20px 20px 0 0;
-  display:flex; align-items:center; justify-content:center;
-  font-size:5rem;
-}
-
-/* Petit logo abo haut à gauche */
-.modal-sub-row {
-  padding:12px 18px 0;
-  display:flex; align-items:center;
-}
-.modal-sub-logo-small {
-  height:36px; object-fit:contain;
-  filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));
-}
-.modal-sub-badge-small {
-  font-family:'Press Start 2P',monospace;
-  font-size:.48rem; padding:4px 10px; border-radius:10px;
-}
-.modal-sub-badge-small.plus { background:rgba(255,200,0,.9); color:#3a2000; }
-.modal-sub-badge-small.x    { background:rgba(0,200,255,.9); color:#001830; }
-.modal-sub-badge-small.max  { background:linear-gradient(135deg,#cc44ff,#8800cc); color:white; }
-.modal-sub-badge-small.free { background:rgba(255,255,255,.2); color:white; }
-
-/* Grand logo titre centré */
-.modal-title-logo-wrap {
-  display:flex; justify-content:center; align-items:center;
-  padding:10px 20px 14px;
-}
-.modal-title-logo {
-  max-height:120px; max-width:80%;
-  object-fit:contain;
-  filter:drop-shadow(0 2px 12px rgba(0,0,0,.6));
-}
-.modal-title-placeholder {
-  font-family:'Permanent Marker',cursive;
-  font-size:2rem; color:white; text-align:center;
-}
-
-.modal-body { padding:0 18px 22px; }
-
-.modal-desc {
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:12px; padding:14px 16px;
-  font-size:.88rem; color:rgba(255,255,255,.85);
-  line-height:1.65; margin-bottom:16px;
-}
-
-.modal-bottom-row {
-  display:flex; align-items:center; gap:20px; flex-wrap:wrap;
-}
-.btn-lecture {
-  padding:13px 30px;
-  background:linear-gradient(135deg,#44d966,#1faa44);
-  border:none; border-radius:25px;
-  color:white; font-family:'Baloo 2',cursive;
-  font-size:1.05rem; font-weight:800;
-  cursor:pointer; transition:all .2s;
-  box-shadow:0 4px 0 rgba(0,80,0,.35);
-  white-space:nowrap; flex-shrink:0;
-}
-.btn-lecture:hover { filter:brightness(1.1); transform:translateY(-2px); }
-.btn-lecture.locked {
-  background:rgba(255,255,255,.1);
-  color:rgba(255,255,255,.35);
-  cursor:not-allowed; box-shadow:none;
-  border:1.5px solid rgba(255,255,255,.15);
-}
-.modal-meta {
-  font-size:.82rem; color:rgba(255,255,255,.4);
-  line-height:2;
-}
-.modal-meta span { color:rgba(255,255,255,.75); }
-
-.modal-sub-required {
-  font-size:.62rem; font-family:'Press Start 2P',monospace;
-  padding:5px 12px; border-radius:20px;
-  margin-top:8px; display:inline-block;
-}
-.modal-sub-required.plus { background:rgba(255,200,0,.2); color:#ffe866; border:1px solid rgba(255,200,0,.4); }
-.modal-sub-required.x   { background:rgba(0,200,255,.15); color:#88eeff; border:1px solid rgba(0,200,255,.35); }
-.modal-sub-required.max { background:rgba(180,80,255,.2); color:#dd99ff; border:1px solid rgba(180,80,255,.4); }
-
-.modal-close {
-  position:absolute; top:10px; right:12px;
-  font-size:1.2rem; cursor:pointer;
-  background:rgba(0,0,0,.6); border:none; color:white;
-  width:32px; height:32px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  transition:background .2s; z-index:10;
-}
-.modal-close:hover { background:rgba(255,255,255,.2); }
-.modal-wrap { position:relative; }
-
-/* ── SCAN EN VEDETTE ── */
-.vedette {
-  position:relative; width:100%; min-height:340px;
-  display:flex; align-items:flex-end;
-  margin-bottom:28px; overflow:hidden;
-}
-.vedette-bg {
-  position:absolute; inset:0;
-  background-size:cover; background-position:center top;
-  filter:brightness(.55);
-}
-.vedette::after {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(to bottom,
-    transparent 0%, transparent 40%,
-    rgba(30,122,30,.7) 75%, #1e7a1e 100%);
-}
-.vedette-content {
-  position:relative; z-index:2;
-  padding:24px 22px 28px; width:100%;
-}
-.vedette-label {
-  font-family:'Press Start 2P',monospace;
-  font-size:.52rem; letter-spacing:3px;
-  color:rgba(255,255,255,.55); margin-bottom:10px;
-}
-.vedette-logo {
-  max-height:90px; max-width:70%; object-fit:contain; display:block;
-  filter:drop-shadow(0 3px 14px rgba(0,0,0,.7)); margin-bottom:12px;
-}
-.vedette-logo-placeholder {
-  font-family:'Permanent Marker',cursive;
-  font-size:2.2rem; color:white; margin-bottom:12px; line-height:1.1;
-  text-shadow:0 3px 10px rgba(0,0,0,.6);
-}
-.vedette-desc {
-  font-size:.88rem; color:rgba(255,255,255,.8);
-  line-height:1.6; max-width:520px; margin-bottom:18px;
-  text-shadow:0 1px 6px rgba(0,0,0,.5);
-}
-.vedette-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-.vedette-btn-lecture {
-  padding:11px 28px;
-  background:linear-gradient(135deg,#44d966,#1faa44);
-  border:none; border-radius:25px;
-  color:white; font-family:'Baloo 2',cursive;
-  font-size:1rem; font-weight:800;
-  cursor:pointer; transition:all .2s;
-  box-shadow:0 4px 0 rgba(0,80,0,.4);
-  display:flex; align-items:center; gap:8px;
-}
-.vedette-btn-lecture:hover { filter:brightness(1.1); transform:translateY(-2px); }
-.vedette-btn-info {
-  padding:11px 22px;
-  background:rgba(255,255,255,.2);
-  border:1.5px solid rgba(255,255,255,.4);
-  border-radius:25px; color:white;
-  font-family:'Baloo 2',cursive; font-size:1rem; font-weight:800;
-  cursor:pointer; transition:all .2s;
-}
-.vedette-btn-info:hover { background:rgba(255,255,255,.32); }
-.vedette-sub-logo {
-  height:32px; object-fit:contain;
-  filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));
-}
-@media(max-width:600px) {
-  .vedette { min-height:260px; }
-  .vedette-logo { max-height:65px; }
-  .vedette-logo-placeholder { font-size:1.7rem; }
-  .vedette-desc { font-size:.82rem; }
-}
-
-/* ── TOAST ── */
-.toast {
-  position:fixed; bottom:28px; left:50%;
-  transform:translateX(-50%) translateY(80px);
-  background:rgba(255,60,60,.25); border:1px solid rgba(255,80,80,.5);
-  backdrop-filter:blur(12px); color:#ffaaaa;
-  padding:11px 26px; border-radius:25px;
-  font-size:.88rem; font-weight:700;
-  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
-  z-index:9999; white-space:nowrap;
-}
-.toast.show { transform:translateX(-50%) translateY(0); }
-
-footer {
-  position:relative; z-index:1;
-  text-align:center; padding:18px;
-  color:rgba(255,255,255,.25); font-size:.6rem;
-  border-top:1px solid rgba(255,255,255,.1);
-  font-family:'Press Start 2P',monospace; letter-spacing:1px;
-}
+  @media(max-width:760px){
+    .vedette{ grid-template-columns:1fr; }
+    .vedette-cover{ min-height:170px; max-height:190px; }
+    .vedette-body{ padding:20px; }
+    .vedette-logo{ max-height:54px; }
+    .vedette-desc{ display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .scan-card{ width:142px; }
+  }
 </style>
 </head>
-<body>
+<body data-v2>
 
-<!-- NAV -->
 <nav>
-  <div class="nav-logo" id="menuToggle">🫧</div>
+  <button class="nav-logo" id="menuToggle" aria-label="Menu">🫧</button>
+  <div class="nav-title">
+    <span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span>
+  </div>
   <div class="nav-links">
-    <a href="index.html" class="nav-btn red">🏠 Accueil</a>
-    <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
-    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
-    <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-    <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Gacha (BETA)</a>
+    <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="bubble_site_scans.html"       class="nav-btn green active"><span class="ico">📜</span>Scans</a>
+    <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
-    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🧙</span></div>
+    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🫧</span></div>
+    <div class="nav-profile-meta">
+      <span class="nav-profile-name" id="navName">Invité</span>
+      <span class="nav-profile-sub"  id="navSub">BASIC</span>
+    </div>
   </a>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
-  <a href="index.html" class="nav-btn red">🏠 Accueil</a>
-  <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
-  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
-  <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-  <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Gacha (BETA)</a>
+  <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+  <a href="bubble_site_scans.html"       class="nav-btn green active"><span class="ico">📜</span>Scans</a>
+  <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_profil.html"      class="nav-btn"><span class="ico">🎭</span>Mon profil</a>
 </div>
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <main>
 
-  <!-- ★ SCAN EN VEDETTE ★ -->
-  <div class="vedette" id="vedetteBlock">
-    <div class="vedette-bg" id="vedetteBg"></div>
-    <div class="vedette-content">
-      <div class="vedette-label">✦ En vedette</div>
-      <div id="vedetteLogoWrap"></div>
-      <div class="vedette-desc" id="vedetteDesc"></div>
-      <div class="vedette-actions">
-        <button class="vedette-btn-lecture" id="vedetteBtnLecture">▶ Lecture</button>
-        <button class="vedette-btn-info" id="vedetteBtnInfo">ℹ Plus d'infos</button>
-        <img class="vedette-sub-logo" id="vedetteSubLogo" src="#" alt="#" style="display:none">
-      </div>
-    </div>
-  </div>
+  <!-- EN VEDETTE -->
+  <section class="vedette fade-up" id="vedette"></section>
 
-  <!-- REPRENDRE LA LECTURE -->
-  <div class="section" id="sectionResume" style="display:none">
-    <div class="section-title">Reprendre la lecture →</div>
-    <div class="scroll-row" id="resumeRow"></div>
-  </div>
+  <!-- REPRENDRE -->
+  <section class="shelf fade-up d1" id="shelfResume" style="display:none">
+    <div class="shelf-head"><h2>📚 Reprendre la lecture</h2></div>
+    <div class="shelf-row" id="rowResume"></div>
+  </section>
 
-  <!-- MAGAZINES -->
-  <div class="section">
-    <div class="section-title">📰 Magazines</div>
-    <div class="scroll-row" id="rowMagazines"></div>
-  </div>
+  <section class="shelf fade-up d2">
+    <div class="shelf-head"><h2>📰 Magazines</h2><span class="count" id="cMag"></span></div>
+    <div class="shelf-row" id="rowMagazines"></div>
+  </section>
 
-  <!-- AVENTURES -->
-  <div class="section">
-    <div class="section-title">⚔️ Aventures</div>
-    <div class="scroll-row" id="rowAventures"></div>
-  </div>
+  <section class="shelf fade-up d3">
+    <div class="shelf-head"><h2>⚔️ Aventures</h2><span class="count" id="cAvt"></span></div>
+    <div class="shelf-row" id="rowAventures"></div>
+  </section>
 
-  <!-- BUBBLE DIRECT -->
-  <div class="section">
-    <div class="section-title">🫧 Bubble Direct</div>
-    <div class="scroll-row" id="rowDirect"></div>
-  </div>
+  <section class="shelf fade-up d4">
+    <div class="shelf-head"><h2>🫧 Bubble Direct</h2><span class="count" id="cDir"></span></div>
+    <div class="shelf-row" id="rowDirect"></div>
+  </section>
 
 </main>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-wrap">
-    <button class="modal-close" id="modalClose">✕</button>
-    <div class="modal" id="modal">
-      <div id="modalCover"></div>
-      <div class="modal-sub-row" id="modalSubRow"></div>
-      <div class="modal-title-logo-wrap" id="modalTitleLogo"></div>
-      <div class="modal-body">
-        <div class="modal-desc" id="modalDesc"></div>
-        <div class="modal-bottom-row" id="modalBottom"></div>
-      </div>
+<!-- MODALE -->
+<div class="overlay" id="modalOverlay">
+  <div class="sheet">
+    <div class="sheet-cover" id="sheetCover">
+      <button class="sheet-close" id="sheetClose" aria-label="Fermer">✕</button>
     </div>
+    <div class="sheet-body" id="sheetBody"></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
-
-<footer>© BUBBLE INC.</footer>
+<footer><span class="footer-logo">BUBBLE INC.</span> · © 2026</footer>
 
 <script>
-/* ══════════════════════════
-   CATALOGUE DES SCANS
-   → Ajoute tes vrais scans ici !
-   sub: "free" | "plus" | "x" | "max"
-   cover: chemin vers l'image de couverture
-   logo: chemin vers le logo du titre (optionnel)
-══════════════════════════ */
-const SCANS = {
-  magazines: [
-    {
-      id:"mag1", title:"Bubble inc. — N°1",
-      cover:"", logo:"#",
-      desc:"Le magazine quotidient de Bubble inc.",
-      year:"2025", type:"Magazine", sub:"plus", emoji:"📰"
-    },
-  ],
-  aventures: [
-    {
-      id:"gi2", title:"Bubble inc. Game IT Pt.2 !", pdf:"scans/game_it_pt_2.pdf",
-      cover:"game_it_cover_2.png", logo:"game_it_logo_2.png",
-      desc:"Découvrez tous les personnages de Bubble Inc. dans cette incroyable et déjantée aventure ! Bully et ses amis partent à la conquête du monde numérique.",
-      year:"2025", type:"Aventure, Fantastique", sub:"x", emoji:"🎮"
-    },
-    {
-      id:"gi1", title:"Bubble inc. Game IT !", pdf:"scans/game_it_pt_1.pdf",
-      cover:"game_it_cover_1.png", logo:"game_it_logo_1.png",
-      desc:"Découvrez tous les personnages de Bubble Inc. dans cette incroyable et déjantée aventure ! Bully et ses amis partent à la conquête du monde numérique.",
-      year:"2025", type:"Aventure, Fantastique", sub:"x", emoji:"🎮"
-    },
-    {
-      id:"eff1", title:"Enquete a la Fête Foraine", pdf:"scans/game_it_pt_2.pdf",
-      cover:"enquete_ff_cover_1.png", logo:"#",
-      desc:"Bully et ses amis doivent savoir qui a volé le trophé dans le parc d'attractions !",
-      year:"2025", type:"Aventure, Mystère", sub:"plus", emoji:"🎡"
-    },
-  ],
-  direct: [
-    {
-      id:"bd1", title:"Bubble News #1",
-      cover:"", logo:"",
-      desc:"Le premier Bubble DIRECT !",
-      year:"2026", type:"News, Direct", sub:"basic", emoji:"📡"
-    },
-  ]
-};
+/* ── Menu mobile ── */
+const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
+function closeMenu(){ menu.classList.remove('open'); ov.classList.remove('open'); }
+toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
+ov.addEventListener('click',closeMenu);
+window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
 
-/* ══════════════════════════
-   ★ SCAN EN VEDETTE ★
-   → Change l'id ici pour changer le scan affiché en haut !
-══════════════════════════ */
-const VEDETTE_ID = "gi1"; // ← CHANGE JUSTE CET ID !
+/* ── État ── */
+let userSubLevel = 'basic';
+let progress = window.getProgress();
 
-const SUB_ORDER  = {free:0, basic:0, plus:1, x:2, max:3};
-const SUB_LABELS = {free:"GRATUIT", basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
-var userSubLevel = "basic";
-var progress = JSON.parse(localStorage.getItem('bubble_progress') || '{}');
+const canRead = s => window.SUB_ORDER[userSubLevel] >= window.SUB_ORDER[s.sub];
 
-/* ── Crée une carte scan ── */
-function makeCard(scan) {
-  const card = document.createElement('div');
-  card.className = 'scan-card';
-
-  const canRead = SUB_ORDER[userSubLevel] >= SUB_ORDER[scan.sub];
-
-  // Cover
-  if(scan.cover) {
-    const img = document.createElement('img');
-    img.className = 'scan-cover';
-    img.src = scan.cover;
-    img.alt = scan.title;
-    img.onerror = () => {
-      img.style.display = 'none';
-      const ph = document.createElement('div');
-      ph.className = 'scan-cover-placeholder';
-      ph.textContent = scan.emoji;
-      card.insertBefore(ph, img);
-    };
-    card.appendChild(img);
-  } else {
-    const ph = document.createElement('div');
-    ph.className = 'scan-cover-placeholder';
-    ph.textContent = scan.emoji;
-    card.appendChild(ph);
-  }
-
-  // Badge sub
-  if(scan.sub !== 'free') {
-    const badge = document.createElement('div');
-    badge.className = `sub-badge ${scan.sub}`;
-    badge.textContent = SUB_LABELS[scan.sub];
-    card.appendChild(badge);
-  }
-
-  // Lock overlay
-  if(!canRead) {
-    const lock = document.createElement('div');
-    lock.className = 'lock-overlay-card';
-    lock.textContent = '🔒';
-    card.appendChild(lock);
-  }
-
-  // Info
-  const info = document.createElement('div');
-  info.className = 'scan-info';
-  info.innerHTML = `<div class="scan-name">${scan.title}</div>`;
-  card.appendChild(info);
-
-  card.addEventListener('click', () => openModal(scan, canRead));
-  return card;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-/* ── Crée une carte reprendre ── */
-function makeResumeCard(scan, prog) {
-  const card = document.createElement('div');
-  card.className = 'resume-card';
+function coverHTML(scan, cls){
+  return scan.cover
+    ? `<img src="${scan.cover}" alt="${scan.title}" onerror="this.outerHTML='<div class=ph>${scan.emoji}</div>'">`
+    : `<div class="ph">${scan.emoji}</div>`;
+}
 
-  if(scan.cover) {
-    const img = document.createElement('img');
-    img.className = 'resume-cover';
-    img.src = scan.cover; img.alt = scan.title;
-    img.onerror = () => { img.replaceWith(makePh()); };
-    card.appendChild(img);
-  } else {
-    const ph = document.createElement('div');
-    ph.className = 'resume-cover-placeholder';
-    ph.textContent = scan.emoji;
-    card.appendChild(ph);
-  }
+function readerURL(scan){
+  return `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
+}
 
-  const info = document.createElement('div');
-  info.className = 'resume-info';
-  info.innerHTML = `<div class="resume-name">${scan.title}</div><div class="resume-ep">Page ${prog}</div>`;
-  card.appendChild(info);
+/* ── Poster d'un scan ── */
+function makeCard(scan){
+  const ok = canRead(scan);
+  const el = document.createElement('button');
+  el.className = 'scan-card';
+  el.innerHTML = `
+    <div class="scan-poster">
+      ${coverHTML(scan)}
+      ${scan.sub !== 'free' && scan.sub !== 'basic'
+        ? `<span class="scan-badge ${scan.sub}">${window.SUB_LABELS[scan.sub]}</span>` : ''}
+      ${ok ? '' : '<div class="scan-lock">🔒</div>'}
+    </div>
+    <div class="scan-name">${scan.title}</div>
+    <div class="scan-meta">${scan.year} · ${scan.type.split(',')[0]}</div>`;
+  el.addEventListener('click', () => openSheet(scan));
+  return el;
+}
 
-  const bar = document.createElement('div');
-  bar.className = 'progress-bar-wrap';
-  const fill = document.createElement('div');
-  fill.className = 'progress-bar-fill';
-  fill.style.width = Math.min(prog * 5, 100) + '%';
-  bar.appendChild(fill);
-  card.appendChild(bar);
-
-  card.addEventListener('click', () => {
-    const canRead = SUB_ORDER[userSubLevel] >= SUB_ORDER[scan.sub];
-    if(canRead && scan.pdf) {
-      progress[scan.id] = (progress[scan.id] || 1);
-      localStorage.setItem('bubble_progress', JSON.stringify(progress));
-      window.location.href = `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
-    } else {
-      openModal(scan, canRead);
-    }
+/* ── Carte "reprendre" ── */
+function makeResumeCard(scan, page){
+  const el = document.createElement('button');
+  el.className = 'scan-card resume-card';
+  el.innerHTML = `
+    <div class="scan-poster">${coverHTML(scan)}</div>
+    <div class="scan-name">${scan.title}</div>
+    <div class="scan-meta">Page ${page}</div>
+    <div class="resume-bar"><i style="width:${Math.min(page*5,100)}%"></i></div>`;
+  el.addEventListener('click', () => {
+    if (canRead(scan) && scan.pdf) location.href = readerURL(scan);
+    else openSheet(scan);
   });
-  return card;
+  return el;
 }
 
-/* ── Ouvre le modal ── */
-function openModal(scan, canRead) {
-  const canReadFinal = canRead || SUB_ORDER[userSubLevel] >= SUB_ORDER[scan.sub];
+/* ── Modale ── */
+function openSheet(scan){
+  const ok = canRead(scan);
+  document.getElementById('sheetCover').innerHTML =
+    `<button class="sheet-close" id="sheetClose" aria-label="Fermer">✕</button>` + coverHTML(scan);
+  document.getElementById('sheetClose').addEventListener('click', closeSheet);
 
-  // 1. Cover pleine largeur
-  const coverEl = document.getElementById('modalCover');
-  coverEl.innerHTML = scan.cover
-    ? `<img class="modal-cover" src="${scan.cover}" alt="${scan.title}" onerror="this.outerHTML='<div class=modal-cover-placeholder>${scan.emoji}</div>'">`
-    : `<div class="modal-cover-placeholder">${scan.emoji}</div>`;
+  const titleHTML = scan.logo
+    ? `<img class="sheet-logo" src="${scan.logo}" alt="${scan.title}" onerror="this.outerHTML='<div class=sheet-title>${scan.title}</div>'">`
+    : `<div class="sheet-title">${scan.title}</div>`;
 
-  // 2. Petit logo abo haut gauche
-  const subLogoMap = { plus:'bubble_+_1.png', x:'bubble_x_croix_1.png', max:'bubble_max_1.png' };
-  const subRow = document.getElementById('modalSubRow');
-  subRow.innerHTML = subLogoMap[scan.sub]
-    ? `<img class="modal-sub-logo-small" src="${subLogoMap[scan.sub]}" alt="${scan.sub}" onerror="this.outerHTML='<span class=modal-sub-badge-small ${scan.sub}>${SUB_LABELS[scan.sub]}</span>'">`
-    : '';
+  const action = ok
+    ? `<button class="btn btn-green" onclick="startReading('${scan.id}')">▶ Lecture</button>`
+    : `<div style="display:flex;flex-direction:column;gap:8px">
+         <span class="btn btn-green is-locked">🔒 Lecture</span>
+         <a href="bubble_site_abonnements.html" class="chip chip-yellow">Nécessite ${window.SUB_LABELS[scan.sub]} → voir les offres</a>
+       </div>`;
 
-  // 3. Grand logo titre centré
-  const titleEl = document.getElementById('modalTitleLogo');
-  titleEl.innerHTML = scan.logo
-    ? `<img class="modal-title-logo" src="${scan.logo}" alt="${scan.title}" onerror="this.outerHTML='<div class=modal-title-placeholder>${scan.title}</div>'">`
-    : `<div class="modal-title-placeholder">${scan.title}</div>`;
-
-  // 4. Description
-  document.getElementById('modalDesc').textContent = scan.desc;
-
-  // 5. Bas : bouton + meta
-  const bottom = document.getElementById('modalBottom');
-  if(canReadFinal) {
-    bottom.innerHTML = `
-      <button class="btn-lecture" onclick="startReading('${scan.id}')">Lecture →</button>
-      <div class="modal-meta">Créé en : <span>${scan.year}</span><br>Type : <span>${scan.type}</span></div>`;
-  } else {
-    bottom.innerHTML = `
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <button class="btn-lecture locked" disabled>🔒 Lecture</button>
-        <span class="modal-sub-required ${scan.sub}">Nécessite ${SUB_LABELS[scan.sub]}</span>
-        <a href="bubble_site_abonnements.html" style="font-size:.78rem;color:rgba(255,255,255,.4);text-decoration:underline;">Voir les offres →</a>
-      </div>
-      <div class="modal-meta">Créé en : <span>${scan.year}</span><br>Type : <span>${scan.type}</span></div>`;
-  }
+  document.getElementById('sheetBody').innerHTML = `
+    ${titleHTML}
+    <div class="sheet-desc">${scan.desc}</div>
+    <div class="sheet-foot">
+      ${action}
+      <div class="sheet-meta">Créé en : <b>${scan.year}</b><br>Type : <b>${scan.type}</b></div>
+    </div>`;
 
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
-function closeModal() {
+function closeSheet(){
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
 }
 
-function startReading(id) {
-  // Trouve le scan dans le catalogue
-  const allScans = [...SCANS.magazines, ...SCANS.aventures, ...SCANS.direct];
-  const scan = allScans.find(s => s.id === id);
-  if(!scan) return;
-
-  // Sauvegarde la progression
+/* ── Lancer la lecture (progression sauvegardée) ── */
+function startReading(id){
+  const scan = window.ALL_SCANS.find(s => s.id === id);
+  if (!scan) return;
   progress[id] = (progress[id] || 0) + 1;
-  localStorage.setItem('bubble_progress', JSON.stringify(progress));
-  buildResumeRow();
-  closeModal();
-
-  // Ouvre le lecteur si un PDF est défini
-  if(scan.pdf) {
-    window.location.href = `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
-  } else {
-    showToast('📖 PDF bientôt disponible !');
-  }
+  window.setProgress(progress);
+  closeSheet();
+  if (scan.pdf) location.href = readerURL(scan);
+  else toast('📖 PDF bientôt disponible !');
 }
+window.startReading = startReading;
 
-/* ── Toast ── */
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+/* ── En vedette ── */
+function buildVedette(){
+  const scan = window.ALL_SCANS.find(s => s.id === window.VEDETTE_ID);
+  if (!scan) return;
+  const ok = canRead(scan);
+
+  const titleHTML = (scan.logo)
+    ? `<img class="vedette-logo" src="${scan.logo}" alt="${scan.title}" onerror="this.outerHTML='<div class=vedette-title>${scan.title}</div>'">`
+    : `<div class="vedette-title">${scan.title}</div>`;
+
+  let btn;
+  if (ok && scan.pdf)  btn = `<a class="btn btn-green btn-lg" href="${readerURL(scan)}" onclick="startReading('${scan.id}');return false;">▶ Lecture</a>`;
+  else if (!ok)        btn = `<a class="btn btn-yellow btn-lg" href="bubble_site_abonnements.html">🔒 Nécessite ${window.SUB_LABELS[scan.sub]}</a>`;
+  else                 btn = `<span class="btn btn-green btn-lg is-locked">⏳ Bientôt</span>`;
+
+  document.getElementById('vedette').innerHTML = `
+    <div class="vedette-cover">${coverHTML(scan)}</div>
+    <div class="vedette-body">
+      <span class="vedette-tag">✦ EN VEDETTE</span>
+      ${titleHTML}
+      <p class="vedette-desc">${scan.desc}</p>
+      <div class="vedette-meta">${scan.year} · ${scan.type}</div>
+      <div class="vedette-actions">
+        ${btn}
+        <button class="btn btn-ghost btn-lg" onclick="openSheetById('${scan.id}')">ℹ Plus d'infos</button>
+      </div>
+    </div>`;
 }
+window.openSheetById = id => openSheet(window.ALL_SCANS.find(s => s.id === id));
 
-/* ── Construit la vedette ── */
-function buildVedette() {
-  const allScans = [...SCANS.magazines, ...SCANS.aventures, ...SCANS.direct];
-  const scan = allScans.find(s => s.id === VEDETTE_ID);
-  if(!scan) return;
-  const canRead = SUB_ORDER[userSubLevel] >= SUB_ORDER[scan.sub];
-  if(scan.cover) {
-    document.getElementById('vedetteBg').style.backgroundImage = `url('${scan.cover}')`;
-  } else {
-    document.getElementById('vedetteBg').style.background = 'linear-gradient(145deg,#062506,#0a3a0a)';
-  }
-  const logoWrap = document.getElementById('vedetteLogoWrap');
-  if(scan.logo && scan.logo !== '#') {
-    logoWrap.innerHTML = `<img class="vedette-logo" src="${scan.logo}" alt="${scan.title}" onerror="this.outerHTML='<div class=vedette-logo-placeholder>${scan.title}</div>'">`;
-  } else {
-    logoWrap.innerHTML = `<div class="vedette-logo-placeholder">${scan.title}</div>`;
-  }
-  document.getElementById('vedetteDesc').textContent = scan.desc;
-  const subLogoMap = { plus:'bubble_+_1.png', x:'bubble_x_croix_1.png', max:'bubble_max_1.png' };
-  const subLogoEl = document.getElementById('vedetteSubLogo');
-  if(subLogoMap[scan.sub]) {
-    subLogoEl.src = subLogoMap[scan.sub]; subLogoEl.style.display = '';
-  } else { subLogoEl.style.display = 'none'; }
-  const btnLecture = document.getElementById('vedetteBtnLecture');
-  if(canRead && scan.pdf) {
-    btnLecture.onclick = () => {
-      progress[scan.id] = (progress[scan.id] || 1);
-      localStorage.setItem('bubble_progress', JSON.stringify(progress));
-      buildResumeRow();
-      window.location.href = `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
-    };
-    btnLecture.textContent = '▶ Lecture';
-    btnLecture.disabled = false;
-  } else if(!canRead) {
-    btnLecture.textContent = '🔒 ' + SUB_LABELS[scan.sub];
-    btnLecture.onclick = () => { window.location.href = 'bubble_site_abonnements.html'; };
-  } else {
-    btnLecture.textContent = '⏳ Bientôt'; btnLecture.disabled = true;
-  }
-  document.getElementById('vedetteBtnInfo').onclick = () => openModal(scan, canRead);
-}
-
-/* ── Construit les rows ── */
-function buildRows() {
-  const rows = {
-    magazines: document.getElementById('rowMagazines'),
-    aventures: document.getElementById('rowAventures'),
-    direct:    document.getElementById('rowDirect'),
-  };
-  for(const [key, row] of Object.entries(rows)) {
+/* ── Construction des rangées ── */
+function buildRows(){
+  const map = { magazines:'rowMagazines', aventures:'rowAventures', direct:'rowDirect' };
+  const counts = { magazines:'cMag', aventures:'cAvt', direct:'cDir' };
+  for (const key in map){
+    const row = document.getElementById(map[key]);
     row.innerHTML = '';
-    for(const scan of SCANS[key]) {
-      row.appendChild(makeCard(scan));
-    }
+    window.SCANS[key].forEach(s => row.appendChild(makeCard(s)));
+    document.getElementById(counts[key]).textContent =
+      window.SCANS[key].length + (window.SCANS[key].length > 1 ? ' titres' : ' titre');
   }
   buildVedette();
-  buildResumeRow();
+  buildResume();
 }
 
-function buildResumeRow() {
-  const row = document.getElementById('resumeRow');
-  const section = document.getElementById('sectionResume');
+function buildResume(){
+  const row = document.getElementById('rowResume');
+  const list = window.ALL_SCANS.filter(s => progress[s.id]);
   row.innerHTML = '';
-  const allScans = [...SCANS.magazines, ...SCANS.aventures, ...SCANS.direct];
-  const inProgress = allScans.filter(s => progress[s.id]);
-  if(inProgress.length > 0) {
-    section.style.display = '';
-    for(const scan of inProgress) {
-      row.appendChild(makeResumeCard(scan, progress[scan.id]));
-    }
-  } else {
-    section.style.display = 'none';
-  }
+  document.getElementById('shelfResume').style.display = list.length ? '' : 'none';
+  list.forEach(s => row.appendChild(makeResumeCard(s, progress[s.id])));
 }
 
-/* ── Menu mobile ── */
-const toggle  = document.getElementById('menuToggle');
-const menu    = document.getElementById('mobileMenu');
-const overlay = document.getElementById('menuOverlay');
-toggle.addEventListener('click', () => {
-  const open = menu.classList.contains('open');
-  menu.classList.toggle('open', !open);
-  overlay.classList.toggle('open', !open);
-  toggle.style.transform = open ? '' : 'scale(1.15) rotate(20deg)';
+/* ── Fermeture modale ── */
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target.id === 'modalOverlay') closeSheet();
 });
-overlay.addEventListener('click', () => {
-  menu.classList.remove('open');
-  overlay.classList.remove('open');
-  toggle.style.transform = '';
-});
-window.addEventListener('resize', () => { if(window.innerWidth > 600) { menu.classList.remove('open'); overlay.classList.remove('open'); toggle.style.transform=''; }});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 
-/* ── Fermer modal ── */
-document.getElementById('modalClose').addEventListener('click', closeModal);
-document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target === document.getElementById('modalOverlay')) closeModal(); });
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+/* Premier rendu (avant que Firebase réponde) */
+buildRows();
 </script>
 
 <script type="module">
-  import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { initializeApp }               from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -879,72 +382,27 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
   });
   const auth = getAuth(app);
   const db   = getFirestore(app);
-  const SUB_LABELS = {basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
 
   onAuthStateChanged(auth, async user => {
-    if(!user) { window.location.href='./login.html'; return; }
-    const pseudo = user.displayName || user.email.split('@')[0];
+    if (!user){ window.location.href = './login.html'; return; }
     try {
       const snap = await getDoc(doc(db,'users',user.uid));
-      if(snap.exists()) {
+      if (snap.exists()){
         const d = snap.data();
         const sub = d.subscription || 'basic';
         const avatarId = d.avatarId || 'bully_1';
-        document.getElementById('navAvatar').innerHTML = `<img src="${avatarId}.png" alt="avatar">`;
-        if(window.applyTheme) window.applyTheme(d.activeEffect||null);
-        const _xp = d.xp || 0;
-        applyFrame(sub, _getLevel(_xp, sub));
+        document.getElementById('navAvatar').innerHTML =
+          `<img src="${avatarId}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
+        document.getElementById('navName').textContent = user.displayName || user.email.split('@')[0];
+        document.getElementById('navSub').textContent  = window.SUB_LABELS[sub];
+        if (window.applyTheme) window.applyTheme(d.activeEffect || null);
+        window.applyFrame(sub, window.getLevel(d.xp || 0, sub).level);
         window.userSubLevel = sub;
+        userSubLevel = sub;
       }
-    } catch(e) {}
-    buildRows();
+    } catch(e){ console.warn(e); }
+    buildRows();   /* on reconstruit avec le bon niveau d'abonnement */
   });
-
-  const _LEVEL_CFG = {
-    basic:{maxLevel:3,xpPerLevel:100},
-    plus:{maxLevel:20,xpPerLevel:200},
-    x:{maxLevel:20,xpPerLevel:300},
-    max:{maxLevel:25,xpPerLevel:400},
-  };
-  function _getLevel(xp,sub){
-    const cfg=_LEVEL_CFG[sub]||_LEVEL_CFG.basic;
-    return Math.min(Math.floor(xp/cfg.xpPerLevel)+1,cfg.maxLevel);
-  }
-
-  /* ── Cadre animé ── */
-  function applyFrame(sub, level) {
-    if (!document.getElementById('bubble-frame-css')) {
-      const s = document.createElement('style');
-      s.id = 'bubble-frame-css';
-      s.textContent = `
-        @keyframes frame-pulse-basic{0%,100%{box-shadow:0 0 8px rgba(91,200,255,.4),0 0 16px rgba(46,125,212,.2)}50%{box-shadow:0 0 18px rgba(91,200,255,.9),0 0 30px rgba(46,125,212,.5)}}
-        @keyframes frame-pulse-plus{0%,100%{box-shadow:0 0 8px rgba(255,200,0,.5),0 0 16px rgba(230,168,0,.3)}50%{box-shadow:0 0 18px rgba(255,200,0,.95),0 0 32px rgba(230,168,0,.6)}}
-        @keyframes frame-shimmer-plus{0%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}50%{box-shadow:0 0 22px rgba(255,230,0,1),0 0 44px rgba(255,200,0,.7);border-color:rgba(255,240,100,1)}100%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}}
-        @keyframes frame-pulse-x{0%,100%{box-shadow:0 0 8px rgba(68,204,255,.5),0 0 16px rgba(0,153,221,.3)}50%{box-shadow:0 0 18px rgba(68,204,255,.95),0 0 32px rgba(0,153,221,.6)}}
-        @keyframes frame-shimmer-x{0%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}50%{box-shadow:0 0 24px rgba(100,230,255,1),0 0 48px rgba(68,204,255,.7);border-color:rgba(150,240,255,1)}100%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}}
-        @keyframes frame-pulse-max{0%,100%{box-shadow:0 0 12px rgba(204,68,255,.6),0 0 24px rgba(136,0,204,.4)}50%{box-shadow:0 0 24px rgba(204,68,255,1),0 0 44px rgba(136,0,204,.7)}}
-        @keyframes frame-shimmer-max{0%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6);border-color:rgba(220,100,255,.95)}25%{box-shadow:0 0 26px rgba(255,100,255,1),0 0 52px rgba(180,0,255,.8);border-color:rgba(255,150,255,1)}75%{box-shadow:0 0 30px rgba(255,80,220,1),0 0 60px rgba(200,0,255,.8);border-color:rgba(255,120,240,1)}100%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6);border-color:rgba(220,100,255,.95)}}
-      `;
-      document.head.appendChild(s);
-    }
-    const frames = {
-      basic: `frame-pulse-basic 2.5s ease-in-out infinite`,
-      plus:  level >= 10 ? `frame-shimmer-plus 2s linear infinite` : `frame-pulse-plus 2.5s ease-in-out infinite`,
-      x:     level >= 10 ? `frame-shimmer-x 2s linear infinite`    : `frame-pulse-x 2.5s ease-in-out infinite`,
-      max:   level >= 15 ? `frame-shimmer-max 2s linear infinite`   : `frame-pulse-max 2.5s ease-in-out infinite`,
-    };
-    const borders = {
-      basic: `3px solid rgba(91,200,255,${0.4+(level/3)*0.5})`,
-      plus:  `3px solid rgba(255,200,0,${0.4+(level/20)*0.6})`,
-      x:     `3px solid rgba(68,204,255,${0.4+(level/20)*0.6})`,
-      max:   `3px solid rgba(204,68,255,${0.5+(level/25)*0.5})`,
-    };
-    document.querySelectorAll('.profile-bubble').forEach(b => {
-      b.style.border    = borders[sub] || borders.basic;
-      b.style.animation = frames[sub]  || frames.basic;
-    });
-  }
-
 </script>
 
 </body>

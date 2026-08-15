@@ -1,378 +1,334 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<link rel="icon" type="image/png" href="bully_icon_site_1.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#EFF4FA">
 <title>Bubble Site</title>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="bubble_effects.js"></script>
+<script src="bubble_frames.js"></script>
+<script src="bubble_data.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* ── HERO ── */
+  .hero{ text-align:center; padding:22px 0 40px; }
+  .hero-logo{
+    font-size: clamp(3rem, 11vw, 6rem);
+    font-weight:800; line-height:1; letter-spacing:-2px;
+    display:inline-flex; align-items:baseline; flex-wrap:wrap; justify-content:center;
+  }
+  .hero-logo span{ text-shadow: 0 4px 0 rgba(22,40,63,.08); }
+  .t-b { color:#1FA8E8 } .t-u { color:#FF8A3D } .t-b2{ color:#37C359 }
+  .t-b3{ color:#FF4E96 } .t-l { color:#F5B700 } .t-e { color:#7E93AC }
+  .hero-logo .t-site{ font-size:.22em; font-weight:800; letter-spacing:2px; color:var(--ink-soft); margin-left:10px; text-shadow:none; }
+  .hero-welcome{ margin-top:16px; font-size:clamp(1.05rem,2.4vw,1.35rem); font-weight:600; color:var(--ink-soft); }
+  .hero-welcome b{ color:var(--ink); font-weight:800; }
+  .hero-cta{ margin-top:26px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
 
-  body {
-    background: linear-gradient(160deg, #5bc8ff 0%, #2e7dd4 35%, #1a3a8c 65%, #2d0a6e 100%);
-    min-height: 100vh;
-    font-family: 'Baloo 2', cursive;
-    color: white;
-    overflow-x: hidden;
+  /* ── BANDEAU PROFIL ── */
+  .me-strip{
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+    padding:18px 22px; margin-bottom:14px;
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-lg); box-shadow:var(--shadow-1);
   }
+  .me-avatar{
+    width:64px; height:64px; border-radius:50%;
+    background:linear-gradient(160deg,#DCEEFF,#9AC8F0);
+    border:3px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center;
+    position:relative; flex-shrink:0; font-size:1.7rem;
+  }
+  .me-avatar img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .me-info{ flex:1; min-width:170px; max-width:560px; }
+  .me-name{ font-size:1.2rem; font-weight:800; }
+  .me-sub{ font-size:.88rem; font-weight:700; color:var(--ink-soft); margin-top:2px; }
+  .me-xp{ margin-top:9px; }
+  .xp-track{ height:9px; background:var(--surface-2); border:1px solid var(--line); border-radius:999px; overflow:hidden; }
+  .xp-fill{ height:100%; width:0%; border-radius:999px; background:var(--accent); transition:width .8s cubic-bezier(.34,1.56,.64,1); }
+  .xp-text{ font-size:.78rem; font-weight:700; color:var(--ink-soft); margin-top:5px; }
 
-  /* ── Bubbles bg ── */
-  .bubble-bg {
-    position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none; z-index: 0; overflow: hidden;
+  /* ── STATS ── */
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:34px; }
+  .stat{
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-md); padding:16px 14px; text-align:center;
+    box-shadow:var(--shadow-1);
   }
-  .bbl {
-    position: absolute; border-radius: 50%;
-    animation: riseUp linear infinite;
-  }
-  @keyframes riseUp {
-    0%   { transform: translateY(110vh) translateX(0px); opacity: 0; }
-    8%   { opacity: 1; }
-    50%  { transform: translateY(50vh) translateX(15px); }
-    92%  { opacity: 0.6; }
-    100% { transform: translateY(-10vh) translateX(-8px); opacity: 0; }
-  }
+  .stat-ico{ font-size:1.3rem; }
+  .stat-num{ font-size:1.7rem; font-weight:800; line-height:1.1; margin-top:2px; }
+  .stat-lbl{ font-size:.78rem; font-weight:700; color:var(--ink-soft); margin-top:2px; }
 
-  /* ══════════════════════════════
-     NAV — desktop (≥ 601px)
-  ══════════════════════════════ */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    height: 58px;
-    background: rgba(20, 60, 160, 0.75);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-    display: flex; align-items: center;
-    z-index: 1000; padding: 0 10px; gap: 7px;
-  }
+  /* ── SECTIONS ── */
+  .block{ margin-bottom:38px; }
+  .block-head{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .block-head h2{ font-size:1.25rem; font-weight:800; }
+  .block-head .more{ margin-left:auto; font-size:.9rem; font-weight:800; color:var(--ink-soft); }
+  .block-head .more:hover{ color:var(--ink); }
 
-  .nav-logo {
-    width: 40px; height: 40px;
-    background: radial-gradient(circle at 38% 32%, #b8e0ff, #3a7ae0);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.3rem; flex-shrink: 0; margin-right: 4px;
-    box-shadow: inset 0 -3px 6px rgba(0,0,80,0.3), 0 0 10px rgba(100,180,255,0.4);
-    border: 2px solid rgba(255,255,255,0.3);
-    cursor: pointer;
-    transition: transform .2s;
-    -webkit-tap-highlight-color: transparent;
+  /* Rangée horizontale scrollable */
+  .row{
+    display:flex; gap:14px; overflow-x:auto; padding-bottom:8px;
+    scroll-snap-type:x proximity; scrollbar-width:none;
   }
-  .nav-logo:hover { transform: scale(1.08); }
+  .row::-webkit-scrollbar{ display:none; }
+  .row > *{ scroll-snap-align:start; }
 
-  .nav-links { display: flex; flex: 1; gap: 6px; }
+  /* Carte "reprendre" */
+  .resume-card{
+    flex-shrink:0; width:208px;
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-md); overflow:hidden; cursor:pointer;
+    box-shadow:var(--shadow-1);
+    transition:transform .18s, box-shadow .18s;
+  }
+  .resume-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-2); }
+  .resume-cover{ width:100%; height:112px; object-fit:cover; display:block; background:var(--surface-2); }
+  .resume-ph{ width:100%; height:112px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:2.2rem; }
+  .resume-body{ padding:11px 13px 13px; }
+  .resume-name{ font-size:.95rem; font-weight:800; line-height:1.2; }
+  .resume-page{ font-size:.8rem; font-weight:700; color:var(--ink-soft); margin:3px 0 8px; }
+  .resume-bar{ height:6px; background:var(--surface-2); border-radius:999px; overflow:hidden; }
+  .resume-bar i{ display:block; height:100%; background:var(--green); border-radius:999px; }
 
-  .nav-btn {
-    flex: 1; height: 42px;
-    border-radius: 12px; border: none;
-    font-family: 'Baloo 2', cursive;
-    font-size: 0.92rem; font-weight: 800;
-    color: white; cursor: pointer; text-decoration: none;
-    display: flex; align-items: center; justify-content: center; gap: 7px;
-    transition: filter 0.15s, transform 0.15s;
-    box-shadow: 0 4px 0 rgba(0,0,0,0.25), 0 2px 12px rgba(0,0,0,0.2);
-    letter-spacing: 0.2px;
-    -webkit-tap-highlight-color: transparent;
+  /* Collection */
+  .coll-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(78px,1fr)); gap:10px; }
+  .coll-card{
+    aspect-ratio:1; border-radius:16px;
+    border:2px solid var(--line); background:var(--surface);
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+    transition:transform .18s;
   }
-  .nav-btn:hover  { filter: brightness(1.12); transform: translateY(-2px); }
-  .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
-  .nav-btn.red    { background: linear-gradient(180deg, #ff5252, #cc2020); }
-  .nav-btn.yellow { background: linear-gradient(180deg, #ffcc00, #cc9900); }
-  .nav-btn.gray   { background: linear-gradient(180deg, #6a7a8a, #4a5a6a); }
-  .nav-btn.green  { background: linear-gradient(180deg, #44d966, #1faa44); }
-  .nav-btn.purple{background:linear-gradient(180deg,#a855f7,#7c3aed);}
-  .nav-btn.active {
-    outline: 2.5px solid rgba(255,255,255,0.7);
-    outline-offset: 1px;
-  }
+  .coll-card.got{ background:var(--surface); box-shadow:var(--shadow-1); }
+  .coll-card.got:hover{ transform:scale(1.06); }
+  .coll-card.got img{ width:78%; height:78%; object-fit:contain; }
+  .coll-card.miss{ background:var(--surface-2); border-style:dashed; color:#B4C4D6; font-size:1.4rem; font-weight:800; }
+  .coll-dot{ position:absolute; top:6px; right:6px; width:9px; height:9px; border-radius:50%; }
 
-  /* Profile bubble */
-  .nav-profile {
-    margin-left: 6px; flex-shrink: 0;
-    display: flex; flex-direction: column; align-items: center;  justify-content: center;
-    cursor: pointer; text-decoration: none;
-    transition: transform 0.2s;
-    -webkit-tap-highlight-color: transparent;
+  /* Personnages */
+  .chars{ display:flex; gap:18px; overflow-x:auto; padding:4px 2px 10px; scrollbar-width:none; }
+  .chars::-webkit-scrollbar{ display:none; }
+  .char{ flex-shrink:0; width:104px; text-align:center; }
+  .char-bubble{
+    width:96px; height:96px; border-radius:50%; margin:0 auto;
+    background:linear-gradient(160deg,#EAF4FF,#C6E1F8);
+    border:3px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; font-size:2rem;
+    transition:transform .2s, border-color .2s;
   }
-  .nav-profile:hover { transform: scale(1.05); }
+  .char:hover .char-bubble{ transform:translateY(-5px) scale(1.05); border-color:var(--accent); }
+  .char-bubble img{ width:100%; height:100%; object-fit:cover; }
+  .char-name{ margin-top:9px; font-size:.95rem; font-weight:800; }
+  .char-desc{ font-size:.78rem; font-weight:600; color:var(--ink-soft); line-height:1.3; margin-top:2px; }
 
-  .profile-bubble {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: radial-gradient(circle at 38% 28%, #c8e8ff, #4488cc 50%, #1a2a5c);
-    border: 2px solid rgba(255,255,255,0.5);
-    box-shadow:
-      0 0 0 1px rgba(100,160,255,0.3),
-      0 4px 12px rgba(0,0,80,0.4),
-      inset 0 -3px 6px rgba(0,0,80,0.3);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden; position: relative;
-  }
-  .profile-bubble::after {
-    content: '';
-    position: absolute; top: 10%; left: 18%;
-    width: 32%; height: 20%;
-    background: rgba(255,255,255,0.35);
-    border-radius: 50%; transform: rotate(-35deg);
-    pointer-events: none;
-  }
-  .profile-bubble img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-  .profile-bubble-icon { font-size: 1.3rem; filter: drop-shadow(0 2px 4px rgba(0,0,80,0.4)); }
-
-
-
-  /* ══════════════════════════════
-     MOBILE MENU (≤ 600px)
-  ══════════════════════════════ */
-  .mobile-menu {
-    display: none;
-    position: fixed;
-    top: 58px; left: 0; right: 0;
-    background: rgba(8, 22, 80, 0.97);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-    flex-direction: column;
-    gap: 12px;
-    padding: 20px 18px 24px;
-    z-index: 998;
-    border-bottom: 1px solid rgba(255,255,255,.15);
-    box-shadow: 0 12px 40px rgba(0,0,0,.5);
-  }
-  .mobile-menu.open {
-    display: flex;
-    animation: slideDown .22s ease;
-  }
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .mobile-menu .nav-btn {
-    width: 100%;
-    height: 54px;
-    font-size: 1.05rem;
-    border-radius: 16px;
-    flex: none;
+  .empty-note{
+    background:var(--surface); border:2px dashed var(--line-strong);
+    border-radius:var(--r-md); padding:22px; text-align:center;
+    color:var(--ink-soft); font-weight:700; font-size:.95rem;
   }
 
-  /* Overlay pour fermer le menu en cliquant à côté */
-  .menu-overlay {
-    display: none;
-    position: fixed;
-    inset: 58px 0 0 0;
-    z-index: 997;
-    background: transparent;
-  }
-  .menu-overlay.open { display: block; }
-
-  /* ══════════════════════════════
-     RESPONSIVE RULES
-  ══════════════════════════════ */
-  @media (max-width: 600px) {
-    /* Cache les liens desktop */
-    .nav-links { display: none; }
-
-    /* Réduit le profil dans la nav mobile */
-    .nav-profile { margin-left: auto; }
-    .profile-bubble { width: 38px; height: 38px; border-width: 2px; }
-    .profile-bubble-icon { font-size: 1.3rem; }
-
-
-    /* Titre hero plus petit */
-    .hero-title {
-      font-size: clamp(2.6rem, 14vw, 4rem) !important;
-    }
-    .hero-welcome { font-size: 1rem; }
-  }
-
-  /* ── MAIN ── */
-  main {
-    position: relative; z-index: 1;
-    padding-top: 100px;
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center; padding-bottom: 80px;
-  }
-
-  .hero-title {
-    font-family: 'Permanent Marker', cursive;
-    font-size: clamp(3.2rem, 9vw, 6.5rem);
-    line-height: 1; letter-spacing: 1px;
-    filter: drop-shadow(2px 4px 0 rgba(0,0,60,0.3));
-    animation: fadeUp 0.7s ease both;
-  }
-  .t-b { color: #3dd6f5; }
-  .t-u { color: #ff8c3a; }
-  .t-b2{ color: #44e87a; }
-  .t-b3{ color: #ff4499; }
-  .t-l { color: #ffe033; }
-  .t-e { color: #c8d0e0; }
-  .t-site {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.28em; color: rgba(20,40,80,0.85);
-    letter-spacing: 2px; display: inline-block;
-    vertical-align: middle; margin-left: 10px;
-    text-shadow: 1px 1px 0 rgba(255,255,255,0.2);
-  }
-
-  .hero-welcome {
-    margin-top: 22px;
-    font-size: 1.15rem; font-weight: 700;
-    color: rgba(255,255,255,0.75);
-    letter-spacing: 0.3px;
-    text-shadow: 0 2px 8px rgba(0,0,60,0.3);
-    animation: fadeUp 0.7s 0.15s ease both;
-  }
-  .hero-welcome span { color: white; }
-
-  .deco-dot {
-    display: inline-block;
-    width: 8px; height: 8px; border-radius: 50%;
-    background: rgba(255,255,255,0.4);
-    margin: 0 6px; vertical-align: middle;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  .deco-dot:nth-child(2) { animation-delay: 0.4s; width: 5px; height: 5px; }
-  .deco-dot:nth-child(3) { animation-delay: 0.8s; width: 10px; height: 10px; }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.9; transform: scale(1.3); }
-  }
-
-  .deco-row {
-    margin-top: 28px;
-    animation: fadeUp 0.7s 0.25s ease both;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  footer {
-    position: relative; z-index: 1;
-    text-align: center; padding: 18px;
-    color: rgba(255,255,255,0.3);
-    font-size: 0.72rem;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    font-family: 'Press Start 2P', monospace;
-    letter-spacing: 1px;
+  @media(max-width:760px){
+    .hero{ padding:10px 0 30px; }
+    .stats{ gap:9px; }
+    .stat-num{ font-size:1.4rem; }
+    .stat-lbl{ font-size:.7rem; }
   }
 </style>
-<script src="bubble_effects.js"></script>
 </head>
-<body>
+<body data-v2>
 
-<div class="bubble-bg" id="bubbleBg"></div>
-
-<!-- NAV -->
+<!-- ══ NAV ══ -->
 <nav>
-  <!-- Logo = bouton menu sur mobile -->
-  <div class="nav-logo" id="menuToggle">🫧</div>
+  <button class="nav-logo" id="menuToggle" aria-label="Menu">🫧</button>
 
-  <!-- Liens desktop (cachés sur mobile) -->
-  <div class="nav-links">
-    <a href="index.html" class="nav-btn red active">🏠 Accueil</a>
-    <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
-    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
-    <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-    <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Gacha (BETA)</a>
-    <a href="chaty-ia.html" class="nav-btn purple">🤖 Chaty IA</a>
+  <div class="nav-title">
+    <span class="t-b">B</span><span class="t-u">u</span><span class="t-b2">b</span><span class="t-b3">b</span><span class="t-l">l</span><span class="t-e">e</span><span class="t-site">site.</span>
   </div>
 
-  <!-- Profil (toujours visible) -->
+  <div class="nav-links">
+    <a href="index.html"                   class="nav-btn red active"><span class="ico">🏠</span>Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+    <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  </div>
+
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
-    <div class="profile-bubble" id="navAvatar">
-      <span class="profile-bubble-icon">🪪</span>
+    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🫧</span></div>
+    <div class="nav-profile-meta">
+      <span class="nav-profile-name" id="navName">Invité</span>
+      <span class="nav-profile-sub"  id="navSub">BASIC</span>
     </div>
   </a>
 </nav>
 
-<!-- Menu déroulant mobile -->
 <div class="mobile-menu" id="mobileMenu">
-  <a href="index.html" class="nav-btn red active">🏠 Accueil</a>
-  <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
-  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
-  <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-  <a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Gacha (BETA)</a>
-  <a href="chaty-ia.html" class="nav-btn purple">🤖 Chaty IA</a>
-  <a href="install_APK.html" class="nav-btn gray">Installer l'app 📲</a>
+  <a href="index.html"                   class="nav-btn red active"><span class="ico">🏠</span>Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+  <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+  <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_profil.html"      class="nav-btn"><span class="ico">🎭</span>Mon profil</a>
 </div>
-<!-- Overlay transparent pour fermer le menu -->
 <div class="menu-overlay" id="menuOverlay"></div>
 
+<!-- ══ CONTENU ══ -->
 <main>
-  <div class="hero-title">
-    <span class="t-b">B</span><span class="t-u">u</span><span class="t-b2">b</span><span class="t-b3">b</span><span class="t-l">l</span><span class="t-e">e</span><span class="t-site">site.</span>
+
+  <section class="hero fade-up">
+    <h1 class="hero-logo">
+      <span class="t-b">B</span><span class="t-u">u</span><span class="t-b2">b</span><span class="t-b3">b</span><span class="t-l">l</span><span class="t-e">e</span><span class="t-site">site.</span>
+    </h1>
+    <p class="hero-welcome" id="welcomeMsg">Bienvenue sur <b>Bubble Site</b> 🫧</p>
+    <div class="hero-cta">
+      <a href="bubble_site_scans.html" class="btn btn-green btn-lg">📜 Lire les scans</a>
+      <a href="bubble_site_gacha.html" class="btn btn-ghost btn-lg">🎁 Ouvrir un coffre</a>
+    </div>
+  </section>
+
+  <!-- Profil -->
+  <a href="bubble_site_profil.html" class="me-strip fade-up d1" id="meStrip" style="display:none">
+    <div class="me-avatar" id="meAvatar">🫧</div>
+    <div class="me-info">
+      <div class="me-name" id="meName">—</div>
+      <div class="me-sub"  id="meSub">BASIC · Niveau 1</div>
+      <div class="me-xp">
+        <div class="xp-track"><div class="xp-fill" id="meXpFill"></div></div>
+        <div class="xp-text" id="meXpText">0 XP</div>
+      </div>
+    </div>
+    <span class="btn btn-ghost btn-sm">Mon profil →</span>
+  </a>
+
+  <!-- Stats -->
+  <div class="stats fade-up d1" id="statsRow" style="display:none">
+    <div class="stat"><div class="stat-ico">📖</div><div class="stat-num" id="statScans">0</div><div class="stat-lbl">scans ouverts</div></div>
+    <div class="stat"><div class="stat-ico">🃏</div><div class="stat-num" id="statCards">0</div><div class="stat-lbl">cartes obtenues</div></div>
+    <div class="stat"><div class="stat-ico">✨</div><div class="stat-num" id="statFx">0</div><div class="stat-lbl">effets débloqués</div></div>
   </div>
-  <div class="hero-welcome" id="welcomeMsg">
-    Bienvenue sur <span>Bubble Site</span> 🫧
-  </div>
-  <div class="deco-row">
-    <span class="deco-dot"></span>
-    <span class="deco-dot"></span>
-    <span class="deco-dot"></span>
-  </div>
+
+  <!-- Reprendre la lecture -->
+  <section class="block fade-up d2" id="blockResume" style="display:none">
+    <div class="block-head">
+      <h2>📚 Reprendre la lecture</h2>
+      <a href="bubble_site_scans.html" class="more">Tous les scans →</a>
+    </div>
+    <div class="row" id="resumeRow"></div>
+  </section>
+
+  <!-- Collection -->
+  <section class="block fade-up d3">
+    <div class="block-head">
+      <h2>🃏 Ta collection</h2>
+      <a href="bubble_site_gacha.html" class="more" id="collCount">0/0 →</a>
+    </div>
+    <div class="coll-grid" id="collGrid"></div>
+  </section>
+
+  <!-- Personnages -->
+  <section class="block fade-up d4">
+    <div class="block-head">
+      <h2>🫧 Les personnages Bubble inc.</h2>
+    </div>
+    <div class="chars" id="charsRow"></div>
+  </section>
+
 </main>
 
-<footer>© BUBBLE INC.</footer>
+<footer>
+  <span class="footer-logo">BUBBLE INC.</span> · © 2026
+</footer>
 
-<script defer>
-  /* ── Bubbles ── */
-  const bg = document.getElementById('bubbleBg');
-  for (let i = 0; i < 24; i++) {
-    const b = document.createElement('div');
-    b.className = 'bbl';
-    const size = 12 + Math.random() * 65;
-    const hue  = 190 + Math.random() * 90;
-    const alpha = 0.08 + Math.random() * 0.18;
-    b.style.cssText = `
-      width:${size}px; height:${size}px;
-      left:${Math.random()*100}%;
-      background: radial-gradient(circle at 35% 30%,
-        rgba(255,255,255,0.25),
-        hsla(${hue},80%,70%,${alpha}) 55%,
-        transparent
-      );
-      border: 1px solid hsla(${hue},70%,80%,0.15);
-      animation-duration:${10+Math.random()*18}s;
-      animation-delay:${Math.random()*14}s;
-    `;
-    bg.appendChild(b);
-  }
-
-  /* ── Menu mobile ── */
+<!-- ══ MENU MOBILE ══ -->
+<script>
   const toggle  = document.getElementById('menuToggle');
   const menu    = document.getElementById('mobileMenu');
   const overlay = document.getElementById('menuOverlay');
-
-  function openMenu() {
-    menu.classList.add('open');
-    overlay.classList.add('open');
-    toggle.style.transform = 'scale(1.15) rotate(20deg)';
-  }
-  function closeMenu() {
-    menu.classList.remove('open');
-    overlay.classList.remove('open');
-    toggle.style.transform = '';
-  }
-
+  function closeMenu(){ menu.classList.remove('open'); overlay.classList.remove('open'); }
   toggle.addEventListener('click', () => {
-    menu.classList.contains('open') ? closeMenu() : openMenu();
+    const open = menu.classList.contains('open');
+    menu.classList.toggle('open', !open);
+    overlay.classList.toggle('open', !open);
   });
   overlay.addEventListener('click', closeMenu);
-
-  // Ferme le menu si on passe en desktop
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 600) closeMenu();
-  });
+  window.addEventListener('resize', () => { if (window.innerWidth > 760) closeMenu(); });
 </script>
 
+<!-- ══ RENDU DES SECTIONS ══ -->
+<script>
+  /* ── Personnages ── */
+  function renderChars(){
+    const row = document.getElementById('charsRow');
+    row.innerHTML = window.CHARACTERS.map(c => `
+      <div class="char">
+        <div class="char-bubble">
+          <img src="${c.file}" alt="${c.name}" onerror="this.replaceWith(document.createTextNode('🫧'))">
+        </div>
+        <div class="char-name">${c.name}</div>
+        ${c.desc ? `<div class="char-desc">${c.desc}</div>` : ''}
+      </div>`).join('');
+  }
+
+  /* ── Collection (grille des cartes) ── */
+  function renderCollection(owned){
+    const grid  = document.getElementById('collGrid');
+    const total = window.CARD_POOL.length;
+    document.getElementById('collCount').textContent = `${owned.length}/${total} →`;
+    grid.innerHTML = window.CARD_POOL.map(card => {
+      if (owned.includes(String(card.id))){
+        return `<div class="coll-card got" title="${card.name} — ${card.rarity}">
+                  <img src="${card.img}" alt="${card.name}" onerror="this.replaceWith(document.createTextNode('🃏'))">
+                  <span class="coll-dot" style="background:${card.color}"></span>
+                </div>`;
+      }
+      return `<div class="coll-card miss" title="Carte non obtenue">?</div>`;
+    }).join('');
+  }
+
+  /* ── Reprendre la lecture ── */
+  function renderResume(sub){
+    const prog = window.getProgress();
+    const list = window.ALL_SCANS.filter(s => prog[s.id]);
+    if (!list.length) return;
+
+    document.getElementById('blockResume').style.display = '';
+    document.getElementById('resumeRow').innerHTML = list.map(s => {
+      const cover = s.cover
+        ? `<img class="resume-cover" src="${s.cover}" alt="${s.title}" onerror="this.outerHTML='<div class=resume-ph>${s.emoji}</div>'">`
+        : `<div class="resume-ph">${s.emoji}</div>`;
+      const pct = Math.min(prog[s.id] * 5, 100);
+      return `<a class="resume-card" href="${linkFor(s, sub)}">
+                ${cover}
+                <div class="resume-body">
+                  <div class="resume-name">${s.title}</div>
+                  <div class="resume-page">Page ${prog[s.id]}</div>
+                  <div class="resume-bar"><i style="width:${pct}%"></i></div>
+                </div>
+              </a>`;
+    }).join('');
+  }
+
+  function linkFor(scan, sub){
+    const ok = window.SUB_ORDER[sub || 'basic'] >= window.SUB_ORDER[scan.sub];
+    if (ok && scan.pdf)
+      return `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
+    return 'bubble_site_scans.html';
+  }
+
+  /* Rendu immédiat de ce qui ne dépend pas du compte */
+  renderChars();
+  renderCollection([]);
+</script>
+
+<!-- ══ FIREBASE (logique inchangée) ══ -->
 <script type="module">
-  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { initializeApp }               from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -387,77 +343,60 @@
   const auth = getAuth(app);
   const db   = getFirestore(app);
 
-  const SUB_LABELS = {basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX"};
-
   onAuthStateChanged(auth, async user => {
-    if (user) {
-      const pseudo = user.displayName || user.email.split('@')[0];
-      document.getElementById('welcomeMsg').innerHTML = `Bienvenue, <span>${pseudo}</span> 👋`;
-      try {
-        const snap = await getDoc(doc(db, 'users', user.uid));
-        if (snap.exists()) {
-          const d = snap.data();
-          const sub      = d.subscription || 'basic';
-          const avatarId = d.avatarId     || 'bully_1';
-          document.getElementById('navAvatar').innerHTML   = `<img src="${avatarId}.png" alt="avatar">`;
-          if(window.applyTheme) window.applyTheme(d.activeEffect||null);
-          const _xp = d.xp || 0;
-          applyFrame(sub, _getLevel(_xp, sub));
-        } else {
-        }
-      } catch(e) {
-        document.getElementById('navSub').textContent = 'BASIC';
-      }
-    } else {
-      document.getElementById('navProfile').href          = './login.html';
+    if (!user){
+      document.getElementById('navProfile').href     = './login.html';
+      document.getElementById('navName').textContent = 'Connexion';
+      document.getElementById('navSub').textContent  = 'Se connecter';
+      renderResume('basic');
+      return;
     }
+
+    const pseudo = user.displayName || user.email.split('@')[0];
+    document.getElementById('welcomeMsg').innerHTML = `Content de te revoir, <b>${pseudo}</b> 👋`;
+    document.getElementById('navName').textContent  = pseudo;
+    document.getElementById('meName').textContent   = pseudo;
+
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if (!snap.exists()){ renderResume('basic'); return; }
+
+      const d        = snap.data();
+      const sub      = d.subscription || 'basic';
+      const avatarId = d.avatarId     || 'bully_1';
+      const xp       = d.xp           || 0;
+      const owned    = (d.gachaCollection || []).map(String);
+      const fx       = (d.gachaEffects    || []).length;
+
+      const avatarHTML = `<img src="${avatarId}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
+      document.getElementById('navAvatar').innerHTML = avatarHTML;
+      document.getElementById('meAvatar').innerHTML  = avatarHTML;
+      document.getElementById('navSub').textContent  = window.SUB_LABELS[sub] || 'BASIC';
+
+      if (window.applyTheme) window.applyTheme(d.activeEffect || null);
+
+      const lv = window.getLevel(xp, sub);
+      window.applyFrame(sub, lv.level);
+
+      /* Bandeau profil */
+      document.getElementById('meStrip').style.display = 'flex';
+      document.getElementById('meSub').textContent   = `${window.SUB_LABELS[sub]} · Niveau ${lv.level}/${lv.maxLevel}`;
+      document.getElementById('meXpFill').style.width = lv.progress + '%';
+      document.getElementById('meXpText').textContent = lv.isMax
+        ? `${xp} XP · 🏆 Niveau max atteint !`
+        : `${xp} XP · encore ${lv.xpNeeded} XP pour le niveau ${lv.level + 1}`;
+
+      /* Stats */
+      document.getElementById('statsRow').style.display = 'grid';
+      document.getElementById('statScans').textContent = Object.keys(window.getProgress()).length;
+      document.getElementById('statCards').textContent = owned.length;
+      document.getElementById('statFx').textContent    = fx;
+
+      renderCollection(owned);
+      renderResume(sub);
+
+    } catch(e){ console.warn('Firestore:', e); renderResume('basic'); }
   });
-
-  const _LEVEL_CFG = {
-    basic:{maxLevel:3,xpPerLevel:100},
-    plus:{maxLevel:20,xpPerLevel:200},
-    x:{maxLevel:20,xpPerLevel:300},
-    max:{maxLevel:25,xpPerLevel:400},
-  };
-  function _getLevel(xp,sub){
-    const cfg=_LEVEL_CFG[sub]||_LEVEL_CFG.basic;
-    return Math.min(Math.floor(xp/cfg.xpPerLevel)+1,cfg.maxLevel);
-  }
-
-  /* ── Cadre animé ── */
-  function applyFrame(sub, level) {
-    if (!document.getElementById('bubble-frame-css')) {
-      const s = document.createElement('style');
-      s.id = 'bubble-frame-css';
-      s.textContent = `
-        @keyframes frame-pulse-basic{0%,100%{box-shadow:0 0 8px rgba(91,200,255,.4),0 0 16px rgba(46,125,212,.2)}50%{box-shadow:0 0 18px rgba(91,200,255,.9),0 0 30px rgba(46,125,212,.5)}}
-        @keyframes frame-pulse-plus{0%,100%{box-shadow:0 0 8px rgba(255,200,0,.5),0 0 16px rgba(230,168,0,.3)}50%{box-shadow:0 0 18px rgba(255,200,0,.95),0 0 32px rgba(230,168,0,.6)}}
-        @keyframes frame-shimmer-plus{0%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}50%{box-shadow:0 0 22px rgba(255,230,0,1),0 0 44px rgba(255,200,0,.7);border-color:rgba(255,240,100,1)}100%{box-shadow:0 0 14px rgba(255,200,0,.8),0 0 28px rgba(230,168,0,.5);border-color:rgba(255,220,0,.9)}}
-        @keyframes frame-pulse-x{0%,100%{box-shadow:0 0 8px rgba(68,204,255,.5),0 0 16px rgba(0,153,221,.3)}50%{box-shadow:0 0 18px rgba(68,204,255,.95),0 0 32px rgba(0,153,221,.6)}}
-        @keyframes frame-shimmer-x{0%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}50%{box-shadow:0 0 24px rgba(100,230,255,1),0 0 48px rgba(68,204,255,.7);border-color:rgba(150,240,255,1)}100%{box-shadow:0 0 14px rgba(68,204,255,.8),0 0 28px rgba(0,153,221,.5);border-color:rgba(68,220,255,.9)}}
-        @keyframes frame-pulse-max{0%,100%{box-shadow:0 0 12px rgba(204,68,255,.6),0 0 24px rgba(136,0,204,.4)}50%{box-shadow:0 0 24px rgba(204,68,255,1),0 0 44px rgba(136,0,204,.7)}}
-        @keyframes frame-shimmer-max{0%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6);border-color:rgba(220,100,255,.95)}25%{box-shadow:0 0 26px rgba(255,100,255,1),0 0 52px rgba(180,0,255,.8);border-color:rgba(255,150,255,1)}75%{box-shadow:0 0 30px rgba(255,80,220,1),0 0 60px rgba(200,0,255,.8);border-color:rgba(255,120,240,1)}100%{box-shadow:0 0 16px rgba(204,68,255,.9),0 0 32px rgba(136,0,204,.6);border-color:rgba(220,100,255,.95)}}
-      `;
-      document.head.appendChild(s);
-    }
-    const frames = {
-      basic: `frame-pulse-basic 2.5s ease-in-out infinite`,
-      plus:  level >= 10 ? `frame-shimmer-plus 2s linear infinite` : `frame-pulse-plus 2.5s ease-in-out infinite`,
-      x:     level >= 10 ? `frame-shimmer-x 2s linear infinite`    : `frame-pulse-x 2.5s ease-in-out infinite`,
-      max:   level >= 15 ? `frame-shimmer-max 2s linear infinite`   : `frame-pulse-max 2.5s ease-in-out infinite`,
-    };
-    const borders = {
-      basic: `3px solid rgba(91,200,255,${0.4+(level/3)*0.5})`,
-      plus:  `3px solid rgba(255,200,0,${0.4+(level/20)*0.6})`,
-      x:     `3px solid rgba(68,204,255,${0.4+(level/20)*0.6})`,
-      max:   `3px solid rgba(204,68,255,${0.5+(level/25)*0.5})`,
-    };
-    document.querySelectorAll('.profile-bubble').forEach(b => {
-      b.style.border    = borders[sub] || borders.basic;
-      b.style.animation = frames[sub]  || frames.basic;
-    });
-  }
-
 </script>
 
 </body>
