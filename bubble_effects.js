@@ -318,6 +318,7 @@ const THEMES = {
 /* ══════════════ MOTEUR ══════════════ */
 let _rafId = null;
 let _resizeHandler = null;
+let _applied = false;   /* un thème a-t-il déjà été appliqué par la page ? */
 
 function applyBgGradient(type){
   const c = THEME_BG[type] || THEME_BG.bubbles;
@@ -345,6 +346,7 @@ function applyTheme(effectType){
   if (_resizeHandler){ window.removeEventListener('resize', _resizeHandler); _resizeHandler = null; }
 
   const type = (!effectType || effectType === 'none') ? 'bubbles' : effectType;
+  _applied = true;
 
   applyBgGradient(type);
   applyAccent(type);
@@ -380,9 +382,12 @@ function applyTheme(effectType){
 window.applyAvatarEffect = applyTheme;
 window.applyTheme = applyTheme;
 
-/* Thème par défaut dès le chargement (évite le fond blanc au 1er rendu) */
+/* Thème par défaut dès le chargement (évite le fond blanc au 1er rendu).
+   On ne l'applique QUE si la page n'a pas déjà choisi son thème entre-temps,
+   sinon on écraserait l'effet de l'utilisateur au moment du DOMContentLoaded. */
+function applyDefaultTheme(){ if (!_applied) applyTheme(null); }
 if (document.readyState === 'loading'){
-  document.addEventListener('DOMContentLoaded', () => applyTheme(null));
+  document.addEventListener('DOMContentLoaded', applyDefaultTheme);
 } else {
-  applyTheme(null);
+  applyDefaultTheme();
 }

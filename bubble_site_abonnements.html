@@ -13,6 +13,7 @@
 <script src="bubble_effects.js"></script>
 <script src="bubble_frames.js"></script>
 <script src="bubble_data.js"></script>
+<script type="module" src="bubble_missions.js"></script>
 <style>
   .plans{
     display:grid; gap:18px;
@@ -112,6 +113,7 @@
     <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
     <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
     <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+    <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
     <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🫧</span></div>
@@ -128,6 +130,7 @@
   <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
   <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
   <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
   <a href="bubble_site_profil.html"      class="nav-btn"><span class="ico">🎭</span>Mon profil</a>
 </div>
 <div class="menu-overlay" id="menuOverlay"></div>
@@ -255,27 +258,16 @@
   ov.addEventListener('click',closeMenu);
   window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
 
-  /* ── Listes d'icônes par offre (modifie ici pour en ajouter) ── */
-  const ICON_SETS = {
-    basic: ['bully_1','anthony_1','luna_1','frosty_1','zippy_1','rocky_1'],
-    plus:  ['bully_1','anthony_1','luna_1','frosty_1','zippy_1','rocky_1',
-            'bully_pixel_1','plant_pixel_1','star_pixel_1','snowflake_pixel_1','sun_pixel_1','rock_pixel_1',
-            'bully_funny_1','anthony_funny_1','luna_funny_1','frosty_funny_1','zippy_funny_1','rocky_funny_1'],
-    x:     ['bully_1','anthony_1','luna_1','frosty_1','zippy_1','rocky_1',
-            'bully_pixel_1','plant_pixel_1','star_pixel_1','snowflake_pixel_1','sun_pixel_1','rock_pixel_1',
-            'bully_game_it_1','anthony_game_it_1','luna_game_it_1','frosty_game_it_1','zippy_game_it_1','rocky_game_it_1'],
-    max:   ['bully_1','anthony_1','luna_1','frosty_1','zippy_1','rocky_1',
-            'bully_pixel_1','plant_pixel_1','star_pixel_1','snowflake_pixel_1','sun_pixel_1','rock_pixel_1',
-            'bully_game_it_1','anthony_game_it_1','luna_game_it_1','frosty_game_it_1','zippy_game_it_1','rocky_game_it_1',
-            'bully_funny_1','anthony_funny_1','luna_funny_1','frosty_funny_1','zippy_funny_1','rocky_funny_1',
-            'bully_ff_1','bulle_ff_1','loop_ff_1'],
-  };
+  /* ── Icônes de chaque offre : calculées depuis bubble_data.js ──
+     Pour ajouter une icône, tu la mets dans CATALOGUE (bubble_data.js)
+     avec le bon "sub" — elle apparaît ici toute seule. */
   const MAX_SHOWN = 12;
 
   document.querySelectorAll('[data-icons]').forEach(row => {
-    const set = ICON_SETS[row.dataset.icons] || [];
-    row.innerHTML = set.slice(0, MAX_SHOWN).map(id =>
-      `<div class="mini-icon"><img src="${id}.png" alt="${id}" onerror="this.replaceWith(document.createTextNode('🫧'))"></div>`
+    const lvl = window.SUB_ORDER[row.dataset.icons] || 0;
+    const set = window.ALL_ICONS.filter(i => window.SUB_ORDER[i.sub] <= lvl);
+    row.innerHTML = set.slice(0, MAX_SHOWN).map(i =>
+      `<div class="mini-icon"><img src="${i.file}" alt="${i.name}" onerror="this.replaceWith(document.createTextNode('🫧'))"></div>`
     ).join('') + (set.length > MAX_SHOWN ? `<div class="icons-more">+${set.length - MAX_SHOWN}</div>` : '');
   });
 </script>

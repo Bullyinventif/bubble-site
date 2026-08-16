@@ -1,328 +1,556 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<link rel="icon" type="image/png" href="login_icon_1.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#EFF4FA">
 <title>Mon Profil — Bubble Site</title>
+<link rel="icon" type="image/png" href="login_icon_1.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Press+Start+2P&family=Permanent+Marker&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <script src="bubble_effects.js"></script>
+<script src="bubble_frames.js"></script>
+<script src="bubble_data.js"></script>
+<script type="module" src="bubble_missions.js"></script>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:linear-gradient(160deg,#5bc8ff 0%,#2e7dd4 35%,#1a3a8c 65%,#2d0a6e 100%); min-height:100vh; font-family:'Baloo 2',cursive; color:white; overflow-x:hidden; }
-  .bubble-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
-  .bbl{position:absolute;border-radius:50%;animation:riseUp linear infinite;}
-  @keyframes riseUp{0%{transform:translateY(110vh);opacity:0}8%{opacity:1}50%{transform:translateY(50vh) translateX(15px)}92%{opacity:.6}100%{transform:translateY(-10vh) translateX(-8px);opacity:0}}
-  nav{position:fixed;top:0;left:0;right:0;height:58px;background:rgba(20,60,160,.75);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.15);display:flex;align-items:center;z-index:1000;padding:0 10px;gap:7px;}
-  .nav-logo{width:40px;height:40px;background:radial-gradient(circle at 38% 32%,#b8e0ff,#3a7ae0);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;margin-right:4px;box-shadow:inset 0 -3px 6px rgba(0,0,80,.3),0 0 10px rgba(100,180,255,.4);border:2px solid rgba(255,255,255,.3);}
-  .nav-links{display:flex;flex:1;gap:6px;}
-  .nav-btn{flex:1;height:42px;border-radius:12px;border:none;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:800;color:white;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:7px;transition:filter .15s,transform .15s;box-shadow:0 4px 0 rgba(0,0,0,.25);}
-  .nav-btn:hover{filter:brightness(1.12);transform:translateY(-2px);}
-  .nav-btn.red{background:linear-gradient(180deg,#ff5252,#cc2020);}
-  .nav-btn.yellow{background:linear-gradient(180deg,#ffcc00,#cc9900);}
-  .nav-btn.gray{background:linear-gradient(180deg,#6a7a8a,#4a5a6a);}
-  .nav-btn.green{background:linear-gradient(180deg,#44d966,#1faa44);}
-  .nav-btn.purple{background:linear-gradient(180deg,#a855f7,#7c3aed);}
-  .nav-profile{margin-left:6px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;transition:transform .2s;}
-  .nav-profile:hover{transform:scale(1.05);}
-  .profile-bubble{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
-  .profile-bubble img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-  .profile-bubble-icon{font-size:1.3rem;}
-  main{position:relative;z-index:1;padding:90px 16px 60px;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px;}
-  .page-title{font-family:'Permanent Marker',cursive;font-size:2rem;text-align:center;text-shadow:2px 3px 0 rgba(0,0,60,.3);margin-bottom:4px;animation:fadeUp .5s ease both;}
-  .card{background:rgba(255,255,255,.12);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:22px 24px;box-shadow:0 8px 30px rgba(0,0,60,.25);animation:fadeUp .5s ease both;}
-  .card:nth-child(2){animation-delay:.05s}.card:nth-child(3){animation-delay:.1s}.card:nth-child(4){animation-delay:.15s}.card:nth-child(5){animation-delay:.2s}
-  .card-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.15);}
-  .card-icon{font-size:1.4rem;}
-  .card-title{font-family:'Press Start 2P',monospace;font-size:.62rem;font-weight:800;}
-  .avatar-section{display:flex;align-items:center;gap:20px;}
-  .big-avatar-wrap{position:relative;flex-shrink:0;}
-  .big-avatar{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:3px solid rgba(255,255,255,.5);box-shadow:0 0 25px rgba(100,160,255,.4);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;transition:transform .2s;position:relative;}
-  .big-avatar:hover{transform:scale(1.05);}
-  .big-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-  .edit-badge{position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:#ffcc00;border:2px solid rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3);}
-  .avatar-info p{font-size:.85rem;color:rgba(255,255,255,.65);line-height:1.5;}
-  .btn-change-avatar{margin-top:10px;padding:9px 20px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.35);border-radius:25px;color:white;font-family:'Baloo 2',cursive;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s;}
-  .btn-change-avatar:hover{background:rgba(255,255,255,.3);transform:scale(1.03);}
-  .form-group{margin-bottom:14px;}
-  .form-group label{display:block;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.55);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;}
-  .form-group input{width:100%;background:rgba(0,0,0,.2);border:1.5px solid rgba(255,255,255,.2);border-radius:12px;color:white;padding:11px 16px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:600;transition:border-color .2s;}
-  .form-group input:focus{outline:none;border-color:rgba(255,255,255,.5);}
-  .form-group input::placeholder{color:rgba(255,255,255,.25);}
-  .btn-save{margin-top:14px;padding:11px 24px;background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.15));border:1.5px solid rgba(255,255,255,.4);border-radius:25px;color:white;font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s;}
-  .btn-save:hover{transform:scale(1.03);filter:brightness(1.1);}
-  .sub-display{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
-  .sub-name{font-family:'Press Start 2P',monospace;font-size:.75rem;}
-  .sub-desc{font-size:.82rem;color:rgba(255,255,255,.55);margin-top:4px;}
-  .sub-badge{padding:8px 18px;border-radius:25px;font-family:'Press Start 2P',monospace;font-size:.55rem;letter-spacing:1px;}
-  .sub-badge.basic{background:rgba(100,160,255,.25);border:1.5px solid rgba(100,160,255,.5);color:#aad4ff;}
-  .sub-badge.plus{background:rgba(255,220,0,.2);border:1.5px solid rgba(255,220,0,.5);color:#ffe866;}
-  .sub-badge.x{background:rgba(100,220,255,.2);border:1.5px solid rgba(100,220,255,.5);color:#88eeff;}
-  .sub-badge.max{background:linear-gradient(135deg,rgba(180,80,255,.25),rgba(80,0,180,.25));border:1.5px solid rgba(180,80,255,.5);color:#dd99ff;}
-  .btn-abos{display:inline-block;margin-top:12px;padding:8px 18px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:25px;color:rgba(255,255,255,.7);font-family:'Baloo 2',cursive;font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:none;transition:all .2s;}
-  .btn-abos:hover{background:rgba(255,255,255,.2);color:white;}
-  .btn-logout{width:100%;padding:13px;background:rgba(255,60,60,.15);border:1.5px solid rgba(255,80,80,.35);border-radius:14px;color:#ff9999;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;}
-  .btn-logout:hover{background:rgba(255,60,60,.28);transform:scale(1.01);}
-  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(60,200,120,.25);border:1px solid rgba(60,200,120,.5);backdrop-filter:blur(12px);color:#88ffcc;padding:11px 26px;border-radius:25px;font-size:.88rem;font-weight:700;transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:9999;white-space:nowrap;}
-  .toast.show{transform:translateX(-50%) translateY(0);}
-  .toast.err{background:rgba(255,60,60,.2);border-color:rgba(255,80,80,.4);color:#ffaaaa;}
-  .overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(5,15,40,.9);backdrop-filter:blur(10px);align-items:center;justify-content:center;}
-  .overlay.open{display:flex;}
-  .picker{background:linear-gradient(160deg,#0e2260,#1a0a45);border:1.5px solid rgba(255,255,255,.18);border-radius:24px;width:min(720px,96vw);max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.7);animation:popIn .3s cubic-bezier(.34,1.56,.64,1);}
-  @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
-  .picker-top{display:flex;align-items:center;gap:20px;padding:22px 26px 18px;border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;}
-  .preview-bubble{width:84px;height:84px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:3px solid rgba(255,255,255,.5);box-shadow:0 0 24px rgba(100,160,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all .25s;position:relative;}
-  .preview-bubble img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-  .picker-top-info{flex:1;}
-  .picker-top-info h2{font-family:'Press Start 2P',monospace;font-size:.72rem;margin-bottom:8px;letter-spacing:1px;}
-  .picker-top-info p{font-size:.9rem;color:rgba(255,255,255,.6);}
-  .picker-actions{display:flex;gap:10px;flex-shrink:0;}
-  .btn-picker{padding:10px 22px;border-radius:25px;font-family:'Baloo 2',cursive;font-size:.9rem;font-weight:800;cursor:pointer;border:none;transition:all .2s;}
-  .btn-picker.confirm{background:linear-gradient(135deg,#44d966,#1faa44);color:white;box-shadow:0 4px 0 rgba(0,80,0,.3);}
-  .btn-picker.confirm:hover{filter:brightness(1.1);transform:translateY(-1px);}
-  .btn-picker.cancel{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);border:1.5px solid rgba(255,255,255,.2);}
-  .btn-picker.cancel:hover{background:rgba(255,255,255,.18);}
-  /* Tabs picker */
-  .picker-tabs{display:flex;gap:6px;padding:12px 26px 0;flex-shrink:0;}
-  .picker-tab{padding:7px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);font-family:'Baloo 2',cursive;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;}
-  .picker-tab.active{background:rgba(255,255,255,.18);color:white;border-color:rgba(255,255,255,.4);}
-  .picker-panel{display:none;overflow-y:auto;padding:18px 26px 28px;flex:1;}
-  .picker-panel.active{display:block;}
-  .picker-panel::-webkit-scrollbar{width:5px;}
-  .picker-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px;}
-  .cat-title{font-family:'Press Start 2P',monospace;font-size:.58rem;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin:20px 0 12px;}
-  .cat-title:first-child{margin-top:0;}
-  .icons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:14px;}
-  .icon-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:transform .15s;}
-  .icon-item:hover .icon-bubble{transform:scale(1.1);box-shadow:0 0 22px rgba(100,180,255,.6);}
-  .icon-item.selected .icon-bubble{outline:3px solid #ffcc00;outline-offset:2px;box-shadow:0 0 22px rgba(255,200,0,.6);}
-  .icon-item.locked{cursor:not-allowed;opacity:.55;}
-  .icon-item.locked:hover .icon-bubble{transform:none;box-shadow:none;}
-  .icon-bubble{width:74px;height:74px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative;}
-  .icon-bubble img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-  .lock-overlay{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
-  .icon-name{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .icon-item.selected .icon-name{color:rgba(255,200,0,.9);}
-  .lock-badge{font-size:.42rem;font-family:'Press Start 2P',monospace;padding:2px 6px;border-radius:8px;margin-top:-2px;background:rgba(255,200,0,.15);border:1px solid rgba(255,200,0,.35);color:#ffe866;}
-  /* Effets grid */
-  .effects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px;margin-top:8px;}
-  .effect-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:12px 8px;border-radius:14px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);transition:all .2s;}
-  .effect-item:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);transform:translateY(-2px);}
-  .effect-item.selected{border-color:#ffcc00;background:rgba(255,200,0,.12);box-shadow:0 0 16px rgba(255,200,0,.3);}
-  .effect-item.locked{opacity:.4;cursor:not-allowed;}
-  .effect-item.locked:hover{transform:none;background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);}
-  .effect-preview{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 38% 28%,#c8e8ff,#4488cc 50%,#1a2a5c);border:2px solid rgba(255,255,255,.3);position:relative;overflow:visible;display:flex;align-items:center;justify-content:center;}
-  .effect-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-  .effect-name{font-size:.62rem;font-weight:800;text-align:center;color:rgba(255,255,255,.7);}
-  .effect-item.selected .effect-name{color:#ffcc00;}
-  .effect-none-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:12px 8px;border-radius:14px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);transition:all .2s;}
-  .effect-none-item:hover{background:rgba(255,255,255,.12);}
-  .effect-none-item.selected{border-color:#ffcc00;background:rgba(255,200,0,.12);}
-  .effect-lock-hint{font-size:.5rem;font-family:'Press Start 2P',monospace;color:rgba(255,200,0,.5);text-align:center;margin-top:2px;}
-  /* Niveau */
-  .level-section{margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);}
-  .level-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-  .level-title{font-family:'Press Start 2P',monospace;font-size:.58rem;color:rgba(255,255,255,.45);letter-spacing:1px;}
-  .level-num{font-family:'Press Start 2P',monospace;font-size:.75rem;color:white;}
-  .level-num span{font-size:.5rem;color:rgba(255,255,255,.4);margin-left:4px;}
-  .level-symbols{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;min-height:24px;}
-  .lvl-symbol{font-size:1rem;transition:all .2s;line-height:1;}
-  .lvl-symbol.inactive{opacity:.18;filter:grayscale(1);}
-  .lvl-symbol.active{filter:drop-shadow(0 0 4px rgba(255,255,255,.5));}
-  .xp-bar-wrap{height:8px;background:rgba(255,255,255,.1);border-radius:20px;overflow:hidden;margin-bottom:6px;}
-  .xp-bar-fill{height:100%;border-radius:20px;transition:width .6s cubic-bezier(.34,1.56,.64,1);}
-  .xp-bar-fill.basic{background:linear-gradient(90deg,#5bc8ff,#2e7dd4);}
-  .xp-bar-fill.plus{background:linear-gradient(90deg,#ffcc00,#e6a800);}
-  .xp-bar-fill.x{background:linear-gradient(90deg,#44ccff,#0099dd);}
-  .xp-bar-fill.max{background:linear-gradient(90deg,#cc44ff,#8800cc);}
-  .xp-info{display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.4);}
-  .xp-info span{font-weight:700;color:rgba(255,255,255,.65);}
-  .level-max-badge{font-family:'Press Start 2P',monospace;font-size:.48rem;padding:4px 10px;border-radius:20px;background:rgba(255,215,0,.2);border:1px solid rgba(255,215,0,.4);color:#ffd700;margin-top:6px;display:inline-block;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-  footer{position:relative;z-index:1;text-align:center;padding:18px;color:rgba(255,255,255,.25);font-size:.6rem;border-top:1px solid rgba(255,255,255,.08);font-family:'Press Start 2P',monospace;letter-spacing:1px;}
-  .nav-logo{cursor:pointer;transition:transform .2s;}
-  .nav-logo:hover{transform:scale(1.08);}
-  .mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;background:rgba(8,22,80,.97);backdrop-filter:blur(22px);flex-direction:column;gap:12px;padding:20px 18px 24px;z-index:998;border-bottom:1px solid rgba(255,255,255,.15);box-shadow:0 12px 40px rgba(0,0,0,.5);}
-  .mobile-menu.open{display:flex;animation:slideDown .22s ease;}
-  @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-  .mobile-menu .nav-btn{width:100%;height:54px;font-size:1.05rem;border-radius:16px;flex:none;}
-  .menu-overlay{display:none;position:fixed;inset:58px 0 0 0;z-index:997;}
-  .menu-overlay.open{display:block;}
-  @media(max-width:600px){
-    .nav-links{display:none;}
-    .nav-profile{margin-left:auto;}
-    main{padding:72px 12px 50px;}
-    .picker-top{flex-wrap:wrap;gap:12px;padding:16px;}
-    .picker-actions{width:100%;justify-content:flex-end;}
-    .icons-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr));}
-    .effects-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr));}
+  main{ max-width:900px; }
+
+  /* ── CARTE PRINCIPALE ── */
+  .hero-card{
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-xl); padding:26px 28px;
+    box-shadow:var(--shadow-1); margin-bottom:16px;
+  }
+  .hero-row{ display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+  .big-avatar{
+    width:104px; height:104px; border-radius:50%;
+    background:linear-gradient(160deg,#EAF4FF,#C6E1F8);
+    border:3px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.6rem; cursor:pointer; flex-shrink:0;
+    transition:transform .2s;
+  }
+  .big-avatar:hover{ transform:scale(1.04); }
+  .big-avatar img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .avatar-wrap{ position:relative; flex-shrink:0; }
+  .edit-badge{
+    position:absolute; bottom:2px; right:2px;
+    width:34px; height:34px; border-radius:50%;
+    background:var(--yellow); color:#4A3200;
+    border:3px solid var(--surface);
+    display:flex; align-items:center; justify-content:center;
+    font-size:.9rem; cursor:pointer;
+    box-shadow:0 2px 8px rgba(22,40,63,.2);
+    transition:transform .15s;
+  }
+  .edit-badge:hover{ transform:scale(1.1); }
+
+  .hero-id{ flex:1; min-width:190px; }
+  .hero-name{ font-size:1.7rem; font-weight:800; letter-spacing:-.5px; }
+  .hero-mail{ font-size:.88rem; font-weight:600; color:var(--ink-soft); margin-top:1px; }
+  .hero-chips{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+
+  .sub-chip{ padding:6px 14px; border-radius:999px; font-size:.8rem; font-weight:800; border:2px solid; }
+  .sub-chip.basic{ background:rgba(43,183,242,.10); color:var(--blue-d);   border-color:rgba(43,183,242,.35); }
+  .sub-chip.plus { background:rgba(255,197,61,.16); color:#9C6D00;         border-color:rgba(255,197,61,.45); }
+  .sub-chip.x    { background:rgba(56,189,248,.14); color:#0284C7;         border-color:rgba(56,189,248,.4); }
+  .sub-chip.max  { background:rgba(168,85,247,.12); color:var(--purple-d); border-color:rgba(168,85,247,.35); }
+
+  /* ── NIVEAU ── */
+  .level-box{ margin-top:22px; padding-top:20px; border-top:2px solid var(--line); }
+  .level-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+  .level-head h3{ font-size:1rem; font-weight:800; }
+  .level-num{ font-size:1.5rem; font-weight:800; }
+  .level-num small{ font-size:.9rem; font-weight:700; color:var(--ink-soft); }
+  .level-max{ margin-left:auto; padding:5px 12px; border-radius:999px; background:rgba(255,197,61,.18); color:#9C6D00; font-size:.78rem; font-weight:800; }
+  .level-symbols{ display:flex; flex-wrap:wrap; gap:5px; margin-bottom:14px; min-height:22px; }
+  .lvl-symbol{ font-size:1.1rem; line-height:1; }
+  .lvl-symbol.off{ opacity:.22; filter:grayscale(1); }
+  .xp-track{ height:12px; background:var(--surface-2); border:2px solid var(--line); border-radius:999px; overflow:hidden; }
+  .xp-fill{ height:100%; width:0%; border-radius:999px; background:var(--accent); transition:width .9s cubic-bezier(.34,1.56,.64,1); }
+  .xp-line{ display:flex; justify-content:space-between; gap:12px; margin-top:8px; font-size:.85rem; font-weight:700; color:var(--ink-soft); }
+
+  /* ── MISSIONS ── */
+  .missions{ margin-bottom:16px; }
+  .mis-head{ display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+  .mis-head h2{ font-size:1.25rem; font-weight:800; }
+  .mis-total{
+    margin-left:auto; padding:6px 14px; border-radius:999px;
+    background:rgba(70,206,98,.14); color:var(--green-d);
+    font-size:.85rem; font-weight:800; border:2px solid rgba(70,206,98,.3);
+  }
+  .mis-hint{ font-size:.92rem; font-weight:600; color:var(--ink-soft); line-height:1.5; margin-bottom:18px; }
+
+  .mis-cat{
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-lg); box-shadow:var(--shadow-1);
+    margin-bottom:14px; overflow:hidden;
+  }
+  .mis-cat-head{
+    display:flex; align-items:center; gap:11px;
+    padding:15px 20px; cursor:pointer;
+    border-bottom:2px solid transparent; transition:background .15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .mis-cat.open .mis-cat-head{ border-bottom-color:var(--line); }
+  .mis-cat-head:hover{ background:var(--surface-2); }
+  .mis-cat-ico{
+    width:38px; height:38px; border-radius:12px; flex-shrink:0;
+    background:var(--accent-soft); display:flex; align-items:center;
+    justify-content:center; font-size:1.15rem;
+  }
+  .mis-cat-title{ font-size:1.02rem; font-weight:800; flex:1; }
+  .mis-cat-count{ font-size:.85rem; font-weight:800; color:var(--ink-soft); }
+  .mis-chevron{ font-size:.8rem; color:var(--ink-soft); transition:transform .2s; }
+  .mis-cat.open .mis-chevron{ transform:rotate(180deg); }
+
+  .mis-body{ display:none; padding:8px 20px 16px; }
+  .mis-cat.open .mis-body{ display:block; }
+
+  .mis{
+    display:flex; align-items:center; gap:13px;
+    padding:13px 0; border-bottom:1px solid var(--line);
+  }
+  .mis:last-child{ border-bottom:none; }
+  .mis-check{
+    width:26px; height:26px; border-radius:50%; flex-shrink:0;
+    border:2px solid var(--line-strong); background:var(--surface-2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:.8rem; font-weight:800; color:transparent;
+  }
+  .mis.done .mis-check{ background:var(--green); border-color:var(--green); color:#fff; }
+  .mis-txt{ flex:1; min-width:0; }
+  .mis-label{ font-size:.98rem; font-weight:800; line-height:1.25; }
+  .mis.done .mis-label{ color:var(--ink-soft); }
+  .mis-desc{ font-size:.83rem; font-weight:600; color:var(--ink-soft); margin-top:1px; }
+  .mis-xp{
+    flex-shrink:0; padding:5px 12px; border-radius:999px;
+    font-size:.82rem; font-weight:800;
+    background:var(--surface-2); color:var(--ink-soft); border:2px solid var(--line);
+  }
+  .mis.done .mis-xp{ background:rgba(70,206,98,.14); color:var(--green-d); border-color:rgba(70,206,98,.3); }
+  .mis-daily .mis-xp{ background:rgba(43,183,242,.12); color:var(--blue-d); border-color:rgba(43,183,242,.3); }
+
+  .mis-prog{ margin-top:7px; height:7px; background:var(--surface-2); border:1px solid var(--line);
+             border-radius:999px; overflow:hidden; }
+  .mis-prog i{ display:block; height:100%; background:var(--accent); border-radius:999px; transition:width .7s; }
+
+  .mis-chips{ display:flex; flex-wrap:wrap; gap:7px; padding:10px 0 4px; }
+  .mis-chip{
+    padding:6px 12px; border-radius:999px; font-size:.8rem; font-weight:700;
+    background:var(--surface-2); border:2px solid var(--line); color:var(--ink-soft);
+  }
+  .mis-chip.ok{ background:rgba(70,206,98,.12); border-color:rgba(70,206,98,.35); color:var(--green-d); }
+
+  .mis-empty{ font-size:.9rem; font-weight:600; color:var(--ink-soft); padding:12px 0; }
+
+  /* ── GRILLE DES CARTES ── */
+  .cards-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+
+  /* ── SÉLECTEUR (overlay) ── */
+  .picker-top{
+    display:flex; align-items:center; gap:18px;
+    padding:22px 24px; border-bottom:2px solid var(--line); flex-shrink:0; flex-wrap:wrap;
+  }
+  .preview-bubble{
+    width:76px; height:76px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(160deg,#EAF4FF,#C6E1F8);
+    border:3px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; font-size:2rem; position:relative;
+  }
+  .preview-bubble img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .picker-info{ flex:1; min-width:150px; }
+  .picker-info h2{ font-size:1.15rem; font-weight:800; }
+  .picker-info p{ font-size:.9rem; font-weight:600; color:var(--ink-soft); margin-top:2px; }
+  .picker-actions{ display:flex; gap:9px; flex-shrink:0; }
+
+  .picker-tabs{ display:flex; gap:8px; padding:14px 24px 0; flex-shrink:0; }
+  .picker-tab{
+    padding:9px 18px; border-radius:999px;
+    border:2px solid var(--line); background:var(--surface);
+    color:var(--ink-soft); font-family:'Baloo 2',sans-serif;
+    font-size:.92rem; font-weight:800; cursor:pointer; transition:all .18s;
+  }
+  .picker-tab:hover{ border-color:var(--line-strong); color:var(--ink); }
+  .picker-tab.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .picker-panel{ display:none; overflow-y:auto; padding:18px 24px 26px; flex:1; }
+  .picker-panel.active{ display:block; }
+
+  .cat-title{ font-size:.82rem; font-weight:800; color:var(--ink-soft); letter-spacing:.5px; margin:22px 0 12px; }
+  .cat-title:first-child{ margin-top:0; }
+
+  .icons-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); gap:14px; }
+  .icon-item{ display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; }
+  .icon-bubble{
+    width:74px; height:74px; border-radius:50%;
+    background:var(--surface-2); border:3px solid var(--line);
+    overflow:hidden; position:relative;
+    display:flex; align-items:center; justify-content:center; font-size:1.6rem;
+    transition:transform .16s, border-color .16s, box-shadow .16s;
+  }
+  .icon-item:not(.locked):hover .icon-bubble{ transform:translateY(-4px); border-color:var(--accent); }
+  .icon-item.selected .icon-bubble{ border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
+  .icon-bubble img{ width:100%; height:100%; object-fit:cover; }
+  .icon-item.locked{ cursor:not-allowed; }
+  .icon-item.locked .icon-bubble{ opacity:.45; }
+  .lock-overlay{
+    position:absolute; inset:0; border-radius:50%;
+    background:rgba(255,255,255,.55); backdrop-filter:blur(1px);
+    display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+  }
+  .icon-name{ font-size:.76rem; font-weight:700; color:var(--ink-soft); text-align:center; line-height:1.2; }
+  .icon-item.selected .icon-name{ color:var(--ink); }
+  .lock-tag{
+    font-size:.62rem; font-weight:800; padding:2px 8px; border-radius:999px;
+    background:rgba(255,197,61,.2); color:#9C6D00;
+  }
+
+  /* Effets */
+  .fx-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:12px; }
+  .fx-item{
+    display:flex; flex-direction:column; align-items:center; gap:7px;
+    padding:14px 10px; border-radius:var(--r-md);
+    border:2px solid var(--line); background:var(--surface);
+    cursor:pointer; transition:all .18s; text-align:center;
+  }
+  .fx-item:not(.locked):hover{ transform:translateY(-3px); border-color:var(--line-strong); }
+  .fx-item.selected{ border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
+  .fx-item.locked{ opacity:.5; cursor:not-allowed; }
+  .fx-dot{
+    width:46px; height:46px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem;
+  }
+  .fx-name{ font-size:.8rem; font-weight:800; }
+  .fx-hint{ font-size:.68rem; font-weight:700; color:var(--ink-soft); }
+
+  @media(max-width:760px){
+    .hero-card{ padding:20px 18px; }
+    .big-avatar{ width:86px; height:86px; }
+    .hero-name{ font-size:1.4rem; }
+    .picker-top{ padding:16px; }
+    .picker-actions{ width:100%; }
+    .picker-actions .btn{ flex:1; }
+    .picker-panel{ padding:16px 16px 22px; }
   }
 </style>
 </head>
-<body>
-
-<div class="bubble-bg" id="bubbleBg"></div>
+<body data-v2>
 
 <nav>
-  <div class="nav-logo" id="menuToggle">🫧</div>
+  <button class="nav-logo" id="menuToggle" aria-label="Menu">🫧</button>
+  <div class="nav-title">
+    <span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span>
+  </div>
   <div class="nav-links">
-    <a href="index.html" class="nav-btn red">🏠 Accueil</a>
-    <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
-    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
-    <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-    <a href="bubble_site_gacha.html" class="nav-btn purple">🎁 Coffres</a>
+    <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+    <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+    <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
-    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🧙</span></div>
+    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🫧</span></div>
+    <div class="nav-profile-meta">
+      <span class="nav-profile-name" id="navName">Invité</span>
+      <span class="nav-profile-sub"  id="navSub">BASIC</span>
+    </div>
   </a>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
-  <a href="index.html" class="nav-btn red">🏠 Accueil</a>
-  <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
-  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray">🎮 Games</a>
-  <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-  <a href="bubble_site_gacha.html" class="nav-btn purple">🎁 Coffres</a>
-  <a href="install_APK.html" class="nav-btn gray">Installer l'app 📲</a>
+  <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+  <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+  <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
+  <a href="bubble_site_profil.html"      class="nav-btn active"><span class="ico">🎭</span>Mon profil</a>
 </div>
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <main>
-  <div class="page-title">✦ Mon Profil ✦</div>
 
-  <div class="card">
-    <div class="card-header"><span class="card-icon">🎭</span><span class="card-title">Icône de profil</span></div>
-    <div class="avatar-section">
-      <div class="big-avatar-wrap">
-        <div class="big-avatar" id="bigAvatar" onclick="openPicker()"></div>
-        <div class="edit-badge" onclick="openPicker()">✏️</div>
+  <!-- ── CARTE PRINCIPALE ── -->
+  <section class="hero-card fade-up">
+    <div class="hero-row">
+      <div class="avatar-wrap">
+        <div class="big-avatar" id="bigAvatar" onclick="openPicker()">🫧</div>
+        <div class="edit-badge" onclick="openPicker()" title="Changer d'icône">✏️</div>
       </div>
-      <div class="avatar-info">
-        <p>Choisis ton icône et ton effet parmi le catalogue Bubble inc. 🫧<br>Les effets se débloquent en ouvrant des coffres !</p>
-        <button class="btn-change-avatar" onclick="openPicker()">🎭 Personnaliser</button>
+      <div class="hero-id">
+        <div class="hero-name" id="heroName">—</div>
+        <div class="hero-mail" id="heroMail">—</div>
+        <div class="hero-chips">
+          <span class="sub-chip basic" id="subChip">BASIC</span>
+          <span class="chip" id="fxChip">✨ Aucun effet</span>
+        </div>
       </div>
+      <button class="btn btn-blue" onclick="openPicker()">🎭 Personnaliser</button>
     </div>
-    <div class="level-section">
-      <div class="level-header">
-        <span class="level-title">Niveau</span>
-        <span class="level-num" id="levelNum">1 <span>/ —</span></span>
+
+    <div class="level-box">
+      <div class="level-head">
+        <h3>Niveau</h3>
+        <span class="level-num" id="levelNum">1 <small>/ —</small></span>
+        <span class="level-max" id="levelMax" style="display:none">🏆 Niveau max !</span>
       </div>
       <div class="level-symbols" id="levelSymbols"></div>
-      <div class="xp-bar-wrap">
-        <div class="xp-bar-fill basic" id="xpBarFill" style="width:0%"></div>
-      </div>
-      <div class="xp-info">
+      <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
+      <div class="xp-line">
         <span id="xpCurrent">0 XP</span>
-        <span id="xpNext">— XP pour le niveau suivant</span>
+        <span id="xpNext">—</span>
       </div>
-      <div id="levelMaxBadge" style="display:none" class="level-max-badge">🏆 NIVEAU MAX !</div>
     </div>
-  </div>
+  </section>
 
-  <div class="card">
-    <div class="card-header"><span class="card-icon">✍️</span><span class="card-title">Pseudo</span></div>
-    <div class="form-group">
-      <label>Ton pseudo</label>
-      <input type="text" id="pseudoInput" placeholder="Entre ton pseudo...">
+  <!-- ── MISSIONS ── -->
+  <section class="missions fade-up d1">
+    <div class="mis-head">
+      <h2>🎯 Missions</h2>
+      <span class="mis-total" id="misTotal">0 XP gagnés</span>
     </div>
-    <button class="btn-save" onclick="savePseudo()">💾 Sauvegarder</button>
-  </div>
+    <p class="mis-hint">C'est en accomplissant ces missions que tu gagnes de l'XP et que tu montes de niveau.</p>
+    <div id="misList"></div>
+  </section>
 
-  <div class="card">
-    <div class="card-header"><span class="card-icon">🔐</span><span class="card-title">Mot de passe</span></div>
-    <div class="form-group">
-      <label>Nouveau mot de passe</label>
-      <input type="password" id="newPwd" placeholder="••••••••">
-    </div>
-    <div class="form-group">
-      <label>Confirmer</label>
-      <input type="password" id="confirmPwd" placeholder="••••••••">
-    </div>
-    <button class="btn-save" onclick="savePassword()">💾 Changer</button>
-  </div>
+  <!-- ── RÉGLAGES ── -->
+  <div class="cards-grid">
 
-  <div class="card">
-    <div class="card-header"><span class="card-icon">✨</span><span class="card-title">Abonnement</span></div>
-    <div class="sub-display">
-      <div>
-        <div class="sub-name" id="subName">BASIC</div>
-        <div class="sub-desc" id="subDesc">Accès gratuit</div>
+    <section class="card fade-up d1">
+      <div class="card-head"><span class="ico">✍️</span><h2>Pseudo</h2></div>
+      <div class="field">
+        <label for="pseudoInput">Ton pseudo</label>
+        <input type="text" id="pseudoInput" placeholder="Entre ton pseudo...">
       </div>
-      <span class="sub-badge basic" id="subBadge">BASIC</span>
-    </div>
-    <a href="bubble_site_abonnements.html" class="btn-abos">✨ Voir les offres →</a>
-  </div>
+      <button class="btn btn-green btn-block" onclick="savePseudo()">💾 Sauvegarder</button>
+    </section>
 
-  <div class="card">
-    <div class="card-header"><span class="card-icon">🚪</span><span class="card-title">Session</span></div>
-    <button class="btn-logout" onclick="handleLogout()">🚪 Se déconnecter</button>
+    <section class="card fade-up d2">
+      <div class="card-head"><span class="ico">🔐</span><h2>Mot de passe</h2></div>
+      <div class="field">
+        <label for="newPwd">Nouveau mot de passe</label>
+        <input type="password" id="newPwd" placeholder="••••••••">
+      </div>
+      <div class="field">
+        <label for="confirmPwd">Confirmer</label>
+        <input type="password" id="confirmPwd" placeholder="••••••••">
+      </div>
+      <button class="btn btn-green btn-block" onclick="savePassword()">💾 Changer</button>
+    </section>
+
+    <section class="card fade-up d3">
+      <div class="card-head"><span class="ico">✨</span><h2>Abonnement</h2></div>
+      <p style="font-size:.95rem;font-weight:600;color:var(--ink-soft);line-height:1.5;margin-bottom:14px" id="subDesc">
+        Accès gratuit
+      </p>
+      <a href="bubble_site_abonnements.html" class="btn btn-yellow btn-block">✨ Voir les offres</a>
+    </section>
+
+    <section class="card fade-up d4">
+      <div class="card-head"><span class="ico">🚪</span><h2>Session</h2></div>
+      <p style="font-size:.95rem;font-weight:600;color:var(--ink-soft);line-height:1.5;margin-bottom:14px">
+        Tu seras redirigé vers la page de connexion.
+      </p>
+      <button class="btn btn-red btn-block" onclick="handleLogout()">🚪 Se déconnecter</button>
+    </section>
+
   </div>
 </main>
 
-<!-- PICKER -->
-<div class="overlay" id="overlay">
-  <div class="picker">
+<!-- ── SÉLECTEUR ── -->
+<div class="overlay" id="pickerOverlay">
+  <div class="sheet">
     <div class="picker-top">
-      <div class="preview-bubble" id="previewBubble"></div>
-      <div class="picker-top-info">
-        <h2 id="pickerTitle">Personnalisation</h2>
-        <p id="previewName">Sélectionne une icône ou un effet</p>
+      <div class="preview-bubble" id="previewBubble">🫧</div>
+      <div class="picker-info">
+        <h2>Personnalisation</h2>
+        <p id="previewName">Choisis une icône et un effet</p>
       </div>
       <div class="picker-actions">
-        <button class="btn-picker confirm" onclick="confirmSelection()">Enregistrer</button>
-        <button class="btn-picker cancel" onclick="closePicker()">Annuler</button>
+        <button class="btn btn-ghost btn-sm" onclick="closePicker()">Annuler</button>
+        <button class="btn btn-green btn-sm" onclick="confirmSelection()">Enregistrer</button>
       </div>
     </div>
-    <!-- Tabs -->
+
     <div class="picker-tabs">
-      <button class="picker-tab active" onclick="switchPickerTab('icons')">🎭 Icônes</button>
-      <button class="picker-tab" onclick="switchPickerTab('effects')">✨ Effets</button>
+      <button class="picker-tab active" data-tab="icons"   onclick="switchTab('icons')">🎭 Icônes</button>
+      <button class="picker-tab"        data-tab="effects" onclick="switchTab('effects')">✨ Effets</button>
     </div>
-    <!-- Panel icônes -->
+
     <div class="picker-panel active" id="panel-icons"></div>
-    <!-- Panel effets -->
-    <div class="picker-panel" id="panel-effects"></div>
+    <div class="picker-panel"        id="panel-effects"></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<footer>© BUBBLE INC.</footer>
+<footer><span class="footer-logo">BUBBLE INC.</span> · © 2026</footer>
 
 <script>
-  const bg = document.getElementById('bubbleBg');
-  for(let i=0;i<24;i++){
-    const b=document.createElement('div'); b.className='bbl';
-    const size=12+Math.random()*65, hue=190+Math.random()*90, alpha=.08+Math.random()*.18;
-    b.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.25),hsla(${hue},80%,70%,${alpha}) 55%,transparent);border:1px solid hsla(${hue},70%,80%,.15);animation-duration:${10+Math.random()*18}s;animation-delay:${Math.random()*14}s;`;
-    bg.appendChild(b);
-  }
+  /* ── Menu mobile ── */
   const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
-  function openMenu(){menu.classList.add('open');ov.classList.add('open');toggle.style.transform='scale(1.15) rotate(20deg)';}
-  function closeMenu(){menu.classList.remove('open');ov.classList.remove('open');toggle.style.transform='';}
-  toggle.addEventListener('click',()=>menu.classList.contains('open')?closeMenu():openMenu());
+  function closeMenu(){ menu.classList.remove('open'); ov.classList.remove('open'); }
+  toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
   ov.addEventListener('click',closeMenu);
-  window.addEventListener('resize',()=>{if(window.innerWidth>600)closeMenu();});
+  window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
 
-  /* Wrappers onclick HTML */
-  function openPicker()    { if(window._openPicker)    window._openPicker(); }
-  function closePicker()   { if(window._closePicker)   window._closePicker(); }
-  function confirmSelection(){ if(window._confirmSelection) window._confirmSelection(); }
-  function savePseudo()    { if(window._savePseudo)    window._savePseudo(); }
-  function savePassword()  { if(window._savePassword)  window._savePassword(); }
-  function handleLogout()  { if(window._handleLogout)  window._handleLogout(); }
-
-  function switchPickerTab(tab){
-    document.querySelectorAll('.picker-tab').forEach((t,i)=>t.classList.toggle('active',['icons','effects'][i]===tab));
-    document.querySelectorAll('.picker-panel').forEach(p=>p.classList.remove('active'));
-    document.getElementById('panel-'+tab).classList.add('active');
+  /* ── Onglets du sélecteur ── */
+  function switchTab(tab){
+    document.querySelectorAll('.picker-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('.picker-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
   }
+
+  /* ── Toast ── */
+  function toast(msg, type){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (type ? ' ' + type : '');
+    setTimeout(() => t.classList.remove('show'), 3200);
+  }
+
+  /* ══════════════════════════════════════
+     AFFICHAGE DES MISSIONS
+     Les définitions viennent de bubble_data.js (window.MISSIONS / window.GAMES),
+     l'avancement vient de bubble_missions.js (window.BubbleMissions).
+  ══════════════════════════════════════ */
+  const OPEN_CATS = { general:true, jeux:false, scans:false, gacha:false };
+
+  function misRow({ done, label, desc, xp, daily, progress }){
+    return `
+      <div class="mis${done ? ' done' : ''}${daily ? ' mis-daily' : ''}">
+        <div class="mis-check">✓</div>
+        <div class="mis-txt">
+          <div class="mis-label">${label}</div>
+          ${desc ? `<div class="mis-desc">${desc}</div>` : ''}
+          ${progress != null ? `<div class="mis-prog"><i style="width:${progress}%"></i></div>` : ''}
+        </div>
+        <span class="mis-xp">${daily && done ? '✓ aujourd’hui' : '+' + xp + ' XP'}</span>
+      </div>`;
+  }
+
+  function renderMissions(st){
+    const M    = window.MISSIONS || {};
+    const done = st.missions || {};
+    const read = st.scansRead || [];
+    const play = st.gamesPlayed || [];
+
+    /* Compteur d'XP gagné via les missions */
+    let earned = 0;
+    const add = (ok, xp) => { if (ok) earned += xp; };
+
+    /* ── GÉNÉRAL ── */
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    const generalRows = (M.general || []).map(m => {
+      const ok = m.daily ? (st.lastLogin === todayStr) : !!done[m.id];
+      add(ok, m.xp);
+      return misRow({ done:ok, label:m.label, desc:m.desc, xp:m.xp, daily:m.daily });
+    }).join('');
+
+    /* ── JEUX ── */
+    const games = window.GAMES || [];
+    const gameRows = games.length ? games.map(g => {
+      const first = play.includes(g.id);
+      add(first, M.gameFirstXP ?? 50);
+      let html = misRow({ done:first, label:`${g.emoji} ${g.name} — première partie`, xp:M.gameFirstXP ?? 50 });
+      if (g.mission){
+        const ok = !!done[g.mission.id];
+        add(ok, g.mission.xp);
+        html += misRow({ done:ok, label:g.mission.label, desc:g.name, xp:g.mission.xp });
+      }
+      return html;
+    }).join('') : '<div class="mis-empty">Aucun jeu configuré pour le moment.</div>';
+
+    /* ── SCANS ── */
+    const scans = window.ALL_SCANS || [];
+    const scanXP = M.scanXP ?? 10;
+    read.forEach(() => earned += scanXP);
+    const chips = scans.map(sc => {
+      const ok = read.includes(sc.id);
+      return `<span class="mis-chip${ok ? ' ok' : ''}">${ok ? '✓' : '○'} ${sc.title}</span>`;
+    }).join('');
+    const milestoneRows = (M.scanMilestones || []).map(p => {
+      const ok = !!done[p.id];
+      add(ok, p.xp);
+      return misRow({ done:ok, label:p.label, desc:`${read.length} / ${p.count} scans lus`,
+                      xp:p.xp, progress:Math.min(read.length / p.count * 100, 100) });
+    }).join('');
+    const scanRows = `
+      <div class="mis${scans.length && read.length >= scans.length ? ' done' : ''}">
+        <div class="mis-check">✓</div>
+        <div class="mis-txt">
+          <div class="mis-label">Lire un scan</div>
+          <div class="mis-desc">+${scanXP} XP par scan, une seule fois par scan</div>
+          <div class="mis-chips">${chips || '<span class="mis-empty">Aucun scan au catalogue.</span>'}</div>
+        </div>
+        <span class="mis-xp">${read.length}/${scans.length}</span>
+      </div>${milestoneRows}`;
+
+    /* ── GACHA ── */
+    const owned = (window.__collectionCount ?? 0);
+    const total = (window.CARD_POOL || []).length;
+    const gachaRows = (M.gacha || []).map(m => {
+      const ok = !!done[m.id];
+      add(ok, m.xp);
+      return misRow({ done:ok, label:m.label, desc:`${owned} / ${total} cartes obtenues`,
+                      xp:m.xp, progress: total ? Math.min(owned / total * 100, 100) : 0 });
+    }).join('');
+
+    const cats = [
+      { key:'general', ico:'⭐', title:'Général', rows:generalRows,
+        count:(M.general||[]).filter(m => m.daily ? st.lastLogin === todayStr : done[m.id]).length + '/' + (M.general||[]).length },
+      { key:'jeux', ico:'🎮', title:'Jeux', rows:gameRows,
+        count: games.filter(g => play.includes(g.id)).length + '/' + games.length },
+      { key:'scans', ico:'📜', title:'Scans', rows:scanRows,
+        count: read.length + '/' + scans.length },
+      { key:'gacha', ico:'🎁', title:'Gacha', rows:gachaRows,
+        count: (M.gacha||[]).filter(m => done[m.id]).length + '/' + (M.gacha||[]).length },
+    ];
+
+    document.getElementById('misList').innerHTML = cats.map(c => `
+      <div class="mis-cat${OPEN_CATS[c.key] ? ' open' : ''}" data-cat="${c.key}">
+        <div class="mis-cat-head" onclick="toggleCat('${c.key}')">
+          <div class="mis-cat-ico">${c.ico}</div>
+          <div class="mis-cat-title">${c.title}</div>
+          <div class="mis-cat-count">${c.count}</div>
+          <div class="mis-chevron">▼</div>
+        </div>
+        <div class="mis-body">${c.rows}</div>
+      </div>`).join('');
+
+    document.getElementById('misTotal').textContent = earned + ' XP gagnés';
+  }
+
+  function toggleCat(key){
+    OPEN_CATS[key] = !OPEN_CATS[key];
+    document.querySelector(`.mis-cat[data-cat="${key}"]`)?.classList.toggle('open', OPEN_CATS[key]);
+  }
+
+  /* Le moteur nous prévient à chaque changement */
+  function hookMissions(){
+    if (!window.BubbleMissions) return setTimeout(hookMissions, 120);
+    window.BubbleMissions.onChange(renderMissions);
+  }
+  hookMissions();
+
+  /* Ponts vers le module (les onclick du HTML) */
+  function openPicker()      { window._openPicker      && window._openPicker(); }
+  function closePicker()     { window._closePicker     && window._closePicker(); }
+  function confirmSelection(){ window._confirmSelection&& window._confirmSelection(); }
+  function savePseudo()      { window._savePseudo      && window._savePseudo(); }
+  function savePassword()    { window._savePassword    && window._savePassword(); }
+  function handleLogout()    { window._handleLogout    && window._handleLogout(); }
 </script>
 
 <script type="module">
-  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut, updatePassword, updateProfile, EmailAuthProvider, reauthenticateWithCredential }
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut, updatePassword, updateProfile,
+           EmailAuthProvider, reauthenticateWithCredential }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc, setDoc }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -338,369 +566,294 @@
   const auth = getAuth(app);
   const db   = getFirestore(app);
 
-  const CATALOGUE = {
-    "Classique": [
-      {id:"bully_1",           file:"bully_1.png",           name:"Bully",           sub:"basic"},
-      {id:"anthony_1",         file:"anthony_1.png",         name:"Anthony",         sub:"basic"},
-      {id:"luna_1",            file:"luna_1.png",            name:"Luna",            sub:"basic"},
-      {id:"frosty_1",          file:"frosty_1.png",          name:"Frosty",          sub:"basic"},
-      {id:"zippy_1",           file:"zippy_1.png",           name:"Zippy",           sub:"basic"},
-      {id:"rocky_1",           file:"rocky_1.png",           name:"Rocky",           sub:"basic"},
-    ],
-    "Pixel": [
-      {id:"bully_pixel_1",     file:"bully_pixel_1.png",     name:"Bully Pixel",     sub:"plus"},
-      {id:"plant_pixel_1",     file:"plant_pixel_1.png",     name:"Plant",           sub:"plus"},
-      {id:"rock_pixel_1",      file:"rock_pixel_1.png",      name:"Roche",           sub:"plus"},
-      {id:"star_pixel_1",      file:"star_pixel_1.png",      name:"Étoile",          sub:"plus"},
-      {id:"snowflake_pixel_1", file:"snowflake_pixel_1.png", name:"Flocon",          sub:"plus"},
-      {id:"sun_pixel_1",       file:"sun_pixel_1.png",       name:"Soleil",          sub:"plus"},
-    ],
-    "Bubble inc. Game IT!": [
-      {id:"bully_game_it_1",   file:"bully_game_it_1.png",   name:"Bully Game IT",   sub:"x"},
-      {id:"anthony_game_it_1", file:"anthony_game_it_1.png", name:"Anthony Game IT", sub:"x"},
-      {id:"luna_game_it_1",    file:"luna_game_it_1.png",    name:"Luna Game IT",    sub:"x"},
-      {id:"frosty_game_it_1",  file:"frosty_game_it_1.png",  name:"Frosty Game IT",  sub:"x"},
-      {id:"zippy_game_it_1",   file:"zippy_game_it_1.png",   name:"Zippy Game IT",   sub:"x"},
-      {id:"rocky_game_it_1",   file:"rocky_game_it_1.png",   name:"Rocky Game IT",   sub:"x"},
-    ],
-    "Rigolo": [
-      {id:"bully_funny_1",   file:"bully_funny_1.png",   name:"Bully Rigolo",   sub:"plus"},
-      {id:"anthony_funny_1", file:"anthony_funny_1.png", name:"Anthony Rigolo", sub:"plus"},
-      {id:"luna_funny_1",    file:"luna_funny_1.png",    name:"Luna Rigolo",    sub:"plus"},
-      {id:"frosty_funny_1",  file:"frosty_funny_1.png",  name:"Frosty Rigolo",  sub:"plus"},
-      {id:"zippy_funny_1",   file:"zippy_funny_1.png",   name:"Zippy Rigolo",   sub:"plus"},
-      {id:"rocky_funny_1",   file:"rocky_funny_1.png",   name:"Rocky Rigolo",   sub:"plus"},
-    ],
-    "Enquete a la fete foraine": [
-      {id:"bully_ff_1",  file:"bully_ff_1.png",  name:"Bully Enquéteur",  sub:"plus"},
-      {id:"bulle_ff_1",  file:"bulle_ff_1.png",  name:"Bulle Enquéteuse", sub:"plus"},
-      {id:"loop_ff_1",   file:"loop_ff_1.png",   name:"Une loupe",        sub:"plus"},
-    ],
+  const SUB_DESCS = {
+    basic:"Accès gratuit — les icônes classiques et les scans offerts.",
+    plus: "Abonné Bubble+ — icônes premium, magazines et scans (+).",
+    x:    "Abonné Bubble X — icônes stellaires, scans (X) et Bubble Game.",
+    max:  "Abonné Bubble MAX — tout est inclus, accès prioritaire partout.",
   };
 
-  /* Les effets disponibles — doivent correspondre aux types dans bubble_effects.js */
-  const ALL_EFFECTS = [
-    {type:"bubbles",   label:"✦ Bulles",          color:"#5bc8ff",  cardId:3},
-    {type:"snow",      label:"❄️ Neige",            color:"#aaeeff",  cardId:4},
-    {type:"sparkles",  label:"✨ Étincelles",       color:"#ffe066",  cardId:5},
-    {type:"fire",      label:"🔥 Flammes",          color:"#ff6622",  cardId:6},
-    {type:"leaves",    label:"🍃 Feuilles",         color:"#44cc66",  cardId:7},
-    {type:"lightning", label:"⚡ Éclairs",          color:"#ffe844",  cardId:8},
-    {type:"aura",      label:"🌀 Aura Violette",    color:"#cc44ff",  cardId:9},
-    {type:"aurora",    label:"🌈 Aurore",           color:"#00ffcc",  cardId:10},
-    {type:"portal",    label:"🌀 Portail Cosmique", color:"#FFD700",  cardId:11},
-  ];
-
-  const SUB_ORDER  = {basic:0,plus:1,x:2,max:3};
-  const SUB_LABELS = {basic:"BASIC",plus:"BUBBLE+",x:"BUBBLE X",max:"BUBBLE MAX"};
-  const SUB_DESCS  = {basic:"Accès gratuit",plus:"Abonné Bubble+",x:"Abonné Bubble X",max:"Abonné Bubble MAX"};
-  const LEVEL_CONFIG = {
-    basic:{maxLevel:3,xpPerLevel:100},
-    plus:{maxLevel:20,xpPerLevel:200},
-    x:{maxLevel:20,xpPerLevel:300},
-    max:{maxLevel:25,xpPerLevel:400},
-  };
-
-  let currentUser  = null;
-  let userSubLevel = "basic";
-  let selectedIcon = null;
-  let selectedEffect = null; /* null = pas de changement, "none" = retirer l'effet */
-  let activeIconId   = "bully_1";
+  let currentUser    = null;
+  let userSub        = 'basic';
+  let activeIconId   = 'bully_1';
   let activeEffect   = null;
-  let unlockedEffects = [];
+  let unlockedFx     = [];
+  let selectedIcon   = null;
+  let selectedEffect = null;      /* null = inchangé, 'none' = retirer */
 
-  /* ── Helpers ── */
-  function toast(msg,err=false){
-    const t=document.getElementById('toast');
-    t.textContent=msg;t.className='toast'+(err?' err':'')+' show';
-    setTimeout(()=>t.classList.remove('show'),3200);
-  }
-  function canUse(sub){return SUB_ORDER[userSubLevel]>=SUB_ORDER[sub];}
-  function findIcon(id){for(const cat of Object.values(CATALOGUE))for(const ic of cat)if(ic.id===id)return ic;return null;}
+  const canUse = sub => window.SUB_ORDER[userSub] >= window.SUB_ORDER[sub];
 
-  function setAvatarUI(file,name){
-    const html=`<img src="${file}" alt="${name}">`;
-    document.getElementById('bigAvatar').innerHTML=html;
-    document.getElementById('navAvatar').innerHTML=html;
-  }
-  function setSubUI(level){
-    const lbl=SUB_LABELS[level]||'BASIC';
-    document.getElementById('subName').textContent=lbl;
-    document.getElementById('subDesc').textContent=SUB_DESCS[level]||'Accès gratuit';
-    document.getElementById('subBadge').textContent=lbl;
-    document.getElementById('subBadge').className='sub-badge '+(level||'basic');
+  /* ── Affichage ── */
+  function setAvatarUI(icon){
+    const html = `<img src="${icon.file}" alt="${icon.name}" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
+    document.getElementById('bigAvatar').innerHTML = html;
+    document.getElementById('navAvatar').innerHTML = html;
   }
 
-  function getLevel(xp,sub){
-    const cfg=LEVEL_CONFIG[sub]||LEVEL_CONFIG.basic;
-    const level=Math.min(Math.floor(xp/cfg.xpPerLevel)+1,cfg.maxLevel);
-    const curXP=(level-1)*cfg.xpPerLevel;
-    const nxtXP=level<cfg.maxLevel?level*cfg.xpPerLevel:curXP+cfg.xpPerLevel;
-    const prog=((xp-curXP)/(nxtXP-curXP))*100;
-    return{level,progress:Math.min(prog,100),xpNeeded:Math.max(nxtXP-xp,0),cfg,isMax:level>=cfg.maxLevel};
+  function setSubUI(sub){
+    const label = window.SUB_LABELS[sub] || 'BASIC';
+    document.getElementById('subChip').textContent = label;
+    document.getElementById('subChip').className   = 'sub-chip ' + sub;
+    document.getElementById('navSub').textContent  = label;
+    document.getElementById('subDesc').textContent = SUB_DESCS[sub] || SUB_DESCS.basic;
   }
 
-  function renderLevelUI(xp,sub){
-    const{level,progress,xpNeeded,cfg,isMax}=getLevel(xp,sub);
-    document.getElementById('levelNum').innerHTML=`${level} <span>/ ${cfg.maxLevel}</span>`;
-    const symEl=document.getElementById('levelSymbols');
-    let html='';
-    if(sub==='basic'){for(let i=1;i<=cfg.maxLevel;i++)html+=`<span class="lvl-symbol ${i<=level?'active':'inactive'}">🫧</span>`;}
-    else if(sub==='plus'){for(let i=1;i<=Math.min(level,cfg.maxLevel);i++)html+=`<span class="lvl-symbol active" style="color:#ffcc00">✦</span>`;}
-    else if(sub==='x'){for(let i=1;i<=Math.min(level,cfg.maxLevel);i++)html+=`<span class="lvl-symbol active" style="color:#44ccff">✕</span>`;}
-    else if(sub==='max'){for(let i=1;i<=Math.min(level,cfg.maxLevel);i++)html+=`<span class="lvl-symbol active" style="filter:drop-shadow(0 0 6px rgba(204,68,255,.9))">🫧</span>`;}
-    symEl.innerHTML=html;
-    const bar=document.getElementById('xpBarFill');
-    bar.className=`xp-bar-fill ${sub}`;
-    bar.style.width=progress+'%';
-    document.getElementById('xpCurrent').textContent=xp+' XP';
-    document.getElementById('xpNext').textContent=isMax?'🏆 Niveau max atteint !':xpNeeded+' XP pour le niveau suivant';
-    document.getElementById('levelMaxBadge').style.display=isMax?'inline-block':'none';
+  function setFxChip(type){
+    const fx = window.ALL_EFFECTS.find(e => e.type === type);
+    document.getElementById('fxChip').textContent = fx ? `${fx.emoji} ${fx.label}` : '✨ Aucun effet';
   }
 
-  /* ── Auth ── */
-  onAuthStateChanged(auth,async user=>{
-    if(!user){window.location.href='./login.html';return;}
-    currentUser=user;
-    document.getElementById('pseudoInput').value=user.displayName||user.email.split('@')[0];
-    try{
-      const snap=await getDoc(doc(db,'users',user.uid));
-      if(snap.exists()){
-        const d=snap.data();
-        userSubLevel=d.subscription||'basic';
-        activeIconId=d.avatarId||'bully_1';
-        activeEffect=d.activeEffect||null;
-        unlockedEffects=(d.gachaEffects||[]);
-        
-        /* Synchronise les effets avec les cartes obtenues */
-        const gachaCollection = (d.gachaCollection||[]);
-        const cardsObtainedMap = {};
-        gachaCollection.forEach(cardId => cardsObtainedMap[String(cardId)] = true);
-        
-        /* Ajoute les effets correspondant aux cartes déjà obtenues */
-        ALL_EFFECTS.forEach(eff => {
-          if(eff.cardId && cardsObtainedMap[String(eff.cardId)] && !unlockedEffects.includes(eff.type)){
-            console.log(`✨ Déblocage rétroactif de l'effet: ${eff.type} (carte #${eff.cardId} obtenue)`);
-            unlockedEffects.push(eff.type);
-          }
+  function renderLevel(xp, sub){
+    const lv  = window.getLevel(xp, sub);
+    const cfg = lv.cfg;
+    document.getElementById('levelNum').innerHTML = `${lv.level} <small>/ ${lv.maxLevel}</small>`;
+    document.getElementById('levelSymbols').innerHTML = window.renderLevelBadges(lv.level, sub);
+    document.getElementById('xpFill').style.width  = lv.progress + '%';
+    document.getElementById('xpCurrent').textContent = xp + ' XP';
+    document.getElementById('xpNext').textContent  = lv.isMax
+      ? 'Palier maximum atteint'
+      : `encore ${lv.xpNeeded} XP pour le niveau ${lv.level + 1}`;
+    document.getElementById('levelMax').style.display = lv.isMax ? 'inline-block' : 'none';
+    window.applyFrame(sub, lv.level);
+  }
+
+  /* ── Connexion ── */
+  onAuthStateChanged(auth, async user => {
+    if (!user){ window.location.href = './login.html'; return; }
+    currentUser = user;
+
+    const pseudo = user.displayName || user.email.split('@')[0];
+    document.getElementById('heroName').textContent    = pseudo;
+    document.getElementById('heroMail').textContent    = user.email;
+    document.getElementById('navName').textContent     = pseudo;
+    document.getElementById('pseudoInput').value       = pseudo;
+
+    try {
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if (snap.exists()){
+        const d = snap.data();
+        userSub      = d.subscription || 'basic';
+        activeIconId = d.avatarId     || 'bully_1';
+        activeEffect = d.activeEffect || null;
+        unlockedFx   = (d.gachaEffects || []).slice();
+        window.__collectionCount = (d.gachaCollection || []).length;
+
+        /* Déblocage rétroactif : une carte possédée débloque son effet */
+        const owned = (d.gachaCollection || []).map(String);
+        window.ALL_EFFECTS.forEach(fx => {
+          if (fx.cardId && owned.includes(String(fx.cardId)) && !unlockedFx.includes(fx.type))
+            unlockedFx.push(fx.type);
         });
-        
-        const xp=d.xp||0;
-        console.log('🎨 Effets débloqués au profil:', unlockedEffects);
-        console.log('✨ Effet actif:', activeEffect);
-        console.log('📚 Cartes obtenues:', gachaCollection);
-        renderLevelUI(xp,userSubLevel);
-      }else{
-        await setDoc(doc(db,'users',user.uid),{subscription:'basic',avatarId:'bully_1',pseudo:user.displayName||'Joueur',xp:0,gachaEffects:[]},{merge:true});
-        userSubLevel='basic'; activeIconId='bully_1'; activeEffect=null; unlockedEffects=[];
-        renderLevelUI(0,'basic');
+
+        renderLevel(d.xp || 0, userSub);
+      } else {
+        await setDoc(doc(db,'users',user.uid), {
+          subscription:'basic', avatarId:'bully_1',
+          pseudo: pseudo, xp:0, gachaEffects:[]
+        }, { merge:true });
+        renderLevel(0, 'basic');
       }
-    }catch(e){toast('⚠️ '+e.message,true);}
-    setSubUI(userSubLevel);
-    const ic=findIcon(activeIconId);
-    if(ic) setAvatarUI(ic.file,ic.name);
-    
-    /* Applique l'effet actif après un délai pour que le DOM soit prêt */
-    setTimeout(() => {
-      if(window.applyTheme) {
-        console.log('🎬 Application de l\'effet:', activeEffect);
-        window.applyTheme(activeEffect);
-      }
-    }, 100);
+    } catch(e){ toast('⚠️ ' + e.message, 'err'); }
+
+    setSubUI(userSub);
+    setFxChip(activeEffect);
+    const icon = window.findIcon(activeIconId) || window.ALL_ICONS[0];
+    setAvatarUI(icon);
+
+    if (window.applyTheme) window.applyTheme(activeEffect);
   });
 
-  /* ── Picker ── */
-  window._openPicker=function(){
-    selectedIcon=findIcon(activeIconId)||Object.values(CATALOGUE)[0][0];
-    selectedEffect=activeEffect;
-    buildIconsPanel();
-    buildEffectsPanel();
-    updatePreview(selectedIcon,selectedEffect);
-    document.getElementById('overlay').classList.add('open');
-  };
-  window._closePicker=function(){
-    document.getElementById('overlay').classList.remove('open');
-    /* Annule la preview d'effet */
-    if(window.applyTheme) window.applyTheme(activeEffect);
+  /* ── Sélecteur ── */
+  window._openPicker = function(){
+    selectedIcon   = window.findIcon(activeIconId) || window.ALL_ICONS[0];
+    selectedEffect = activeEffect;
+    buildIcons();
+    buildEffects();
+    updatePreview();
+    document.getElementById('pickerOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
   };
 
-  function buildIconsPanel(){
-    const body=document.getElementById('panel-icons');
-    body.innerHTML='';
-    for(const[catName,icons]of Object.entries(CATALOGUE)){
-      const t=document.createElement('div');t.className='cat-title';t.textContent=catName;body.appendChild(t);
-      const grid=document.createElement('div');grid.className='icons-grid';
-      for(const icon of icons){
-        const locked=!canUse(icon.sub);
-        const item=document.createElement('div');
-        item.className='icon-item'+(locked?' locked':'')+(icon.id===selectedIcon?.id?' selected':'');
-        const bubble=document.createElement('div');bubble.className='icon-bubble';
-        bubble.innerHTML=`<img src="${icon.file}" alt="${icon.name}">`;
-        if(locked) bubble.innerHTML+=`<div class="lock-overlay">🔒</div>`;
-        const name=document.createElement('div');name.className='icon-name';name.textContent=icon.name;
-        item.appendChild(bubble);item.appendChild(name);
-        if(locked){const badge=document.createElement('div');badge.className='lock-badge';badge.textContent=SUB_LABELS[icon.sub];item.appendChild(badge);}
-        else{item.addEventListener('click',()=>{selectedIcon=icon;updatePreview(icon,selectedEffect);body.querySelectorAll('.icon-item').forEach(el=>el.classList.remove('selected'));item.classList.add('selected');});}
+  window._closePicker = function(){
+    document.getElementById('pickerOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    if (window.applyTheme) window.applyTheme(activeEffect);   /* annule l'aperçu */
+  };
+
+  function updatePreview(){
+    const pb = document.getElementById('previewBubble');
+    pb.innerHTML = selectedIcon
+      ? `<img src="${selectedIcon.file}" alt="${selectedIcon.name}" onerror="this.replaceWith(document.createTextNode('🫧'))">`
+      : '🫧';
+    document.getElementById('previewName').textContent =
+      selectedIcon ? selectedIcon.name : 'Choisis une icône';
+  }
+
+  function buildIcons(){
+    const panel = document.getElementById('panel-icons');
+    panel.innerHTML = '';
+    for (const [cat, icons] of Object.entries(window.CATALOGUE)){
+      const t = document.createElement('div');
+      t.className = 'cat-title'; t.textContent = cat;
+      panel.appendChild(t);
+
+      const grid = document.createElement('div');
+      grid.className = 'icons-grid';
+
+      icons.forEach(icon => {
+        const locked = !canUse(icon.sub);
+        const item = document.createElement('div');
+        item.className = 'icon-item' + (locked ? ' locked' : '')
+                       + (icon.id === selectedIcon?.id ? ' selected' : '');
+        item.innerHTML = `
+          <div class="icon-bubble">
+            <img src="${icon.file}" alt="${icon.name}" onerror="this.replaceWith(document.createTextNode('🫧'))">
+            ${locked ? '<div class="lock-overlay">🔒</div>' : ''}
+          </div>
+          <div class="icon-name">${icon.name}</div>
+          ${locked ? `<span class="lock-tag">${window.SUB_LABELS[icon.sub]}</span>` : ''}`;
+
+        if (!locked){
+          item.addEventListener('click', () => {
+            selectedIcon = icon;
+            panel.querySelectorAll('.icon-item').forEach(el => el.classList.remove('selected'));
+            item.classList.add('selected');
+            updatePreview();
+          });
+        }
         grid.appendChild(item);
-      }
-      body.appendChild(grid);
+      });
+      panel.appendChild(grid);
     }
   }
 
-  function buildEffectsPanel(){
-    const body=document.getElementById('panel-effects');
-    body.innerHTML='';
-    const t=document.createElement('div');t.className='cat-title';t.textContent='Effets débloqués via les coffres';body.appendChild(t);
-    const grid=document.createElement('div');grid.className='effects-grid';
+  function buildEffects(){
+    const panel = document.getElementById('panel-effects');
+    panel.innerHTML = '';
 
-    /* Option "Aucun effet" */
-    const noneItem=document.createElement('div');
-    noneItem.className='effect-none-item'+(selectedEffect===null|selectedEffect==='none'?' selected':'');
-    noneItem.innerHTML=`<div class="effect-preview" style="font-size:1.6rem">🚫</div><div class="effect-name" style="color:rgba(255,255,255,.5)">Aucun</div>`;
-    noneItem.addEventListener('click',()=>{
-      selectedEffect='none';
-      updatePreview(selectedIcon,null);
-      grid.querySelectorAll('.effect-item,.effect-none-item').forEach(el=>el.classList.remove('selected'));
-      noneItem.classList.add('selected');
+    const t = document.createElement('div');
+    t.className = 'cat-title';
+    t.textContent = 'Effets débloqués en ouvrant des coffres';
+    panel.appendChild(t);
+
+    const grid = document.createElement('div');
+    grid.className = 'fx-grid';
+
+    /* Option "aucun" */
+    const none = document.createElement('div');
+    none.className = 'fx-item' + (!selectedEffect || selectedEffect === 'none' ? ' selected' : '');
+    none.innerHTML = `<div class="fx-dot" style="background:var(--surface-2)">🚫</div>
+                      <div class="fx-name">Aucun</div>`;
+    none.addEventListener('click', () => {
+      selectedEffect = 'none';
+      grid.querySelectorAll('.fx-item').forEach(el => el.classList.remove('selected'));
+      none.classList.add('selected');
+      if (window.applyTheme) window.applyTheme(null);
     });
-    grid.appendChild(noneItem);
+    grid.appendChild(none);
 
-    /* Effets disponibles */
-    ALL_EFFECTS.forEach(eff=>{
-      const unlocked=unlockedEffects.includes(eff.type);
-      const item=document.createElement('div');
-      item.className='effect-item'+(unlocked?'':' locked')+(selectedEffect===eff.type?' selected':'');
+    window.ALL_EFFECTS.forEach(fx => {
+      const unlocked = unlockedFx.includes(fx.type);
+      const item = document.createElement('div');
+      item.className = 'fx-item' + (unlocked ? '' : ' locked')
+                     + (selectedEffect === fx.type ? ' selected' : '');
+      const soft = fx.color + '22';
+      item.innerHTML = `
+        <div class="fx-dot" style="background:${soft};color:${fx.color}">${fx.emoji}</div>
+        <div class="fx-name" style="color:${unlocked ? fx.color : 'var(--ink-soft)'}">${fx.label}</div>
+        ${unlocked ? '' : '<div class="fx-hint">🎁 Coffre</div>'}`;
 
-      const preview=document.createElement('div');preview.className='effect-preview';
-      const ic=findIcon(activeIconId)||{file:'bully_1.png',name:'Bully'};
-      preview.innerHTML=`<img src="${ic.file}" alt="${ic.name}">`;
-
-      const name=document.createElement('div');name.className='effect-name';
-      name.textContent=eff.label;
-      name.style.color=unlocked?eff.color:'rgba(255,255,255,.3)';
-
-      item.appendChild(preview);item.appendChild(name);
-
-      if(!unlocked){
-        const hint=document.createElement('div');hint.className='effect-lock-hint';hint.textContent='Coffre 🎁';item.appendChild(hint);
-      }else{
-        item.addEventListener('click',()=>{
-          selectedEffect=eff.type;
-          updatePreview(selectedIcon,eff.type);
-          grid.querySelectorAll('.effect-item,.effect-none-item').forEach(el=>el.classList.remove('selected'));
+      if (unlocked){
+        item.addEventListener('click', () => {
+          selectedEffect = fx.type;
+          grid.querySelectorAll('.fx-item').forEach(el => el.classList.remove('selected'));
           item.classList.add('selected');
+          if (window.applyTheme) window.applyTheme(fx.type);   /* aperçu en direct */
         });
       }
       grid.appendChild(item);
     });
-    body.appendChild(grid);
+
+    panel.appendChild(grid);
   }
 
-  function updatePreview(icon,effectType){
-    const pb=document.getElementById('previewBubble');
-    pb.innerHTML=icon?`<img src="${icon.file}" alt="${icon.name}">`:'';
-    document.getElementById('previewName').textContent=icon?icon.name:'Sélectionne une icône';
-    /* Preview de l'effet sur la bulle de prévisualisation */
-    if(window.applyTheme) window.applyTheme(effectType||null);
-  }
+  /* ── Enregistrer icône + effet ── */
+  window._confirmSelection = async function(){
+    if (!currentUser) return;
+    const updates = {};
+    if (selectedIcon) updates.avatarId = selectedIcon.id;
+    if (selectedEffect !== null) updates.activeEffect = selectedEffect === 'none' ? null : selectedEffect;
 
-  /* ── Sauvegarde icône + effet ── */
-  window._confirmSelection=async function(){
-    if(!currentUser) return;
-    const updates={};
-    if(selectedIcon) updates.avatarId=selectedIcon.id;
-    if(selectedEffect!==null){
-      updates.activeEffect = selectedEffect==='none'?null:selectedEffect;
-    }
-    
-    /* Synchronise les effets débloqués avec les cartes obtenues */
-    try{
-      const snap = await getDoc(doc(db,'users',currentUser.uid));
-      if(snap.exists()){
-        const d = snap.data();
-        const gachaCollection = (d.gachaCollection||[]);
-        const cardsObtainedMap = {};
-        gachaCollection.forEach(cardId => cardsObtainedMap[String(cardId)] = true);
-        
-        /* Recalcule les effets débloqués */
-        let syncedEffects = [...unlockedEffects];
-        ALL_EFFECTS.forEach(eff => {
-          if(eff.cardId && cardsObtainedMap[String(eff.cardId)] && !syncedEffects.includes(eff.type)){
-            syncedEffects.push(eff.type);
-          }
-        });
-        
-        /* Sauvegarde la liste mise à jour */
-        if(syncedEffects.length !== unlockedEffects.length || syncedEffects.some((e,i) => e !== unlockedEffects[i])){
-          console.log('🔄 Synchronisation des effets:', syncedEffects);
-          updates.gachaEffects = syncedEffects;
-          unlockedEffects = syncedEffects;
-        }
-      }
-    } catch(e){
-      console.error('Erreur sync effets:', e);
-    }
-    
-    try{
-      await setDoc(doc(db,'users',currentUser.uid),updates,{merge:true});
-      if(selectedIcon){activeIconId=selectedIcon.id;setAvatarUI(selectedIcon.file,selectedIcon.name);}
-      if(selectedEffect!==null){activeEffect=selectedEffect==='none'?null:selectedEffect;}
-      if(window.applyTheme) window.applyTheme(activeEffect);
-      window._closePicker();
-      toast('✅ Profil mis à jour !');
-    }catch(e){toast('❌ '+e.message,true);}
+    /* On enregistre aussi les effets débloqués rétroactivement */
+    updates.gachaEffects = unlockedFx;
+
+    try {
+      await setDoc(doc(db,'users',currentUser.uid), updates, { merge:true });
+      if (selectedIcon){ activeIconId = selectedIcon.id; setAvatarUI(selectedIcon); }
+      if (selectedEffect !== null) activeEffect = selectedEffect === 'none' ? null : selectedEffect;
+      setFxChip(activeEffect);
+      if (window.applyTheme) window.applyTheme(activeEffect);
+      document.getElementById('pickerOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+      toast('✅ Profil mis à jour !', 'ok');
+    } catch(e){ toast('❌ ' + e.message, 'err'); }
   };
 
   /* ── Pseudo ── */
-  window._savePseudo=async function(){
-    const p=document.getElementById('pseudoInput').value.trim();
-    if(!p){toast('⚠️ Entre un pseudo !',true);return;}
-    try{
-      await updateProfile(currentUser,{displayName:p});
-      await setDoc(doc(db,'users',currentUser.uid),{pseudo:p},{merge:true});
-      toast('✅ Pseudo mis à jour !');
-    }catch(e){toast('❌ '+e.message,true);}
+  window._savePseudo = async function(){
+    const p = document.getElementById('pseudoInput').value.trim();
+    if (!p){ toast('⚠️ Entre un pseudo !', 'err'); return; }
+    try {
+      await updateProfile(currentUser, { displayName:p });
+      await setDoc(doc(db,'users',currentUser.uid), { pseudo:p }, { merge:true });
+      document.getElementById('heroName').textContent = p;
+      document.getElementById('navName').textContent  = p;
+      toast('✅ Pseudo mis à jour !', 'ok');
+    } catch(e){ toast('❌ ' + e.message, 'err'); }
   };
 
   /* ── Mot de passe ── */
-  window._savePassword=async function(){
-    const newPwd=document.getElementById('newPwd').value;
-    const confirm=document.getElementById('confirmPwd').value;
-    if(!newPwd||!confirm){toast('⚠️ Remplis les deux champs !',true);return;}
-    if(newPwd!==confirm){toast('❌ Les mots de passe ne correspondent pas !',true);return;}
-    if(newPwd.length<6){toast('❌ Minimum 6 caractères !',true);return;}
-    try{
-      await updatePassword(currentUser,newPwd);
-      document.getElementById('newPwd').value='';
-      document.getElementById('confirmPwd').value='';
-      toast('✅ Mot de passe changé !');
-    }catch(e){
-      if(e.code==='auth/requires-recent-login'){
-        const oldPwd=prompt('Entre ton mot de passe actuel pour confirmer :');
-        if(!oldPwd)return;
-        try{
-          const cred=EmailAuthProvider.credential(currentUser.email,oldPwd);
-          await reauthenticateWithCredential(currentUser,cred);
-          await updatePassword(currentUser,newPwd);
-          document.getElementById('newPwd').value='';
-          document.getElementById('confirmPwd').value='';
-          toast('✅ Mot de passe changé !');
-        }catch(e2){toast('❌ '+e2.message,true);}
-      }else{toast('❌ '+e.message,true);}
+  window._savePassword = async function(){
+    const a = document.getElementById('newPwd').value;
+    const b = document.getElementById('confirmPwd').value;
+    if (!a || !b)      { toast('⚠️ Remplis les deux champs !', 'err'); return; }
+    if (a !== b)       { toast('❌ Les mots de passe ne correspondent pas !', 'err'); return; }
+    if (a.length < 6)  { toast('❌ Minimum 6 caractères !', 'err'); return; }
+
+    const clear = () => {
+      document.getElementById('newPwd').value = '';
+      document.getElementById('confirmPwd').value = '';
+    };
+
+    try {
+      await updatePassword(currentUser, a);
+      clear(); toast('✅ Mot de passe changé !', 'ok');
+    } catch(e){
+      if (e.code === 'auth/requires-recent-login'){
+        const old = prompt('Entre ton mot de passe actuel pour confirmer :');
+        if (!old) return;
+        try {
+          const cred = EmailAuthProvider.credential(currentUser.email, old);
+          await reauthenticateWithCredential(currentUser, cred);
+          await updatePassword(currentUser, a);
+          clear(); toast('✅ Mot de passe changé !', 'ok');
+        } catch(e2){ toast('❌ ' + e2.message, 'err'); }
+      } else toast('❌ ' + e.message, 'err');
     }
   };
 
   /* ── Déconnexion ── */
-  window._handleLogout=async function(){
+  window._handleLogout = async function(){
     await signOut(auth);
-    window.location.href='./login.html';
+    window.location.href = './login.html';
   };
 
-  /* ── Fermer picker ── */
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')window._closePicker&&window._closePicker();});
-  document.getElementById('overlay').addEventListener('click',e=>{
-    if(e.target===document.getElementById('overlay'))window._closePicker&&window._closePicker();
+  /* ── Fermeture du sélecteur ── */
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') window._closePicker(); });
+  document.getElementById('pickerOverlay').addEventListener('click', e => {
+    if (e.target.id === 'pickerOverlay') window._closePicker();
   });
 </script>
+
 </body>
 </html>

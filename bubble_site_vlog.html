@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#EFF4FA">
+<title>Vlog — Bubble Site</title>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="bubble_effects.js"></script>
+<script src="bubble_frames.js"></script>
+<script src="bubble_data.js"></script>
+<script type="module" src="bubble_missions.js"></script>
+<style>
+  /* ── Post mis en avant ── */
+  .featured{
+    display:grid; grid-template-columns:1fr 1fr; gap:0;
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-xl); overflow:hidden;
+    box-shadow:var(--shadow-2); margin-bottom:38px;
+  }
+  .featured-cover{ position:relative; min-height:280px; background:var(--surface-2);
+                   display:flex; align-items:center; justify-content:center; font-size:4rem; }
+  .featured-cover img{ width:100%; height:100%; object-fit:cover; }
+  .featured-body{ padding:28px; display:flex; flex-direction:column; gap:12px; justify-content:center; }
+  .featured-tag{
+    align-self:flex-start; padding:5px 13px; border-radius:999px;
+    background:rgba(255,95,162,.14); color:var(--pink-d);
+    font-size:.75rem; font-weight:800; letter-spacing:.5px;
+  }
+  .featured-title{ font-size:clamp(1.5rem,3vw,2.1rem); font-weight:800; letter-spacing:-.5px; line-height:1.15; }
+  .featured-date{ font-size:.88rem; font-weight:700; color:var(--ink-soft); }
+  .featured-desc{ font-size:.98rem; font-weight:600; color:var(--ink-soft); line-height:1.55; }
+  .featured-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+
+  /* ── Liste des posts ── */
+  .posts{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; }
+  .post{
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow-1);
+    display:flex; flex-direction:column;
+    transition:transform .18s, box-shadow .18s;
+  }
+  .post:hover{ transform:translateY(-4px); box-shadow:var(--shadow-2); }
+  .post-cover{ height:150px; background:var(--surface-2); display:flex; align-items:center;
+               justify-content:center; font-size:2.6rem; position:relative; }
+  .post-cover img{ width:100%; height:100%; object-fit:cover; }
+  .post-lock{ position:absolute; inset:0; background:rgba(255,255,255,.72); backdrop-filter:blur(2px);
+              display:flex; align-items:center; justify-content:center; font-size:1.8rem; }
+  .post-body{ padding:16px 18px 18px; display:flex; flex-direction:column; gap:7px; flex:1; }
+  .post-date{ font-size:.78rem; font-weight:800; color:var(--pink-d); letter-spacing:.3px; }
+  .post-title{ font-size:1.08rem; font-weight:800; line-height:1.25; }
+  .post-desc{ font-size:.9rem; font-weight:600; color:var(--ink-soft); line-height:1.45; flex:1; }
+
+  /* ── Aucun post ── */
+  .empty{
+    background:var(--surface); border:2px dashed var(--line-strong);
+    border-radius:var(--r-xl); padding:52px 26px; text-align:center;
+  }
+  .empty-emoji{ font-size:3.4rem; }
+  .empty h2{ font-size:1.3rem; font-weight:800; margin:12px 0 8px; }
+  .empty p{ font-size:.98rem; font-weight:600; color:var(--ink-soft); line-height:1.6; max-width:460px; margin:0 auto; }
+  .empty code{
+    background:var(--surface-2); border:1px solid var(--line);
+    padding:2px 7px; border-radius:7px; font-size:.9em; font-weight:700;
+  }
+
+  @media(max-width:760px){
+    .featured{ grid-template-columns:1fr; }
+    .featured-cover{ min-height:180px; max-height:200px; }
+    .featured-body{ padding:20px; }
+  }
+</style>
+</head>
+<body data-v2>
+
+<nav>
+  <button class="nav-logo" id="menuToggle" aria-label="Menu">🫧</button>
+  <div class="nav-title">
+    <span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+    <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+    <a href="bubble_site_vlog.html"        class="nav-btn pink active"><span class="ico">🎬</span>Vlog</a>
+  </div>
+  <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
+    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🫧</span></div>
+    <div class="nav-profile-meta">
+      <span class="nav-profile-name" id="navName">Invité</span>
+      <span class="nav-profile-sub"  id="navSub">BASIC</span>
+    </div>
+  </a>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+  <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+  <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_vlog.html"        class="nav-btn pink active"><span class="ico">🎬</span>Vlog</a>
+  <a href="bubble_site_profil.html"      class="nav-btn"><span class="ico">🎭</span>Mon profil</a>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<main>
+  <h1 class="page-title fade-up">🎬 Le Vlog Bubble inc.</h1>
+  <p class="page-subtitle fade-up d1">Les coulisses, les annonces et les Bubble Direct.</p>
+
+  <div id="vlogContent"></div>
+</main>
+
+<footer><span class="footer-logo">BUBBLE INC.</span> · © 2026</footer>
+
+<script>
+/* ── Menu mobile ── */
+const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
+function closeMenu(){ menu.classList.remove('open'); ov.classList.remove('open'); }
+toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
+ov.addEventListener('click',closeMenu);
+window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
+
+let userSub = 'basic';
+
+/* Affiche une date "2026-08-15" → "15 août 2026" */
+const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+function prettyDate(d){
+  if (!d) return '';
+  const [y,m,j] = String(d).split('-');
+  if (!y || !m || !j) return d;
+  return `${parseInt(j,10)} ${MOIS[parseInt(m,10)-1]} ${y}`;
+}
+
+function canSee(post){ return window.SUB_ORDER[userSub] >= window.SUB_ORDER[post.sub || 'basic']; }
+
+function coverOf(post, cls){
+  return post.cover
+    ? `<img src="${post.cover}" alt="${post.title}" onerror="this.replaceWith(document.createTextNode('🎬'))">`
+    : '🎬';
+}
+
+function render(){
+  const box   = document.getElementById('vlogContent');
+  const posts = (window.VLOG || []).slice();
+
+  /* Aucun post encore publié */
+  if (!posts.length){
+    box.innerHTML = `
+      <div class="empty fade-up d2">
+        <div class="empty-emoji">🎬</div>
+        <h2>Le vlog arrive bientôt !</h2>
+        <p>Aucun post pour le moment. Pour en publier un, ouvre <code>bubble_data.js</code>
+           et ajoute une ligne dans <code>window.VLOG</code> — le post apparaîtra ici
+           et sur l'accueil automatiquement.</p>
+      </div>`;
+    return;
+  }
+
+  /* Tri du plus récent au plus ancien */
+  posts.sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
+  const [first, ...rest] = posts;
+  const ok = canSee(first);
+
+  const action = ok
+    ? (first.video
+        ? `<a class="btn btn-red btn-lg" href="${first.video}" target="_blank" rel="noopener">▶ Regarder</a>`
+        : `<span class="btn btn-ghost btn-lg is-locked">⏳ Vidéo bientôt</span>`)
+    : `<a class="btn btn-yellow btn-lg" href="bubble_site_abonnements.html">🔒 Nécessite ${window.SUB_LABELS[first.sub]}</a>`;
+
+  box.innerHTML = `
+    <section class="featured fade-up d2">
+      <div class="featured-cover">${coverOf(first)}</div>
+      <div class="featured-body">
+        <span class="featured-tag">✦ DERNIER POST</span>
+        <div class="featured-title">${first.title}</div>
+        <div class="featured-date">${prettyDate(first.date)}</div>
+        <p class="featured-desc">${first.desc || ''}</p>
+        <div class="featured-actions">${action}</div>
+      </div>
+    </section>
+
+    ${rest.length ? `
+      <h2 class="section-title fade-up d3">📼 Les posts précédents</h2>
+      <div class="posts">
+        ${rest.map(p => {
+          const vu = canSee(p);
+          return `<article class="post fade-up d3">
+            <div class="post-cover">
+              ${coverOf(p)}
+              ${vu ? '' : '<div class="post-lock">🔒</div>'}
+            </div>
+            <div class="post-body">
+              <div class="post-date">${prettyDate(p.date)}</div>
+              <div class="post-title">${p.title}</div>
+              <p class="post-desc">${p.desc || ''}</p>
+              ${vu
+                ? (p.video ? `<a class="btn btn-red btn-sm" href="${p.video}" target="_blank" rel="noopener">▶ Regarder</a>`
+                           : `<span class="btn btn-ghost btn-sm is-locked">⏳ Bientôt</span>`)
+                : `<a class="btn btn-yellow btn-sm" href="bubble_site_abonnements.html">🔒 ${window.SUB_LABELS[p.sub]}</a>`}
+            </div>
+          </article>`;
+        }).join('')}
+      </div>` : ''}
+  `;
+}
+
+render();
+</script>
+
+<script type="module">
+  import { initializeApp }               from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  onAuthStateChanged(auth, async user => {
+    if (!user){ window.location.href = './login.html'; return; }
+    try {
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if (snap.exists()){
+        const d = snap.data();
+        const sub = d.subscription || 'basic';
+        userSub = sub;
+        window.userSub = sub;
+        document.getElementById('navAvatar').innerHTML =
+          `<img src="${(d.avatarId||'bully_1')}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
+        document.getElementById('navName').textContent = user.displayName || user.email.split('@')[0];
+        document.getElementById('navSub').textContent  = window.SUB_LABELS[sub];
+        if (window.applyTheme) window.applyTheme(d.activeEffect || null);
+        window.applyFrame(sub, window.getLevel(d.xp || 0, sub).level);
+      }
+    } catch(e){ console.warn(e); }
+    render();
+  });
+</script>
+
+</body>
+</html>

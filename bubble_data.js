@@ -78,15 +78,174 @@ window.CARD_POOL = [
   { id:11, rarity:"Légendaire", color:"#E0A011", img:"cartes/star_collier.png",  name:"Collier des étoiles", desc:"Ce collier est accompagné d'une forme à 5 pointes...", effect:{ type:"portal", label:"🌀 Portail Cosmique", color:"#E09B00" } },
 ];
 
+/* ══════════════════════════════════════
+   LE VLOG
+   Ajoute un post en haut de la liste : le premier de la liste est
+   automatiquement celui mis en avant sur l'accueil et sur la page Vlog.
+   Champs :
+     id      identifiant unique (sert aux liens)
+     title   titre du post
+     date    "2026-08-15"  (format année-mois-jour, pour le tri et l'affichage)
+     cover   image de couverture (optionnel)
+     desc    petit texte de présentation
+     video   lien YouTube (optionnel) — bouton "Regarder"
+     sub     "basic" | "plus" | "x" | "max"  (qui peut le voir)
+   Exemple :
+     { id:"v1", title:"Bubble Direct #1", date:"2026-08-15", cover:"",
+       desc:"Le premier vlog de Bubble inc. !", video:"", sub:"basic" },
+══════════════════════════════════════ */
+window.VLOG = [
+  /* ← tes posts viennent ici */
+];
+
+/* ── Catalogue des icônes de profil ──
+   sub = abonnement minimum pour débloquer l'icône.
+   Utilisé par la page Profil (le sélecteur) ET la page Abonnements. */
+window.CATALOGUE = {
+  "Classique": [
+    { id:"bully_1",           file:"bully_1.png",           name:"Bully",           sub:"basic" },
+    { id:"anthony_1",         file:"anthony_1.png",         name:"Anthony",         sub:"basic" },
+    { id:"luna_1",            file:"luna_1.png",            name:"Luna",            sub:"basic" },
+    { id:"frosty_1",          file:"frosty_1.png",          name:"Frosty",          sub:"basic" },
+    { id:"zippy_1",           file:"zippy_1.png",           name:"Zippy",           sub:"basic" },
+    { id:"rocky_1",           file:"rocky_1.png",           name:"Rocky",           sub:"basic" },
+  ],
+  "Pixel": [
+    { id:"bully_pixel_1",     file:"bully_pixel_1.png",     name:"Bully Pixel",     sub:"plus" },
+    { id:"plant_pixel_1",     file:"plant_pixel_1.png",     name:"Plante",          sub:"plus" },
+    { id:"rock_pixel_1",      file:"rock_pixel_1.png",      name:"Roche",           sub:"plus" },
+    { id:"star_pixel_1",      file:"star_pixel_1.png",      name:"Étoile",          sub:"plus" },
+    { id:"snowflake_pixel_1", file:"snowflake_pixel_1.png", name:"Flocon",          sub:"plus" },
+    { id:"sun_pixel_1",       file:"sun_pixel_1.png",       name:"Soleil",          sub:"plus" },
+  ],
+  "Rigolo": [
+    { id:"bully_funny_1",     file:"bully_funny_1.png",     name:"Bully Rigolo",    sub:"plus" },
+    { id:"anthony_funny_1",   file:"anthony_funny_1.png",   name:"Anthony Rigolo",  sub:"plus" },
+    { id:"luna_funny_1",      file:"luna_funny_1.png",      name:"Luna Rigolo",     sub:"plus" },
+    { id:"frosty_funny_1",    file:"frosty_funny_1.png",    name:"Frosty Rigolo",   sub:"plus" },
+    { id:"zippy_funny_1",     file:"zippy_funny_1.png",     name:"Zippy Rigolo",    sub:"plus" },
+    { id:"rocky_funny_1",     file:"rocky_funny_1.png",     name:"Rocky Rigolo",    sub:"plus" },
+  ],
+  "Enquête à la fête foraine": [
+    { id:"bully_ff_1",        file:"bully_ff_1.png",        name:"Bully Enquêteur",  sub:"plus" },
+    { id:"bulle_ff_1",        file:"bulle_ff_1.png",        name:"Bulle Enquêteuse", sub:"plus" },
+    { id:"loop_ff_1",         file:"loop_ff_1.png",         name:"Une loupe",        sub:"plus" },
+  ],
+  "Bubble inc. Game IT!": [
+    { id:"bully_game_it_1",   file:"bully_game_it_1.png",   name:"Bully Game IT",   sub:"x" },
+    { id:"anthony_game_it_1", file:"anthony_game_it_1.png", name:"Anthony Game IT", sub:"x" },
+    { id:"luna_game_it_1",    file:"luna_game_it_1.png",    name:"Luna Game IT",    sub:"x" },
+    { id:"frosty_game_it_1",  file:"frosty_game_it_1.png",  name:"Frosty Game IT",  sub:"x" },
+    { id:"zippy_game_it_1",   file:"zippy_game_it_1.png",   name:"Zippy Game IT",   sub:"x" },
+    { id:"rocky_game_it_1",   file:"rocky_game_it_1.png",   name:"Rocky Game IT",   sub:"x" },
+  ],
+};
+
+/* Toutes les icônes à plat + recherche par id */
+window.ALL_ICONS = Object.values(window.CATALOGUE).flat();
+window.findIcon  = id => window.ALL_ICONS.find(i => i.id === id) || null;
+
+/* ── Les effets de fond (doivent correspondre aux types de bubble_effects.js) ──
+   cardId = la carte gacha qui débloque l'effet. */
+window.ALL_EFFECTS = [
+  { type:"bubbles",   label:"Bulles",           emoji:"🫧",  color:"#2BB7F2", cardId:3  },
+  { type:"snow",      label:"Neige",            emoji:"❄️",  color:"#4BA8E8", cardId:4  },
+  { type:"sparkles",  label:"Étincelles",       emoji:"✨",  color:"#E8A700", cardId:5  },
+  { type:"fire",      label:"Flammes",          emoji:"🔥",  color:"#F97316", cardId:6  },
+  { type:"leaves",    label:"Feuilles",         emoji:"🍃",  color:"#3EAE55", cardId:7  },
+  { type:"lightning", label:"Éclairs",          emoji:"⚡",  color:"#8B5CF6", cardId:8  },
+  { type:"aura",      label:"Aura violette",    emoji:"🌀",  color:"#A855F7", cardId:9  },
+  { type:"aurora",    label:"Aurore",           emoji:"🌈",  color:"#0FB5A0", cardId:10 },
+  { type:"portal",    label:"Portail cosmique", emoji:"🪐",  color:"#E09B00", cardId:11 },
+];
+
+/* ══════════════════════════════════════
+   LES JEUX
+   Les jeux sont sur l'autre site (bubble_game). Ici on décrit juste
+   ce qu'il faut pour afficher les missions sur la page Profil.
+     id      identifiant utilisé dans le code du jeu (voir bubble_game_hook.js)
+     mission la mission spéciale du jeu — change le texte et l'XP comme tu veux
+══════════════════════════════════════ */
+window.GAMES = [
+  { id:'bubblecraft', name:'Bubblecraft', emoji:'⛏️',
+    url:'https://bullyinventif.github.io/bubblecraft/',
+    mission:{ id:'bubblecraft_terre', label:'Poser 10 blocs de terre', xp:80 } },
+
+  { id:'fishing_time', name:'Fishing Time', emoji:'🎣',
+    url:'https://bullyinventif.github.io/fishing_time/',
+    mission:{ id:'fishing_10', label:'Attraper 10 poissons', xp:80 } },
+
+  { id:'box_run', name:'Box Run', emoji:'📦',
+    url:'https://bullyinventif.github.io/box_run/',
+    mission:{ id:'boxrun_100', label:'Atteindre 100 de score', xp:80 } },
+
+  { id:'spacecraft_burster', name:'Spacecraft Burster', emoji:'🚀',
+    url:'https://bullyinventif.github.io/spacecraft-burster/',
+    mission:{ id:'spacecraft_20', label:'Détruire 20 vaisseaux', xp:80 } },   /* ← change le texte */
+
+  { id:'block_craft', name:'Block Craft', emoji:'🧱',
+    url:'https://bullyinventif.github.io/block-craft/',
+    mission:{ id:'blockcraft_build', label:'Construire une maison', xp:80 } },  /* ← change le texte */
+];
+
+/* ══════════════════════════════════════
+   LES MISSIONS
+   Change les textes et les XP ici, la page Profil suit automatiquement.
+══════════════════════════════════════ */
+window.MISSIONS = {
+  /* XP gagné pour chaque nouveau scan lu */
+  scanXP: 10,
+  /* XP gagné la première fois qu'on lance un jeu */
+  gameFirstXP: 50,
+
+  general: [
+    { id:'daily_login', label:'Se connecter',  desc:'Reviens sur le site chaque jour',        xp:30,  daily:true },
+    { id:'first_game',  label:'Jouer à un jeu', desc:"Lance n'importe quel Bubble Game",      xp:100 },
+    { id:'first_scan',  label:'Lire un scan',   desc:'Ouvre ton premier scan',                xp:100 },
+  ],
+
+  /* Paliers sur le nombre total de scans lus */
+  scanMilestones: [
+    { id:'scans_10', count:10, label:'Lire 10 scans', xp:100 },
+    { id:'scans_20', count:20, label:'Lire 20 scans', xp:100 },
+    { id:'scans_50', count:50, label:'Lire 50 scans', xp:100 },
+  ],
+
+  gacha: [
+    { id:'collection_t1', label:'Compléter la collection — Tome 1',
+      desc:'Obtenir les 11 cartes du premier tome', xp:100 },
+  ],
+};
+
 /* ── Réglages communs ── */
 window.SUB_ORDER  = { free:0, basic:0, plus:1, x:2, max:3 };
 window.SUB_LABELS = { free:"GRATUIT", basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX" };
 
-/* Progression de lecture (stockée dans le navigateur) */
+/* ── Progression de lecture (stockée dans le navigateur) ──
+   Format : { "gi1": { page: 7, total: 24 }, ... }
+   L'ancien format (un simple numéro de page) est encore lu sans casser. */
 window.getProgress = function(){
   try { return JSON.parse(localStorage.getItem('bubble_progress') || '{}'); }
   catch(e){ return {}; }
 };
 window.setProgress = function(p){
-  localStorage.setItem('bubble_progress', JSON.stringify(p));
+  try { localStorage.setItem('bubble_progress', JSON.stringify(p)); } catch(e){}
+};
+
+/* Lit la progression d'un scan, quel que soit le format enregistré */
+window.progressOf = function(id){
+  const raw = window.getProgress()[id];
+  if (raw == null) return null;
+  if (typeof raw === 'number') return { page: raw, total: 0, pct: Math.min(raw * 5, 100) };
+  const page  = raw.page  || 1;
+  const total = raw.total || 0;
+  return { page, total, pct: total ? Math.round(page / total * 100) : Math.min(page * 5, 100) };
+};
+
+/* Enregistre la page courante d'un scan */
+window.saveProgress = function(id, page, total){
+  if (!id) return;
+  const p = window.getProgress();
+  p[id] = { page: Math.max(1, page|0), total: total|0 };
+  window.setProgress(p);
 };

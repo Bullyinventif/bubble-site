@@ -13,6 +13,7 @@
 <script src="bubble_effects.js"></script>
 <script src="bubble_frames.js"></script>
 <script src="bubble_data.js"></script>
+<script type="module" src="bubble_missions.js"></script>
 <style>
   /* ── EN VEDETTE ── */
   .vedette{
@@ -133,6 +134,7 @@
     <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
     <a href="bubble_site_scans.html"       class="nav-btn green active"><span class="ico">📜</span>Scans</a>
     <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+    <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
     <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🫧</span></div>
@@ -149,6 +151,7 @@
   <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
   <a href="bubble_site_scans.html"       class="nav-btn green active"><span class="ico">📜</span>Scans</a>
   <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
   <a href="bubble_site_profil.html"      class="nav-btn"><span class="ico">🎭</span>Mon profil</a>
 </div>
 <div class="menu-overlay" id="menuOverlay"></div>
@@ -204,7 +207,6 @@ window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
 
 /* ── État ── */
 let userSubLevel = 'basic';
-let progress = window.getProgress();
 
 const canRead = s => window.SUB_ORDER[userSubLevel] >= window.SUB_ORDER[s.sub];
 
@@ -221,7 +223,8 @@ function coverHTML(scan, cls){
 }
 
 function readerURL(scan){
-  return `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
+  return `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}`
+       + `&title=${encodeURIComponent(scan.title)}&id=${encodeURIComponent(scan.id)}`;
 }
 
 /* ── Poster d'un scan ── */
@@ -243,14 +246,15 @@ function makeCard(scan){
 }
 
 /* ── Carte "reprendre" ── */
-function makeResumeCard(scan, page){
+function makeResumeCard(scan, prog){
   const el = document.createElement('button');
   el.className = 'scan-card resume-card';
+  const label = prog.total ? `Page ${prog.page} / ${prog.total}` : `Page ${prog.page}`;
   el.innerHTML = `
     <div class="scan-poster">${coverHTML(scan)}</div>
     <div class="scan-name">${scan.title}</div>
-    <div class="scan-meta">Page ${page}</div>
-    <div class="resume-bar"><i style="width:${Math.min(page*5,100)}%"></i></div>`;
+    <div class="scan-meta">${label}</div>
+    <div class="resume-bar"><i style="width:${prog.pct}%"></i></div>`;
   el.addEventListener('click', () => {
     if (canRead(scan) && scan.pdf) location.href = readerURL(scan);
     else openSheet(scan);
@@ -296,8 +300,9 @@ function closeSheet(){
 function startReading(id){
   const scan = window.ALL_SCANS.find(s => s.id === id);
   if (!scan) return;
-  progress[id] = (progress[id] || 0) + 1;
-  window.setProgress(progress);
+  /* On marque le scan comme "commencé" ; c'est le lecteur qui enregistre
+     ensuite la vraie page au fil de la lecture. */
+  if (!window.progressOf(id)) window.saveProgress(id, 1, 0);
   closeSheet();
   if (scan.pdf) location.href = readerURL(scan);
   else toast('📖 PDF bientôt disponible !');
@@ -315,7 +320,7 @@ function buildVedette(){
     : `<div class="vedette-title">${scan.title}</div>`;
 
   let btn;
-  if (ok && scan.pdf)  btn = `<a class="btn btn-green btn-lg" href="${readerURL(scan)}" onclick="startReading('${scan.id}');return false;">▶ Lecture</a>`;
+  if (ok && scan.pdf)  btn = `<button class="btn btn-green btn-lg" onclick="startReading('${scan.id}')">▶ Lecture</button>`;
   else if (!ok)        btn = `<a class="btn btn-yellow btn-lg" href="bubble_site_abonnements.html">🔒 Nécessite ${window.SUB_LABELS[scan.sub]}</a>`;
   else                 btn = `<span class="btn btn-green btn-lg is-locked">⏳ Bientôt</span>`;
 
@@ -351,10 +356,12 @@ function buildRows(){
 
 function buildResume(){
   const row = document.getElementById('rowResume');
-  const list = window.ALL_SCANS.filter(s => progress[s.id]);
+  const list = window.ALL_SCANS
+    .map(s => ({ scan:s, prog: window.progressOf(s.id) }))
+    .filter(x => x.prog);
   row.innerHTML = '';
   document.getElementById('shelfResume').style.display = list.length ? '' : 'none';
-  list.forEach(s => row.appendChild(makeResumeCard(s, progress[s.id])));
+  list.forEach(({scan, prog}) => row.appendChild(makeResumeCard(scan, prog)));
 }
 
 /* ── Fermeture modale ── */

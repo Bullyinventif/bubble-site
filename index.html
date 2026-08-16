@@ -13,6 +13,7 @@
 <script src="bubble_effects.js"></script>
 <script src="bubble_frames.js"></script>
 <script src="bubble_data.js"></script>
+<script type="module" src="bubble_missions.js"></script>
 <style>
   /* ── HERO ── */
   .hero{ text-align:center; padding:22px 0 40px; }
@@ -62,6 +63,26 @@
   .stat-ico{ font-size:1.3rem; }
   .stat-num{ font-size:1.7rem; font-weight:800; line-height:1.1; margin-top:2px; }
   .stat-lbl{ font-size:.78rem; font-weight:700; color:var(--ink-soft); margin-top:2px; }
+
+  /* ── DERNIER POST VLOG ── */
+  .vlog-strip{
+    display:grid; grid-template-columns:190px 1fr; gap:0;
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow-1);
+    margin-bottom:34px; text-decoration:none; color:inherit;
+    transition:transform .18s, box-shadow .18s;
+  }
+  .vlog-strip:hover{ transform:translateY(-4px); box-shadow:var(--shadow-2); }
+  .vlog-cover{ background:var(--surface-2); min-height:130px; display:flex;
+               align-items:center; justify-content:center; font-size:2.8rem; }
+  .vlog-cover img{ width:100%; height:100%; object-fit:cover; }
+  .vlog-body{ padding:18px 22px; display:flex; flex-direction:column; gap:6px; justify-content:center; }
+  .vlog-tag{ align-self:flex-start; padding:4px 12px; border-radius:999px;
+             background:rgba(255,95,162,.14); color:var(--pink-d); font-size:.72rem; font-weight:800; }
+  .vlog-title{ font-size:1.2rem; font-weight:800; line-height:1.25; }
+  .vlog-date{ font-size:.82rem; font-weight:700; color:var(--ink-soft); }
+  .vlog-desc{ font-size:.9rem; font-weight:600; color:var(--ink-soft); line-height:1.45; }
+  @media(max-width:760px){ .vlog-strip{ grid-template-columns:1fr; } .vlog-cover{ min-height:120px; max-height:140px; } }
 
   /* ── SECTIONS ── */
   .block{ margin-bottom:38px; }
@@ -157,6 +178,7 @@
     <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
     <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
     <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+    <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
   </div>
 
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
@@ -174,6 +196,7 @@
   <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
   <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
   <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
   <a href="bubble_site_profil.html"      class="nav-btn"><span class="ico">🎭</span>Mon profil</a>
 </div>
 <div class="menu-overlay" id="menuOverlay"></div>
@@ -212,6 +235,9 @@
     <div class="stat"><div class="stat-ico">🃏</div><div class="stat-num" id="statCards">0</div><div class="stat-lbl">cartes obtenues</div></div>
     <div class="stat"><div class="stat-ico">✨</div><div class="stat-num" id="statFx">0</div><div class="stat-lbl">effets débloqués</div></div>
   </div>
+
+  <!-- Dernier post du vlog (masqué tant que VLOG est vide) -->
+  <a class="vlog-strip fade-up d1" id="vlogStrip" href="bubble_site_vlog.html" style="display:none"></a>
 
   <!-- Reprendre la lecture -->
   <section class="block fade-up d2" id="blockResume" style="display:none">
@@ -293,22 +319,23 @@
 
   /* ── Reprendre la lecture ── */
   function renderResume(sub){
-    const prog = window.getProgress();
-    const list = window.ALL_SCANS.filter(s => prog[s.id]);
+    const list = window.ALL_SCANS
+      .map(s => ({ scan:s, prog: window.progressOf(s.id) }))
+      .filter(x => x.prog);
     if (!list.length) return;
 
     document.getElementById('blockResume').style.display = '';
-    document.getElementById('resumeRow').innerHTML = list.map(s => {
+    document.getElementById('resumeRow').innerHTML = list.map(({scan:s, prog}) => {
       const cover = s.cover
         ? `<img class="resume-cover" src="${s.cover}" alt="${s.title}" onerror="this.outerHTML='<div class=resume-ph>${s.emoji}</div>'">`
         : `<div class="resume-ph">${s.emoji}</div>`;
-      const pct = Math.min(prog[s.id] * 5, 100);
+      const label = prog.total ? `Page ${prog.page} / ${prog.total}` : `Page ${prog.page}`;
       return `<a class="resume-card" href="${linkFor(s, sub)}">
                 ${cover}
                 <div class="resume-body">
                   <div class="resume-name">${s.title}</div>
-                  <div class="resume-page">Page ${prog[s.id]}</div>
-                  <div class="resume-bar"><i style="width:${pct}%"></i></div>
+                  <div class="resume-page">${label}</div>
+                  <div class="resume-bar"><i style="width:${prog.pct}%"></i></div>
                 </div>
               </a>`;
     }).join('');
@@ -317,11 +344,38 @@
   function linkFor(scan, sub){
     const ok = window.SUB_ORDER[sub || 'basic'] >= window.SUB_ORDER[scan.sub];
     if (ok && scan.pdf)
-      return `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}`;
+      return `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}&id=${encodeURIComponent(scan.id)}`;
     return 'bubble_site_scans.html';
   }
 
+  /* ── Dernier post du vlog ── */
+  const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  function prettyDate(d){
+    const [y,m,j] = String(d||'').split('-');
+    if (!y || !m || !j) return d || '';
+    return `${parseInt(j,10)} ${MOIS[parseInt(m,10)-1]} ${y}`;
+  }
+  function renderVlog(){
+    const posts = (window.VLOG || []).slice()
+      .sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
+    if (!posts.length) return;                 /* pas encore de post : on n'affiche rien */
+    const p = posts[0];
+    const el = document.getElementById('vlogStrip');
+    el.innerHTML = `
+      <div class="vlog-cover">${p.cover
+        ? `<img src="${p.cover}" alt="${p.title}" onerror="this.replaceWith(document.createTextNode('🎬'))">`
+        : '🎬'}</div>
+      <div class="vlog-body">
+        <span class="vlog-tag">🎬 DERNIER POST</span>
+        <div class="vlog-title">${p.title}</div>
+        <div class="vlog-date">${prettyDate(p.date)}</div>
+        <p class="vlog-desc">${p.desc || ''}</p>
+      </div>`;
+    el.style.display = 'grid';
+  }
+
   /* Rendu immédiat de ce qui ne dépend pas du compte */
+  renderVlog();
   renderChars();
   renderCollection([]);
 </script>

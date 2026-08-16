@@ -130,6 +130,7 @@ nav{
 .nav-btn.gray.active   { background: #7E93AC;       box-shadow:0 3px 0 #5E7590; }
 .nav-btn.green.active  { background: var(--green);  box-shadow:0 3px 0 var(--green-d); }
 .nav-btn.purple.active { background: var(--purple); box-shadow:0 3px 0 var(--purple-d); }
+.nav-btn.pink.active   { background: var(--pink);   box-shadow:0 3px 0 var(--pink-d); }
 
 /* Petit point de couleur pour identifier chaque onglet au repos */
 .nav-btn::before{

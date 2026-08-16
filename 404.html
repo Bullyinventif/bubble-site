@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#EFF4FA">
+<title>Page introuvable — Bubble Site</title>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="bubble_effects.js"></script>
+<style>
+  body{ display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+  .box{ position:relative; z-index:1; text-align:center; max-width:520px; }
+
+  .big404{
+    font-size:clamp(5rem,20vw,10rem); font-weight:800; line-height:.9;
+    letter-spacing:-6px; margin-bottom:6px;
+  }
+  .big404 .z{ display:inline-block; animation:float 3s ease-in-out infinite; }
+  .big404 .z:nth-child(1){ color:#1FA8E8; }
+  .big404 .z:nth-child(2){ color:#FF8A3D; animation-delay:.25s; }
+  .big404 .z:nth-child(3){ color:#37C359; animation-delay:.5s; }
+  @keyframes float{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-14px) } }
+
+  .bubble-pop{ font-size:3.4rem; margin-bottom:10px; animation:float 3.4s ease-in-out infinite; }
+
+  h1{ font-size:clamp(1.4rem,4vw,1.9rem); font-weight:800; letter-spacing:-.5px; margin-bottom:10px; }
+  p{ font-size:1rem; font-weight:600; color:var(--ink-soft); line-height:1.6; margin-bottom:26px; }
+  .actions{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+  .links{ margin-top:32px; padding-top:22px; border-top:2px solid var(--line); }
+  .links-label{ font-size:.8rem; font-weight:800; color:var(--ink-soft); letter-spacing:.5px; margin-bottom:12px; }
+  .links-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .links-row a{
+    padding:8px 16px; border-radius:999px;
+    background:var(--surface); border:2px solid var(--line);
+    font-size:.88rem; font-weight:800; color:var(--ink-soft);
+    transition:all .15s;
+  }
+  .links-row a:hover{ border-color:var(--line-strong); color:var(--ink); transform:translateY(-2px); }
+</style>
+</head>
+<body data-v2>
+
+<div class="box fade-up">
+  <div class="bubble-pop">🫧</div>
+  <div class="big404"><span class="z">4</span><span class="z">0</span><span class="z">4</span></div>
+  <h1>Cette bulle a éclaté !</h1>
+  <p>La page que tu cherches n'existe pas, a été renommée, ou n'est pas encore sortie.<br>Pas de panique, tout le reste est là.</p>
+
+  <div class="actions">
+    <a href="index.html" class="btn btn-blue btn-lg">🏠 Retour à l'accueil</a>
+    <a href="bubble_site_scans.html" class="btn btn-ghost btn-lg">📜 Voir les scans</a>
+  </div>
+
+  <div class="links">
+    <div class="links-label">OU ALORS…</div>
+    <div class="links-row">
+      <a href="bubble_site_abonnements.html">✨ Abonnements</a>
+      <a href="https://bullyinventif.github.io/bubble_game/">🎮 Games</a>
+      <a href="bubble_site_gacha.html">🎁 Coffres</a>
+      <a href="bubble_site_vlog.html">🎬 Vlog</a>
+      <a href="bubble_site_profil.html">🎭 Mon profil</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
