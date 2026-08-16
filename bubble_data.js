@@ -189,17 +189,71 @@ window.GAMES = [
 ];
 
 /* ══════════════════════════════════════
+   LES 4 MONNAIES
+   C'est le même compteur d'XP pour tout le monde, mais il change de nom,
+   de symbole et de couleur selon l'abonnement — et surtout, les missions
+   rapportent plus quand tu montes en abonnement (multiplicateur).
+
+   Exemple, la connexion du jour (base 20) :
+     BASIC  ×1    →  +20 bulles
+     BUBBLE+ ×2,5 →  +50 étoiles
+     BUBBLE X ×4  →  +80 cristaux
+     BUBBLE MAX ×6→ +120 orbes
+══════════════════════════════════════ */
+/* img : laisse vide pour utiliser l'emoji. Dès que tu mets un nom de
+   fichier (ex: 'xp_bulle.png'), c'est ton image qui s'affiche partout,
+   sans rien changer d'autre. */
+window.CURRENCY = {
+  basic: { name:'bulles',   one:'bulle',   symbol:'🫧', img:'', mult:1,   grad:['#5BC8FF','#2BB7F2'] },
+  plus:  { name:'étoiles',  one:'étoile',  symbol:'✦',  img:'', mult:2.5, grad:['#FFD84D','#E0A011'] },
+  x:     { name:'cristaux', one:'cristal', symbol:'💎', img:'', mult:4,   grad:['#7DD3FC','#0284C7'] },
+  max:   { name:'orbes',    one:'orbe',    symbol:'🔮', img:'', mult:6,   grad:['#C084FC','#7E22CE'] },
+};
+
+/* Le symbole prêt à afficher : ton image si elle existe, sinon l'emoji */
+window.currencyIcon = function(sub, size){
+  const c = window.currencyOf(sub);
+  const px = size || 16;
+  return c.img
+    ? `<img src="${c.img}" alt="${c.name}" style="width:${px}px;height:${px}px;object-fit:contain;vertical-align:-2px">`
+    : c.symbol;
+};
+
+/* Combien rapporte une mission pour un abonnement donné */
+window.xpFor = function(base, sub){
+  const c = window.CURRENCY[sub] || window.CURRENCY.basic;
+  return Math.round((base || 0) * c.mult);
+};
+
+/* Le nom de la monnaie, prêt à afficher */
+window.currencyOf = sub => window.CURRENCY[sub] || window.CURRENCY.basic;
+
+/* "2450 💎 cristaux" (ou avec ton image quand tu l'auras faite) */
+window.amountLabel = function(n, sub, size){
+  const c = window.currencyOf(sub);
+  return `${n} ${window.currencyIcon(sub, size)} ${Math.abs(n) === 1 ? c.one : c.name}`;
+};
+/* "+80 💎" pour les pastilles de mission */
+window.gainLabel = function(n, sub, size){
+  return `+${n} ${window.currencyIcon(sub, size)}`;
+};
+
+/* ══════════════════════════════════════
    LES MISSIONS
    Change les textes et les XP ici, la page Profil suit automatiquement.
 ══════════════════════════════════════ */
 window.MISSIONS = {
-  /* XP gagné pour chaque nouveau scan lu */
+  /* ⚠️ Toutes les valeurs ci-dessous sont les valeurs BASIC (la base).
+     Les autres abonnements sont calculés automatiquement :
+     Bubble+ ×2,5 · Bubble X ×4 · Bubble MAX ×6 */
+
+  /* Gagné pour chaque nouveau scan lu */
   scanXP: 10,
-  /* XP gagné la première fois qu'on lance un jeu */
+  /* Gagné la première fois qu'on lance un jeu */
   gameFirstXP: 50,
 
   general: [
-    { id:'daily_login', label:'Se connecter',  desc:'Reviens sur le site chaque jour',        xp:30,  daily:true },
+    { id:'daily_login', label:'Se connecter',  desc:'Reviens sur le site chaque jour',        xp:20,  daily:true },
     { id:'first_game',  label:'Jouer à un jeu', desc:"Lance n'importe quel Bubble Game",      xp:100 },
     { id:'first_scan',  label:'Lire un scan',   desc:'Ouvre ton premier scan',                xp:100 },
   ],

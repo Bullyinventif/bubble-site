@@ -435,10 +435,13 @@
       /* Bandeau profil */
       document.getElementById('meStrip').style.display = 'flex';
       document.getElementById('meSub').textContent   = `${window.SUB_LABELS[sub]} · Niveau ${lv.level}/${lv.maxLevel}`;
-      document.getElementById('meXpFill').style.width = lv.progress + '%';
-      document.getElementById('meXpText').textContent = lv.isMax
-        ? `${xp} XP · 🏆 Niveau max atteint !`
-        : `${xp} XP · encore ${lv.xpNeeded} XP pour le niveau ${lv.level + 1}`;
+      const cur  = window.currencyOf(sub);
+      const fill = document.getElementById('meXpFill');
+      fill.style.width      = lv.progress + '%';
+      fill.style.background = `linear-gradient(90deg, ${cur.grad[0]}, ${cur.grad[1]})`;
+      document.getElementById('meXpText').innerHTML = lv.isMax
+        ? `${window.amountLabel(xp, sub, 14)} · 🏆 Niveau max atteint !`
+        : `${window.amountLabel(xp, sub, 14)} · encore ${lv.xpNeeded} ${window.currencyIcon(sub,13)} pour le niveau ${lv.level + 1}`;
 
       /* Stats */
       document.getElementById('statsRow').style.display = 'grid';

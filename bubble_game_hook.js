@@ -73,7 +73,7 @@ function loadCatalogue(){
 }
 
 /* ── Petite bulle "+XP" ── */
-function xpToast(xp, label){
+function xpToast(xp, label, ico){
   let box = document.getElementById('bq-toast');
   if (!box){
     box = document.createElement('div');
@@ -90,7 +90,7 @@ function xpToast(xp, label){
     'font-weight:700;font-size:14px;box-shadow:0 10px 26px rgba(0,0,0,.35);' +
     'opacity:0;transform:translateY(18px);transition:all .35s cubic-bezier(.34,1.56,.64,1)';
   t.innerHTML =
-    `<span style="background:#46CE62;padding:2px 9px;border-radius:99px;font-size:13px">+${xp} XP</span>` +
+    `<span style="background:#46CE62;padding:2px 9px;border-radius:99px;font-size:13px">+${xp} ${ico || ''}</span>` +
     `<span>${label}</span>`;
   box.appendChild(t);
   requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateY(0)'; });
@@ -115,11 +115,14 @@ function xpToast(xp, label){
 
   const game    = (window.GAMES || []).find(g => g.id === GAME_ID);
   const cfg     = window.MISSIONS || {};
-  const firstXP = cfg.gameFirstXP ?? FALLBACK.gameFirstXP;
-  const genXP   = (cfg.general || []).find(m => m.id === 'first_game')?.xp ?? FALLBACK.firstGameXP;
-  const misId   = game?.mission?.id  || (GAME_ID + '_mission');
-  const misXP   = game?.mission?.xp  ?? FALLBACK.missionXP;
-  const misTxt  = game?.mission?.label || 'Mission accomplie !';
+  const baseFirst = cfg.gameFirstXP ?? FALLBACK.gameFirstXP;
+  const baseGen   = (cfg.general || []).find(m => m.id === 'first_game')?.xp ?? FALLBACK.firstGameXP;
+  const misId     = game?.mission?.id  || (GAME_ID + '_mission');
+  const baseMis   = game?.mission?.xp  ?? FALLBACK.missionXP;
+  const misTxt    = game?.mission?.label || 'Mission accomplie !';
+  /* Les gains dépendent de l'abonnement du joueur */
+  const forSub = (base, sub) => window.xpFor ? window.xpFor(base, sub) : base;
+  const iconOf = sub => (window.currencyIcon ? window.currencyIcon(sub, 14) : '');
 
   onAuthStateChanged(auth, async user => {
     if (!user) return;                         /* pas connecté : on ne fait rien */
@@ -131,12 +134,17 @@ function xpToast(xp, label){
 
     const done   = data.missions    || {};
     const played = data.gamesPlayed || [];
+    const sub    = data.subscription || 'basic';
+    const firstXP = forSub(baseFirst, sub);
+    const genXP   = forSub(baseGen,   sub);
+    const misXP   = forSub(baseMis,   sub);
+    const ico     = iconOf(sub);
 
     /* 1. Première partie sur ce jeu */
     if (GAME_ID && !played.includes(GAME_ID)){
       try {
         await setDoc(ref, { gamesPlayed: arrayUnion(GAME_ID), xp: increment(firstXP) }, { merge:true });
-        xpToast(firstXP, `Première partie : ${game ? game.name : GAME_ID}`);
+        xpToast(firstXP, `Première partie : ${game ? game.name : GAME_ID}`, ico);
         played.push(GAME_ID);
       } catch(e){ console.warn('[Bubble]', e.message); }
     }
@@ -145,7 +153,7 @@ function xpToast(xp, label){
     if (!done.first_game){
       try {
         await setDoc(ref, { missions:{ first_game:true }, xp: increment(genXP) }, { merge:true });
-        xpToast(genXP, 'Mission : jouer à un jeu');
+        xpToast(genXP, 'Mission : jouer à un jeu', ico);
         done.first_game = true;
       } catch(e){ console.warn('[Bubble]', e.message); }
     }
@@ -157,7 +165,7 @@ function xpToast(xp, label){
         done[misId] = true;
         try {
           await setDoc(ref, { missions:{ [misId]:true }, xp: increment(misXP) }, { merge:true });
-          xpToast(misXP, misTxt);
+          xpToast(misXP, misTxt, ico);
         } catch(e){ console.warn('[Bubble]', e.message); }
       }
     };

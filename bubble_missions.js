@@ -38,8 +38,15 @@ const db   = getFirestore(app);
 
 /* ── État local ── */
 const state = {
-  uid: null, xp: 0, missions: {}, scansRead: [], gamesPlayed: [], lastLogin: null, loaded: false,
+  uid: null, xp: 0, sub: 'basic',
+  missions: {}, scansRead: [], gamesPlayed: [], lastLogin: null, loaded: false,
 };
+
+/* Combien rapporte une mission pour l'abonnement en cours
+   (base ×1 en BASIC, ×2,5 en +, ×4 en X, ×6 en MAX) */
+function gain(base){
+  return window.xpFor ? window.xpFor(base, state.sub) : (base || 0);
+}
 const listeners = [];      /* changement d'état  */
 const gainers   = [];      /* gain d'XP en direct */
 let resolveReady;
@@ -97,9 +104,10 @@ function xpToast(xp, label){
     document.head.appendChild(st);
   }
 
+  const icon = window.currencyIcon ? window.currencyIcon(state.sub, 15) : '';
   const t = document.createElement('div');
   t.className = 'xp-toast';
-  t.innerHTML = `<span class="amount">+${xp} XP</span><span>${label}</span>`;
+  t.innerHTML = `<span class="amount">+${xp} ${icon}</span><span>${label}</span>`;
   box.appendChild(t);
   setTimeout(() => { t.style.animation = 'xpOut .4s ease forwards'; }, 3200);
   setTimeout(() => t.remove(), 3700);
@@ -132,7 +140,7 @@ async function dailyLogin(){
   if (state.lastLogin === d) return false;
   state.lastLogin = d;
   const m = (window.MISSIONS?.general || []).find(x => x.id === 'daily_login');
-  return push({ lastLogin: d }, m?.xp ?? 30, 'Connexion du jour 🫧');
+  return push({ lastLogin: d }, gain(m?.xp ?? 20), 'Connexion du jour');
 }
 
 /* ══ Un scan a été ouvert ══ */
@@ -143,17 +151,16 @@ async function scanRead(scanId){
   const first = !state.scansRead.includes(scanId);
   if (first){
     state.scansRead.push(scanId);
-    const xp = window.MISSIONS?.scanXP ?? 10;
-    await push({ scansRead: arrayUnion(scanId) }, xp, 'Nouveau scan lu 📜');
+    await push({ scansRead: arrayUnion(scanId) }, gain(window.MISSIONS?.scanXP ?? 10), 'Nouveau scan lu');
   }
 
   /* Mission générale : lire son tout premier scan */
   const g = (window.MISSIONS?.general || []).find(x => x.id === 'first_scan');
-  if (g) await complete(g.id, g.xp, g.label);
+  if (g) await complete(g.id, gain(g.xp), g.label);
 
   /* Paliers : 10, 20, 50 scans lus */
   for (const p of (window.MISSIONS?.scanMilestones || [])){
-    if (state.scansRead.length >= p.count) await complete(p.id, p.xp, p.label);
+    if (state.scansRead.length >= p.count) await complete(p.id, gain(p.xp), p.label);
   }
 }
 
@@ -165,14 +172,13 @@ async function gamePlayed(gameId){
   if (!state.gamesPlayed.includes(gameId)){
     state.gamesPlayed.push(gameId);
     const game = (window.GAMES || []).find(g => g.id === gameId);
-    const xp   = window.MISSIONS?.gameFirstXP ?? 50;
-    await push({ gamesPlayed: arrayUnion(gameId) }, xp,
-               `Premier essai : ${game ? game.name : gameId} 🎮`);
+    await push({ gamesPlayed: arrayUnion(gameId) }, gain(window.MISSIONS?.gameFirstXP ?? 50),
+               `Premier essai : ${game ? game.name : gameId}`);
   }
 
   /* Mission générale : jouer à un jeu pour la première fois */
   const g = (window.MISSIONS?.general || []).find(x => x.id === 'first_game');
-  if (g) await complete(g.id, g.xp, g.label);
+  if (g) await complete(g.id, gain(g.xp), g.label);
 }
 
 /* ══ Collection complète ══ */
@@ -182,7 +188,7 @@ async function checkCollection(owned){
   const total = window.CARD_POOL.length;
   if (!total || (owned || []).length < total) return;
   const m = (window.MISSIONS?.gacha || [])[0];
-  if (m) await complete(m.id, m.xp, m.label);
+  if (m) await complete(m.id, gain(m.xp), m.label);
 }
 
 /* ══ Chargement au démarrage ══ */
@@ -191,6 +197,7 @@ let previous = null;   /* photo de l'état précédent, pour repérer les nouvea
 function absorb(d){
   const before = previous;
   state.xp          = d.xp || 0;
+  state.sub         = d.subscription || 'basic';
   state.missions    = d.missions    || {};
   state.scansRead   = d.scansRead   || [];
   state.gamesPlayed = d.gamesPlayed || [];
@@ -247,7 +254,7 @@ onAuthStateChanged(auth, async user => {
 });
 
 window.BubbleMissions = {
-  ready, state,
+  ready, state, gain,
   complete, scanRead, gamePlayed, checkCollection, dailyLogin,
   onChange(fn){ listeners.push(fn); if (state.loaded) fn(state); },
   /* Prévenu à chaque gain d'XP : { xp, missions:[ids], label } */

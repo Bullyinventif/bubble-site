@@ -332,6 +332,7 @@
         <div class="hero-mail" id="heroMail">—</div>
         <div class="hero-chips">
           <span class="sub-chip basic" id="subChip">BASIC</span>
+          <span class="chip" id="curChip">🫧 Tes bulles</span>
           <span class="chip" id="fxChip">✨ Aucun effet</span>
         </div>
       </div>
@@ -420,7 +421,7 @@
       <div class="mis-xp">
         <div class="mis-xp-line">
           <span>Niveau <b id="misLevel">1</b></span>
-          <span><b id="misXpNum">0</b> XP</span>
+          <span><b id="misXpNum">0</b></span>
         </div>
         <div class="xp-track" id="misXpTrack"><div class="xp-fill" id="misXpFill"></div></div>
       </div>
@@ -500,6 +501,12 @@
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
 
+  /* La pastille d'une mission : le montant dépend de ton abonnement */
+  function xpBadge(base){
+    const sub = window.__userSub || 'basic';
+    return window.gainLabel(window.xpFor(base, sub), sub, 14);
+  }
+
   function misRow({ id, done, label, desc, badge, daily, progress }){
     return `
       <div class="mis${done ? ' done' : ''}${daily ? ' mis-daily' : ''}" data-mission="${id || ''}">
@@ -527,7 +534,7 @@
       const ok = m.daily ? (st.lastLogin === today) : !!done[m.id];
       add(ok, m.xp);
       return misRow({ id:m.id, done:ok, label:m.label, desc:m.desc, daily:m.daily,
-                      badge: (m.daily && ok) ? '✓ aujourd’hui' : '+' + m.xp + ' XP' });
+                      badge: (m.daily && ok) ? '✓ aujourd’hui' : xpBadge(m.xp) });
     }).join('');
     const genDone = gen.filter(m => m.daily ? st.lastLogin === today : done[m.id]).length;
 
@@ -538,12 +545,12 @@
       const played = play.includes(g.id);
       add(played, firstXP);
       let html = misRow({ id:'play_'+g.id, done:played,
-                          label:`${g.emoji} ${g.name} — première partie`, badge:'+' + firstXP + ' XP' });
+                          label:`${g.emoji} ${g.name} — première partie`, badge:xpBadge(firstXP) });
       if (g.mission){
         const ok = !!done[g.mission.id];
         add(ok, g.mission.xp);
         html += misRow({ id:g.mission.id, done:ok, label:g.mission.label,
-                         desc:g.name, badge:'+' + g.mission.xp + ' XP' });
+                         desc:g.name, badge:xpBadge(g.mission.xp) });
       }
       return html;
     }).join('') : '<div class="mis-empty">Aucun jeu configuré.</div>';
@@ -563,7 +570,7 @@
         <div class="mis-check">✓</div>
         <div class="mis-txt">
           <div class="mis-label">Lire un scan</div>
-          <div class="mis-desc">+${scanXP} XP par scan, une seule fois par scan</div>
+          <div class="mis-desc">${xpBadge(scanXP)} par scan, une seule fois par scan</div>
           <div class="mis-chips">${chips || '<span class="mis-empty">Aucun scan au catalogue.</span>'}</div>
         </div>
         <span class="mis-badge">${read.length}/${scans.length}</span>
@@ -572,7 +579,7 @@
       const ok = !!done[p.id];
       add(ok, p.xp);
       return misRow({ id:p.id, done:ok, label:p.label, desc:`${read.length} / ${p.count} scans lus`,
-                      badge:'+' + p.xp + ' XP', progress:Math.min(read.length / p.count * 100, 100) });
+                      badge:xpBadge(p.xp), progress:Math.min(read.length / p.count * 100, 100) });
     }).join('');
 
     /* GACHA */
@@ -582,7 +589,7 @@
       const ok = !!done[m.id];
       add(ok, m.xp);
       return misRow({ id:m.id, done:ok, label:m.label, desc:`${owned} / ${total} cartes obtenues`,
-                      badge:'+' + m.xp + ' XP', progress: total ? Math.min(owned / total * 100, 100) : 0 });
+                      badge:xpBadge(m.xp), progress: total ? Math.min(owned / total * 100, 100) : 0 });
     }).join('');
 
     return {
@@ -601,10 +608,12 @@
     lastState = st;
     const { earned, sections } = buildSections(st);
 
-    /* Carte résumé sur la page */
-    const totalMissions = sections.reduce((n,s) => n + (s.rows.match(/class="mis[ "]/g) || []).length, 0);
-    document.getElementById('misSummary').textContent = `${earned} XP gagnés grâce aux missions`;
-    document.getElementById('misTotal').textContent   = `${earned} XP gagnés`;
+    /* Carte résumé sur la page (dans la monnaie de ton abonnement) */
+    const sub0 = window.__userSub || 'basic';
+    const earnedCur = window.xpFor(earned, sub0);
+    document.getElementById('misSummary').innerHTML =
+      `${window.amountLabel(earnedCur, sub0, 15)} gagné(e)s grâce aux missions`;
+    document.getElementById('misTotal').innerHTML = window.amountLabel(earnedCur, sub0, 14);
 
     /* Onglets */
     document.getElementById('misTabs').innerHTML = CATS.map(c =>
@@ -627,9 +636,12 @@
     /* Niveau + barre d'XP du pop-up */
     const sub = window.__userSub || 'basic';
     const lv = window.getLevel(st.xp || 0, sub);
+    const cur2 = window.currencyOf(sub);
     document.getElementById('misLevel').textContent = lv.level;
-    document.getElementById('misXpNum').textContent = st.xp || 0;
-    document.getElementById('misXpFill').style.width = lv.progress + '%';
+    document.getElementById('misXpNum').innerHTML   = `${st.xp || 0} ${window.currencyIcon(sub,14)}`;
+    const mf = document.getElementById('misXpFill');
+    mf.style.width      = lv.progress + '%';
+    mf.style.background = `linear-gradient(90deg, ${cur2.grad[0]}, ${cur2.grad[1]})`;
 
     /* Barre d'XP de la page */
     if (window._renderLevelUI) window._renderLevelUI(st.xp || 0, sub);
@@ -819,6 +831,9 @@
     const label = window.SUB_LABELS[sub] || 'BASIC';
     document.getElementById('subChip').textContent = label;
     document.getElementById('subChip').className   = 'sub-chip ' + sub;
+    const cur = window.currencyOf(sub);
+    const cc  = document.getElementById('curChip');
+    if (cc) cc.innerHTML = `${window.currencyIcon(sub,15)} Tes ${cur.name}`;
     document.getElementById('navSub').textContent  = label;
     document.getElementById('subDesc').textContent = SUB_DESCS[sub] || SUB_DESCS.basic;
   }
@@ -833,11 +848,14 @@
     const cfg = lv.cfg;
     document.getElementById('levelNum').innerHTML = `${lv.level} <small>/ ${lv.maxLevel}</small>`;
     document.getElementById('levelSymbols').innerHTML = window.renderLevelBadges(lv.level, sub);
-    document.getElementById('xpFill').style.width  = lv.progress + '%';
-    document.getElementById('xpCurrent').textContent = xp + ' XP';
-    document.getElementById('xpNext').textContent  = lv.isMax
+    const cur  = window.currencyOf(sub);
+    const fill = document.getElementById('xpFill');
+    fill.style.width      = lv.progress + '%';
+    fill.style.background = `linear-gradient(90deg, ${cur.grad[0]}, ${cur.grad[1]})`;
+    document.getElementById('xpCurrent').innerHTML = window.amountLabel(xp, sub, 15);
+    document.getElementById('xpNext').innerHTML  = lv.isMax
       ? 'Palier maximum atteint'
-      : `encore ${lv.xpNeeded} XP pour le niveau ${lv.level + 1}`;
+      : `encore ${lv.xpNeeded} ${window.currencyIcon(sub,14)} pour le niveau ${lv.level + 1}`;
     document.getElementById('levelMax').style.display = lv.isMax ? 'inline-block' : 'none';
     window.applyFrame(sub, lv.level);
   }
