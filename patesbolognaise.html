@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#EFF4FA">
+<meta name="robots" content="noindex, nofollow">
+<title>Bubble Site</title>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="bubble_frames.js"></script>
+<script src="bubble_data.js"></script>
+<style>
+  main{ max-width:1080px; }
+  /* Barre du haut : 3 raccourcis seulement, on ne les étire pas */
+  nav .nav-links{ flex:0 1 auto; }
+  nav .nav-btn{ flex:0 0 auto; padding:0 20px; }
+  nav .nav-title{ display:flex; flex:0 0 auto; margin-right:auto; }
+
+  /* ── Écran d'attente / refus ── */
+  #gate{
+    position:fixed; inset:0; z-index:9999; background:var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px; text-align:center; padding:30px;
+  }
+  #gate .g-emoji{ font-size:3.4rem; }
+  #gate h1{ font-size:1.6rem; font-weight:800; }
+  #gate p{ font-size:.95rem; font-weight:600; color:var(--ink-soft); max-width:420px; }
+  .spin{ width:38px; height:38px; border-radius:50%; border:4px solid var(--line);
+         border-top-color:var(--accent); animation:sp .8s linear infinite; }
+  @keyframes sp{ to{ transform:rotate(360deg); } }
+
+  /* ── Bandeau admin ── */
+  .adm-top{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    background:linear-gradient(135deg,#FF7BB8,#B02F6B); color:#fff;
+    border-radius:var(--r-lg); padding:20px 24px; margin-bottom:18px;
+    box-shadow:var(--shadow-2);
+  }
+  .adm-top .me-avatar{
+    width:56px; height:56px; border-radius:50%; flex-shrink:0; position:relative;
+    background:rgba(255,255,255,.25); border:3px solid rgba(255,255,255,.6);
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem; overflow:visible;
+  }
+  .adm-top .me-avatar img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .adm-top-id{ flex:1; min-width:160px; }
+  .adm-top-id b{ display:block; font-size:1.25rem; font-weight:800; }
+  .adm-top-id span{ font-size:.85rem; font-weight:700; opacity:.85; }
+  .adm-badge{
+    padding:7px 15px; border-radius:999px; background:rgba(255,255,255,.22);
+    border:2px solid rgba(255,255,255,.45); font-size:.8rem; font-weight:800; letter-spacing:.5px;
+  }
+
+  /* ── Onglets ── */
+  .adm-tabs{ display:flex; gap:9px; margin-bottom:18px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
+  .adm-tabs::-webkit-scrollbar{ display:none; }
+  .adm-tab{
+    flex-shrink:0; padding:11px 20px; border-radius:999px;
+    border:2px solid var(--line); background:var(--surface);
+    font-family:'Baloo 2',sans-serif; font-size:.95rem; font-weight:800;
+    color:var(--ink-soft); cursor:pointer; transition:all .18s; white-space:nowrap;
+  }
+  .adm-tab:hover{ border-color:var(--line-strong); color:var(--ink); }
+  .adm-tab.active{ background:var(--pink); border-color:var(--pink); color:#fff; box-shadow:0 3px 0 var(--pink-d); }
+  .panel{ display:none; }
+  .panel.on{ display:block; animation:fadeUp .35s ease both; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:none;} }
+
+  /* ── Coup d'œil ── */
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px; }
+  @media(max-width:720px){ .stats{ grid-template-columns:repeat(2,1fr); } }
+  .stat{
+    background:var(--surface); border:2px solid var(--line); border-radius:var(--r-md);
+    padding:18px 20px; box-shadow:var(--shadow-1);
+  }
+  .stat .n{ font-size:1.9rem; font-weight:800; line-height:1.1; }
+  .stat .l{ font-size:.85rem; font-weight:700; color:var(--ink-soft); margin-top:2px; }
+  .split{ display:flex; height:20px; border-radius:999px; overflow:hidden; border:2px solid var(--line); background:var(--surface-2); }
+  .split i{ display:block; height:100%; }
+  .split-legend{ display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; font-size:.85rem; font-weight:700; }
+  .split-legend span{ display:flex; align-items:center; gap:6px; color:var(--ink-soft); }
+  .dot{ width:11px; height:11px; border-radius:50%; }
+
+  .rank{ display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--line); }
+  .rank:last-child{ border-bottom:none; }
+  .rank .pos{ width:26px; font-weight:800; color:var(--ink-soft); text-align:center; flex-shrink:0; }
+  .rank .nm{ flex:1; min-width:0; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rank .vl{ font-weight:800; color:var(--green-d); white-space:nowrap; }
+
+  /* ── Joueurs ── */
+  .adm-grid{ display:grid; grid-template-columns:300px 1fr; gap:18px; align-items:start; }
+  @media(max-width:900px){ .adm-grid{ grid-template-columns:1fr; } }
+  .u-list{ background:var(--surface); border:2px solid var(--line); border-radius:var(--r-lg);
+           box-shadow:var(--shadow-1); overflow:hidden; }
+  .u-search{ padding:14px; border-bottom:2px solid var(--line); }
+  .u-search input{
+    width:100%; padding:11px 14px; border:2px solid var(--line); border-radius:var(--r-sm);
+    font-family:'Baloo 2',sans-serif; font-size:.95rem; font-weight:600; color:var(--ink);
+    background:var(--surface-2); outline:none;
+  }
+  .u-search input:focus{ border-color:var(--accent); background:var(--surface); }
+  .u-scroll{ max-height:62vh; overflow-y:auto; }
+  .u-row{
+    display:flex; align-items:center; gap:11px; padding:11px 14px; cursor:pointer;
+    border-bottom:1px solid var(--line); transition:background .15s;
+  }
+  .u-row:hover{ background:var(--surface-2); }
+  .u-row.sel{ background:var(--accent-soft); }
+  .u-av{ width:36px; height:36px; border-radius:50%; flex-shrink:0; background:var(--surface-2);
+         border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:.95rem; overflow:hidden; }
+  .u-av img{ width:100%; height:100%; object-fit:cover; }
+  .u-meta{ flex:1; min-width:0; }
+  .u-meta b{ display:block; font-size:.95rem; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .u-meta span{ font-size:.78rem; font-weight:700; color:var(--ink-soft); }
+  .u-tag{ font-size:.68rem; font-weight:800; padding:3px 8px; border-radius:999px; flex-shrink:0;
+          background:var(--surface-2); border:1px solid var(--line); color:var(--ink-soft); }
+
+  .u-detail{ background:var(--surface); border:2px solid var(--line); border-radius:var(--r-lg);
+             box-shadow:var(--shadow-1); padding:22px 24px; }
+  .blk{ padding:18px 0; border-top:2px solid var(--line); }
+  .blk:first-of-type{ border-top:none; padding-top:6px; }
+  .blk h3{ font-size:1.02rem; font-weight:800; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .blk h3 small{ margin-left:auto; font-size:.78rem; font-weight:700; color:var(--ink-soft); }
+
+  .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .inp, select.inp{
+    padding:10px 13px; border:2px solid var(--line); border-radius:var(--r-sm);
+    font-family:'Baloo 2',sans-serif; font-size:.95rem; font-weight:700; color:var(--ink);
+    background:var(--surface-2); outline:none; min-width:0;
+  }
+  .inp:focus{ border-color:var(--accent); background:var(--surface); }
+  .inp.num{ width:104px; text-align:center; }
+  .lbl{ font-size:.8rem; font-weight:800; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; }
+
+  /* Grilles de cases à cocher */
+  .picks{ display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:8px; }
+  .pick{
+    display:flex; align-items:center; gap:9px; padding:9px 11px; cursor:pointer;
+    border:2px solid var(--line); border-radius:var(--r-sm); background:var(--surface-2);
+    font-size:.86rem; font-weight:700; transition:all .15s; user-select:none;
+  }
+  .pick:hover{ border-color:var(--line-strong); }
+  .pick.on{ background:rgba(70,206,98,.12); border-color:var(--green); color:var(--green-d); }
+  .pick .bx{
+    width:19px; height:19px; border-radius:6px; flex-shrink:0;
+    border:2px solid var(--line-strong); background:var(--surface);
+    display:flex; align-items:center; justify-content:center; font-size:.7rem; color:transparent;
+  }
+  .pick.on .bx{ background:var(--green); border-color:var(--green); color:#fff; }
+  .pick img{ width:22px; height:22px; border-radius:6px; object-fit:cover; flex-shrink:0; }
+  .pick .nm{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .mini{ display:flex; gap:6px; flex-wrap:wrap; }
+  .mini b{ font-size:.78rem; font-weight:800; padding:4px 10px; border-radius:999px;
+           background:var(--surface-2); border:1px solid var(--line); color:var(--ink-soft); }
+
+  .save-bar{
+    position:sticky; bottom:0; z-index:5; margin:0 -24px -22px; padding:16px 24px;
+    background:var(--surface); border-top:2px solid var(--line);
+    box-shadow:0 -8px 20px rgba(22,40,63,.06);
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  }
+  .save-msg{ font-size:.88rem; font-weight:800; }
+  .save-msg.ok{ color:var(--green-d); }
+  .save-msg.ko{ color:var(--red-d); }
+
+  /* ── Vlog ── */
+  .vl-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start; }
+  @media(max-width:900px){ .vl-grid{ grid-template-columns:1fr; } }
+  .vl-post{
+    display:flex; gap:12px; padding:12px; border:2px solid var(--line); border-radius:var(--r-md);
+    background:var(--surface-2); margin-bottom:10px; align-items:center;
+  }
+  .vl-post.sel{ border-color:var(--pink); background:rgba(255,95,162,.08); }
+  .vl-cover{ width:64px; height:48px; border-radius:10px; background:var(--surface); flex-shrink:0;
+             border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:1.2rem; overflow:hidden; }
+  .vl-cover img{ width:100%; height:100%; object-fit:cover; }
+  .vl-info{ flex:1; min-width:0; }
+  .vl-info b{ display:block; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .vl-info span{ font-size:.8rem; font-weight:700; color:var(--ink-soft); }
+  .vl-draft{ font-size:.68rem; font-weight:800; padding:3px 8px; border-radius:999px;
+             background:rgba(255,197,61,.2); color:#9C6D00; }
+
+  .imgrow{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+  .imgrow .inp{ flex:1; }
+  .imgprev{ width:44px; height:34px; border-radius:8px; background:var(--surface-2); flex-shrink:0;
+            border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:.85rem; overflow:hidden; }
+  .imgprev img{ width:100%; height:100%; object-fit:cover; }
+  .xbtn{ width:32px; height:32px; border-radius:9px; flex-shrink:0; cursor:pointer;
+         border:2px solid var(--line); background:var(--surface); font-weight:800; color:var(--ink-soft); }
+  .xbtn:hover{ border-color:var(--red); color:var(--red-d); }
+  .hint{ font-size:.84rem; font-weight:600; color:var(--ink-soft); line-height:1.5; }
+  .hint code{ background:var(--surface-2); border:1px solid var(--line); border-radius:6px; padding:1px 6px; font-size:.82em; }
+  textarea.inp{ width:100%; min-height:120px; resize:vertical; line-height:1.55; font-weight:600; }
+</style>
+</head>
+<body data-v2>
+
+<!-- ══ Écran d'accès ══ -->
+<div id="gate">
+  <div class="spin"></div>
+  <p>Un instant…</p>
+</div>
+
+<!-- ══ Le panneau (caché tant qu'on n'est pas admin) ══ -->
+<div id="shell" style="display:none">
+
+<nav>
+  <a href="index.html" class="nav-title">BUBBLE INC.</a>
+  <div class="nav-links">
+    <a href="index.html"              class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+    <a href="bubble_site_vlog.html"   class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
+    <a href="bubble_site_profil.html" class="nav-btn"><span class="ico">🎭</span>Mon profil</a>
+  </div>
+</nav>
+
+<main>
+  <div class="adm-top">
+    <div class="me-avatar" id="admAvatar">🛠️</div>
+    <div class="adm-top-id">
+      <b id="admName">Admin</b>
+      <span id="admMail"></span>
+    </div>
+    <span class="adm-badge">🛠️ PANNEAU ADMIN</span>
+  </div>
+
+  <div class="adm-tabs">
+    <button class="adm-tab active" data-p="apercu">👀 Coup d'œil</button>
+    <button class="adm-tab" data-p="joueurs">🎮 Joueurs</button>
+    <button class="adm-tab" data-p="vlog">🎬 Vlog</button>
+  </div>
+
+  <!-- ══ COUP D'ŒIL ══ -->
+  <section class="panel on" id="p-apercu">
+    <div class="stats" id="statBoxes"></div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head"><span class="ico">✨</span><h2>Répartition des abonnements</h2></div>
+      <div class="split" id="subSplit"></div>
+      <div class="split-legend" id="subLegend"></div>
+    </div>
+
+    <div class="vl-grid">
+      <div class="card">
+        <div class="card-head"><span class="ico">🏆</span><h2>Top 10 des joueurs</h2></div>
+        <div id="topList"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="ico">🆕</span><h2>Derniers comptes créés</h2></div>
+        <div id="newList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ JOUEURS ══ -->
+  <section class="panel" id="p-joueurs">
+    <div class="adm-grid">
+      <div class="u-list">
+        <div class="u-search"><input id="uSearch" placeholder="🔍 Chercher un joueur…"></div>
+        <div class="u-scroll" id="uList"></div>
+      </div>
+      <div class="u-detail" id="uDetail">
+        <p class="hint">👈 Choisis un joueur dans la liste pour modifier son niveau,
+           son abonnement, ses déblocages, ses cartes et ses missions.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ VLOG ══ -->
+  <section class="panel" id="p-vlog">
+    <div class="vl-grid">
+      <div class="card">
+        <div class="card-head"><span class="ico">📼</span><h2>Les posts</h2></div>
+        <button class="btn btn-green btn-sm btn-block" id="vNew" style="margin-bottom:14px">➕ Nouveau post</button>
+        <div id="vList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="ico">✍️</span><h2 id="vEditTitle">Créer un post</h2></div>
+
+        <div class="field"><label>Titre</label>
+          <input class="inp" id="vTitle" style="width:100%" placeholder="Bubble Direct #1"></div>
+
+        <div class="row" style="margin-bottom:16px">
+          <div style="flex:1;min-width:150px">
+            <label class="lbl">Date</label><br>
+            <input class="inp" type="date" id="vDate" style="width:100%">
+          </div>
+          <div style="flex:1;min-width:150px">
+            <label class="lbl">Visible par</label><br>
+            <select class="inp" id="vSub" style="width:100%"></select>
+          </div>
+        </div>
+
+        <div class="field"><label>Texte principal</label>
+          <textarea class="inp" id="vDesc" placeholder="Raconte ce qu'il se passe chez Bubble inc. !"></textarea></div>
+
+        <div class="field"><label>Lien vidéo (facultatif)</label>
+          <input class="inp" id="vVideo" style="width:100%" placeholder="https://youtu.be/…"></div>
+
+        <div class="blk">
+          <h3>🖼️ Images <small>fichiers du dossier <code>vlog/</code></small></h3>
+          <p class="hint" style="margin-bottom:10px">
+            Mets tes images dans le dossier <code>vlog/</code> du site, puis écris juste
+            le nom du fichier ici (ex. <code>direct1.png</code>). La première image sert de couverture.
+          </p>
+          <div id="vImgs"></div>
+          <button class="btn btn-ghost btn-sm" id="vAddImg">➕ Ajouter une image</button>
+        </div>
+
+        <div class="row" style="margin-top:18px">
+          <label class="pick" id="vPub"><span class="bx">✓</span><span class="nm">Publié</span></label>
+          <span class="hint" style="flex:1">Décoché = brouillon, invisible sur le site.</span>
+        </div>
+
+        <div class="save-bar">
+          <button class="btn btn-green" id="vSave">💾 Enregistrer</button>
+          <button class="btn btn-red btn-sm" id="vDel" style="display:none">🗑️ Supprimer</button>
+          <span class="save-msg" id="vMsg"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><span class="footer-logo">BUBBLE INC.</span> · panneau d'administration</footer>
+</div>
+
+<script type="module">
+import { initializeApp }               from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs }
+       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+  authDomain:"bubble-game-fa894.firebaseapp.com",
+  projectId:"bubble-game-fa894",
+  storageBucket:"bubble-game-fa894.firebasestorage.app",
+  messagingSenderId:"60256418096",
+  appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const $  = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+let ME = null, USERS = [], POSTS = [], sel = null, editId = null;
+
+/* ══════════════════════════════════════
+   1. LE VERROU — abonnement "admin" dans Firestore
+   ══════════════════════════════════════ */
+function deny(){
+  $('#gate').innerHTML = `
+    <div class="g-emoji">🫧</div>
+    <h1>Page introuvable</h1>
+    <p>Cette page n'existe pas… ou elle ne t'est pas destinée.</p>
+    <a class="btn btn-blue" href="index.html">🏠 Retour à l'accueil</a>`;
+}
+
+onAuthStateChanged(auth, async user => {
+  if (!user){ location.replace('./login.html'); return; }
+  let d = {};
+  try { const s = await getDoc(doc(db,'users',user.uid)); if (s.exists()) d = s.data(); }
+  catch(e){ console.warn(e); }
+
+  if ((d.subscription || 'basic') !== 'admin'){ deny(); return; }
+
+  ME = { uid:user.uid, email:user.email, ...d };
+  $('#gate').remove();
+  $('#shell').style.display = '';
+  $('#admName').textContent = d.pseudo || user.displayName || user.email.split('@')[0];
+  $('#admMail').textContent = user.email;
+  const ic = window.findIcon(d.avatarId || 'bully_1');
+  if (ic) $('#admAvatar').innerHTML =
+    `<img src="${esc(ic.file)}" alt="" onerror="this.replaceWith(document.createTextNode('🛠️'))">`;
+  window.applyFrame('admin', window.getLevel(d.xp || 0, 'admin').level, d.frameId || null);
+
+  boot();
+});
+
+/* ══ Onglets ══ */
+document.querySelectorAll('.adm-tab').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.adm-tab').forEach(x => x.classList.toggle('active', x === b));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('on', p.id === 'p-' + b.dataset.p));
+}));
+
+/* ══════════════════════════════════════
+   2. CHARGEMENT
+   ══════════════════════════════════════ */
+async function boot(){
+  try {
+    const snap = await getDocs(collection(db,'users'));
+    USERS = snap.docs.map(s => ({ uid:s.id, ...s.data() }));
+  } catch(e){ console.error('Lecture des comptes impossible :', e); }
+
+  try {
+    const snap = await getDocs(collection(db,'vlog'));
+    POSTS = snap.docs.map(s => ({ id:s.id, ...s.data() }));
+  } catch(e){ console.warn('Lecture du vlog impossible :', e); }
+
+  renderApercu();
+  renderUserList();
+  renderVlogList();
+  newPost();
+}
+
+/* ══════════════════════════════════════
+   3. COUP D'ŒIL
+   ══════════════════════════════════════ */
+const todayStr = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+};
+
+function renderApercu(){
+  const t     = todayStr();
+  const nbXP  = USERS.reduce((a,u) => a + (u.xp || 0), 0);
+  const scans = USERS.reduce((a,u) => a + (u.scansRead || []).length, 0);
+  const cards = USERS.reduce((a,u) => a + (u.gachaCollection || []).length, 0);
+  const today = USERS.filter(u => u.lastLogin === t).length;
+  const full  = USERS.filter(u => (u.gachaCollection || []).length >= (window.CARD_POOL || []).length).length;
+
+  $('#statBoxes').innerHTML = [
+    ['👥', USERS.length, 'comptes'],
+    ['🟢', today,        'connectés aujourd’hui'],
+    ['⚡', nbXP.toLocaleString('fr-FR'), 'XP au total'],
+    ['📜', scans,        'scans lus'],
+    ['🎴', cards,        'cartes obtenues'],
+    ['🏅', full,         'collections complètes'],
+  ].map(([e,n,l]) => `<div class="stat"><div class="n">${e} ${n}</div><div class="l">${l}</div></div>`).join('');
+
+  /* Répartition des abonnements */
+  const keys = ['basic','plus','x','max','admin'];
+  const cols = { basic:'#2BB7F2', plus:'#FFC53D', x:'#38BDF8', max:'#A855F7', admin:'#E84A8A' };
+  const cnt  = {}; keys.forEach(k => cnt[k] = 0);
+  USERS.forEach(u => { const s = u.subscription || 'basic'; if (cnt[s] != null) cnt[s]++; else cnt.basic++; });
+  const tot = Math.max(USERS.length, 1);
+
+  $('#subSplit').innerHTML  = keys.map(k =>
+    `<i style="width:${cnt[k]/tot*100}%;background:${cols[k]}"></i>`).join('');
+  $('#subLegend').innerHTML = keys.map(k =>
+    `<span><i class="dot" style="background:${cols[k]}"></i>${window.SUB_LABELS[k]} · <b>${cnt[k]}</b></span>`).join('');
+
+  const line = (u,i,val) => `
+    <div class="rank">
+      <span class="pos">${i+1}</span>
+      <span class="nm">${esc(u.pseudo || u.email || u.uid.slice(0,8))}</span>
+      <span class="vl">${val}</span>
+    </div>`;
+
+  const top = USERS.slice().sort((a,b) => (b.xp||0) - (a.xp||0)).slice(0,10);
+  $('#topList').innerHTML = top.length
+    ? top.map((u,i) => line(u,i, `${(u.xp||0).toLocaleString('fr-FR')} ${window.currencyIcon(u.subscription||'basic',15)}`)).join('')
+    : '<p class="hint">Aucun compte pour l’instant.</p>';
+
+  const recent = USERS.slice().sort((a,b) =>
+    String(b.createdAt||b.lastLogin||'').localeCompare(String(a.createdAt||a.lastLogin||''))).slice(0,10);
+  $('#newList').innerHTML = recent.length
+    ? recent.map((u,i) => line(u,i, window.SUB_LABELS[u.subscription||'basic'])).join('')
+    : '<p class="hint">Aucun compte pour l’instant.</p>';
+}
+
+/* ══════════════════════════════════════
+   4. LISTE DES JOUEURS
+   ══════════════════════════════════════ */
+function renderUserList(){
+  const q = ($('#uSearch').value || '').toLowerCase().trim();
+  const list = USERS
+    .filter(u => !q || [u.pseudo, u.email, u.uid].some(v => String(v||'').toLowerCase().includes(q)))
+    .sort((a,b) => String(a.pseudo||a.email||'').localeCompare(String(b.pseudo||b.email||'')));
+
+  $('#uList').innerHTML = list.length ? list.map(u => {
+    const ic = window.findIcon(u.avatarId || 'bully_1');
+    return `<div class="u-row ${sel && sel.uid === u.uid ? 'sel' : ''}" data-uid="${esc(u.uid)}">
+      <div class="u-av">${ic ? `<img src="${esc(ic.file)}" alt="" onerror="this.replaceWith(document.createTextNode('🫧'))">` : '🫧'}</div>
+      <div class="u-meta">
+        <b>${esc(u.pseudo || u.email || u.uid.slice(0,10))}</b>
+        <span>Niv. ${window.getLevel(u.xp||0, u.subscription||'basic').level} · ${(u.xp||0)} XP</span>
+      </div>
+      <span class="u-tag">${window.SUB_LABELS[u.subscription||'basic']}</span>
+    </div>`;
+  }).join('') : '<p class="hint" style="padding:16px">Aucun joueur trouvé.</p>';
+
+  $('#uList').querySelectorAll('.u-row').forEach(r =>
+    r.addEventListener('click', () => selectUser(r.dataset.uid)));
+}
+$('#uSearch').addEventListener('input', renderUserList);
+
+function selectUser(uid){
+  sel = USERS.find(u => u.uid === uid) || null;
+  renderUserList();
+  renderUserDetail();
+  $('#uDetail').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+/* ══════════════════════════════════════
+   5. FICHE D'UN JOUEUR
+   ══════════════════════════════════════ */
+function pick(id, label, on, img){
+  return `<label class="pick ${on ? 'on' : ''}" data-pick="${id}">
+    <span class="bx">✓</span>${img ? `<img src="${esc(img)}" alt="" onerror="this.style.display='none'">` : ''}
+    <span class="nm">${esc(label)}</span></label>`;
+}
+
+/* Toutes les missions du site, à plat */
+function allMissions(){
+  const M = window.MISSIONS || {};
+  const out = [];
+  (M.general || []).forEach(m => out.push({ id:m.id, label:'⭐ ' + m.label }));
+  (window.GAMES || []).forEach(g => { if (g.mission) out.push({ id:g.mission.id, label:'🎮 ' + g.name + ' — ' + g.mission.label }); });
+  (M.scanMilestones || []).forEach(m => out.push({ id:m.id, label:'📜 ' + m.label }));
+  (M.gacha || []).forEach(m => out.push({ id:m.id, label:'🎁 ' + m.label }));
+  return out;
+}
+
+function renderUserDetail(){
+  if (!sel){ return; }
+  const u    = sel;
+  const sub  = u.subscription || 'basic';
+  const lv   = window.getLevel(u.xp || 0, sub);
+  const cfg  = window.LEVEL_CONFIG[sub] || window.LEVEL_CONFIG.basic;
+  const ic   = window.findIcon(u.avatarId || 'bully_1');
+  const fx   = u.gachaEffects   || [];
+  const frs  = u.framesUnlocked || [];
+  const ics  = u.iconsUnlocked  || [];
+  const cds  = (u.gachaCollection || []).map(String);
+  const mis  = u.missions || {};
+
+  $('#uDetail').innerHTML = `
+    <div class="row" style="gap:14px;margin-bottom:4px">
+      <div class="u-av" style="width:52px;height:52px">
+        ${ic ? `<img src="${esc(ic.file)}" alt="">` : '🫧'}
+      </div>
+      <div style="flex:1;min-width:150px">
+        <b style="font-size:1.2rem">${esc(u.pseudo || '(sans pseudo)')}</b><br>
+        <span class="lbl">${esc(u.email || u.uid)}</span>
+      </div>
+    </div>
+
+    <div class="blk">
+      <h3>⚡ Niveau, XP et abonnement</h3>
+      <div class="row">
+        <span class="lbl">Niveau</span>
+        <input class="inp num" type="number" id="fLevel" min="1" max="${cfg.maxLevel}" value="${lv.level}">
+        <span class="lbl">XP</span>
+        <input class="inp num" type="number" id="fXp" min="0" value="${u.xp || 0}">
+        <span class="lbl">Abonnement</span>
+        <select class="inp" id="fSub">
+          ${['basic','plus','x','max','admin'].map(s =>
+            `<option value="${s}" ${s===sub?'selected':''}>${window.SUB_LABELS[s]}</option>`).join('')}
+        </select>
+      </div>
+      <p class="hint" style="margin-top:9px">
+        Niveau max en ${window.SUB_LABELS[sub]} : <b>${cfg.maxLevel}</b> · ${cfg.xpPerLevel} XP par niveau.
+        Change le niveau et l'XP se recalcule tout seul (et l'inverse).
+      </p>
+    </div>
+
+    <div class="blk">
+      <h3>🎨 Effets de fond <small>${fx.length} / ${(window.ALL_EFFECTS||[]).length}</small></h3>
+      <div class="picks" id="gEffects">
+        ${(window.ALL_EFFECTS||[]).map(e => pick('fx:'+e.type, e.emoji + ' ' + e.label, fx.includes(e.type))).join('')}
+      </div>
+    </div>
+
+    <div class="blk">
+      <h3>🖼️ Cadres offerts <small>en plus de ceux gagnés par le niveau</small></h3>
+      <div class="picks" id="gFrames">
+        ${(window.framesFor(sub)||[]).map(f =>
+          pick('fr:'+f.id, `Niv.${f.level} · ${f.name}`, frs.includes(f.id))).join('')}
+      </div>
+    </div>
+
+    <div class="blk">
+      <h3>🎭 Icônes offertes <small>${ics.length} en plus de l'abonnement</small></h3>
+      <div class="picks" id="gIcons">
+        ${(window.ALL_ICONS||[]).map(i =>
+          pick('ic:'+i.id, i.name, ics.includes(i.id), i.file)).join('')}
+      </div>
+    </div>
+
+    <div class="blk">
+      <h3>🎴 Cartes gacha <small>${cds.length} / ${(window.CARD_POOL||[]).length}</small></h3>
+      <div class="picks" id="gCards">
+        ${(window.CARD_POOL||[]).map(c =>
+          pick('cd:'+c.id, c.name, cds.includes(String(c.id)), c.img)).join('')}
+      </div>
+    </div>
+
+    <div class="blk">
+      <h3>🎯 Missions <small>${Object.values(mis).filter(Boolean).length} faites</small></h3>
+      <div class="picks" id="gMissions">
+        ${allMissions().map(m => pick('ms:'+m.id, m.label, !!mis[m.id])).join('')}
+      </div>
+      <div class="row" style="margin-top:12px">
+        <span class="lbl">Scans lus</span>
+        <div class="mini">${(u.scansRead||[]).length ? (u.scansRead||[]).map(s => `<b>${esc(s)}</b>`).join('') : '<b>aucun</b>'}</div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <span class="lbl">Jeux essayés</span>
+        <div class="mini">${(u.gamesPlayed||[]).length ? (u.gamesPlayed||[]).map(s => `<b>${esc(s)}</b>`).join('') : '<b>aucun</b>'}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="fClearScans" style="margin-top:12px">🧹 Vider scans + jeux</button>
+    </div>
+
+    <div class="save-bar">
+      <button class="btn btn-green" id="fSave">💾 Enregistrer</button>
+      <button class="btn btn-ghost btn-sm" id="fAll">✨ Tout débloquer</button>
+      <button class="btn btn-red btn-sm" id="fReset">🗑️ Remettre à zéro</button>
+      <span class="save-msg" id="fMsg"></span>
+    </div>`;
+
+  /* Cases à cocher */
+  $('#uDetail').querySelectorAll('.pick').forEach(p =>
+    p.addEventListener('click', ev => { ev.preventDefault(); p.classList.toggle('on'); }));
+
+  /* Niveau ⇄ XP */
+  const fL = $('#fLevel'), fX = $('#fXp'), fS = $('#fSub');
+  const cfgOf = s => window.LEVEL_CONFIG[s] || window.LEVEL_CONFIG.basic;
+  fL.addEventListener('input', () => {
+    const c = cfgOf(fS.value);
+    const n = Math.min(Math.max(parseInt(fL.value,10) || 1, 1), c.maxLevel);
+    fX.value = (n - 1) * c.xpPerLevel;
+  });
+  fX.addEventListener('input', () => {
+    fL.value = window.getLevel(parseInt(fX.value,10) || 0, fS.value).level;
+  });
+  fS.addEventListener('change', () => {
+    const c = cfgOf(fS.value);
+    fL.max = c.maxLevel;
+    fL.value = window.getLevel(parseInt(fX.value,10) || 0, fS.value).level;
+  });
+
+  $('#fClearScans').addEventListener('click', async () => {
+    if (!confirm('Vider la liste des scans lus et des jeux essayés ?')) return;
+    await save({ scansRead:[], gamesPlayed:[] });
+  });
+
+  $('#fAll').addEventListener('click', () => {
+    $('#uDetail').querySelectorAll('#gEffects .pick, #gFrames .pick, #gIcons .pick, #gCards .pick')
+      .forEach(p => p.classList.add('on'));
+    msg('#fMsg', 'Tout coché — pense à enregistrer !', 'ok');
+  });
+
+  $('#fReset').addEventListener('click', async () => {
+    if (!confirm('Remettre ce compte à zéro ?\n(XP, missions, cartes, effets, cadres, icônes — l\'abonnement est gardé)')) return;
+    await save({
+      xp:0, missions:{}, scansRead:[], gamesPlayed:[], gachaCollection:[], gachaHistory:[],
+      gachaEffects:[], framesUnlocked:[], iconsUnlocked:[], activeEffect:null, frameId:null, lastLogin:null
+    });
+  });
+
+  $('#fSave').addEventListener('click', async () => {
+    const on = pref => [...$('#uDetail').querySelectorAll(`.pick.on[data-pick^="${pref}:"]`)]
+      .map(p => p.dataset.pick.slice(pref.length + 1));
+    await save({
+      xp: Math.max(0, parseInt(fX.value,10) || 0),
+      subscription: fS.value,
+      gachaEffects:   on('fx'),
+      framesUnlocked: on('fr'),
+      iconsUnlocked:  on('ic'),
+      gachaCollection: on('cd').map(n => parseInt(n,10)),
+      missions: Object.fromEntries(on('ms').map(id => [id, true])),
+    });
+  });
+}
+
+function msg(sel_, text, kind){
+  const el = $(sel_); if (!el) return;
+  el.textContent = text;
+  el.className = 'save-msg ' + (kind || '');
+  setTimeout(() => { if (el.textContent === text) el.textContent = ''; }, 4000);
+}
+
+/* Écrit dans Firestore ET met à jour la copie locale */
+async function save(patch){
+  if (!sel) return;
+  try {
+    /* merge:false pour les tableaux/objets qu'on remplace volontairement,
+       mais on garde le reste du document → on passe par un merge classique. */
+    await setDoc(doc(db,'users',sel.uid), patch, { merge:true });
+    Object.assign(sel, patch);
+    renderUserList();
+    renderUserDetail();
+    renderApercu();
+    msg('#fMsg', '✅ Enregistré !', 'ok');
+  } catch(e){
+    console.error(e);
+    msg('#fMsg', '❌ Échec : ' + e.message, 'ko');
+  }
+}
+
+/* ══════════════════════════════════════
+   6. LE VLOG
+   ══════════════════════════════════════ */
+const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+function prettyDate(d){
+  if (!d) return '';
+  const [y,m,j] = String(d).split('-');
+  if (!y || !m || !j) return d;
+  return `${parseInt(j,10)} ${MOIS[parseInt(m,10)-1]} ${y}`;
+}
+
+/* Le menu "visible par" ne montre jamais l'abonnement admin */
+$('#vSub').innerHTML = (window.PUBLIC_SUBS || ['basic','plus','x','max'])
+  .map(s => `<option value="${s}">${window.SUB_LABELS[s]}</option>`).join('');
+
+function renderVlogList(){
+  const list = POSTS.slice().sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
+  $('#vList').innerHTML = list.length ? list.map(p => {
+    const cov = (p.images || [])[0] || p.cover;
+    return `<div class="vl-post ${editId===p.id?'sel':''}" data-id="${esc(p.id)}">
+      <div class="vl-cover">${cov ? `<img src="${esc(cov)}" alt="" onerror="this.replaceWith(document.createTextNode('🎬'))">` : '🎬'}</div>
+      <div class="vl-info">
+        <b>${esc(p.title || '(sans titre)')}</b>
+        <span>${prettyDate(p.date)} · ${esc(p.author || '?')} · ${window.SUB_LABELS[p.sub||'basic']}</span>
+      </div>
+      ${p.published === false ? '<span class="vl-draft">BROUILLON</span>' : ''}
+    </div>`;
+  }).join('') : '<p class="hint">Aucun post pour l’instant. Clique sur « Nouveau post » !</p>';
+
+  $('#vList').querySelectorAll('.vl-post').forEach(r =>
+    r.addEventListener('click', () => editPost(r.dataset.id)));
+}
+
+function imgRow(val){
+  const d = document.createElement('div');
+  d.className = 'imgrow';
+  d.innerHTML = `
+    <div class="imgprev">${val ? `<img src="vlog/${esc(val)}" alt="" onerror="this.replaceWith(document.createTextNode('🖼️'))">` : '🖼️'}</div>
+    <input class="inp" placeholder="nom-du-fichier.png" value="${esc(val||'')}">
+    <button class="xbtn" title="Retirer">✕</button>`;
+  const inp = d.querySelector('input');
+  inp.addEventListener('input', () => {
+    const v = inp.value.trim();
+    d.querySelector('.imgprev').innerHTML = v
+      ? `<img src="vlog/${esc(v)}" alt="" onerror="this.replaceWith(document.createTextNode('🖼️'))">` : '🖼️';
+  });
+  d.querySelector('.xbtn').addEventListener('click', () => d.remove());
+  return d;
+}
+function imgValues(){
+  return [...$('#vImgs').querySelectorAll('input')]
+    .map(i => i.value.trim()).filter(Boolean).map(v => v.startsWith('vlog/') ? v : 'vlog/' + v);
+}
+
+function newPost(){
+  editId = null;
+  $('#vEditTitle').textContent = 'Créer un post';
+  $('#vTitle').value = ''; $('#vDesc').value = ''; $('#vVideo').value = '';
+  $('#vDate').value  = todayStr();
+  $('#vSub').value   = 'basic';
+  $('#vPub').classList.add('on');
+  $('#vImgs').innerHTML = '';
+  $('#vImgs').appendChild(imgRow(''));
+  $('#vDel').style.display = 'none';
+  renderVlogList();
+}
+
+function editPost(id){
+  const p = POSTS.find(x => x.id === id); if (!p) return;
+  editId = id;
+  $('#vEditTitle').textContent = 'Modifier le post';
+  $('#vTitle').value = p.title || '';
+  $('#vDesc').value  = p.desc  || '';
+  $('#vVideo').value = p.video || '';
+  $('#vDate').value  = p.date  || todayStr();
+  $('#vSub').value   = p.sub   || 'basic';
+  $('#vPub').classList.toggle('on', p.published !== false);
+  $('#vImgs').innerHTML = '';
+  const imgs = (p.images || []).map(s => String(s).replace(/^vlog\//,''));
+  (imgs.length ? imgs : ['']).forEach(v => $('#vImgs').appendChild(imgRow(v)));
+  $('#vDel').style.display = '';
+  renderVlogList();
+}
+
+$('#vNew').addEventListener('click', newPost);
+$('#vAddImg').addEventListener('click', () => $('#vImgs').appendChild(imgRow('')));
+$('#vPub').addEventListener('click', ev => { ev.preventDefault(); $('#vPub').classList.toggle('on'); });
+
+/* Un identifiant lisible : "2026-08-15-bubble-direct-1" */
+function slug(t){
+  return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50) || 'post';
+}
+
+$('#vSave').addEventListener('click', async () => {
+  const title = $('#vTitle').value.trim();
+  if (!title){ msg('#vMsg', '❌ Il faut un titre !', 'ko'); return; }
+  const imgs = imgValues();
+  const data = {
+    title,
+    date:      $('#vDate').value || todayStr(),
+    desc:      $('#vDesc').value.trim(),
+    video:     $('#vVideo').value.trim(),
+    sub:       $('#vSub').value,
+    images:    imgs,
+    cover:     imgs[0] || '',
+    published: $('#vPub').classList.contains('on'),
+    author:    ME.pseudo || ME.email || 'Admin',
+    authorId:  ME.uid,
+    authorAvatar: ME.avatarId || 'bully_1',
+    updatedAt: new Date().toISOString(),
+  };
+  const id = editId || `${data.date}-${slug(title)}`;
+  try {
+    await setDoc(doc(db,'vlog',id), data, { merge:true });
+    const i = POSTS.findIndex(p => p.id === id);
+    if (i >= 0) POSTS[i] = { id, ...POSTS[i], ...data }; else POSTS.push({ id, ...data });
+    editId = id;
+    $('#vEditTitle').textContent = 'Modifier le post';
+    $('#vDel').style.display = '';
+    renderVlogList();
+    msg('#vMsg', '✅ Post enregistré — il est déjà en ligne !', 'ok');
+  } catch(e){
+    console.error(e);
+    msg('#vMsg', '❌ Échec : ' + e.message, 'ko');
+  }
+});
+
+$('#vDel').addEventListener('click', async () => {
+  if (!editId) return;
+  if (!confirm('Supprimer ce post définitivement ?')) return;
+  try {
+    await deleteDoc(doc(db,'vlog',editId));
+    POSTS = POSTS.filter(p => p.id !== editId);
+    newPost();
+    msg('#vMsg', '🗑️ Post supprimé.', 'ok');
+  } catch(e){ msg('#vMsg', '❌ Échec : ' + e.message, 'ko'); }
+});
+</script>
+
+</body>
+</html>

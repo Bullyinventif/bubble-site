@@ -57,6 +57,7 @@
   .sub-chip.plus { background:rgba(255,197,61,.16); color:#9C6D00;         border-color:rgba(255,197,61,.45); }
   .sub-chip.x    { background:rgba(56,189,248,.14); color:#0284C7;         border-color:rgba(56,189,248,.4); }
   .sub-chip.max  { background:rgba(168,85,247,.12); color:var(--purple-d); border-color:rgba(168,85,247,.35); }
+  .sub-chip.admin{ background:rgba(255,95,162,.14); color:var(--pink-d);   border-color:rgba(255,95,162,.4); }
 
   /* ── NIVEAU ── */
   .level-box{ margin-top:22px; padding-top:20px; border-top:2px solid var(--line); }
@@ -846,6 +847,8 @@
   let selectedFrame  = null;
 
   const canUse = sub => window.SUB_ORDER[userSub] >= window.SUB_ORDER[sub];
+  /* Une icône est utilisable si l'abonnement suffit OU si un admin l'a offerte */
+  const iconOk = icon => canUse(icon.sub) || (window.__iconGrants || []).includes(icon.id);
 
   /* ── Affichage ── */
   function setAvatarUI(icon){
@@ -911,6 +914,9 @@
         activeEffect = d.activeEffect || null;
         activeFrame  = d.frameId      || null;
         unlockedFx   = (d.gachaEffects || []).slice();
+        /* Cadres offerts par un admin (page patesbolognaise.html) */
+        window.__frameGrants = (d.framesUnlocked || []).slice();
+        window.__iconGrants  = (d.iconsUnlocked  || []).slice();
         window.__collectionCount = (d.gachaCollection || []).length;
 
         /* Déblocage rétroactif : une carte possédée débloque son effet */
@@ -1021,7 +1027,7 @@
       grid.className = 'icons-grid';
 
       icons.forEach(icon => {
-        const locked = !canUse(icon.sub);
+        const locked = !iconOk(icon);
         const item = document.createElement('div');
         item.className = 'icon-item' + (locked ? ' locked' : '')
                        + (icon.id === selectedIcon?.id ? ' selected' : '');

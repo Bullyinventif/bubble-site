@@ -16,6 +16,8 @@ const LEVEL_CONFIG = {
   plus:  { maxLevel: 20, xpPerLevel: 200, color: '#FFC53D', dark: '#DFA111', symbol: '✦',  label: 'Étoile +'  },
   x:     { maxLevel: 20, xpPerLevel: 300, color: '#38BDF8', dark: '#0284C7', symbol: '✕',  label: 'Étoile X'  },
   max:   { maxLevel: 25, xpPerLevel: 400, color: '#A855F7', dark: '#7E22CE', symbol: '🫧', label: 'Bulle MAX' },
+  /* Abonnement caché des comptes admin : même progression que MAX. */
+  admin: { maxLevel: 25, xpPerLevel: 400, color: '#E84A8A', dark: '#B02F6B', symbol: '🛠️', label: 'Admin'     },
 };
 
 function getLevel(xp, sub){
@@ -254,7 +256,13 @@ function findFrame(id, sub){
   }
   return null;
 }
-function frameUnlocked(frame, level){ return (frame?.level || 1) <= (level || 1); }
+/* Un cadre est débloqué si le niveau suffit… ou si un admin l'a offert
+   (champ Firestore "framesUnlocked", copié dans window.__frameGrants). */
+function frameUnlocked(frame, level){
+  if (!frame) return false;
+  if ((window.__frameGrants || []).includes(frame.id)) return true;
+  return (frame.level || 1) <= (level || 1);
+}
 
 /* Le meilleur cadre débloqué, si le joueur n'a rien choisi */
 function defaultFrame(sub, level){

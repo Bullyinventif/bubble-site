@@ -355,15 +355,16 @@
     if (!y || !m || !j) return d || '';
     return `${parseInt(j,10)} ${MOIS[parseInt(m,10)-1]} ${y}`;
   }
+  window.__VLOG_POSTS = (window.VLOG || []).slice();
   function renderVlog(){
-    const posts = (window.VLOG || []).slice()
+    const posts = window.__VLOG_POSTS.filter(p => p.published !== false)
       .sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
     if (!posts.length) return;                 /* pas encore de post : on n'affiche rien */
     const p = posts[0];
     const el = document.getElementById('vlogStrip');
     el.innerHTML = `
-      <div class="vlog-cover">${p.cover
-        ? `<img src="${p.cover}" alt="${p.title}" onerror="this.replaceWith(document.createTextNode('🎬'))">`
+      <div class="vlog-cover">${((p.images||[])[0] || p.cover)
+        ? `<img src="${(p.images||[])[0] || p.cover}" alt="${p.title}" onerror="this.replaceWith(document.createTextNode('🎬'))">`
         : '🎬'}</div>
       <div class="vlog-body">
         <span class="vlog-tag">🎬 DERNIER POST</span>
@@ -384,7 +385,8 @@
 <script type="module">
   import { initializeApp }               from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, getDocs }
+         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const app = initializeApp({
     apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
@@ -396,6 +398,15 @@
   });
   const auth = getAuth(app);
   const db   = getFirestore(app);
+
+  /* Les posts publiés depuis le panneau admin (sinon ceux de bubble_data.js) */
+  (async () => {
+    try {
+      const snap = await getDocs(collection(db,'vlog'));
+      const live = snap.docs.map(s => ({ id:s.id, ...s.data() }));
+      if (live.length){ window.__VLOG_POSTS = live; renderVlog(); }
+    } catch(e){ console.warn('Vlog indisponible :', e); }
+  })();
 
   onAuthStateChanged(auth, async user => {
     if (!user){

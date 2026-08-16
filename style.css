@@ -205,6 +205,8 @@ nav{
 .btn-purple:active { box-shadow:0 1px 0 var(--purple-d); }
 .btn-red    { background:var(--red);    box-shadow:0 4px 0 var(--red-d); }
 .btn-red:active    { box-shadow:0 1px 0 var(--red-d); }
+.btn-pink   { background:var(--pink);   box-shadow:0 4px 0 var(--pink-d); }
+.btn-pink:active   { box-shadow:0 1px 0 var(--pink-d); }
 
 /* Bouton secondaire (contour) */
 .btn-ghost{

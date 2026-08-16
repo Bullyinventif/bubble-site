@@ -242,6 +242,8 @@ window.FRAMES = {
     { id:'m5', name:'Big Bang',        level:25, ornaments:['burst','flowers'], glow:true, spin:true },
   ],
 };
+/* Un compte ADMIN a exactement les mêmes cadres qu'un compte MAX. */
+window.FRAMES.admin = window.FRAMES.max;
 
 /* ══════════════════════════════════════
    LES 4 MONNAIES
@@ -263,6 +265,9 @@ window.CURRENCY = {
   plus:  { name:'étoiles',  one:'étoile',  symbol:'✦',  img:'', mult:2.5, grad:['#FFD84D','#E0A011'] },
   x:     { name:'cristaux', one:'cristal', symbol:'💎', img:'', mult:4,   grad:['#7DD3FC','#0284C7'] },
   max:   { name:'orbes',    one:'orbe',    symbol:'🔮', img:'', mult:6,   grad:['#C084FC','#7E22CE'] },
+  /* Abonnement caché : réservé aux comptes admin (jamais affiché dans la liste
+     des abonnements, se met uniquement à la main dans Firestore). */
+  admin: { name:'orbes',    one:'orbe',    symbol:'🛠️', img:'', mult:6,   grad:['#FF7BB8','#B02F6B'] },
 };
 
 /* Le symbole prêt à afficher : ton image si elle existe, sinon l'emoji */
@@ -327,8 +332,13 @@ window.MISSIONS = {
 };
 
 /* ── Réglages communs ── */
-window.SUB_ORDER  = { free:0, basic:0, plus:1, x:2, max:3 };
-window.SUB_LABELS = { free:"GRATUIT", basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX" };
+window.SUB_ORDER  = { free:0, basic:0, plus:1, x:2, max:3, admin:4 };
+window.SUB_LABELS = { free:"GRATUIT", basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX", admin:"ADMIN" };
+
+/* Les abonnements que l'on peut acheter / afficher dans la liste.
+   "admin" en est volontairement absent. */
+window.PUBLIC_SUBS = ["basic","plus","x","max"];
+window.isAdminSub  = s => s === 'admin';
 
 /* ── Progression de lecture (stockée dans le navigateur) ──
    Format : { "gi1": { page: 7, total: 24 }, ... }
