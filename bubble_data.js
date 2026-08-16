@@ -340,44 +340,91 @@ window.GAMES = [
 ══════════════════════════════════════ */
 window.FRAMES = {
 
-  /* 🫧 BASIC — 3 niveaux */
+  /* 🫧 BASIC — 3 niveaux — thème : la bulle qui devient de la mousse */
   basic: [
-    { id:'b1', name:'Bulle',            level:1, ornaments:['dots'] },
-    { id:'b2', name:'Bulle pétillante', level:2, ornaments:['sparkles'] },
-    { id:'b3', name:'Bulle spirale',    level:3, ornaments:['spirals','dots'], spin:true },
+    { id:'b1', name:'Petite bulle', level:1,
+      width:3, ornaments:['bubble1'] },
+
+    { id:'b2', name:'Bulles', level:2,
+      width:5, grad:['#7FD8FF','#1690C6'], ornaments:['bubbleFew'] },
+
+    { id:'b3', name:'Mousse', level:3,
+      width:6.5, grad:['#8FDEFF','#1080B6'], glow:true,
+      outer:{ shape:'circle', width:1.6, dashed:true, r:44, spin:true },
+      ornaments:['bubbleCrown'] },
   ],
 
-  /* ✦ BUBBLE+ — 20 niveaux */
+  /* ✦ BUBBLE+ — 20 niveaux — thème : or et royauté */
   plus: [
-    { id:'p1', name:'Étincelle',            level:1,  ornaments:['sparkles'] },
-    { id:'p2', name:'Rayons',               level:5,  ornaments:['rays'] },
-    { id:'p3', name:"Couronne d'étoiles",   level:10, ornaments:['crown','sparkles'] },
-    { id:'p4', name:'Royale',               level:15, ornaments:['king','sparkles'], glow:true },
-    { id:'p5', name:'Étoile filante',       level:20, shape:'star', width:3.4,
-               ornaments:['sparkles'], glow:true, spin:true },
+    { id:'p1', name:'Étincelle', level:1,
+      color:'#F2B21A', width:3, ornaments:['sparkFew'] },
+
+    { id:'p2', name:'Anneau doré', level:5,
+      width:5.5, grad:['#FFE07A','#D89400'], ornaments:['sparkles'] },
+
+    { id:'p3', name:'Laurier', level:10,
+      width:5, grad:['#FFDF6E','#D08A00'], ornaments:['laurel','sparkFew'] },
+
+    { id:'p4', name:'Couronne du roi', level:15,
+      width:7, grad:['#FFE894','#C97F00'], glow:true,
+      ornaments:['crownBig','laurel'] },
+
+    { id:'p5', name:'Or massif', level:20,
+      width:8.5, grad:['#FFEFAE','#B87400'], glow:true,
+      outer:{ shape:'gear', width:3.4, r:48, spin:true, color:'#E8B22A' },
+      ornaments:['crownRoyal','gems'] },
   ],
 
-  /* 💎 BUBBLE X — 20 niveaux */
+  /* 💎 BUBBLE X — 20 niveaux — thème : glace et cristal */
   x: [
-    { id:'x1', name:'Givre',            level:1,  ornaments:['crosses'] },
-    { id:'x2', name:'Éclats',           level:5,  ornaments:['shards'] },
-    { id:'x3', name:'Cristal',          level:10, ornaments:['shards','crosses'], glow:true },
-    { id:'x4', name:'Éclat stellaire',  level:15, ornaments:['rays','crosses'], glow:true },
-    { id:'x5', name:'Étoile de glace',  level:20, shape:'star', width:4,
-               ornaments:['crosses'], glow:true, spin:true },
+    { id:'x1', name:'Givre', level:1,
+      color:'#4FC3F7', width:3, ornaments:['frost'] },
+
+    { id:'x2', name:'Éclats de glace', level:5,
+      width:5.5, grad:['#A5E8FF','#0284C7'], ornaments:['shardsAll'] },
+
+    { id:'x3', name:'Cristal', level:10,
+      shape:'hex', width:6, grad:['#BDEEFF','#0B7FBF'], ornaments:['facets','frost'] },
+
+    { id:'x4', name:'Prisme', level:15,
+      shape:'hex', width:7, grad:['#D2F3FF','#0369A1'], glow:true,
+      outer:{ shape:'hex', width:2, r:47, spin:true, color:'#7DD3FC' },
+      ornaments:['facets','shardsAll'] },
+
+    { id:'x5', name:'Cœur de glace', level:20,
+      shape:'hex', width:9, grad:['#EAFAFF','#025E8C'], glow:true,
+      ornaments:['icePeaks','facets'] },
   ],
 
-  /* 🔮 BUBBLE MAX — 25 niveaux */
+  /* 🔮 BUBBLE MAX — 25 niveaux — thème : cosmos et orbites */
   max: [
-    { id:'m1', name:'Orbe',            level:1,  ornaments:['flowers'] },
-    { id:'m2', name:'Orbe rayonnant',  level:8,  ornaments:['rays','flowers'], width:5 },
-    { id:'m3', name:'Orbe couronné',   level:16, ornaments:['crown','flowers'], glow:true },
-    { id:'m4', name:'Orbe fantôme',    level:22, dashed:true, ornaments:['flowers'], spin:true, glow:true },
-    { id:'m5', name:'Big Bang',        level:25, ornaments:['burst','flowers'], glow:true, spin:true },
+    { id:'m1', name:'Orbe', level:1,
+      color:'#A855F7', width:3, ornaments:['moon'] },
+
+    { id:'m2', name:'Anneau planétaire', level:8,
+      width:5.5, grad:['#D8B4FE','#7E22CE'], ornaments:['saturn'] },
+
+    { id:'m3', name:'Constellation', level:16,
+      width:5, grad:['#E9D5FF','#6D28D9'], ornaments:['constellation'] },
+
+    { id:'m4', name:'Nébuleuse', level:22,
+      width:7.5, grad:['#F0E1FF','#5B21B6'], glow:true, spin:true,
+      outer:{ shape:'circle', width:1.4, dashed:true, r:49, spin:true, color:'#C084FC' },
+      ornaments:['stardust','constellation'] },
+
+    { id:'m5', name:'Big Bang', level:25,
+      width:9, grad:['#FBEFFF','#4C1D95'], glow:true,
+      outer:{ shape:'gear', width:3, r:50, spin:true, color:'#C084FC' },
+      ornaments:['bigbang','stardust'] },
   ],
 };
-/* Un compte ADMIN a exactement les mêmes cadres qu'un compte MAX. */
-window.FRAMES.admin = window.FRAMES.max;
+
+window.FRAMES.admin = [
+  { id:'ad1', name:'Badge admin', level:1,
+    width:8, grad:['#FFC2DE','#B02F6B'], glow:true,
+    outer:{ shape:'gear', width:3.2, r:47, spin:true, color:'#FF7BB8' },
+    ornaments:['gems','sparkFew'] },
+];
 
 /* ══════════════════════════════════════
    LES 4 MONNAIES

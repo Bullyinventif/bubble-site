@@ -193,8 +193,11 @@
   }
 
     /* ── CHOIX DU CADRE ── */
-  .frm-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(108px,1fr)); gap:16px; }
-  .frm-item{ display:flex; flex-direction:column; align-items:center; gap:7px; cursor:pointer; text-align:center; }
+  .frm-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(116px,1fr)); gap:18px 14px; margin-bottom:8px; }
+  /* Les cadres débordent de l'avatar : on laisse de la place autour */
+  .frm-item{ display:flex; flex-direction:column; align-items:center; gap:7px; cursor:pointer;
+             text-align:center; padding-top:14px; }
+  .frm-item .frm-av{ margin-bottom:14px; }
   .frm-av{
     width:76px; height:76px; border-radius:50%; position:relative;
     background:linear-gradient(160deg,#EAF4FF,#C6E1F8);
@@ -964,45 +967,60 @@
     window.applyFrame(userSub, window.__level || 1, activeFrame);
   };
 
-  /* ── Les cadres de ton abonnement ── */
+  /* ── Les cadres : toutes les séries jusqu'à ton abonnement ── */
+  const TIER_TITLES = {
+    basic: '🫧 Série BASIC',
+    plus:  '✦ Série BUBBLE+',
+    x:     '💎 Série BUBBLE X',
+    max:   '🔮 Série BUBBLE MAX',
+    admin: '🛠️ Série ADMIN',
+  };
+
   function buildFrames(){
     const panel = document.getElementById('panel-frames');
     const level = window.__level || 1;
     const list  = window.framesFor(userSub);
     panel.innerHTML = '';
 
-    const t = document.createElement('div');
-    t.className = 'cat-title';
-    t.textContent = `Cadres ${window.SUB_LABELS[userSub]} — débloqués en montant de niveau`;
-    panel.appendChild(t);
+    const ic = window.findIcon(selectedIcon?.id || activeIconId) || { file:'bully_1.png', name:'' };
 
-    const grid = document.createElement('div');
-    grid.className = 'frm-grid';
+    /* On regroupe par série : ton abonnement te donne aussi ceux d'en dessous */
+    const byTier = {};
+    list.forEach(f => (byTier[f.tier] = byTier[f.tier] || []).push(f));
 
-    list.forEach(f => {
-      const ok   = window.frameUnlocked(f, level);
-      const item = document.createElement('div');
-      item.className = 'frm-item' + (ok ? '' : ' locked') + (f.id === selectedFrame ? ' selected' : '');
-      const ic = window.findIcon(selectedIcon?.id || activeIconId) || { file:'bully_1.png', name:'' };
-      item.innerHTML = `
-        <div class="frm-av"><img src="${ic.file}" alt=""></div>
-        <div class="frm-name">${f.name}</div>
-        ${ok ? `<div class="frm-lvl">niveau ${f.level}</div>`
-             : `<div class="frm-lock">🔒 niveau ${f.level}</div>`}`;
+    Object.keys(byTier).forEach(tier => {
+      const t = document.createElement('div');
+      t.className = 'cat-title';
+      t.textContent = TIER_TITLES[tier] || tier;
+      panel.appendChild(t);
 
-      grid.appendChild(item);
-      window.drawFrame(item.querySelector('.frm-av'), f.id, userSub);
+      const grid = document.createElement('div');
+      grid.className = 'frm-grid';
 
-      if (ok){
-        item.addEventListener('click', () => {
-          selectedFrame = f.id;
-          grid.querySelectorAll('.frm-item').forEach(el => el.classList.remove('selected'));
-          item.classList.add('selected');
-          updatePreview();
-        });
-      }
+      byTier[tier].forEach(f => {
+        const ok   = window.frameUnlocked(f, level);
+        const item = document.createElement('div');
+        item.className = 'frm-item' + (ok ? '' : ' locked') + (f.id === selectedFrame ? ' selected' : '');
+        item.innerHTML = `
+          <div class="frm-av"><img src="${ic.file}" alt=""></div>
+          <div class="frm-name">${f.name}</div>
+          ${ok ? `<div class="frm-lvl">niveau ${f.level}</div>`
+               : `<div class="frm-lock">🔒 niveau ${f.level}</div>`}`;
+
+        grid.appendChild(item);
+        window.drawFrame(item.querySelector('.frm-av'), f.id, userSub);
+
+        if (ok){
+          item.addEventListener('click', () => {
+            selectedFrame = f.id;
+            panel.querySelectorAll('.frm-item').forEach(el => el.classList.remove('selected'));
+            item.classList.add('selected');
+            updatePreview();
+          });
+        }
+      });
+      panel.appendChild(grid);
     });
-    panel.appendChild(grid);
   }
 
   function updatePreview(){

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Planche des cadres</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="bubble_frames.js"></script>
+<script src="bubble_data.js"></script>
+<style>
+  body{ background:#EFF4FA; font-family:'Baloo 2',sans-serif; color:#16283F; padding:34px 30px 46px; }
+  h1{ font-size:1.9rem; font-weight:800; margin-bottom:4px; }
+  .sub{ font-weight:700; color:#64809F; margin-bottom:26px; }
+  .tier{ margin-bottom:30px; }
+  .tier h2{ font-size:1.15rem; font-weight:800; margin-bottom:14px; padding:8px 16px;
+            border-radius:999px; display:inline-block; }
+  .grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:16px; }
+  .cell{ background:#fff; border:2px solid #E1E9F3; border-radius:22px; padding:20px 10px 14px; text-align:center; }
+  .av{ width:76px; height:76px; margin:0 auto 26px; border-radius:50%; position:relative;
+       background:linear-gradient(160deg,#EAF4FF,#C6E1F8); display:flex; align-items:center;
+       justify-content:center; overflow:visible; }
+  .av img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .nm{ font-size:.92rem; font-weight:800; line-height:1.2; }
+  .lv{ font-size:.76rem; font-weight:700; color:#64809F; margin-top:3px; }
+  .tech{ font-size:.68rem; font-weight:700; color:#A6B8CC; margin-top:5px; line-height:1.35; }
+</style>
+</head>
+<body>
+<h1>🖼️ Tous les cadres — état actuel</h1>
+<div class="sub" id="count"></div>
+<div id="out"></div>
+
+<script>
+const TIERS = {
+  basic: ['🫧 SÉRIE BASIC — 3 niveaux', '#2BB7F2'],
+  plus:  ['✦ SÉRIE BUBBLE+ — 20 niveaux', '#DFA111'],
+  x:     ['💎 SÉRIE BUBBLE X — 20 niveaux', '#0284C7'],
+  max:   ['🔮 SÉRIE BUBBLE MAX — 25 niveaux', '#8236D6'],
+  admin: ['🛠️ SÉRIE ADMIN', '#B02F6B'],
+};
+const out = document.getElementById('out');
+document.getElementById('count').textContent =
+  Object.values(window.FRAMES).flat().length + ' cadres · avatar de test : Bully';
+Object.entries(TIERS).forEach(([tier,[title,col]]) => {
+  const list = (window.FRAMES[tier] || []);
+  if (!list.length) return;
+  const sec = document.createElement('div');
+  sec.className = 'tier';
+  sec.innerHTML = `<h2 style="background:${col}22;color:${col}">${title}</h2>
+    <div class="grid">${list.map(f => `
+      <div class="cell">
+        <div class="av" data-f="${f.id}" data-t="${tier}"><img src="bully_1.png" alt=""></div>
+        <div class="nm">${f.name}</div>
+        <div class="lv">niveau ${f.level}</div>
+        <div class="tech">${[
+          'anneau ' + (f.shape || 'cercle'),
+          f.dashed ? 'pointillés' : '',
+          'ép.' + (f.width || 4),
+          (f.ornaments||[]).join(' + ') || '—',
+          f.spin ? 'tourne' : '',
+          f.glow ? 'luisance' : '',
+        ].filter(Boolean).join(' · ')}</div>
+      </div>`).join('')}</div>`;
+  out.appendChild(sec);
+});
+document.querySelectorAll('.av').forEach(el => window.drawFrame(el, el.dataset.f, el.dataset.t));
+</script>
+</body>
+</html>
