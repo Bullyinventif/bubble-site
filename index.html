@@ -356,21 +356,32 @@
     return `${parseInt(j,10)} ${MOIS[parseInt(m,10)-1]} ${y}`;
   }
   window.__VLOG_POSTS = (window.VLOG || []).slice();
+  window.__VLOG_TAGS  = (window.VLOG_TAGS || []).slice();
   function renderVlog(){
     const posts = window.__VLOG_POSTS.filter(p => p.published !== false)
-      .sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
+      /* les épinglés d'abord, puis du plus récent au plus ancien */
+      .sort((a,b) => (b.pinned?1:0) - (a.pinned?1:0)
+                  || String(b.date||'').localeCompare(String(a.date||'')));
     if (!posts.length) return;                 /* pas encore de post : on n'affiche rien */
-    const p = posts[0];
+    const p      = posts[0];
+    const accent = p.accent || '#FF5FA2';
+    const cover  = (p.images||[])[0] || p.cover;
+    const chips  = (p.tags||[])
+      .map(id => window.__VLOG_TAGS.find(t => t.id === id))
+      .filter(Boolean).map(t => window.tagChip(t, true)).join('');
     const el = document.getElementById('vlogStrip');
+    el.style.borderColor = accent + '55';
     el.innerHTML = `
-      <div class="vlog-cover">${((p.images||[])[0] || p.cover)
-        ? `<img src="${(p.images||[])[0] || p.cover}" alt="${p.title}" onerror="this.replaceWith(document.createTextNode('🎬'))">`
+      <div class="vlog-cover">${cover
+        ? `<img src="${cover}" alt="${window.bbEscape(p.title)}" onerror="this.replaceWith(document.createTextNode('🎬'))">`
         : '🎬'}</div>
       <div class="vlog-body">
-        <span class="vlog-tag">🎬 DERNIER POST</span>
-        <div class="vlog-title">${p.title}</div>
+        <span class="vlog-tag" style="background:${accent}22;color:${accent}">
+          ${p.pinned ? '📌 ÉPINGLÉ' : '🎬 DERNIER POST'}</span>
+        <div class="vlog-title">${window.bbEscape(p.title)}</div>
         <div class="vlog-date">${prettyDate(p.date)}</div>
-        <p class="vlog-desc">${p.desc || ''}</p>
+        ${chips ? `<div class="tag-row" style="margin:4px 0">${chips}</div>` : ''}
+        <p class="vlog-desc">${window.bbEscape(window.bbPlain(p.desc, 180))}</p>
       </div>`;
     el.style.display = 'grid';
   }
@@ -404,7 +415,11 @@
     try {
       const snap = await getDocs(collection(db,'vlog'));
       const live = snap.docs.map(s => ({ id:s.id, ...s.data() }));
-      if (live.length){ window.__VLOG_POSTS = live; renderVlog(); }
+      if (live.length) window.__VLOG_POSTS = live;
+      const tv = await getDocs(collection(db,'vlogTags'));
+      const tags = tv.docs.map(s => ({ id:s.id, ...s.data() }));
+      if (tags.length) window.__VLOG_TAGS = tags;
+      if (live.length || tags.length) renderVlog();
     } catch(e){ console.warn('Vlog indisponible :', e); }
   })();
 

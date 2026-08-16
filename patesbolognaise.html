@@ -194,7 +194,44 @@
   .xbtn:hover{ border-color:var(--red); color:var(--red-d); }
   .hint{ font-size:.84rem; font-weight:600; color:var(--ink-soft); line-height:1.5; }
   .hint code{ background:var(--surface-2); border:1px solid var(--line); border-radius:6px; padding:1px 6px; font-size:.82em; }
-  textarea.inp{ width:100%; min-height:120px; resize:vertical; line-height:1.55; font-weight:600; }
+  textarea.inp{ width:100%; min-height:180px; resize:vertical; line-height:1.6; font-weight:600; }
+
+  /* ── Barre d'outils du texte ── */
+  .tb{
+    display:flex; gap:5px; flex-wrap:wrap; align-items:center;
+    padding:9px 10px; border:2px solid var(--line); border-bottom:none;
+    border-radius:var(--r-sm) var(--r-sm) 0 0; background:var(--surface-2);
+  }
+  .tb + textarea.inp{ border-radius:0 0 var(--r-sm) var(--r-sm); }
+  .tb-b{
+    min-width:32px; height:32px; padding:0 9px; border-radius:9px; cursor:pointer;
+    border:2px solid var(--line); background:var(--surface);
+    font-family:'Baloo 2',sans-serif; font-size:.86rem; font-weight:800; color:var(--ink);
+  }
+  .tb-b:hover{ border-color:var(--accent); color:var(--blue-d); }
+  .tb-sep{ width:2px; height:22px; background:var(--line); margin:0 3px; }
+  .tb-lbl{ font-size:.76rem; font-weight:800; color:var(--ink-soft); text-transform:uppercase; }
+  .tb-col{
+    width:24px; height:24px; border-radius:7px; cursor:pointer;
+    border:2px solid rgba(22,40,63,.15); padding:0; margin-right:3px;
+  }
+  .tb-col:hover{ transform:scale(1.15); }
+
+  .prev-box{ margin-top:14px; border:2px dashed var(--line-strong); border-radius:var(--r-md); padding:16px 18px; background:var(--surface-2); }
+  .prev-lbl{ font-size:.76rem; font-weight:800; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; margin-bottom:10px; }
+
+  .color-in{
+    width:52px; height:42px; padding:2px; cursor:pointer;
+    border:2px solid var(--line); border-radius:var(--r-sm); background:var(--surface-2);
+  }
+
+  /* ── Tags ── */
+  .t-row{ display:flex; align-items:center; gap:9px; padding:8px 0; border-bottom:1px solid var(--line); }
+  .t-row:last-child{ border-bottom:none; }
+  .t-row .grow{ flex:1; min-width:0; }
+  .tag-pick{ cursor:pointer; opacity:.42; transition:opacity .15s, transform .15s; }
+  .tag-pick:hover{ opacity:.8; transform:translateY(-1px); }
+  .tag-pick.on{ opacity:1; }
 </style>
 </head>
 <body data-v2>
@@ -270,12 +307,35 @@
   </section>
 
   <!-- ══ VLOG ══ -->
+  <!-- ══ VLOG ══ -->
   <section class="panel" id="p-vlog">
     <div class="vl-grid">
-      <div class="card">
-        <div class="card-head"><span class="ico">📼</span><h2>Les posts</h2></div>
-        <button class="btn btn-green btn-sm btn-block" id="vNew" style="margin-bottom:14px">➕ Nouveau post</button>
-        <div id="vList"></div>
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head"><span class="ico">📼</span><h2>Les posts</h2></div>
+          <button class="btn btn-green btn-sm btn-block" id="vNew" style="margin-bottom:14px">➕ Nouveau post</button>
+          <div id="vList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><span class="ico">🏷️</span><h2>Tes tags</h2></div>
+          <p class="hint" style="margin-bottom:12px">
+            Un tag = un emoji, un nom et une couleur. Tu peux en mettre plusieurs sur un post,
+            et les visiteurs peuvent filtrer le vlog avec.
+          </p>
+          <div id="tList" style="margin-bottom:14px"></div>
+          <div class="row" style="gap:8px">
+            <input class="inp" id="tEmoji" style="width:64px;text-align:center" placeholder="🏷️" maxlength="4">
+            <input class="inp" id="tName" style="flex:1;min-width:120px" placeholder="Nom du tag">
+            <input type="color" class="color-in" id="tColor" value="#2BB7F2" title="Couleur">
+            <button class="btn btn-blue btn-sm" id="tAdd">➕</button>
+          </div>
+          <div class="row" style="margin-top:10px;align-items:center">
+            <span class="lbl">Aperçu</span>
+            <span id="tPreview"></span>
+          </div>
+          <span class="save-msg" id="tMsg"></span>
+        </div>
       </div>
 
       <div class="card">
@@ -285,36 +345,88 @@
           <input class="inp" id="vTitle" style="width:100%" placeholder="Bubble Direct #1"></div>
 
         <div class="row" style="margin-bottom:16px">
-          <div style="flex:1;min-width:150px">
+          <div style="flex:1;min-width:140px">
             <label class="lbl">Date</label><br>
             <input class="inp" type="date" id="vDate" style="width:100%">
           </div>
-          <div style="flex:1;min-width:150px">
-            <label class="lbl">Visible par</label><br>
+          <div style="flex:2;min-width:190px">
+            <label class="lbl">Qui peut le voir</label><br>
             <select class="inp" id="vSub" style="width:100%"></select>
+          </div>
+          <div>
+            <label class="lbl">Couleur</label><br>
+            <input type="color" class="color-in" id="vAccent" value="#FF5FA2">
           </div>
         </div>
 
-        <div class="field"><label>Texte principal</label>
-          <textarea class="inp" id="vDesc" placeholder="Raconte ce qu'il se passe chez Bubble inc. !"></textarea></div>
+        <div class="blk">
+          <h3>🏷️ Tags du post <small>clique pour ajouter / retirer</small></h3>
+          <div class="tag-row" id="vTags"></div>
+        </div>
 
-        <div class="field"><label>Lien vidéo (facultatif)</label>
-          <input class="inp" id="vVideo" style="width:100%" placeholder="https://youtu.be/…"></div>
+        <div class="blk">
+          <h3>📝 Texte principal</h3>
+          <div class="tb">
+            <button class="tb-b" data-wrap="**|**"  title="Gras"><b>G</b></button>
+            <button class="tb-b" data-wrap="*|*"    title="Italique"><i>I</i></button>
+            <button class="tb-b" data-wrap="__|__"  title="Souligné"><u>S</u></button>
+            <button class="tb-b" data-wrap="~~|~~"  title="Barré"><s>B</s></button>
+            <span class="tb-sep"></span>
+            <button class="tb-b" data-line="## "    title="Titre">H1</button>
+            <button class="tb-b" data-line="### "   title="Petit titre">H2</button>
+            <button class="tb-b" data-line="- "     title="Liste">•</button>
+            <button class="tb-b" data-insert="\n---\n" title="Séparation">―</button>
+            <button class="tb-b" data-wrap="[|](https://)" title="Lien">🔗</button>
+            <span class="tb-sep"></span>
+            <span class="tb-lbl">Couleur du texte :</span>
+            <span id="tbColors"></span>
+            <button class="tb-b" data-insert="§r" title="Revenir au noir">✖ couleur</button>
+          </div>
+          <textarea class="inp" id="vDesc" placeholder="Raconte ce qu'il se passe chez Bubble inc. !
+Sélectionne du texte puis clique sur un bouton là-haut."></textarea>
+          <p class="hint" style="margin-top:8px">
+            Sélectionne du texte, puis clique un bouton. Les codes couleur ressemblent à Minecraft :
+            <code>§c</code> rouge, <code>§a</code> vert… et <code>§r</code> pour revenir au noir.
+          </p>
+          <div class="prev-box">
+            <div class="prev-lbl">👁️ Aperçu en direct</div>
+            <div class="bb" id="vPreview"></div>
+          </div>
+        </div>
 
         <div class="blk">
           <h3>🖼️ Images <small>fichiers du dossier <code>vlog/</code></small></h3>
+          <div class="row" style="margin-bottom:12px">
+            <span class="lbl">Disposition</span>
+            <select class="inp" id="vLayout">
+              <option value="grande">Une grande image par ligne</option>
+              <option value="deux">Deux images côte à côte</option>
+              <option value="galerie">Galerie de vignettes</option>
+            </select>
+          </div>
           <p class="hint" style="margin-bottom:10px">
-            Mets tes images dans le dossier <code>vlog/</code> du site, puis écris juste
-            le nom du fichier ici (ex. <code>direct1.png</code>). La première image sert de couverture.
+            Mets tes images dans le dossier <code>vlog/</code> du site, puis écris juste le nom
+            du fichier (ex. <code>direct1.png</code>). La première sert de couverture.
           </p>
           <div id="vImgs"></div>
           <button class="btn btn-ghost btn-sm" id="vAddImg">➕ Ajouter une image</button>
         </div>
 
+        <div class="blk">
+          <h3>🔘 Bouton personnalisé <small>facultatif</small></h3>
+          <div class="row">
+            <input class="inp" id="vBtnText" style="flex:1;min-width:150px" placeholder="Texte du bouton (ex. Télécharger le tome 2)">
+            <input class="inp" id="vBtnUrl"  style="flex:2;min-width:200px" placeholder="https://…">
+          </div>
+          <div class="field" style="margin-top:14px"><label>Lien vidéo (facultatif)</label>
+            <input class="inp" id="vVideo" style="width:100%" placeholder="https://youtu.be/…"></div>
+        </div>
+
         <div class="row" style="margin-top:18px">
           <label class="pick" id="vPub"><span class="bx">✓</span><span class="nm">Publié</span></label>
-          <span class="hint" style="flex:1">Décoché = brouillon, invisible sur le site.</span>
+          <label class="pick" id="vPin"><span class="bx">✓</span><span class="nm">📌 Épinglé en haut</span></label>
         </div>
+        <p class="hint" style="margin-top:8px">Décoché « Publié » = brouillon, invisible sur le site.</p>
 
         <div class="save-bar">
           <button class="btn btn-green" id="vSave">💾 Enregistrer</button>
@@ -350,7 +462,7 @@ const $  = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s)
   .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-let ME = null, USERS = [], POSTS = [], sel = null, editId = null;
+let ME = null, USERS = [], POSTS = [], TAGS = [], sel = null, editId = null;
 
 /* ══════════════════════════════════════
    1. LE VERROU — abonnement "admin" dans Firestore
@@ -404,8 +516,23 @@ async function boot(){
     POSTS = snap.docs.map(s => ({ id:s.id, ...s.data() }));
   } catch(e){ console.warn('Lecture du vlog impossible :', e); }
 
+  try {
+    const snap = await getDocs(collection(db,'vlogTags'));
+    TAGS = snap.docs.map(s => ({ id:s.id, ...s.data() }));
+  } catch(e){ console.warn('Lecture des tags impossible :', e); }
+
+  /* Premier lancement : on installe les tags de départ */
+  if (!TAGS.length){
+    TAGS = (window.VLOG_TAGS || []).slice();
+    for (const t of TAGS){
+      try { await setDoc(doc(db,'vlogTags',t.id), { name:t.name, emoji:t.emoji, color:t.color }); }
+      catch(e){ /* pas grave, ils resteront locaux */ }
+    }
+  }
+
   renderApercu();
   renderUserList();
+  renderTagManager();
   renderVlogList();
   newPost();
 }
@@ -707,19 +834,153 @@ function prettyDate(d){
   return `${parseInt(j,10)} ${MOIS[parseInt(m,10)-1]} ${y}`;
 }
 
-/* Le menu "visible par" ne montre jamais l'abonnement admin */
-$('#vSub').innerHTML = (window.PUBLIC_SUBS || ['basic','plus','x','max'])
-  .map(s => `<option value="${s}">${window.SUB_LABELS[s]}</option>`).join('');
+/* Qui peut voir un post : "free" = tout le monde, même sans compte */
+$('#vSub').innerHTML = (window.VLOG_SUBS || [])
+  .map(o => `<option value="${o.id}">${esc(o.label)}</option>`).join('');
 
+/* ── 6a. LES TAGS ── */
+function slug(t){
+  return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40) || 'tag';
+}
+const chip = (t, cls) =>
+  `<span class="tag-chip ${cls||''}" style="--tg:${esc(t.color||'#2BB7F2')}">${esc(t.emoji||'')} ${esc(t.name)}</span>`;
+
+function renderTagManager(){
+  $('#tList').innerHTML = TAGS.length ? TAGS.map(t => `
+    <div class="t-row" data-tag="${esc(t.id)}">
+      <span class="grow">${chip(t)}</span>
+      <input type="color" class="color-in" style="width:40px;height:32px" value="${esc(t.color||'#2BB7F2')}" data-edit="color">
+      <button class="xbtn" data-del="1" title="Supprimer">✕</button>
+    </div>`).join('') : '<p class="hint">Aucun tag pour l’instant — crée le premier juste en dessous !</p>';
+
+  $('#tList').querySelectorAll('.t-row').forEach(row => {
+    const id = row.dataset.tag;
+    row.querySelector('[data-edit="color"]').addEventListener('change', async e => {
+      const t = TAGS.find(x => x.id === id); if (!t) return;
+      t.color = e.target.value;
+      await saveTag(t);
+    });
+    row.querySelector('[data-del]').addEventListener('click', () => removeTag(id));
+  });
+  renderTagPicker();
+}
+
+function tagPreview(){
+  $('#tPreview').innerHTML = chip({
+    emoji: $('#tEmoji').value.trim() || '🏷️',
+    name:  $('#tName').value.trim()  || 'Nom du tag',
+    color: $('#tColor').value,
+  });
+}
+['#tEmoji','#tName','#tColor'].forEach(sel => $(sel).addEventListener('input', tagPreview));
+tagPreview();
+
+async function saveTag(t){
+  try { await setDoc(doc(db,'vlogTags',t.id), { name:t.name, emoji:t.emoji, color:t.color }, { merge:true });
+        renderTagManager(); renderVlogList(); return true; }
+  catch(e){ msg('#tMsg', '❌ ' + e.message, 'ko'); return false; }
+}
+
+$('#tAdd').addEventListener('click', async () => {
+  const name = $('#tName').value.trim();
+  if (!name){ msg('#tMsg', '❌ Il faut un nom !', 'ko'); return; }
+  const t = { id:slug(name), name, emoji:$('#tEmoji').value.trim(), color:$('#tColor').value };
+  if (TAGS.some(x => x.id === t.id)){ msg('#tMsg', '❌ Ce tag existe déjà.', 'ko'); return; }
+  TAGS.push(t);
+  if (await saveTag(t)){
+    $('#tName').value = ''; $('#tEmoji').value = ''; tagPreview();
+    msg('#tMsg', '✅ Tag créé !', 'ok');
+  }
+});
+
+async function removeTag(id){
+  const t = TAGS.find(x => x.id === id); if (!t) return;
+  const used = POSTS.filter(p => (p.tags||[]).includes(id)).length;
+  if (!confirm(`Supprimer le tag « ${t.name} » ?` + (used ? `\nIl est utilisé sur ${used} post(s), il en sera retiré.` : ''))) return;
+  try {
+    await deleteDoc(doc(db,'vlogTags',id));
+    TAGS = TAGS.filter(x => x.id !== id);
+    for (const p of POSTS.filter(p => (p.tags||[]).includes(id))){
+      p.tags = p.tags.filter(x => x !== id);
+      await setDoc(doc(db,'vlog',p.id), { tags:p.tags }, { merge:true });
+    }
+    postTags = postTags.filter(x => x !== id);
+    renderTagManager(); renderVlogList();
+    msg('#tMsg', '🗑️ Tag supprimé.', 'ok');
+  } catch(e){ msg('#tMsg', '❌ ' + e.message, 'ko'); }
+}
+
+/* Les tags cochés sur le post en cours d'édition */
+let postTags = [];
+function renderTagPicker(){
+  $('#vTags').innerHTML = TAGS.length
+    ? TAGS.map(t => `<span data-pick-tag="${esc(t.id)}">${chip(t, 'tag-pick' + (postTags.includes(t.id) ? ' on' : ''))}</span>`).join('')
+    : '<p class="hint">Crée d’abord un tag dans la carte « Tes tags ».</p>';
+  $('#vTags').querySelectorAll('[data-pick-tag]').forEach(el =>
+    el.addEventListener('click', () => {
+      const id = el.dataset.pickTag;
+      postTags = postTags.includes(id) ? postTags.filter(x => x !== id) : [...postTags, id];
+      renderTagPicker();
+    }));
+}
+
+/* ── 6b. BARRE D'OUTILS DU TEXTE ── */
+const ta = $('#vDesc');
+function surround(before, after){
+  const a = ta.selectionStart, b = ta.selectionEnd;
+  const sel = ta.value.slice(a,b) || 'texte';
+  ta.value = ta.value.slice(0,a) + before + sel + after + ta.value.slice(b);
+  ta.focus();
+  ta.setSelectionRange(a + before.length, a + before.length + sel.length);
+  preview();
+}
+function prefixLines(pre){
+  const a = ta.selectionStart, b = ta.selectionEnd;
+  const s0 = ta.value.lastIndexOf('\n', a - 1) + 1;
+  const e0 = ta.value.indexOf('\n', b) === -1 ? ta.value.length : ta.value.indexOf('\n', b);
+  const block = ta.value.slice(s0, e0).split('\n').map(l => l.startsWith(pre) ? l : pre + l).join('\n');
+  ta.value = ta.value.slice(0,s0) + block + ta.value.slice(e0);
+  ta.focus(); ta.setSelectionRange(s0, s0 + block.length);
+  preview();
+}
+function insertAt(txt){
+  const a = ta.selectionStart;
+  ta.value = ta.value.slice(0,a) + txt + ta.value.slice(ta.selectionEnd);
+  ta.focus(); ta.setSelectionRange(a + txt.length, a + txt.length);
+  preview();
+}
+
+/* La palette de couleurs : elle écrit le code toute seule */
+$('#tbColors').innerHTML = (window.BB_COLORS || []).map(c =>
+  `<button class="tb-col" data-col="${c.code}" title="${esc(c.name)} (§${c.code})" style="background:${c.hex}"></button>`).join('');
+
+document.querySelectorAll('.tb-b, .tb-col').forEach(b => b.addEventListener('click', ev => {
+  ev.preventDefault();
+  if (b.dataset.col)    return surround('§' + b.dataset.col, '§r');
+  if (b.dataset.wrap){  const [x,y] = b.dataset.wrap.split('|'); return surround(x, y); }
+  if (b.dataset.line)   return prefixLines(b.dataset.line);
+  if (b.dataset.insert) return insertAt(b.dataset.insert.replace(/\\n/g,'\n'));
+}));
+
+function preview(){ $('#vPreview').innerHTML = window.bbFormat(ta.value) || '<p class="hint">L’aperçu s’affiche ici…</p>'; }
+ta.addEventListener('input', preview);
+$('#vAccent').addEventListener('input', () => { $('#vPreview').style.setProperty('--accent', $('#vAccent').value); });
+
+/* ── 6c. LA LISTE DES POSTS ── */
 function renderVlogList(){
-  const list = POSTS.slice().sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
+  const list = POSTS.slice().sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0)
+                                        || String(b.date||'').localeCompare(String(a.date||'')));
   $('#vList').innerHTML = list.length ? list.map(p => {
-    const cov = (p.images || [])[0] || p.cover;
-    return `<div class="vl-post ${editId===p.id?'sel':''}" data-id="${esc(p.id)}">
+    const cov  = (p.images || [])[0] || p.cover;
+    const tags = (p.tags || []).map(id => TAGS.find(t => t.id === id)).filter(Boolean);
+    return `<div class="vl-post ${editId===p.id?'sel':''}" data-id="${esc(p.id)}"
+                 style="border-color:${p.accent ? esc(p.accent)+'66' : 'var(--line)'}">
       <div class="vl-cover">${cov ? `<img src="${esc(cov)}" alt="" onerror="this.replaceWith(document.createTextNode('🎬'))">` : '🎬'}</div>
       <div class="vl-info">
-        <b>${esc(p.title || '(sans titre)')}</b>
-        <span>${prettyDate(p.date)} · ${esc(p.author || '?')} · ${window.SUB_LABELS[p.sub||'basic']}</span>
+        <b>${p.pinned ? '📌 ' : ''}${esc(p.title || '(sans titre)')}</b>
+        <span>${prettyDate(p.date)} · ${esc(p.author || '?')} · ${p.sub === 'free' ? '🌍 tout le monde' : window.SUB_LABELS[p.sub||'basic']}</span>
+        ${tags.length ? `<div class="tag-row" style="margin-top:5px">${tags.map(t => chip(t,'sm')).join('')}</div>` : ''}
       </div>
       ${p.published === false ? '<span class="vl-draft">BROUILLON</span>' : ''}
     </div>`;
@@ -729,14 +990,17 @@ function renderVlogList(){
     r.addEventListener('click', () => editPost(r.dataset.id)));
 }
 
-function imgRow(val){
+/* ── 6d. LES IMAGES (nom de fichier + légende) ── */
+function imgRow(val, cap){
   const d = document.createElement('div');
   d.className = 'imgrow';
+  d.style.flexWrap = 'wrap';
   d.innerHTML = `
     <div class="imgprev">${val ? `<img src="vlog/${esc(val)}" alt="" onerror="this.replaceWith(document.createTextNode('🖼️'))">` : '🖼️'}</div>
-    <input class="inp" placeholder="nom-du-fichier.png" value="${esc(val||'')}">
+    <input class="inp f-name" style="flex:1;min-width:130px" placeholder="nom-du-fichier.png" value="${esc(val||'')}">
+    <input class="inp f-cap"  style="flex:1;min-width:130px" placeholder="légende (facultatif)" value="${esc(cap||'')}">
     <button class="xbtn" title="Retirer">✕</button>`;
-  const inp = d.querySelector('input');
+  const inp = d.querySelector('.f-name');
   inp.addEventListener('input', () => {
     const v = inp.value.trim();
     d.querySelector('.imgprev').innerHTML = v
@@ -745,63 +1009,85 @@ function imgRow(val){
   d.querySelector('.xbtn').addEventListener('click', () => d.remove());
   return d;
 }
-function imgValues(){
-  return [...$('#vImgs').querySelectorAll('input')]
-    .map(i => i.value.trim()).filter(Boolean).map(v => v.startsWith('vlog/') ? v : 'vlog/' + v);
+function imgData(){
+  const rows = [...$('#vImgs').querySelectorAll('.imgrow')];
+  const images = [], captions = [];
+  rows.forEach(r => {
+    const n = r.querySelector('.f-name').value.trim();
+    if (!n) return;
+    images.push(n.startsWith('vlog/') ? n : 'vlog/' + n);
+    captions.push(r.querySelector('.f-cap').value.trim());
+  });
+  return { images, captions };
 }
 
+/* ── 6e. NOUVEAU / MODIFIER ── */
 function newPost(){
   editId = null;
   $('#vEditTitle').textContent = 'Créer un post';
-  $('#vTitle').value = ''; $('#vDesc').value = ''; $('#vVideo').value = '';
-  $('#vDate').value  = todayStr();
-  $('#vSub').value   = 'basic';
+  $('#vTitle').value = ''; ta.value = ''; $('#vVideo').value = '';
+  $('#vBtnText').value = ''; $('#vBtnUrl').value = '';
+  $('#vDate').value   = todayStr();
+  $('#vSub').value    = 'free';
+  $('#vAccent').value = '#FF5FA2';
+  $('#vLayout').value = 'grande';
+  postTags = [];
   $('#vPub').classList.add('on');
+  $('#vPin').classList.remove('on');
   $('#vImgs').innerHTML = '';
-  $('#vImgs').appendChild(imgRow(''));
+  $('#vImgs').appendChild(imgRow('',''));
   $('#vDel').style.display = 'none';
-  renderVlogList();
+  renderTagPicker(); preview(); renderVlogList();
 }
 
 function editPost(id){
   const p = POSTS.find(x => x.id === id); if (!p) return;
   editId = id;
   $('#vEditTitle').textContent = 'Modifier le post';
-  $('#vTitle').value = p.title || '';
-  $('#vDesc').value  = p.desc  || '';
-  $('#vVideo').value = p.video || '';
-  $('#vDate').value  = p.date  || todayStr();
-  $('#vSub').value   = p.sub   || 'basic';
+  $('#vTitle').value   = p.title || '';
+  ta.value             = p.desc  || '';
+  $('#vVideo').value   = p.video || '';
+  $('#vBtnText').value = p.btnText || '';
+  $('#vBtnUrl').value  = p.btnUrl  || '';
+  $('#vDate').value    = p.date  || todayStr();
+  $('#vSub').value     = p.sub   || 'free';
+  $('#vAccent').value  = p.accent || '#FF5FA2';
+  $('#vLayout').value  = p.layout || 'grande';
+  postTags = (p.tags || []).slice();
   $('#vPub').classList.toggle('on', p.published !== false);
+  $('#vPin').classList.toggle('on', !!p.pinned);
   $('#vImgs').innerHTML = '';
   const imgs = (p.images || []).map(s => String(s).replace(/^vlog\//,''));
-  (imgs.length ? imgs : ['']).forEach(v => $('#vImgs').appendChild(imgRow(v)));
+  const caps = p.captions || [];
+  if (imgs.length) imgs.forEach((v,i) => $('#vImgs').appendChild(imgRow(v, caps[i])));
+  else $('#vImgs').appendChild(imgRow('',''));
   $('#vDel').style.display = '';
-  renderVlogList();
+  renderTagPicker(); preview(); renderVlogList();
 }
 
 $('#vNew').addEventListener('click', newPost);
-$('#vAddImg').addEventListener('click', () => $('#vImgs').appendChild(imgRow('')));
-$('#vPub').addEventListener('click', ev => { ev.preventDefault(); $('#vPub').classList.toggle('on'); });
-
-/* Un identifiant lisible : "2026-08-15-bubble-direct-1" */
-function slug(t){
-  return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50) || 'post';
-}
+$('#vAddImg').addEventListener('click', () => $('#vImgs').appendChild(imgRow('','')));
+['#vPub','#vPin'].forEach(sel =>
+  $(sel).addEventListener('click', ev => { ev.preventDefault(); $(sel).classList.toggle('on'); }));
 
 $('#vSave').addEventListener('click', async () => {
   const title = $('#vTitle').value.trim();
   if (!title){ msg('#vMsg', '❌ Il faut un titre !', 'ko'); return; }
-  const imgs = imgValues();
+  const { images, captions } = imgData();
   const data = {
     title,
     date:      $('#vDate').value || todayStr(),
-    desc:      $('#vDesc').value.trim(),
+    desc:      ta.value.trim(),
     video:     $('#vVideo').value.trim(),
+    btnText:   $('#vBtnText').value.trim(),
+    btnUrl:    $('#vBtnUrl').value.trim(),
     sub:       $('#vSub').value,
-    images:    imgs,
-    cover:     imgs[0] || '',
+    accent:    $('#vAccent').value,
+    layout:    $('#vLayout').value,
+    tags:      postTags.slice(),
+    images, captions,
+    cover:     images[0] || '',
+    pinned:    $('#vPin').classList.contains('on'),
     published: $('#vPub').classList.contains('on'),
     author:    ME.pseudo || ME.email || 'Admin',
     authorId:  ME.uid,
@@ -817,7 +1103,7 @@ $('#vSave').addEventListener('click', async () => {
     $('#vEditTitle').textContent = 'Modifier le post';
     $('#vDel').style.display = '';
     renderVlogList();
-    msg('#vMsg', '✅ Post enregistré — il est déjà en ligne !', 'ok');
+    msg('#vMsg', data.published ? '✅ Post en ligne !' : '✅ Brouillon enregistré.', 'ok');
   } catch(e){
     console.error(e);
     msg('#vMsg', '❌ Échec : ' + e.message, 'ko');

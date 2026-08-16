@@ -84,10 +84,75 @@
   .read-imgs{ display:grid; gap:12px; margin-top:18px; }
   .read-imgs img{ width:100%; border-radius:var(--r-md); border:2px solid var(--line); display:block; }
 
+  /* ── Filtres par tag ── */
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:26px; }
+  .f-btn{
+    padding:9px 16px; border-radius:999px; cursor:pointer;
+    border:2px solid var(--line); background:var(--surface);
+    font-family:'Baloo 2',sans-serif; font-size:.88rem; font-weight:800;
+    color:var(--ink-soft); transition:all .16s; display:inline-flex; align-items:center; gap:6px;
+  }
+  .f-btn:hover{ border-color:var(--line-strong); color:var(--ink); transform:translateY(-2px); }
+  .f-btn.on{ color:#fff; border-color:transparent; background:var(--tg,var(--accent)); box-shadow:0 3px 0 rgba(22,40,63,.16); }
+  .f-count{ font-size:.75rem; opacity:.75; }
+
+  /* ── Épinglé / nouveau ── */
+  .badge-row{ display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+  .pin-badge, .new-badge{
+    display:inline-flex; align-items:center; gap:4px;
+    padding:4px 10px; border-radius:999px; font-size:.7rem; font-weight:800; letter-spacing:.4px;
+  }
+  .pin-badge{ background:rgba(255,197,61,.2); color:#9C6D00; }
+  .new-badge{ background:var(--green); color:#fff; animation:newPulse 1.8s ease-in-out infinite; }
+  @keyframes newPulse{ 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.07) } }
+
+  /* ── Galerie d'images ── */
+  .gal{ display:grid; gap:14px; margin-top:20px; }
+  .gal.grande{ grid-template-columns:1fr; }
+  .gal.deux{ grid-template-columns:1fr 1fr; }
+  .gal.galerie{ grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
+  .gal figure{ margin:0; cursor:zoom-in; }
+  .gal img{
+    width:100%; display:block; border-radius:var(--r-md);
+    border:2px solid var(--line); background:var(--surface-2);
+    transition:transform .18s, box-shadow .18s;
+  }
+  .gal.galerie img{ aspect-ratio:1; object-fit:cover; }
+  .gal figure:hover img{ transform:translateY(-3px); box-shadow:var(--shadow-2); }
+  .gal figcaption{ font-size:.85rem; font-weight:700; color:var(--ink-soft); margin-top:7px; text-align:center; }
+
+  /* ── Loupe plein écran ── */
+  #lightbox{ display:none; position:fixed; inset:0; z-index:3000; background:rgba(22,40,63,.85);
+             align-items:center; justify-content:center; flex-direction:column; gap:14px; padding:24px; }
+  #lightbox.open{ display:flex; }
+  #lightbox img{ max-width:min(1100px,94vw); max-height:76vh; border-radius:var(--r-lg); border:3px solid #fff; }
+  #lbCap{ color:#fff; font-weight:800; text-align:center; max-width:700px; }
+  .lb-btn{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:48px; height:48px; border-radius:50%; cursor:pointer;
+    border:none; background:rgba(255,255,255,.9); color:var(--ink);
+    font-size:1.4rem; font-weight:800;
+  }
+  .lb-prev{ left:18px; } .lb-next{ right:18px; }
+  .lb-close{ position:absolute; top:18px; right:18px; width:44px; height:44px; border-radius:50%;
+             border:none; background:rgba(255,255,255,.9); cursor:pointer; font-size:1.1rem; font-weight:800; }
+
+  /* ── Bouton personnalisé du post ── */
+  .post-cta{ margin-top:22px; display:flex; gap:10px; flex-wrap:wrap; }
+
+  .invite{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    background:var(--surface); border:2px dashed var(--line-strong);
+    border-radius:var(--r-lg); padding:16px 20px; margin-bottom:24px;
+  }
+  .invite p{ flex:1; min-width:200px; font-size:.92rem; font-weight:700; color:var(--ink-soft); }
+
   @media(max-width:760px){
     .featured{ grid-template-columns:1fr; }
     .featured-cover{ min-height:180px; max-height:200px; }
     .featured-body{ padding:20px; }
+    .gal.deux{ grid-template-columns:1fr; }
+    .read-sheet{ width:100%; }
   }
 </style>
 </head>
@@ -130,8 +195,17 @@
   <h1 class="page-title fade-up">🎬 Le Vlog Bubble inc.</h1>
   <p class="page-subtitle fade-up d1">Les coulisses, les annonces et les Bubble Direct.</p>
 
+  <div class="filters" id="vlogFilters"></div>
   <div id="vlogContent"></div>
 </main>
+
+<div id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <button class="lb-btn lb-prev" id="lbPrev">‹</button>
+  <img id="lbImg" alt="">
+  <div id="lbCap"></div>
+  <button class="lb-btn lb-next" id="lbNext">›</button>
+</div>
 
 <!-- Lecture d'un post -->
 <div class="overlay" id="readOverlay">
@@ -142,9 +216,10 @@
     </div>
     <div class="read-meta" id="readMeta"></div>
     <div class="read-body">
-      <div class="read-text" id="readText"></div>
-      <div class="read-imgs" id="readImgs"></div>
-      <div id="readVideo" style="margin-top:18px"></div>
+      <div class="tag-row" id="readTags" style="margin-bottom:14px"></div>
+      <div class="bb" id="readText"></div>
+      <div id="readImgs"></div>
+      <div class="post-cta" id="readCta"></div>
     </div>
   </div>
 </div>
@@ -159,7 +234,7 @@ toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');men
 ov.addEventListener('click',closeMenu);
 window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
 
-let userSub = 'basic';
+let userSub = 'free';   /* 'free' = visiteur sans compte */
 
 /* Affiche une date "2026-08-15" → "15 août 2026" */
 const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -170,13 +245,24 @@ function prettyDate(d){
   return `${parseInt(j,10)} ${MOIS[parseInt(m,10)-1]} ${y}`;
 }
 
-function canSee(post){ return window.SUB_ORDER[userSub] >= window.SUB_ORDER[post.sub || 'basic']; }
+function canSee(post){
+  /* "free" (ou rien) = visible par tout le monde, même sans compte */
+  return window.SUB_ORDER[userSub] >= window.SUB_ORDER[post.sub || 'free'];
+}
 
-const esc = t => String(t == null ? '' : t)
-  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const esc = t => window.bbEscape(t);
 
-/* Les posts : d'abord ceux du panneau admin (Firestore), sinon window.VLOG */
-let POSTS = (window.VLOG || []).slice();
+let POSTS  = (window.VLOG || []).slice();
+let TAGS   = (window.VLOG_TAGS || []).slice();
+let filter = null;                 /* id de tag sélectionné, null = tout */
+
+const tagOf   = id => TAGS.find(t => t.id === id) || null;
+const tagsOf  = p  => (p.tags || []).map(tagOf).filter(Boolean);
+const isNew   = p  => {
+  if (!p.date) return false;
+  const d = new Date(p.date + 'T00:00:00');
+  return (Date.now() - d.getTime()) < 7 * 864e5;
+};
 
 function coverOf(post){
   const src = (post.images || [])[0] || post.cover;
@@ -185,82 +271,176 @@ function coverOf(post){
     : '🎬';
 }
 
-/* ── Lecteur ── */
+/* ── La loupe plein écran ── */
+let lbList = [], lbCaps = [], lbAt = 0;
+const lb = document.getElementById('lightbox');
+function lbShow(i){
+  if (!lbList.length) return;
+  lbAt = (i + lbList.length) % lbList.length;
+  document.getElementById('lbImg').src = lbList[lbAt];
+  document.getElementById('lbCap').textContent = lbCaps[lbAt] || '';
+  lb.classList.add('open');
+}
+function lbClose(){ lb.classList.remove('open'); }
+document.getElementById('lbClose').addEventListener('click', lbClose);
+document.getElementById('lbPrev').addEventListener('click', () => lbShow(lbAt - 1));
+document.getElementById('lbNext').addEventListener('click', () => lbShow(lbAt + 1));
+lb.addEventListener('click', e => { if (e.target === lb) lbClose(); });
+
+/* ── Le lecteur d'un post ── */
 const readOv = document.getElementById('readOverlay');
 function openPost(id){
   const p = POSTS.find(x => String(x.id) === String(id));
   if (!p || !canSee(p)) return;
+  const accent = p.accent || '#FF5FA2';
+
   document.getElementById('readTitle').textContent = p.title || '';
+  document.getElementById('readTitle').style.color = accent;
   document.getElementById('readMeta').textContent =
     `${prettyDate(p.date)}${p.author ? ' · par ' + p.author : ''}`;
-  document.getElementById('readText').textContent = p.desc || '';
-  document.getElementById('readImgs').innerHTML =
-    (p.images || []).map(src => `<img src="${esc(src)}" alt="" onerror="this.remove()">`).join('');
-  document.getElementById('readVideo').innerHTML = p.video
-    ? `<a class="btn btn-red" href="${esc(p.video)}" target="_blank" rel="noopener">▶ Regarder la vidéo</a>` : '';
+  document.getElementById('readTags').innerHTML =
+    tagsOf(p).map(t => window.tagChip(t)).join('');
+  document.getElementById('readText').innerHTML = window.bbFormat(p.desc || '');
+
+  /* Images + légendes */
+  const imgs = p.images || [], caps = p.captions || [];
+  const layout = p.layout || 'grande';
+  document.getElementById('readImgs').innerHTML = imgs.length
+    ? `<div class="gal ${layout}">` + imgs.map((src,i) => `
+        <figure data-i="${i}">
+          <img src="${esc(src)}" alt="${esc(caps[i]||'')}" onerror="this.closest('figure').remove()">
+          ${caps[i] ? `<figcaption>${esc(caps[i])}</figcaption>` : ''}
+        </figure>`).join('') + `</div>`
+    : '';
+  lbList = imgs.slice(); lbCaps = caps.slice();
+  document.getElementById('readImgs').querySelectorAll('figure').forEach(f =>
+    f.addEventListener('click', () => lbShow(+f.dataset.i)));
+
+  /* Bouton personnalisé + vidéo */
+  const cta = [];
+  if (p.btnUrl && p.btnText)
+    cta.push(`<a class="btn" style="background:${esc(accent)};box-shadow:0 4px 0 rgba(22,40,63,.22)" href="${esc(p.btnUrl)}" target="_blank" rel="noopener">${esc(p.btnText)}</a>`);
+  if (p.video)
+    cta.push(`<a class="btn btn-red" href="${esc(p.video)}" target="_blank" rel="noopener">▶ Regarder la vidéo</a>`);
+  document.getElementById('readCta').innerHTML = cta.join('');
+
   readOv.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closePost(){ readOv.classList.remove('open'); document.body.style.overflow = ''; }
 document.getElementById('readClose').addEventListener('click', closePost);
 readOv.addEventListener('click', e => { if (e.target === readOv) closePost(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closePost(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){ if (lb.classList.contains('open')) lbClose(); else closePost(); }
+  if (lb.classList.contains('open')){
+    if (e.key === 'ArrowRight') lbShow(lbAt + 1);
+    if (e.key === 'ArrowLeft')  lbShow(lbAt - 1);
+  }
+});
+
+/* ── Les boutons de filtre ── */
+function renderFilters(posts){
+  const box = document.getElementById('vlogFilters');
+  const used = {};
+  posts.forEach(p => (p.tags || []).forEach(id => used[id] = (used[id] || 0) + 1));
+  const list = TAGS.filter(t => used[t.id]);
+  if (list.length < 2){ box.innerHTML = ''; return; }
+
+  box.innerHTML =
+    `<button class="f-btn ${filter ? '' : 'on'}" data-tag="">🗂️ Tout <span class="f-count">${posts.length}</span></button>` +
+    list.map(t => `<button class="f-btn ${filter===t.id?'on':''}" data-tag="${esc(t.id)}" style="--tg:${esc(t.color)}">
+        ${t.emoji || ''} ${esc(t.name)} <span class="f-count">${used[t.id]}</span></button>`).join('');
+
+  box.querySelectorAll('.f-btn').forEach(b => b.addEventListener('click', () => {
+    filter = b.dataset.tag || null;
+    render();
+  }));
+}
+
+function cardOf(p){
+  const vu     = canSee(p);
+  const accent = p.accent || '#FF5FA2';
+  const chips  = tagsOf(p).map(t => window.tagChip(t, true)).join('');
+  return `<article class="post fade-up d3" style="border-color:${vu ? esc(accent)+'44' : 'var(--line)'}">
+    <div class="post-cover">
+      ${coverOf(p)}
+      ${vu ? '' : '<div class="post-lock">🔒</div>'}
+    </div>
+    <div class="post-body">
+      <div class="badge-row">
+        ${p.pinned ? '<span class="pin-badge">📌 ÉPINGLÉ</span>' : ''}
+        ${isNew(p)  ? '<span class="new-badge">NOUVEAU</span>' : ''}
+        <span class="post-date" style="color:${esc(accent)}">${prettyDate(p.date)}</span>
+      </div>
+      <div class="post-title">${esc(p.title)}</div>
+      ${chips ? `<div class="tag-row">${chips}</div>` : ''}
+      <p class="post-desc">${esc(window.bbPlain(p.desc, 120))}</p>
+      ${vu
+        ? `<button class="btn btn-sm" style="background:${esc(accent)};box-shadow:0 4px 0 rgba(22,40,63,.22)" data-open="${esc(p.id)}">📖 Lire</button>`
+        : `<a class="btn btn-yellow btn-sm" href="bubble_site_abonnements.html">🔒 ${window.SUB_LABELS[p.sub||'basic']}</a>`}
+    </div>
+  </article>`;
+}
 
 function render(){
-  const box   = document.getElementById('vlogContent');
-  const posts = POSTS.filter(p => p.published !== false);
+  const box = document.getElementById('vlogContent');
+  const all = POSTS.filter(p => p.published !== false);
+
+  /* Épinglés d'abord, puis du plus récent au plus ancien */
+  all.sort((a,b) => (b.pinned?1:0) - (a.pinned?1:0)
+                 || String(b.date||'').localeCompare(String(a.date||'')));
+  renderFilters(all);
+
+  const posts = filter ? all.filter(p => (p.tags||[]).includes(filter)) : all;
 
   if (!posts.length){
     box.innerHTML = `
       <div class="empty fade-up d2">
         <div class="empty-emoji">🎬</div>
-        <h2>Le vlog arrive bientôt !</h2>
-        <p>Aucun post pour le moment. Reviens vite, ça se prépare dans les coulisses de Bubble inc. !</p>
+        <h2>${filter ? 'Rien avec ce tag' : 'Le vlog arrive bientôt !'}</h2>
+        <p>${filter
+          ? 'Essaie un autre tag, ou clique sur « Tout ».'
+          : 'Aucun post pour le moment. Reviens vite, ça se prépare dans les coulisses de Bubble inc. !'}</p>
       </div>`;
     return;
   }
 
-  posts.sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
   const [first, ...rest] = posts;
-  const ok = canSee(first);
+  const ok     = canSee(first);
+  const accent = first.accent || '#FF5FA2';
+  const chips  = tagsOf(first).map(t => window.tagChip(t)).join('');
 
   const action = ok
-    ? `<button class="btn btn-pink btn-lg" data-open="${esc(first.id)}">📖 Lire le post</button>`
+    ? `<button class="btn btn-lg" style="background:${esc(accent)};box-shadow:0 5px 0 rgba(22,40,63,.22)" data-open="${esc(first.id)}">📖 Lire le post</button>`
     : `<a class="btn btn-yellow btn-lg" href="bubble_site_abonnements.html">🔒 Nécessite ${window.SUB_LABELS[first.sub||'basic']}</a>`;
 
   box.innerHTML = `
-    <section class="featured fade-up d2">
-      <div class="featured-cover">${coverOf(first)}</div>
+    ${(userSub === 'free' && all.some(p => !canSee(p))) ? `
+      <div class="invite fade-up">
+        <span style="font-size:1.6rem">🫧</span>
+        <p>Certains posts sont réservés aux abonnés. Crée ton compte, c'est gratuit !</p>
+        <a class="btn btn-blue btn-sm" href="login.html">Se connecter</a>
+      </div>` : ''}
+
+    <section class="featured fade-up d2" style="border-color:${ok ? esc(accent)+'55' : 'var(--line)'}">
+      <div class="featured-cover">${coverOf(first)}${ok ? '' : '<div class="post-lock">🔒</div>'}</div>
       <div class="featured-body">
-        <span class="featured-tag">✦ DERNIER POST</span>
+        <div class="badge-row">
+          <span class="featured-tag" style="background:${esc(accent)}22;color:${esc(accent)}">
+            ${first.pinned ? '📌 ÉPINGLÉ' : '✦ DERNIER POST'}</span>
+          ${isNew(first) ? '<span class="new-badge">NOUVEAU</span>' : ''}
+        </div>
         <div class="featured-title">${esc(first.title)}</div>
         <div class="featured-date">${prettyDate(first.date)}${first.author ? ' · par ' + esc(first.author) : ''}</div>
-        <p class="featured-desc">${esc((first.desc||'').slice(0,220))}${(first.desc||'').length > 220 ? '…' : ''}</p>
+        ${chips ? `<div class="tag-row">${chips}</div>` : ''}
+        <p class="featured-desc">${esc(window.bbPlain(first.desc, 220))}</p>
         <div class="featured-actions">${action}</div>
       </div>
     </section>
 
     ${rest.length ? `
       <h2 class="section-title fade-up d3">📼 Les posts précédents</h2>
-      <div class="posts">
-        ${rest.map(p => {
-          const vu = canSee(p);
-          return `<article class="post fade-up d3">
-            <div class="post-cover">
-              ${coverOf(p)}
-              ${vu ? '' : '<div class="post-lock">🔒</div>'}
-            </div>
-            <div class="post-body">
-              <div class="post-date">${prettyDate(p.date)}</div>
-              <div class="post-title">${esc(p.title)}</div>
-              <p class="post-desc">${esc((p.desc||'').slice(0,120))}${(p.desc||'').length > 120 ? '…' : ''}</p>
-              ${vu
-                ? `<button class="btn btn-pink btn-sm" data-open="${esc(p.id)}">📖 Lire</button>`
-                : `<a class="btn btn-yellow btn-sm" href="bubble_site_abonnements.html">🔒 ${window.SUB_LABELS[p.sub||'basic']}</a>`}
-            </div>
-          </article>`;
-        }).join('')}
-      </div>` : ''}
+      <div class="posts">${rest.map(cardOf).join('')}</div>` : ''}
   `;
 
   box.querySelectorAll('[data-open]').forEach(b =>
@@ -287,8 +467,31 @@ render();
   const auth = getAuth(app);
   const db   = getFirestore(app);
 
+  /* Les posts et les tags publiés depuis le panneau admin.
+     Le vlog est visible SANS COMPTE : on charge d'abord, on regarde le compte ensuite. */
+  async function loadVlog(){
+    try {
+      const [pv, tv] = await Promise.all([ getDocs(collection(db,'vlog')), getDocs(collection(db,'vlogTags')) ]);
+      const live = pv.docs.map(d => ({ id:d.id, ...d.data() }));
+      const tags = tv.docs.map(d => ({ id:d.id, ...d.data() }));
+      if (live.length) POSTS = live;
+      if (tags.length) TAGS  = tags;
+    } catch(e){ console.warn('Vlog Firestore indisponible :', e); }
+  }
+
   onAuthStateChanged(auth, async user => {
-    if (!user){ window.location.href = './login.html'; return; }
+    if (!user){
+      /* Visiteur : on ne renvoie PAS vers la connexion, le vlog est ouvert à tous */
+      userSub = 'free';
+      window.userSub = 'free';
+      const np = document.getElementById('navProfile');
+      if (np) np.href = './login.html';
+      document.getElementById('navName').textContent = 'Connexion';
+      document.getElementById('navSub').textContent  = 'Se connecter';
+      await loadVlog();
+      render();
+      return;
+    }
     try {
       const snap = await getDoc(doc(db,'users',user.uid));
       if (snap.exists()){
@@ -301,18 +504,12 @@ render();
         document.getElementById('navName').textContent = user.displayName || user.email.split('@')[0];
         document.getElementById('navSub').textContent  = window.SUB_LABELS[sub];
         if (window.applyTheme) window.applyTheme(d.activeEffect || null);
-        window.applyFrame(sub, window.getLevel(d.xp || 0, sub).level);
+        window.__frameGrants = (d.framesUnlocked || []).slice();
+        window.applyFrame(sub, window.getLevel(d.xp || 0, sub).level, d.frameId || null);
       }
     } catch(e){ console.warn(e); }
 
-    /* Les posts publiés depuis le panneau admin.
-       S'il n'y en a aucun, on garde ceux écrits à la main dans bubble_data.js. */
-    try {
-      const snap = await getDocs(collection(db,'vlog'));
-      const live = snap.docs.map(s => ({ id:s.id, ...s.data() }));
-      if (live.length) POSTS = live;
-    } catch(e){ console.warn('Vlog Firestore indisponible :', e); }
-
+    await loadVlog();
     render();
   });
 </script>

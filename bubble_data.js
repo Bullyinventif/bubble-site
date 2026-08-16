@@ -80,23 +80,157 @@ window.CARD_POOL = [
 
 /* ══════════════════════════════════════
    LE VLOG
-   Ajoute un post en haut de la liste : le premier de la liste est
-   automatiquement celui mis en avant sur l'accueil et sur la page Vlog.
-   Champs :
-     id      identifiant unique (sert aux liens)
-     title   titre du post
-     date    "2026-08-15"  (format année-mois-jour, pour le tri et l'affichage)
-     cover   image de couverture (optionnel)
-     desc    petit texte de présentation
-     video   lien YouTube (optionnel) — bouton "Regarder"
-     sub     "basic" | "plus" | "x" | "max"  (qui peut le voir)
-   Exemple :
-     { id:"v1", title:"Bubble Direct #1", date:"2026-08-15", cover:"",
-       desc:"Le premier vlog de Bubble inc. !", video:"", sub:"basic" },
+   Les posts sont normalement écrits depuis le panneau admin
+   (patesbolognaise.html) et stockés dans Firebase.
+   La liste ci-dessous ne sert que de SECOURS : elle s'affiche
+   uniquement si Firebase ne répond pas.
+   Champs d'un post :
+     id        identifiant unique
+     title     titre
+     date      "2026-08-15"
+     desc      le texte principal (mise en forme Bubble : voir bbFormat)
+     images    ["vlog/photo1.png", ...]  (la 1ʳᵉ sert de couverture)
+     captions  ["légende 1", ...]        (dans le même ordre que images)
+     layout    "grande" | "deux" | "galerie"
+     tags      ["annonce", "fix"]  (identifiants de tags, voir window.VLOG_TAGS)
+     accent    "#FF5FA2"   couleur du post
+     pinned    true/false  épinglé en haut du vlog
+     video     lien YouTube (optionnel)
+     btnText / btnUrl   bouton personnalisé (optionnel)
+     sub       qui peut le voir : "free" = tout le monde, même sans compte
+     published true/false
 ══════════════════════════════════════ */
 window.VLOG = [
   /* ← tes posts viennent ici */
 ];
+
+
+/* ══════════════════════════════════════
+   MISE EN FORME DES TEXTES DE VLOG  (« format Bubble »)
+   Un mini-langage tout simple, sans HTML, donc sans risque.
+
+     **gras**        __souligné__      *italique*      ~~barré~~
+     # Grand titre   ## Titre          ### Petit titre
+     - un point de liste
+     [voir le tome 2](https://…)
+     §c texte en rouge §r  (§r remet la couleur normale)
+     ---             (une ligne de séparation)
+
+   Les codes couleur sont dans window.BB_COLORS.
+══════════════════════════════════════ */
+window.BB_COLORS = [
+  { code:'c', name:'Rouge',  hex:'#E23B3B' },
+  { code:'o', name:'Orange', hex:'#F97316' },
+  { code:'e', name:'Jaune',  hex:'#D89400' },
+  { code:'a', name:'Vert',   hex:'#2FA648' },
+  { code:'t', name:'Turquoise', hex:'#0FB5A0' },
+  { code:'b', name:'Bleu',   hex:'#1690C6' },
+  { code:'v', name:'Violet', hex:'#8236D6' },
+  { code:'p', name:'Rose',   hex:'#DB3A7E' },
+  { code:'g', name:'Gris',   hex:'#64809F' },
+  { code:'n', name:'Noir',   hex:'#16283F' },
+];
+window.BB_COLOR_MAP = window.BB_COLORS.reduce((m,c) => (m[c.code] = c.hex, m), {});
+
+window.bbEscape = t => String(t == null ? '' : t)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+/* Seuls ces liens sont acceptés (pas de javascript:…) */
+function bbSafeUrl(u){
+  const s = String(u || '').trim();
+  if (/^(https?:\/\/|mailto:|#)/i.test(s)) return s;
+  if (/^[\w\-./]+\.(html|png|jpe?g|gif|webp|pdf)(\?.*)?$/i.test(s)) return s;
+  return '';
+}
+
+/* Les codes couleur d'UNE ligne. Toute couleur ouverte est refermée
+   à la fin de la ligne : impossible de déteindre sur le reste du texte. */
+function bbColors(line){
+  let open = 0;
+  let out = line.replace(/§([a-z])/g, (m, code) => {
+    if (code === 'r'){ const close = '</span>'.repeat(open); open = 0; return close; }
+    const hex = window.BB_COLOR_MAP[code];
+    if (!hex) return '';
+    open++;
+    return `<span style="color:${hex}">`;
+  });
+  return out + '</span>'.repeat(open);
+}
+
+/* Gras / italique / souligné / barré / liens */
+function bbInline(line){
+  let t = bbColors(line);
+  t = t.replace(/\[([^\]]{1,120})\]\(([^)\s]{1,300})\)/g, (m, txt, url) => {
+    const u = bbSafeUrl(url);
+    return u ? `<a href="${u}" target="_blank" rel="noopener">${txt}</a>` : txt;
+  });
+  t = t.replace(/\*\*([^*]{1,300})\*\*/g, '<b>$1</b>');
+  t = t.replace(/__([^_]{1,300})__/g,     '<u>$1</u>');
+  t = t.replace(/~~([^~]{1,300})~~/g,     '<s>$1</s>');
+  t = t.replace(/(^|[^*])\*([^*\n]{1,300})\*/g, '$1<i>$2</i>');
+  return t;
+}
+
+/* Le texte complet → du HTML sûr, à mettre dans un élément .bb */
+window.bbFormat = function(txt){
+  const lines = window.bbEscape(txt).split(/\r?\n/);
+  const out = [];
+  let list = null, para = [];
+
+  const flushPara = () => { if (para.length){ out.push('<p>' + para.map(bbInline).join('<br>') + '</p>'); para = []; } };
+  const flushList = () => { if (list){ out.push('<ul>' + list.map(l => '<li>' + bbInline(l) + '</li>').join('') + '</ul>'); list = null; } };
+
+  for (const raw of lines){
+    const line = raw.trimEnd();
+
+    if (/^\s*-{3,}\s*$/.test(line)){ flushPara(); flushList(); out.push('<hr>'); continue; }
+
+    const li = line.match(/^\s*[-•]\s+(.*)$/);
+    if (li){ flushPara(); (list = list || []).push(li[1]); continue; }
+    flushList();
+
+    const h = line.match(/^(#{1,3})\s+(.*)$/);
+    if (h){ flushPara(); const n = h[1].length + 2; out.push(`<h${n}>${bbInline(h[2])}</h${n}>`); continue; }
+
+    if (!line.trim()){ flushPara(); continue; }
+    para.push(line);
+  }
+  flushPara(); flushList();
+  return out.join('');
+};
+
+/* Version « texte nu », pour les aperçus courts (accueil, vignettes) */
+window.bbPlain = function(txt, max){
+  const t = String(txt || '')
+    .replace(/§[a-z]/g, '')
+    .replace(/[*_~#]/g, '')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return max && t.length > max ? t.slice(0, max) + '…' : t;
+};
+
+/* ══════════════════════════════════════
+   LES TAGS DU VLOG
+   Ils se créent depuis le panneau admin et sont enregistrés dans Firebase.
+   Cette liste sert de secours / de point de départ.
+   Champs : id, name, emoji, color
+══════════════════════════════════════ */
+window.VLOG_TAGS = [
+  { id:'annonce',  name:'Annonce',      emoji:'📢', color:'#2BB7F2' },
+  { id:'maj',      name:'Mise à jour',  emoji:'🔄', color:'#46CE62' },
+  { id:'fix',      name:'Fix Bug',      emoji:'🐛', color:'#E23B3B' },
+  { id:'presenta', name:'Présentation', emoji:'🎤', color:'#A855F7' },
+  { id:'coulisse', name:'Coulisses',    emoji:'🎬', color:'#FF5FA2' },
+];
+window.findTag = id => (window.VLOG_TAGS || []).find(t => t.id === id) || null;
+
+/* Une pastille de tag prête à afficher */
+window.tagChip = function(tag, small){
+  if (!tag) return '';
+  return `<span class="tag-chip${small ? ' sm' : ''}" style="--tg:${tag.color}">`
+       + `${tag.emoji || ''} ${window.bbEscape(tag.name)}</span>`;
+};
 
 /* ── Catalogue des icônes de profil ──
    sub = abonnement minimum pour débloquer l'icône.
@@ -332,13 +466,23 @@ window.MISSIONS = {
 };
 
 /* ── Réglages communs ── */
-window.SUB_ORDER  = { free:0, basic:0, plus:1, x:2, max:3, admin:4 };
+/* free = visiteur sans compte. Un contenu en "free" est visible par TOUT LE MONDE. */
+window.SUB_ORDER  = { free:0, basic:1, plus:2, x:3, max:4, admin:5 };
 window.SUB_LABELS = { free:"GRATUIT", basic:"BASIC", plus:"BUBBLE+", x:"BUBBLE X", max:"BUBBLE MAX", admin:"ADMIN" };
 
 /* Les abonnements que l'on peut acheter / afficher dans la liste.
    "admin" en est volontairement absent. */
 window.PUBLIC_SUBS = ["basic","plus","x","max"];
 window.isAdminSub  = s => s === 'admin';
+
+/* Qui peut voir un post de vlog (le panneau admin propose cette liste) */
+window.VLOG_SUBS = [
+  { id:"free",  label:"🌍 Tout le monde (même sans compte)" },
+  { id:"basic", label:"🫧 BASIC et plus" },
+  { id:"plus",  label:"✦ BUBBLE+ et plus" },
+  { id:"x",     label:"💎 BUBBLE X et plus" },
+  { id:"max",   label:"🔮 BUBBLE MAX seulement" },
+];
 
 /* ── Progression de lecture (stockée dans le navigateur) ──
    Format : { "gi1": { page: 7, total: 24 }, ... }

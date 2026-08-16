@@ -373,3 +373,33 @@ footer .footer-logo{ font-weight:800; color:var(--ink); }
   main{ padding: calc(var(--nav-h) + 22px) 14px 56px; }
   .card{ padding:18px 18px; border-radius:20px; }
 }
+
+
+/* ── 12. TEXTE MIS EN FORME (posts de vlog) ────────────────────── */
+.bb{ font-size:1rem; font-weight:600; line-height:1.7; color:var(--ink); }
+.bb p{ margin:0 0 .85em; }
+.bb p:last-child{ margin-bottom:0; }
+.bb h3{ font-size:1.35rem; font-weight:800; letter-spacing:-.3px; margin:1.1em 0 .45em; }
+.bb h4{ font-size:1.12rem; font-weight:800; margin:1em 0 .4em; }
+.bb h5{ font-size:1rem;    font-weight:800; margin:.9em 0 .35em; color:var(--ink-soft); }
+.bb h3:first-child, .bb h4:first-child, .bb h5:first-child{ margin-top:0; }
+.bb ul{ margin:0 0 .9em; padding-left:1.3em; }
+.bb li{ margin:.25em 0; }
+.bb li::marker{ color:var(--accent); font-weight:800; }
+.bb a{ color:var(--blue-d); font-weight:800; border-bottom:2px solid rgba(43,183,242,.35); }
+.bb a:hover{ border-bottom-color:var(--blue-d); }
+.bb b{ font-weight:800; }
+.bb u{ text-decoration:underline; text-underline-offset:3px; }
+.bb hr{ border:none; border-top:2px solid var(--line); margin:1.4em 0; }
+
+/* ── 13. TAGS DU VLOG ──────────────────────────────────────────── */
+.tag-chip{
+  display:inline-flex; align-items:center; gap:5px;
+  padding:5px 12px; border-radius:999px;
+  font-size:.78rem; font-weight:800; letter-spacing:.2px; white-space:nowrap;
+  color:var(--tg,#2BB7F2);
+  background:color-mix(in srgb, var(--tg,#2BB7F2) 13%, transparent);
+  border:2px solid color-mix(in srgb, var(--tg,#2BB7F2) 32%, transparent);
+}
+.tag-chip.sm{ padding:3px 9px; font-size:.7rem; border-width:1px; }
+.tag-row{ display:flex; gap:7px; flex-wrap:wrap; }
