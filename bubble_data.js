@@ -41,7 +41,7 @@ window.SCANS = {
       year:"2025", type:"Aventure, Fantastique", sub:"x", emoji:"🎮"
     },
     {
-      id:"eff1", title:"Enquête à la Fête Foraine", pdf:"scans/game_it_pt_2.pdf",
+      id:"eff1", title:"Enquête à la Fête Foraine", pdf:"scans/enquete_ff_1.pdf",
       cover:"enquete_ff_cover_1.png", logo:"",
       desc:"Bully et ses amis doivent savoir qui a volé le trophée dans le parc d'attractions !",
       year:"2025", type:"Aventure, Mystère", sub:"plus", emoji:"🎡"
