@@ -476,7 +476,10 @@ function drawFrame(el, frameId, sub){
   el.querySelector('.bf-wrap')?.remove();
   if (!frame){ el.style.border = ''; return; }
 
-  const col  = frame.color || (LEVEL_CONFIG[sub] || LEVEL_CONFIG.basic).color;
+  /* La couleur vient de la SÉRIE du cadre, pas de l'abonnement de celui qui
+     le regarde : sinon un cadre BASIC porté par un MAX devient violet. */
+  const col  = frame.color
+            || (LEVEL_CONFIG[frame.tier] || LEVEL_CONFIG[sub] || LEVEL_CONFIG.basic).color;
   const orn  = (frame.ornaments || []).map(o => ORNAMENTS[o] ? ORNAMENTS[o](col) : '').join('');
   const spin = frame.spin ? ' bf-spin' : '';
   const glow = frame.glow ? ' bf-glow' : '';
@@ -535,17 +538,40 @@ function findFrame(id){
   if (!id) return null;
   return allFrames().find(f => f.id === id) || null;
 }
-/* Un cadre est débloqué si le niveau suffit… ou si un admin l'a offert
-   (champ Firestore "framesUnlocked", copié dans window.__frameGrants). */
-function frameUnlocked(frame, level){
+/* Un cadre est débloqué si :
+     • un admin l'a offert (champ Firestore "framesUnlocked"), OU
+     • il vient d'une série INFÉRIEURE à ton abonnement → tout est débloqué
+       (un MAX a d'office tous les cadres BASIC, + et X), OU
+     • c'est ta propre série et ton niveau suffit.
+   La série admin n'est débloquée que pour les comptes admin. */
+function frameUnlocked(frame, level, sub){
   if (!frame) return false;
   if ((window.__frameGrants || []).includes(frame.id)) return true;
+
+  const me   = sub || window.__userSub || 'basic';
+  const tier = frame.tier || 'basic';
+
+  if (tier === 'admin') return me === 'admin';
+  if (me === 'admin')   return true;
+
+  const ti = TIER_ORDER.indexOf(tier);
+  const mi = TIER_ORDER.indexOf(me);
+  if (ti >= 0 && mi > ti) return true;          /* série inférieure : cadeau */
+
   return (frame.level || 1) <= (level || 1);
+}
+
+/* Est-ce que ce cadre vient d'une série inférieure (donc offert) ? */
+function frameIsBonus(frame, sub){
+  const me = sub || window.__userSub || 'basic';
+  if (!frame || frame.tier === 'admin') return false;
+  if (me === 'admin') return true;
+  return TIER_ORDER.indexOf(me) > TIER_ORDER.indexOf(frame.tier || 'basic');
 }
 
 /* Le meilleur cadre débloqué, si le joueur n'a rien choisi */
 function defaultFrame(sub, level){
-  const list = framesFor(sub).filter(f => frameUnlocked(f, level));
+  const list = framesFor(sub).filter(f => frameUnlocked(f, level, sub));
   return list.length ? list[list.length - 1] : null;
 }
 
@@ -554,7 +580,7 @@ function applyFrame(sub, level, chosenId){
   injectCSS();
   const cfg   = LEVEL_CONFIG[sub] || LEVEL_CONFIG.basic;
   let frame   = chosenId ? findFrame(chosenId, sub) : null;
-  if (frame && !frameUnlocked(frame, level)) frame = null;
+  if (frame && !frameUnlocked(frame, level, sub)) frame = null;
   if (!frame) frame = defaultFrame(sub, level);
 
   document.querySelectorAll('.profile-bubble, .big-avatar, .me-avatar').forEach(el => {
@@ -596,6 +622,7 @@ window.drawFrame         = drawFrame;
 window.framesFor         = framesFor;
 window.findFrame         = findFrame;
 window.frameUnlocked     = frameUnlocked;
+window.frameIsBonus      = frameIsBonus;
 window.defaultFrame      = defaultFrame;
 window.allFrames         = allFrames;
 window.TIER_ORDER        = TIER_ORDER;

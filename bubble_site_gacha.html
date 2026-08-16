@@ -692,7 +692,10 @@ renderCollection();
       document.getElementById('navSub').textContent  = window.SUB_LABELS[userSub];
 
       if (window.applyTheme) window.applyTheme(d.activeEffect || null);
-      window.applyFrame(userSub, window.getLevel(d.xp || 0, userSub).level);
+      window.__frameGrants = (d.framesUnlocked || []).slice();
+      window.__iconGrants  = (d.iconsUnlocked  || []).slice();
+      window.__userSub     = userSub;
+      window.applyFrame(userSub, window.getLevel(d.xp || 0, userSub).level, d.frameId || null);
 
       renderCollection();
       unlockChests(userSub);

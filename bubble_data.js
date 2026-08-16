@@ -342,13 +342,13 @@ window.FRAMES = {
 
   /* 🫧 BASIC — 3 niveaux — thème : la bulle qui devient de la mousse */
   basic: [
-    { id:'b1', name:'Petite bulle', level:1,
+    { id:'b1', name:'Petite bulle', level:1, color:'#2BB7F2',
       width:3, ornaments:['bubble1'] },
 
-    { id:'b2', name:'Bulles', level:2,
+    { id:'b2', name:'Bulles', level:2, color:'#2BB7F2',
       width:5, grad:['#7FD8FF','#1690C6'], ornaments:['bubbleFew'] },
 
-    { id:'b3', name:'Mousse', level:3,
+    { id:'b3', name:'Mousse', level:3, color:'#2BB7F2',
       width:6.5, grad:['#8FDEFF','#1080B6'], glow:true,
       outer:{ shape:'circle', width:1.6, dashed:true, r:44, spin:true },
       ornaments:['bubbleCrown'] },
@@ -359,17 +359,17 @@ window.FRAMES = {
     { id:'p1', name:'Étincelle', level:1,
       color:'#F2B21A', width:3, ornaments:['sparkFew'] },
 
-    { id:'p2', name:'Anneau doré', level:5,
+    { id:'p2', name:'Anneau doré', level:5, color:'#E8A700',
       width:5.5, grad:['#FFE07A','#D89400'], ornaments:['sparkles'] },
 
-    { id:'p3', name:'Laurier', level:10,
+    { id:'p3', name:'Laurier', level:10, color:'#E8A700',
       width:5, grad:['#FFDF6E','#D08A00'], ornaments:['laurel','sparkFew'] },
 
-    { id:'p4', name:'Couronne du roi', level:15,
+    { id:'p4', name:'Couronne du roi', level:15, color:'#E8A700',
       width:7, grad:['#FFE894','#C97F00'], glow:true,
       ornaments:['crownBig','laurel'] },
 
-    { id:'p5', name:'Or massif', level:20,
+    { id:'p5', name:'Or massif', level:20, color:'#E8A700',
       width:8.5, grad:['#FFEFAE','#B87400'], glow:true,
       outer:{ shape:'gear', width:3.4, r:48, spin:true, color:'#E8B22A' },
       ornaments:['crownRoyal','gems'] },
@@ -380,18 +380,18 @@ window.FRAMES = {
     { id:'x1', name:'Givre', level:1,
       color:'#4FC3F7', width:3, ornaments:['frost'] },
 
-    { id:'x2', name:'Éclats de glace', level:5,
+    { id:'x2', name:'Éclats de glace', level:5, color:'#0EA5E9',
       width:5.5, grad:['#A5E8FF','#0284C7'], ornaments:['shardsAll'] },
 
-    { id:'x3', name:'Cristal', level:10,
+    { id:'x3', name:'Cristal', level:10, color:'#0EA5E9',
       shape:'hex', width:6, grad:['#BDEEFF','#0B7FBF'], ornaments:['facets','frost'] },
 
-    { id:'x4', name:'Prisme', level:15,
+    { id:'x4', name:'Prisme', level:15, color:'#0EA5E9',
       shape:'hex', width:7, grad:['#D2F3FF','#0369A1'], glow:true,
       outer:{ shape:'hex', width:2, r:47, spin:true, color:'#7DD3FC' },
       ornaments:['facets','shardsAll'] },
 
-    { id:'x5', name:'Cœur de glace', level:20,
+    { id:'x5', name:'Cœur de glace', level:20, color:'#0EA5E9',
       shape:'hex', width:9, grad:['#EAFAFF','#025E8C'], glow:true,
       ornaments:['icePeaks','facets'] },
   ],
@@ -401,18 +401,18 @@ window.FRAMES = {
     { id:'m1', name:'Orbe', level:1,
       color:'#A855F7', width:3, ornaments:['moon'] },
 
-    { id:'m2', name:'Anneau planétaire', level:8,
+    { id:'m2', name:'Anneau planétaire', level:8, color:'#A855F7',
       width:5.5, grad:['#D8B4FE','#7E22CE'], ornaments:['saturn'] },
 
-    { id:'m3', name:'Constellation', level:16,
+    { id:'m3', name:'Constellation', level:16, color:'#A855F7',
       width:5, grad:['#E9D5FF','#6D28D9'], ornaments:['constellation'] },
 
-    { id:'m4', name:'Nébuleuse', level:22,
+    { id:'m4', name:'Nébuleuse', level:22, color:'#A855F7',
       width:7.5, grad:['#F0E1FF','#5B21B6'], glow:true, spin:true,
       outer:{ shape:'circle', width:1.4, dashed:true, r:49, spin:true, color:'#C084FC' },
       ornaments:['stardust','constellation'] },
 
-    { id:'m5', name:'Big Bang', level:25,
+    { id:'m5', name:'Big Bang', level:25, color:'#A855F7',
       width:9, grad:['#FBEFFF','#4C1D95'], glow:true,
       outer:{ shape:'gear', width:3, r:50, spin:true, color:'#C084FC' },
       ornaments:['bigbang','stardust'] },
@@ -420,7 +420,7 @@ window.FRAMES = {
 };
 
 window.FRAMES.admin = [
-  { id:'ad1', name:'Badge admin', level:1,
+  { id:'ad1', name:'Badge admin', level:1, color:'#E84A8A',
     width:8, grad:['#FFC2DE','#B02F6B'], glow:true,
     outer:{ shape:'gear', width:3.2, r:47, spin:true, color:'#FF7BB8' },
     ornaments:['gems','sparkFew'] },

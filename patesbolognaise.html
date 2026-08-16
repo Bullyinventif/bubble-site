@@ -225,6 +225,31 @@
     border:2px solid var(--line); border-radius:var(--r-sm); background:var(--surface-2);
   }
 
+  /* ── Grille de cadres ── */
+  .fgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:14px 10px; align-items:stretch; }
+  .fpick{
+    display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer;
+    padding:20px 5px 10px; border:2px solid var(--line); border-radius:var(--r-md);
+    background:var(--surface-2); text-align:center; transition:all .15s; user-select:none;
+  }
+  .fpick:hover{ border-color:var(--line-strong); }
+  .fpick.on{ background:rgba(70,206,98,.1); border-color:var(--green); }
+  .fpick.worn{ background:rgba(43,183,242,.12); border-color:var(--accent); }
+  .fpick-av{
+    width:54px; height:54px; border-radius:50%; position:relative; overflow:visible;
+    background:linear-gradient(160deg,#EAF4FF,#C6E1F8);
+    display:flex; align-items:center; justify-content:center; margin-bottom:12px;
+  }
+  .fpick-av img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .fpick-nm{ font-size:.76rem; font-weight:800; line-height:1.15; }
+  .fpick-lv{ font-size:.66rem; font-weight:700; color:var(--ink-soft); }
+  .fpick-tag{ font-size:.6rem; font-weight:800; padding:2px 7px; border-radius:999px; }
+  .fpick-tag.gift{ background:rgba(70,206,98,.16); color:var(--green-d); }
+  .fpick-tag.worn{ background:var(--accent); color:#fff; }
+  .ftier{ font-size:.78rem; font-weight:800; color:var(--ink-soft);
+          text-transform:uppercase; letter-spacing:.4px; margin:14px 0 8px; }
+  .ftier:first-child{ margin-top:0; }
+
   /* ── Tags ── */
   .t-row{ display:flex; align-items:center; gap:9px; padding:8px 0; border-bottom:1px solid var(--line); }
   .t-row:last-child{ border-bottom:none; }
@@ -697,11 +722,13 @@ function renderUserDetail(){
     </div>
 
     <div class="blk">
-      <h3>🖼️ Cadres offerts <small>en plus de ceux gagnés par le niveau</small></h3>
-      <div class="picks" id="gFrames">
-        ${(window.framesFor(sub)||[]).map(f =>
-          pick('fr:'+f.id, `Niv.${f.level} · ${f.name}`, frs.includes(f.id))).join('')}
-      </div>
+      <h3>🖼️ Cadres de profil <small>clic = offrir · bouton = faire porter</small></h3>
+      <p class="hint" style="margin-bottom:12px">
+        Les séries en dessous de son abonnement sont déjà toutes débloquées.
+        Coche un cadre pour l'<b>offrir</b> même s'il n'a pas le niveau (ou pas l'abonnement).
+        Le cadre <b>porté</b> est celui qu'on voit sur son avatar.
+      </p>
+      <div id="gFrames"></div>
     </div>
 
     <div class="blk">
@@ -747,6 +774,9 @@ function renderUserDetail(){
   $('#uDetail').querySelectorAll('.pick').forEach(p =>
     p.addEventListener('click', ev => { ev.preventDefault(); p.classList.toggle('on'); }));
 
+  /* La grille des cadres, dessinés pour de vrai */
+  buildFrameGrid(u, sub, lv.level);
+
   /* Niveau ⇄ XP */
   const fL = $('#fLevel'), fX = $('#fXp'), fS = $('#fSub');
   const cfgOf = s => window.LEVEL_CONFIG[s] || window.LEVEL_CONFIG.basic;
@@ -770,7 +800,7 @@ function renderUserDetail(){
   });
 
   $('#fAll').addEventListener('click', () => {
-    $('#uDetail').querySelectorAll('#gEffects .pick, #gFrames .pick, #gIcons .pick, #gCards .pick')
+    $('#uDetail').querySelectorAll('#gEffects .pick, #gIcons .pick, #gCards .pick, #gFrames .fpick')
       .forEach(p => p.classList.add('on'));
     msg('#fMsg', 'Tout coché — pense à enregistrer !', 'ok');
   });
@@ -784,7 +814,7 @@ function renderUserDetail(){
   });
 
   $('#fSave').addEventListener('click', async () => {
-    const on = pref => [...$('#uDetail').querySelectorAll(`.pick.on[data-pick^="${pref}:"]`)]
+    const on = pref => [...$('#uDetail').querySelectorAll(`.on[data-pick^="${pref}:"]`)]
       .map(p => p.dataset.pick.slice(pref.length + 1));
     await save({
       xp: Math.max(0, parseInt(fX.value,10) || 0),
@@ -796,6 +826,70 @@ function renderUserDetail(){
       missions: Object.fromEntries(on('ms').map(id => [id, true])),
     });
   });
+}
+
+/* ══ La grille des cadres d'un joueur ══ */
+const FTIER_TITLES = {
+  basic:'🫧 Série BASIC', plus:'✦ Série BUBBLE+', x:'💎 Série BUBBLE X',
+  max:'🔮 Série BUBBLE MAX', admin:'🛠️ Série ADMIN',
+};
+
+function buildFrameGrid(u, sub, level){
+  const box = $('#gFrames'); if (!box) return;
+  const gifts = u.framesUnlocked || [];
+  const worn  = u.frameId || null;
+  const icon  = window.findIcon(u.avatarId || 'bully_1') || { file:'bully_1.png' };
+
+  /* On montre TOUS les cadres du jeu : un admin peut offrir ce qu'il veut */
+  const byTier = {};
+  (window.allFrames() || []).forEach(f => (byTier[f.tier] = byTier[f.tier] || []).push(f));
+
+  box.innerHTML = Object.keys(byTier).map(tier => {
+    /* Est-ce une série que son abonnement lui donne déjà en entier ? */
+    const auto = tier !== 'admin' &&
+      (sub === 'admin' || window.TIER_ORDER.indexOf(sub) > window.TIER_ORDER.indexOf(tier));
+    const above = sub !== 'admin' && (tier === 'admin'
+      || window.TIER_ORDER.indexOf(tier) > window.TIER_ORDER.indexOf(sub));
+    const note = auto  ? ' · déjà tout débloqué 🎁'
+               : above ? ' · pas son abonnement (à offrir à la main)'
+               : ' · se débloque en montant de niveau';
+    return `<div class="ftier">${FTIER_TITLES[tier] || tier}${note}</div>
+      <div class="fgrid">${byTier[tier].map(f => {
+        const on = gifts.includes(f.id);
+        return `<div class="fpick ${on ? 'on' : ''} ${worn === f.id ? 'worn' : ''}"
+                     data-pick="fr:${esc(f.id)}" data-tier="${esc(tier)}">
+          <div class="fpick-av" data-frame="${esc(f.id)}"><img src="${esc(icon.file)}" alt=""></div>
+          <div class="fpick-nm">${esc(f.name)}</div>
+          <div class="fpick-lv">niveau ${f.level}</div>
+          ${worn === f.id ? '<span class="fpick-tag worn">PORTÉ</span>'
+                          : (auto || f.level <= level) && tier !== 'admin'
+                            ? '<span class="fpick-tag gift">débloqué</span>' : ''}
+          <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:.72rem"
+                  data-wear="${esc(f.id)}">Faire porter</button>
+        </div>`;
+      }).join('')}</div>`;
+  }).join('');
+
+  /* On dessine chaque cadre */
+  box.querySelectorAll('.fpick-av').forEach(el =>
+    window.drawFrame(el, el.dataset.frame, sub));
+
+  /* Clic sur la vignette = offrir / retirer le cadeau */
+  box.querySelectorAll('.fpick').forEach(el =>
+    el.addEventListener('click', ev => {
+      if (ev.target.closest('[data-wear]')) return;
+      el.classList.toggle('on');
+    }));
+
+  /* Bouton = faire porter ce cadre tout de suite */
+  box.querySelectorAll('[data-wear]').forEach(btn =>
+    btn.addEventListener('click', async ev => {
+      ev.stopPropagation();
+      const id = btn.dataset.wear;
+      const on = [...box.querySelectorAll('.fpick.on')].map(p => p.dataset.pick.slice(3));
+      if (!on.includes(id)) on.push(id);          /* on l'offre au passage */
+      await save({ frameId:id, framesUnlocked:on });
+    }));
 }
 
 function msg(sel_, text, kind){

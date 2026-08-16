@@ -456,7 +456,10 @@
       if (window.applyTheme) window.applyTheme(d.activeEffect || null);
 
       const lv = window.getLevel(xp, sub);
-      window.applyFrame(sub, lv.level);
+      window.__frameGrants = (d.framesUnlocked || []).slice();
+      window.__iconGrants  = (d.iconsUnlocked  || []).slice();
+      window.__userSub     = sub;
+      window.applyFrame(sub, lv.level, d.frameId || null);
 
       /* Bandeau profil */
       document.getElementById('meStrip').style.display = 'flex';

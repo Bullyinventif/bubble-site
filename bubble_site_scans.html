@@ -403,7 +403,10 @@ buildRows();
         document.getElementById('navName').textContent = user.displayName || user.email.split('@')[0];
         document.getElementById('navSub').textContent  = window.SUB_LABELS[sub];
         if (window.applyTheme) window.applyTheme(d.activeEffect || null);
-        window.applyFrame(sub, window.getLevel(d.xp || 0, sub).level);
+        window.__frameGrants = (d.framesUnlocked || []).slice();
+        window.__iconGrants  = (d.iconsUnlocked  || []).slice();
+        window.__userSub     = sub;
+        window.applyFrame(sub, window.getLevel(d.xp || 0, sub).level, d.frameId || null);
         window.userSubLevel = sub;
         userSubLevel = sub;
       }

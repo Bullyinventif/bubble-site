@@ -217,6 +217,9 @@
   .frm-lvl{ font-size:.72rem; font-weight:700; color:var(--ink-soft); }
   .frm-lock{ font-size:.68rem; font-weight:800; padding:2px 9px; border-radius:999px;
              background:rgba(255,197,61,.2); color:#9C6D00; }
+  .frm-gift{ font-size:.68rem; font-weight:800; padding:2px 9px; border-radius:999px;
+             background:rgba(70,206,98,.16); color:var(--green-d); }
+  .cat-note{ font-size:.72rem; font-weight:700; color:var(--ink-soft); margin-left:6px; }
 
   /* ── GRILLE DES CARTES ── */
   .cards-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
@@ -895,6 +898,8 @@
     window.applyFrame(sub, lv.level, activeFrame);
     window.__level = lv.level;
   }
+  /* Le moteur de missions s'en sert pour remettre le niveau à jour sans Ctrl+R */
+  window._renderLevelUI = renderLevel;
 
   /* ── Connexion ── */
   onAuthStateChanged(auth, async user => {
@@ -991,21 +996,26 @@
     Object.keys(byTier).forEach(tier => {
       const t = document.createElement('div');
       t.className = 'cat-title';
-      t.textContent = TIER_TITLES[tier] || tier;
+      t.innerHTML = (TIER_TITLES[tier] || tier)
+        + (tier !== userSub && tier !== 'admin'
+            ? ' <span class="cat-note">déjà tout débloqué 🎁</span>'
+            : ' <span class="cat-note">à débloquer en montant de niveau</span>');
       panel.appendChild(t);
 
       const grid = document.createElement('div');
       grid.className = 'frm-grid';
 
       byTier[tier].forEach(f => {
-        const ok   = window.frameUnlocked(f, level);
-        const item = document.createElement('div');
+        const ok    = window.frameUnlocked(f, level, userSub);
+        const bonus = window.frameIsBonus(f, userSub);
+        const item  = document.createElement('div');
         item.className = 'frm-item' + (ok ? '' : ' locked') + (f.id === selectedFrame ? ' selected' : '');
         item.innerHTML = `
           <div class="frm-av"><img src="${ic.file}" alt=""></div>
           <div class="frm-name">${f.name}</div>
-          ${ok ? `<div class="frm-lvl">niveau ${f.level}</div>`
-               : `<div class="frm-lock">🔒 niveau ${f.level}</div>`}`;
+          ${bonus ? `<div class="frm-gift">🎁 offert</div>`
+                  : ok ? `<div class="frm-lvl">niveau ${f.level}</div>`
+                       : `<div class="frm-lock">🔒 niveau ${f.level}</div>`}`;
 
         grid.appendChild(item);
         window.drawFrame(item.querySelector('.frm-av'), f.id, userSub);

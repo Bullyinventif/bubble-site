@@ -14,7 +14,12 @@
   .tier{ margin-bottom:30px; }
   .tier h2{ font-size:1.15rem; font-weight:800; margin-bottom:14px; padding:8px 16px;
             border-radius:999px; display:inline-block; }
-  .grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:16px; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; }
+  @media(max-width:640px){
+    body{ padding:20px 14px 32px; }
+    .grid{ grid-template-columns:repeat(2,1fr); gap:12px; }
+    h1{ font-size:1.4rem; }
+  }
   .cell{ background:#fff; border:2px solid #E1E9F3; border-radius:22px; padding:20px 10px 14px; text-align:center; }
   .av{ width:76px; height:76px; margin:0 auto 26px; border-radius:50%; position:relative;
        background:linear-gradient(160deg,#EAF4FF,#C6E1F8); display:flex; align-items:center;
