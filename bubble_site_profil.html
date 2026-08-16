@@ -72,81 +72,126 @@
   .xp-fill{ height:100%; width:0%; border-radius:999px; background:var(--accent); transition:width .9s cubic-bezier(.34,1.56,.64,1); }
   .xp-line{ display:flex; justify-content:space-between; gap:12px; margin-top:8px; font-size:.85rem; font-weight:700; color:var(--ink-soft); }
 
-  /* ── MISSIONS ── */
-  .missions{ margin-bottom:16px; }
-  .mis-head{ display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
-  .mis-head h2{ font-size:1.25rem; font-weight:800; }
-  .mis-total{
-    margin-left:auto; padding:6px 14px; border-radius:999px;
-    background:rgba(70,206,98,.14); color:var(--green-d);
-    font-size:.85rem; font-weight:800; border:2px solid rgba(70,206,98,.3);
-  }
-  .mis-hint{ font-size:.92rem; font-weight:600; color:var(--ink-soft); line-height:1.5; margin-bottom:18px; }
-
-  .mis-cat{
+  /* ── RÉSUMÉ DES MISSIONS (sur la page) ── */
+  .mis-card{
     background:var(--surface); border:2px solid var(--line);
-    border-radius:var(--r-lg); box-shadow:var(--shadow-1);
-    margin-bottom:14px; overflow:hidden;
+    border-radius:var(--r-lg); padding:20px 22px; box-shadow:var(--shadow-1);
+    margin-bottom:16px; display:flex; align-items:center; gap:18px; flex-wrap:wrap;
   }
-  .mis-cat-head{
-    display:flex; align-items:center; gap:11px;
-    padding:15px 20px; cursor:pointer;
-    border-bottom:2px solid transparent; transition:background .15s;
-    -webkit-tap-highlight-color:transparent;
-  }
-  .mis-cat.open .mis-cat-head{ border-bottom-color:var(--line); }
-  .mis-cat-head:hover{ background:var(--surface-2); }
-  .mis-cat-ico{
-    width:38px; height:38px; border-radius:12px; flex-shrink:0;
+  .mis-card-ico{
+    width:52px; height:52px; border-radius:16px; flex-shrink:0;
     background:var(--accent-soft); display:flex; align-items:center;
-    justify-content:center; font-size:1.15rem;
+    justify-content:center; font-size:1.5rem;
   }
-  .mis-cat-title{ font-size:1.02rem; font-weight:800; flex:1; }
-  .mis-cat-count{ font-size:.85rem; font-weight:800; color:var(--ink-soft); }
-  .mis-chevron{ font-size:.8rem; color:var(--ink-soft); transition:transform .2s; }
-  .mis-cat.open .mis-chevron{ transform:rotate(180deg); }
+  .mis-card-txt{ flex:1; min-width:170px; }
+  .mis-card-txt h2{ font-size:1.15rem; font-weight:800; }
+  .mis-card-txt p{ font-size:.9rem; font-weight:600; color:var(--ink-soft); margin-top:2px; }
+  .mis-card-stat{ font-size:.85rem; font-weight:800; color:var(--green-d); margin-top:6px; }
 
-  .mis-body{ display:none; padding:8px 20px 16px; }
-  .mis-cat.open .mis-body{ display:block; }
-
-  .mis{
-    display:flex; align-items:center; gap:13px;
-    padding:13px 0; border-bottom:1px solid var(--line);
+  /* ── LE POP-UP ── */
+  .mis-sheet{ width:min(680px,96vw); max-height:88vh; }
+  .mis-top{ flex-shrink:0; border-bottom:2px solid var(--line); }
+  .mis-top-row{ display:flex; align-items:center; gap:12px; padding:20px 22px 0; }
+  .mis-top-row h2{ font-size:1.25rem; font-weight:800; flex:1; }
+  .mis-total{
+    padding:5px 13px; border-radius:999px;
+    background:rgba(70,206,98,.14); color:var(--green-d);
+    font-size:.82rem; font-weight:800; border:2px solid rgba(70,206,98,.3);
+    white-space:nowrap;
   }
+  .mis-close{
+    width:34px; height:34px; border-radius:50%; flex-shrink:0;
+    border:2px solid var(--line); background:var(--surface);
+    font-size:.95rem; font-weight:800; color:var(--ink-soft); cursor:pointer;
+  }
+  .mis-close:hover{ background:var(--surface-2); color:var(--ink); }
+
+  /* Mini barre d'XP dans le pop-up (cible des bulles) */
+  .mis-xp{ padding:12px 22px 0; }
+  .mis-xp-line{ display:flex; justify-content:space-between; font-size:.82rem; font-weight:800; color:var(--ink-soft); margin-bottom:6px; }
+  .mis-xp-line b{ color:var(--ink); }
+
+  /* Onglets de catégorie */
+  .mis-tabs{ display:flex; gap:8px; padding:14px 22px; overflow-x:auto; scrollbar-width:none; }
+  .mis-tabs::-webkit-scrollbar{ display:none; }
+  .mis-tab{
+    flex-shrink:0; padding:9px 16px; border-radius:999px;
+    border:2px solid var(--line); background:var(--surface);
+    font-family:'Baloo 2',sans-serif; font-size:.9rem; font-weight:800;
+    color:var(--ink-soft); cursor:pointer; transition:all .18s; white-space:nowrap;
+  }
+  .mis-tab:hover{ border-color:var(--line-strong); color:var(--ink); }
+  .mis-tab.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  /* Zone qui défile */
+  .mis-scroll{ overflow-y:auto; padding:4px 22px 24px; flex:1; scroll-behavior:smooth; }
+  .mis-sec{ scroll-margin-top:8px; padding-top:16px; }
+  .mis-sec-title{
+    display:flex; align-items:center; gap:9px;
+    font-size:1rem; font-weight:800; margin-bottom:6px;
+    position:sticky; top:0; background:var(--surface); padding:8px 0; z-index:2;
+  }
+  .mis-sec-count{ margin-left:auto; font-size:.82rem; font-weight:800; color:var(--ink-soft); }
+
+  /* Une mission */
+  .mis{ display:flex; align-items:center; gap:13px; padding:13px 0; border-bottom:1px solid var(--line); }
   .mis:last-child{ border-bottom:none; }
   .mis-check{
     width:26px; height:26px; border-radius:50%; flex-shrink:0;
     border:2px solid var(--line-strong); background:var(--surface-2);
     display:flex; align-items:center; justify-content:center;
-    font-size:.8rem; font-weight:800; color:transparent;
+    font-size:.8rem; font-weight:800; color:transparent; transition:all .3s;
   }
   .mis.done .mis-check{ background:var(--green); border-color:var(--green); color:#fff; }
+  .mis.just-done{ animation:misPop .6s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes misPop{ 0%{background:rgba(70,206,98,.25)} 100%{background:transparent} }
   .mis-txt{ flex:1; min-width:0; }
   .mis-label{ font-size:.98rem; font-weight:800; line-height:1.25; }
   .mis.done .mis-label{ color:var(--ink-soft); }
   .mis-desc{ font-size:.83rem; font-weight:600; color:var(--ink-soft); margin-top:1px; }
-  .mis-xp{
+  .mis-badge{
     flex-shrink:0; padding:5px 12px; border-radius:999px;
     font-size:.82rem; font-weight:800;
     background:var(--surface-2); color:var(--ink-soft); border:2px solid var(--line);
   }
-  .mis.done .mis-xp{ background:rgba(70,206,98,.14); color:var(--green-d); border-color:rgba(70,206,98,.3); }
-  .mis-daily .mis-xp{ background:rgba(43,183,242,.12); color:var(--blue-d); border-color:rgba(43,183,242,.3); }
+  .mis.done .mis-badge{ background:rgba(70,206,98,.14); color:var(--green-d); border-color:rgba(70,206,98,.3); }
+  .mis-daily .mis-badge{ background:rgba(43,183,242,.12); color:var(--blue-d); border-color:rgba(43,183,242,.3); }
 
   .mis-prog{ margin-top:7px; height:7px; background:var(--surface-2); border:1px solid var(--line);
              border-radius:999px; overflow:hidden; }
   .mis-prog i{ display:block; height:100%; background:var(--accent); border-radius:999px; transition:width .7s; }
 
   .mis-chips{ display:flex; flex-wrap:wrap; gap:7px; padding:10px 0 4px; }
-  .mis-chip{
-    padding:6px 12px; border-radius:999px; font-size:.8rem; font-weight:700;
-    background:var(--surface-2); border:2px solid var(--line); color:var(--ink-soft);
-  }
+  .mis-chip{ padding:6px 12px; border-radius:999px; font-size:.8rem; font-weight:700;
+             background:var(--surface-2); border:2px solid var(--line); color:var(--ink-soft); }
   .mis-chip.ok{ background:rgba(70,206,98,.12); border-color:rgba(70,206,98,.35); color:var(--green-d); }
-
   .mis-empty{ font-size:.9rem; font-weight:600; color:var(--ink-soft); padding:12px 0; }
 
-  /* ── GRILLE DES CARTES ── */
+  /* ── LES BULLES QUI FILENT VERS LA BARRE D'XP ── */
+  .xp-bubble{
+    position:fixed; z-index:5000; pointer-events:none;
+    border-radius:50%;
+    background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.95), var(--accent) 62%, transparent 74%);
+    box-shadow:0 0 12px var(--accent-soft);
+    will-change:transform,opacity;
+  }
+  /* la barre tremble quand les bulles arrivent */
+  @keyframes xpShake{
+    0%,100%{ transform:translateX(0) }
+    12%{ transform:translateX(-4px) } 26%{ transform:translateX(4px) }
+    40%{ transform:translateX(-3px) } 55%{ transform:translateX(3px) }
+    70%{ transform:translateX(-2px) } 85%{ transform:translateX(2px) }
+  }
+  .xp-hit{ animation:xpShake .55s ease; }
+  .xp-fill.flash{ filter:brightness(1.35); box-shadow:0 0 14px var(--accent); }
+  .xp-gain-float{
+    position:fixed; z-index:5001; pointer-events:none;
+    font-weight:800; font-size:1.05rem; color:var(--green-d);
+    text-shadow:0 2px 6px rgba(255,255,255,.9);
+    transition:transform .9s cubic-bezier(.2,.8,.3,1), opacity .9s;
+  }
+
+    /* ── GRILLE DES CARTES ── */
   .cards-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
 
   /* ── SÉLECTEUR (overlay) ── */
@@ -308,14 +353,15 @@
     </div>
   </section>
 
-  <!-- ── MISSIONS ── -->
-  <section class="missions fade-up d1">
-    <div class="mis-head">
-      <h2>🎯 Missions</h2>
-      <span class="mis-total" id="misTotal">0 XP gagnés</span>
+  <!-- ── MISSIONS : carte résumé ── -->
+  <section class="mis-card fade-up d1">
+    <div class="mis-card-ico">🎯</div>
+    <div class="mis-card-txt">
+      <h2>Missions</h2>
+      <p>C'est en accomplissant des missions que tu gagnes de l'XP et que tu montes de niveau.</p>
+      <div class="mis-card-stat" id="misSummary">—</div>
     </div>
-    <p class="mis-hint">C'est en accomplissant ces missions que tu gagnes de l'XP et que tu montes de niveau.</p>
-    <div id="misList"></div>
+    <button class="btn btn-blue" onclick="openMissions()">Voir les missions</button>
   </section>
 
   <!-- ── RÉGLAGES ── -->
@@ -361,6 +407,28 @@
 
   </div>
 </main>
+
+<!-- ── POP-UP DES MISSIONS ── -->
+<div class="overlay" id="misOverlay">
+  <div class="sheet mis-sheet">
+    <div class="mis-top">
+      <div class="mis-top-row">
+        <h2>🎯 Missions</h2>
+        <span class="mis-total" id="misTotal">0 XP gagnés</span>
+        <button class="mis-close" onclick="closeMissions()" aria-label="Fermer">✕</button>
+      </div>
+      <div class="mis-xp">
+        <div class="mis-xp-line">
+          <span>Niveau <b id="misLevel">1</b></span>
+          <span><b id="misXpNum">0</b> XP</span>
+        </div>
+        <div class="xp-track" id="misXpTrack"><div class="xp-fill" id="misXpFill"></div></div>
+      </div>
+      <div class="mis-tabs" id="misTabs"></div>
+    </div>
+    <div class="mis-scroll" id="misScroll"></div>
+  </div>
+</div>
 
 <!-- ── SÉLECTEUR ── -->
 <div class="overlay" id="pickerOverlay">
@@ -414,129 +482,286 @@
   }
 
   /* ══════════════════════════════════════
-     AFFICHAGE DES MISSIONS
-     Les définitions viennent de bubble_data.js (window.MISSIONS / window.GAMES),
-     l'avancement vient de bubble_missions.js (window.BubbleMissions).
+     LES MISSIONS
+     Définitions : bubble_data.js (window.MISSIONS / window.GAMES)
+     Avancement  : bubble_missions.js (window.BubbleMissions), en direct
   ══════════════════════════════════════ */
-  const OPEN_CATS = { general:true, jeux:false, scans:false, gacha:false };
+  const CATS = [
+    { key:'general', ico:'⭐', title:'Général' },
+    { key:'jeux',    ico:'🎮', title:'Jeux' },
+    { key:'scans',   ico:'📜', title:'Scans' },
+    { key:'gacha',   ico:'🎁', title:'Gacha' },
+  ];
+  let lastState = null;
+  let activeCat = 'general';   /* onglet en cours, conservé pendant les mises à jour */
 
-  function misRow({ done, label, desc, xp, daily, progress }){
+  function todayStr(){
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  function misRow({ id, done, label, desc, badge, daily, progress }){
     return `
-      <div class="mis${done ? ' done' : ''}${daily ? ' mis-daily' : ''}">
+      <div class="mis${done ? ' done' : ''}${daily ? ' mis-daily' : ''}" data-mission="${id || ''}">
         <div class="mis-check">✓</div>
         <div class="mis-txt">
           <div class="mis-label">${label}</div>
           ${desc ? `<div class="mis-desc">${desc}</div>` : ''}
           ${progress != null ? `<div class="mis-prog"><i style="width:${progress}%"></i></div>` : ''}
         </div>
-        <span class="mis-xp">${daily && done ? '✓ aujourd’hui' : '+' + xp + ' XP'}</span>
+        <span class="mis-badge">${badge}</span>
       </div>`;
   }
 
-  function renderMissions(st){
-    const M    = window.MISSIONS || {};
-    const done = st.missions || {};
-    const read = st.scansRead || [];
-    const play = st.gamesPlayed || [];
-
-    /* Compteur d'XP gagné via les missions */
+  /* Construit les 4 sections + calcule les compteurs */
+  function buildSections(st){
+    const M = window.MISSIONS || {};
+    const done = st.missions || {}, read = st.scansRead || [], play = st.gamesPlayed || [];
+    const today = todayStr();
     let earned = 0;
     const add = (ok, xp) => { if (ok) earned += xp; };
 
-    /* ── GÉNÉRAL ── */
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-    const generalRows = (M.general || []).map(m => {
-      const ok = m.daily ? (st.lastLogin === todayStr) : !!done[m.id];
+    /* GÉNÉRAL */
+    const gen = (M.general || []);
+    const genRows = gen.map(m => {
+      const ok = m.daily ? (st.lastLogin === today) : !!done[m.id];
       add(ok, m.xp);
-      return misRow({ done:ok, label:m.label, desc:m.desc, xp:m.xp, daily:m.daily });
+      return misRow({ id:m.id, done:ok, label:m.label, desc:m.desc, daily:m.daily,
+                      badge: (m.daily && ok) ? '✓ aujourd’hui' : '+' + m.xp + ' XP' });
     }).join('');
+    const genDone = gen.filter(m => m.daily ? st.lastLogin === today : done[m.id]).length;
 
-    /* ── JEUX ── */
+    /* JEUX */
     const games = window.GAMES || [];
+    const firstXP = M.gameFirstXP ?? 50;
     const gameRows = games.length ? games.map(g => {
-      const first = play.includes(g.id);
-      add(first, M.gameFirstXP ?? 50);
-      let html = misRow({ done:first, label:`${g.emoji} ${g.name} — première partie`, xp:M.gameFirstXP ?? 50 });
+      const played = play.includes(g.id);
+      add(played, firstXP);
+      let html = misRow({ id:'play_'+g.id, done:played,
+                          label:`${g.emoji} ${g.name} — première partie`, badge:'+' + firstXP + ' XP' });
       if (g.mission){
         const ok = !!done[g.mission.id];
         add(ok, g.mission.xp);
-        html += misRow({ done:ok, label:g.mission.label, desc:g.name, xp:g.mission.xp });
+        html += misRow({ id:g.mission.id, done:ok, label:g.mission.label,
+                         desc:g.name, badge:'+' + g.mission.xp + ' XP' });
       }
       return html;
-    }).join('') : '<div class="mis-empty">Aucun jeu configuré pour le moment.</div>';
+    }).join('') : '<div class="mis-empty">Aucun jeu configuré.</div>';
+    const gameDone = games.filter(g => play.includes(g.id)).length;
 
-    /* ── SCANS ── */
+    /* SCANS */
     const scans = window.ALL_SCANS || [];
     const scanXP = M.scanXP ?? 10;
-    read.forEach(() => earned += scanXP);
+    earned += read.length * scanXP;
     const chips = scans.map(sc => {
       const ok = read.includes(sc.id);
       return `<span class="mis-chip${ok ? ' ok' : ''}">${ok ? '✓' : '○'} ${sc.title}</span>`;
     }).join('');
-    const milestoneRows = (M.scanMilestones || []).map(p => {
-      const ok = !!done[p.id];
-      add(ok, p.xp);
-      return misRow({ done:ok, label:p.label, desc:`${read.length} / ${p.count} scans lus`,
-                      xp:p.xp, progress:Math.min(read.length / p.count * 100, 100) });
-    }).join('');
-    const scanRows = `
-      <div class="mis${scans.length && read.length >= scans.length ? ' done' : ''}">
+    const allRead = scans.length && read.length >= scans.length;
+    let scanRows = `
+      <div class="mis${allRead ? ' done' : ''}">
         <div class="mis-check">✓</div>
         <div class="mis-txt">
           <div class="mis-label">Lire un scan</div>
           <div class="mis-desc">+${scanXP} XP par scan, une seule fois par scan</div>
           <div class="mis-chips">${chips || '<span class="mis-empty">Aucun scan au catalogue.</span>'}</div>
         </div>
-        <span class="mis-xp">${read.length}/${scans.length}</span>
-      </div>${milestoneRows}`;
+        <span class="mis-badge">${read.length}/${scans.length}</span>
+      </div>`;
+    scanRows += (M.scanMilestones || []).map(p => {
+      const ok = !!done[p.id];
+      add(ok, p.xp);
+      return misRow({ id:p.id, done:ok, label:p.label, desc:`${read.length} / ${p.count} scans lus`,
+                      badge:'+' + p.xp + ' XP', progress:Math.min(read.length / p.count * 100, 100) });
+    }).join('');
 
-    /* ── GACHA ── */
-    const owned = (window.__collectionCount ?? 0);
+    /* GACHA */
+    const owned = window.__collectionCount ?? 0;
     const total = (window.CARD_POOL || []).length;
     const gachaRows = (M.gacha || []).map(m => {
       const ok = !!done[m.id];
       add(ok, m.xp);
-      return misRow({ done:ok, label:m.label, desc:`${owned} / ${total} cartes obtenues`,
-                      xp:m.xp, progress: total ? Math.min(owned / total * 100, 100) : 0 });
+      return misRow({ id:m.id, done:ok, label:m.label, desc:`${owned} / ${total} cartes obtenues`,
+                      badge:'+' + m.xp + ' XP', progress: total ? Math.min(owned / total * 100, 100) : 0 });
     }).join('');
 
-    const cats = [
-      { key:'general', ico:'⭐', title:'Général', rows:generalRows,
-        count:(M.general||[]).filter(m => m.daily ? st.lastLogin === todayStr : done[m.id]).length + '/' + (M.general||[]).length },
-      { key:'jeux', ico:'🎮', title:'Jeux', rows:gameRows,
-        count: games.filter(g => play.includes(g.id)).length + '/' + games.length },
-      { key:'scans', ico:'📜', title:'Scans', rows:scanRows,
-        count: read.length + '/' + scans.length },
-      { key:'gacha', ico:'🎁', title:'Gacha', rows:gachaRows,
-        count: (M.gacha||[]).filter(m => done[m.id]).length + '/' + (M.gacha||[]).length },
-    ];
-
-    document.getElementById('misList').innerHTML = cats.map(c => `
-      <div class="mis-cat${OPEN_CATS[c.key] ? ' open' : ''}" data-cat="${c.key}">
-        <div class="mis-cat-head" onclick="toggleCat('${c.key}')">
-          <div class="mis-cat-ico">${c.ico}</div>
-          <div class="mis-cat-title">${c.title}</div>
-          <div class="mis-cat-count">${c.count}</div>
-          <div class="mis-chevron">▼</div>
-        </div>
-        <div class="mis-body">${c.rows}</div>
-      </div>`).join('');
-
-    document.getElementById('misTotal').textContent = earned + ' XP gagnés';
+    return {
+      earned,
+      sections:[
+        { key:'general', rows:genRows,   count:`${genDone}/${gen.length}` },
+        { key:'jeux',    rows:gameRows,  count:`${gameDone}/${games.length}` },
+        { key:'scans',   rows:scanRows,  count:`${read.length}/${scans.length}` },
+        { key:'gacha',   rows:gachaRows, count:`${(M.gacha||[]).filter(m => done[m.id]).length}/${(M.gacha||[]).length}` },
+      ],
+    };
   }
 
-  function toggleCat(key){
-    OPEN_CATS[key] = !OPEN_CATS[key];
-    document.querySelector(`.mis-cat[data-cat="${key}"]`)?.classList.toggle('open', OPEN_CATS[key]);
+  /* Rendu complet (appelé à chaque changement, même pop-up ouvert) */
+  function renderMissions(st){
+    lastState = st;
+    const { earned, sections } = buildSections(st);
+
+    /* Carte résumé sur la page */
+    const totalMissions = sections.reduce((n,s) => n + (s.rows.match(/class="mis[ "]/g) || []).length, 0);
+    document.getElementById('misSummary').textContent = `${earned} XP gagnés grâce aux missions`;
+    document.getElementById('misTotal').textContent   = `${earned} XP gagnés`;
+
+    /* Onglets */
+    document.getElementById('misTabs').innerHTML = CATS.map(c =>
+      `<button class="mis-tab${c.key === activeCat ? ' active' : ''}" data-go="${c.key}"
+               onclick="goToCat('${c.key}')">${c.ico} ${c.title}</button>`).join('');
+
+    /* Contenu : on garde la position de défilement */
+    const box = document.getElementById('misScroll');
+    const keep = box.scrollTop;
+    box.innerHTML = sections.map(sec => {
+      const cat = CATS.find(c => c.key === sec.key);
+      return `<section class="mis-sec" id="cat-${sec.key}">
+                <div class="mis-sec-title">${cat.ico} ${cat.title}
+                  <span class="mis-sec-count">${sec.count}</span></div>
+                ${sec.rows}
+              </section>`;
+    }).join('');
+    box.scrollTop = keep;
+
+    /* Niveau + barre d'XP du pop-up */
+    const sub = window.__userSub || 'basic';
+    const lv = window.getLevel(st.xp || 0, sub);
+    document.getElementById('misLevel').textContent = lv.level;
+    document.getElementById('misXpNum').textContent = st.xp || 0;
+    document.getElementById('misXpFill').style.width = lv.progress + '%';
+
+    /* Barre d'XP de la page */
+    if (window._renderLevelUI) window._renderLevelUI(st.xp || 0, sub);
   }
 
-  /* Le moteur nous prévient à chaque changement */
+  /* ── Ouvrir / fermer ── */
+  function openMissions(){
+    document.getElementById('misOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (lastState) renderMissions(lastState);
+    syncTabs();
+  }
+  function closeMissions(){
+    document.getElementById('misOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function setActiveTab(key){
+    activeCat = key;
+    document.querySelectorAll('.mis-tab').forEach(t => t.classList.toggle('active', t.dataset.go === key));
+  }
+
+  function goToCat(key){
+    const sec = document.getElementById('cat-' + key);
+    const box = document.getElementById('misScroll');
+    if (!sec || !box) return;
+    /* On mesure à l'écran : plus fiable que offsetTop selon les parents positionnés */
+    const delta = sec.getBoundingClientRect().top - box.getBoundingClientRect().top;
+    box.scrollTo({ top: box.scrollTop + delta - 6, behavior:'smooth' });
+    setActiveTab(key);
+    box.dataset.locked = '1';                        /* on fige pendant le défilement animé */
+    clearTimeout(box._unlock);
+    box._unlock = setTimeout(() => { box.dataset.locked = ''; }, 700);
+  }
+
+  /* L'onglet actif suit le défilement */
+  function syncTabs(){
+    const box = document.getElementById('misScroll');
+    if (!box || box.dataset.hooked) return;
+    box.dataset.hooked = '1';
+    box.addEventListener('scroll', () => {
+      if (box.dataset.locked) return;
+      const top = box.getBoundingClientRect().top;
+      let current = CATS[0].key;
+      CATS.forEach(c => {
+        const el = document.getElementById('cat-' + c.key);
+        if (el && el.getBoundingClientRect().top - top <= 70) current = c.key;
+      });
+      setActiveTab(current);
+    }, { passive:true });
+  }
+
+  /* ══════════════════════════════════════
+     ANIMATION : des bulles filent vers la barre d'XP
+  ══════════════════════════════════════ */
+  function bubblesToXP(xp, missionIds){
+    const popupOpen = document.getElementById('misOverlay').classList.contains('open');
+    const target = popupOpen ? document.getElementById('misXpTrack')
+                             : document.querySelector('.xp-track');
+    if (!target) return;
+
+    /* D'où partent les bulles : de la mission validée si on la voit, sinon du centre */
+    let from = null;
+    if (popupOpen && missionIds && missionIds.length){
+      const row = document.querySelector(`.mis[data-mission="${missionIds[0]}"]`);
+      if (row){
+        row.classList.add('just-done');
+        setTimeout(() => row.classList.remove('just-done'), 700);
+        from = row.getBoundingClientRect();
+      }
+    }
+    const t = target.getBoundingClientRect();
+    if (!from) from = { left:innerWidth/2 - 20, top:innerHeight/2 - 20, width:40, height:40 };
+
+    const fx = from.left + from.width / 2;
+    const fy = from.top  + from.height / 2;
+    const tx = t.left + t.width * .35;
+    const ty = t.top  + t.height / 2;
+
+    const count = Math.min(4 + Math.round(xp / 20), 16);
+    for (let i = 0; i < count; i++){
+      const b = document.createElement('div');
+      b.className = 'xp-bubble';
+      const size = 9 + Math.random() * 15;
+      const jx = (Math.random() - .5) * 90;
+      const jy = (Math.random() - .5) * 50;
+      b.style.cssText =
+        `width:${size}px;height:${size}px;left:${fx + jx}px;top:${fy + jy}px;opacity:0;` +
+        `transition:transform .85s cubic-bezier(.45,.05,.35,1), opacity .85s;` +
+        `transition-delay:${i * 45}ms`;
+      document.body.appendChild(b);
+
+      requestAnimationFrame(() => {
+        b.style.opacity = '1';
+        b.style.transform = `translate(${tx - fx - jx}px, ${ty - fy - jy}px) scale(.35)`;
+      });
+      setTimeout(() => { b.style.opacity = '0'; }, 700 + i * 45);
+      setTimeout(() => b.remove(), 1100 + i * 45);
+    }
+
+    /* La barre encaisse : elle tremble et s'illumine */
+    setTimeout(() => {
+      target.classList.add('xp-hit');
+      const fill = target.querySelector('.xp-fill');
+      if (fill) fill.classList.add('flash');
+      setTimeout(() => { target.classList.remove('xp-hit'); fill && fill.classList.remove('flash'); }, 600);
+
+      /* Le "+X XP" qui s'envole */
+      const f = document.createElement('div');
+      f.className = 'xp-gain-float';
+      f.textContent = '+' + xp + ' XP';
+      f.style.left = (tx - 20) + 'px';
+      f.style.top  = (ty - 34) + 'px';
+      document.body.appendChild(f);
+      requestAnimationFrame(() => { f.style.transform = 'translateY(-34px)'; f.style.opacity = '0'; });
+      setTimeout(() => f.remove(), 1000);
+    }, 620);
+  }
+
+  /* ── Branchement au moteur ── */
   function hookMissions(){
     if (!window.BubbleMissions) return setTimeout(hookMissions, 120);
+    window.BubbleMissions.silent = true;          /* la page gère son propre affichage */
     window.BubbleMissions.onChange(renderMissions);
+    window.BubbleMissions.onGain(({ xp, missions }) => bubblesToXP(xp, missions));
   }
   hookMissions();
+
+  /* Fermeture du pop-up */
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMissions(); });
+  document.getElementById('misOverlay').addEventListener('click', e => {
+    if (e.target.id === 'misOverlay') closeMissions();
+  });
 
   /* Ponts vers le module (les onclick du HTML) */
   function openPicker()      { window._openPicker      && window._openPicker(); }
@@ -633,6 +858,7 @@
       if (snap.exists()){
         const d = snap.data();
         userSub      = d.subscription || 'basic';
+        window.__userSub = userSub;
         activeIconId = d.avatarId     || 'bully_1';
         activeEffect = d.activeEffect || null;
         unlockedFx   = (d.gachaEffects || []).slice();

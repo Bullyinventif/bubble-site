@@ -19,7 +19,7 @@
 
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, increment, arrayUnion }
+import { getFirestore, doc, getDoc, setDoc, onSnapshot, increment, arrayUnion }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const CONFIG = {
@@ -40,7 +40,8 @@ const db   = getFirestore(app);
 const state = {
   uid: null, xp: 0, missions: {}, scansRead: [], gamesPlayed: [], lastLogin: null, loaded: false,
 };
-const listeners = [];
+const listeners = [];      /* changement d'état  */
+const gainers   = [];      /* gain d'XP en direct */
 let resolveReady;
 const ready = new Promise(r => { resolveReady = r; });
 
@@ -51,6 +52,19 @@ function today(){
 }
 
 function notify(){ listeners.forEach(fn => { try { fn(state); } catch(e){ console.warn(e); } }); }
+function emitGain(info){ gainers.forEach(fn => { try { fn(info); } catch(e){ console.warn(e); } }); }
+
+/* Retrouve le libellé d'une mission à partir de son id */
+function labelOf(id){
+  const M = window.MISSIONS || {};
+  const pools = [ ...(M.general || []), ...(M.scanMilestones || []), ...(M.gacha || []) ];
+  const hit = pools.find(m => m.id === id);
+  if (hit) return hit.label;
+  const g = (window.GAMES || []).find(x => x.mission && x.mission.id === id);
+  if (g) return g.mission.label;
+  if (id === 'first_game') return 'Jouer à un jeu';
+  return 'Mission accomplie !';
+}
 
 /* ══ Petite notification "+30 XP" ══ */
 function xpToast(xp, label){
@@ -98,11 +112,8 @@ async function push(patch, xpGain, label){
     const data = { ...patch };
     if (xpGain) data.xp = increment(xpGain);
     await setDoc(doc(db, 'users', state.uid), data, { merge:true });
-    if (xpGain){
-      state.xp += xpGain;
-      xpToast(xpGain, label || 'Mission accomplie !');
-    }
-    notify();
+    /* On n'annonce rien ici : onSnapshot voit le changement et prévient
+       toutes les pages ouvertes, y compris celles des autres onglets. */
     return true;
   } catch(e){ console.error('Missions — écriture impossible :', e); return false; }
 }
@@ -175,24 +186,62 @@ async function checkCollection(owned){
 }
 
 /* ══ Chargement au démarrage ══ */
+let previous = null;   /* photo de l'état précédent, pour repérer les nouveautés */
+
+function absorb(d){
+  const before = previous;
+  state.xp          = d.xp || 0;
+  state.missions    = d.missions    || {};
+  state.scansRead   = d.scansRead   || [];
+  state.gamesPlayed = d.gamesPlayed || [];
+  state.lastLogin   = d.lastLogin   || null;
+
+  if (before){
+    const gained  = state.xp - before.xp;
+    const newOnes = Object.keys(state.missions).filter(k => state.missions[k] && !before.missions[k]);
+    const newScan = state.scansRead.filter(x => !before.scansRead.includes(x));
+    const newGame = state.gamesPlayed.filter(x => !before.gamesPlayed.includes(x));
+
+    if (gained > 0){
+      let label;
+      if (newOnes.length)      label = labelOf(newOnes[0]);
+      else if (newScan.length) label = 'Nouveau scan lu 📜';
+      else if (newGame.length) label = 'Première partie 🎮';
+      else                     label = 'Connexion du jour 🫧';
+      if (!window.BubbleMissions?.silent) xpToast(gained, label);
+      emitGain({ xp: gained, missions: newOnes, label });
+    }
+  }
+
+  previous = {
+    xp: state.xp,
+    missions: { ...state.missions },
+    scansRead: [...state.scansRead],
+    gamesPlayed: [...state.gamesPlayed],
+  };
+  notify();
+}
+
 onAuthStateChanged(auth, async user => {
   if (!user){ state.loaded = true; resolveReady(state); return; }
   state.uid = user.uid;
+  const ref = doc(db, 'users', user.uid);
+
+  /* Premier chargement */
   try {
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    if (snap.exists()){
-      const d = snap.data();
-      state.xp          = d.xp || 0;
-      state.missions    = d.missions     || {};
-      state.scansRead   = d.scansRead    || [];
-      state.gamesPlayed = d.gamesPlayed  || [];
-      state.lastLogin   = d.lastLogin    || null;
-    }
+    const snap = await getDoc(ref);
+    if (snap.exists()) absorb(snap.data());
   } catch(e){ console.error('Missions — chargement impossible :', e); }
 
   state.loaded = true;
   resolveReady(state);
   notify();
+
+  /* ── SYNCHRO EN DIRECT ──
+     Plus besoin de recharger la page : dès qu'une mission est validée
+     (ici, dans un autre onglet, ou depuis un jeu), tout se met à jour. */
+  onSnapshot(ref, snap => { if (snap.exists()) absorb(snap.data()); },
+             e => console.warn('Missions — écoute interrompue :', e.message));
 
   await dailyLogin();
 });
@@ -201,4 +250,8 @@ window.BubbleMissions = {
   ready, state,
   complete, scanRead, gamePlayed, checkCollection, dailyLogin,
   onChange(fn){ listeners.push(fn); if (state.loaded) fn(state); },
+  /* Prévenu à chaque gain d'XP : { xp, missions:[ids], label } */
+  onGain(fn){ gainers.push(fn); },
+  /* Mettre à true pour que la page gère elle-même l'annonce (page Profil) */
+  silent: false,
 };
