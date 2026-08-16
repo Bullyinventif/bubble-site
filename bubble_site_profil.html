@@ -191,7 +191,30 @@
     transition:transform .9s cubic-bezier(.2,.8,.3,1), opacity .9s;
   }
 
-    /* ── GRILLE DES CARTES ── */
+    /* ── CHOIX DU CADRE ── */
+  .frm-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(108px,1fr)); gap:16px; }
+  .frm-item{ display:flex; flex-direction:column; align-items:center; gap:7px; cursor:pointer; text-align:center; }
+  .frm-av{
+    width:76px; height:76px; border-radius:50%; position:relative;
+    background:linear-gradient(160deg,#EAF4FF,#C6E1F8);
+    display:flex; align-items:center; justify-content:center; overflow:visible;
+    transition:transform .16s;
+  }
+  .frm-av img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .frm-item:not(.locked):hover .frm-av{ transform:translateY(-4px); }
+  .frm-item.selected .frm-name{ color:var(--accent); }
+  .frm-item.selected .frm-av::after{
+    content:''; position:absolute; inset:-13px; border-radius:50%;
+    border:3px solid var(--accent); opacity:.55;
+  }
+  .frm-item.locked .frm-av{ filter:grayscale(.9); opacity:.45; }
+  .frm-item.locked{ cursor:not-allowed; }
+  .frm-name{ font-size:.82rem; font-weight:800; line-height:1.2; }
+  .frm-lvl{ font-size:.72rem; font-weight:700; color:var(--ink-soft); }
+  .frm-lock{ font-size:.68rem; font-weight:800; padding:2px 9px; border-radius:999px;
+             background:rgba(255,197,61,.2); color:#9C6D00; }
+
+  /* ── GRILLE DES CARTES ── */
   .cards-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
 
   /* ── SÉLECTEUR (overlay) ── */
@@ -449,10 +472,12 @@
     <div class="picker-tabs">
       <button class="picker-tab active" data-tab="icons"   onclick="switchTab('icons')">🎭 Icônes</button>
       <button class="picker-tab"        data-tab="effects" onclick="switchTab('effects')">✨ Effets</button>
+      <button class="picker-tab"        data-tab="frames"  onclick="switchTab('frames')">🖼️ Cadres</button>
     </div>
 
     <div class="picker-panel active" id="panel-icons"></div>
     <div class="picker-panel"        id="panel-effects"></div>
+    <div class="picker-panel"        id="panel-frames"></div>
   </div>
 </div>
 
@@ -817,6 +842,8 @@
   let unlockedFx     = [];
   let selectedIcon   = null;
   let selectedEffect = null;      /* null = inchangé, 'none' = retirer */
+  let activeFrame    = null;      /* le cadre choisi (id) */
+  let selectedFrame  = null;
 
   const canUse = sub => window.SUB_ORDER[userSub] >= window.SUB_ORDER[sub];
 
@@ -825,6 +852,8 @@
     const html = `<img src="${icon.file}" alt="${icon.name}" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
     document.getElementById('bigAvatar').innerHTML = html;
     document.getElementById('navAvatar').innerHTML = html;
+    /* ⚠️ innerHTML efface le cadre SVG : on le redessine juste après */
+    window.applyFrame(userSub, window.__level || 1, activeFrame);
   }
 
   function setSubUI(sub){
@@ -857,7 +886,8 @@
       ? 'Palier maximum atteint'
       : `encore ${lv.xpNeeded} ${window.currencyIcon(sub,14)} pour le niveau ${lv.level + 1}`;
     document.getElementById('levelMax').style.display = lv.isMax ? 'inline-block' : 'none';
-    window.applyFrame(sub, lv.level);
+    window.applyFrame(sub, lv.level, activeFrame);
+    window.__level = lv.level;
   }
 
   /* ── Connexion ── */
@@ -879,6 +909,7 @@
         window.__userSub = userSub;
         activeIconId = d.avatarId     || 'bully_1';
         activeEffect = d.activeEffect || null;
+        activeFrame  = d.frameId      || null;
         unlockedFx   = (d.gachaEffects || []).slice();
         window.__collectionCount = (d.gachaCollection || []).length;
 
@@ -911,8 +942,10 @@
   window._openPicker = function(){
     selectedIcon   = window.findIcon(activeIconId) || window.ALL_ICONS[0];
     selectedEffect = activeEffect;
+    selectedFrame  = activeFrame;
     buildIcons();
     buildEffects();
+    buildFrames();
     updatePreview();
     document.getElementById('pickerOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -922,7 +955,49 @@
     document.getElementById('pickerOverlay').classList.remove('open');
     document.body.style.overflow = '';
     if (window.applyTheme) window.applyTheme(activeEffect);   /* annule l'aperçu */
+    window.applyFrame(userSub, window.__level || 1, activeFrame);
   };
+
+  /* ── Les cadres de ton abonnement ── */
+  function buildFrames(){
+    const panel = document.getElementById('panel-frames');
+    const level = window.__level || 1;
+    const list  = window.framesFor(userSub);
+    panel.innerHTML = '';
+
+    const t = document.createElement('div');
+    t.className = 'cat-title';
+    t.textContent = `Cadres ${window.SUB_LABELS[userSub]} — débloqués en montant de niveau`;
+    panel.appendChild(t);
+
+    const grid = document.createElement('div');
+    grid.className = 'frm-grid';
+
+    list.forEach(f => {
+      const ok   = window.frameUnlocked(f, level);
+      const item = document.createElement('div');
+      item.className = 'frm-item' + (ok ? '' : ' locked') + (f.id === selectedFrame ? ' selected' : '');
+      const ic = window.findIcon(selectedIcon?.id || activeIconId) || { file:'bully_1.png', name:'' };
+      item.innerHTML = `
+        <div class="frm-av"><img src="${ic.file}" alt=""></div>
+        <div class="frm-name">${f.name}</div>
+        ${ok ? `<div class="frm-lvl">niveau ${f.level}</div>`
+             : `<div class="frm-lock">🔒 niveau ${f.level}</div>`}`;
+
+      grid.appendChild(item);
+      window.drawFrame(item.querySelector('.frm-av'), f.id, userSub);
+
+      if (ok){
+        item.addEventListener('click', () => {
+          selectedFrame = f.id;
+          grid.querySelectorAll('.frm-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          updatePreview();
+        });
+      }
+    });
+    panel.appendChild(grid);
+  }
 
   function updatePreview(){
     const pb = document.getElementById('previewBubble');
@@ -931,6 +1006,7 @@
       : '🫧';
     document.getElementById('previewName').textContent =
       selectedIcon ? selectedIcon.name : 'Choisis une icône';
+    window.drawFrame(pb, selectedFrame, userSub);
   }
 
   function buildIcons(){
@@ -1027,6 +1103,7 @@
     const updates = {};
     if (selectedIcon) updates.avatarId = selectedIcon.id;
     if (selectedEffect !== null) updates.activeEffect = selectedEffect === 'none' ? null : selectedEffect;
+    if (selectedFrame) updates.frameId = selectedFrame;
 
     /* On enregistre aussi les effets débloqués rétroactivement */
     updates.gachaEffects = unlockedFx;
@@ -1035,6 +1112,7 @@
       await setDoc(doc(db,'users',currentUser.uid), updates, { merge:true });
       if (selectedIcon){ activeIconId = selectedIcon.id; setAvatarUI(selectedIcon); }
       if (selectedEffect !== null) activeEffect = selectedEffect === 'none' ? null : selectedEffect;
+      if (selectedFrame){ activeFrame = selectedFrame; window.applyFrame(userSub, window.__level || 1, activeFrame); }
       setFxChip(activeEffect);
       if (window.applyTheme) window.applyTheme(activeEffect);
       document.getElementById('pickerOverlay').classList.remove('open');

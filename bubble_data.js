@@ -188,6 +188,61 @@ window.GAMES = [
     mission:{ id:'blockcraft_build', label:'Construire une maison', xp:80 } },  /* ← change le texte */
 ];
 
+
+/* ══════════════════════════════════════
+   LES CADRES DE PROFIL
+   Une série par abonnement, débloquée par niveau, choisie par le joueur.
+   Chaque cadre = un anneau + des ornements dessinés autour de l'avatar.
+
+     level     niveau qui débloque le cadre
+     shape     'circle' (défaut) | 'star' | 'square'
+     width     épaisseur de l'anneau
+     dashed    true = anneau en pointillés
+     spin      true = les ornements tournent lentement
+     glow      true = halo lumineux
+     ornaments dots · sparkles · crosses · spirals · rays · crown ·
+               king · shards · flowers · burst
+     color     par défaut la couleur de l'abonnement
+══════════════════════════════════════ */
+window.FRAMES = {
+
+  /* 🫧 BASIC — 3 niveaux */
+  basic: [
+    { id:'b1', name:'Bulle',            level:1, ornaments:['dots'] },
+    { id:'b2', name:'Bulle pétillante', level:2, ornaments:['sparkles'] },
+    { id:'b3', name:'Bulle spirale',    level:3, ornaments:['spirals','dots'], spin:true },
+  ],
+
+  /* ✦ BUBBLE+ — 20 niveaux */
+  plus: [
+    { id:'p1', name:'Étincelle',            level:1,  ornaments:['sparkles'] },
+    { id:'p2', name:'Rayons',               level:5,  ornaments:['rays'] },
+    { id:'p3', name:"Couronne d'étoiles",   level:10, ornaments:['crown','sparkles'] },
+    { id:'p4', name:'Royale',               level:15, ornaments:['king','sparkles'], glow:true },
+    { id:'p5', name:'Étoile filante',       level:20, shape:'star', width:3.4,
+               ornaments:['sparkles'], glow:true, spin:true },
+  ],
+
+  /* 💎 BUBBLE X — 20 niveaux */
+  x: [
+    { id:'x1', name:'Givre',            level:1,  ornaments:['crosses'] },
+    { id:'x2', name:'Éclats',           level:5,  ornaments:['shards'] },
+    { id:'x3', name:'Cristal',          level:10, ornaments:['shards','crosses'], glow:true },
+    { id:'x4', name:'Éclat stellaire',  level:15, ornaments:['rays','crosses'], glow:true },
+    { id:'x5', name:'Étoile de glace',  level:20, shape:'star', width:4,
+               ornaments:['crosses'], glow:true, spin:true },
+  ],
+
+  /* 🔮 BUBBLE MAX — 25 niveaux */
+  max: [
+    { id:'m1', name:'Orbe',            level:1,  ornaments:['flowers'] },
+    { id:'m2', name:'Orbe rayonnant',  level:8,  ornaments:['rays','flowers'], width:5 },
+    { id:'m3', name:'Orbe couronné',   level:16, ornaments:['crown','flowers'], glow:true },
+    { id:'m4', name:'Orbe fantôme',    level:22, dashed:true, ornaments:['flowers'], spin:true, glow:true },
+    { id:'m5', name:'Big Bang',        level:25, ornaments:['burst','flowers'], glow:true, spin:true },
+  ],
+};
+
 /* ══════════════════════════════════════
    LES 4 MONNAIES
    C'est le même compteur d'XP pour tout le monde, mais il change de nom,
