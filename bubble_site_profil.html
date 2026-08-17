@@ -14,6 +14,7 @@
 <script src="bubble_frames.js"></script>
 <script src="bubble_data.js"></script>
 <script type="module" src="bubble_missions.js"></script>
+<script type="module" src="bubble_scores.js"></script>
 <style>
   main{ max-width:900px; }
 
@@ -561,32 +562,55 @@
     const add = (ok, xp) => { if (ok) earned += xp; };
 
     /* GÉNÉRAL */
-    const gen = (M.general || []);
+    const gen   = (M.general || []);
+    const games0 = window.GAMES || [];
     const genRows = gen.map(m => {
       const ok = m.daily ? (st.lastLogin === today) : !!done[m.id];
       add(ok, m.xp);
-      return misRow({ id:m.id, done:ok, label:m.label, desc:m.desc, daily:m.daily,
+
+      /* Avancement : « 4 / 7 jours » ou « 3 / 5 jeux essayés » */
+      let desc = m.desc, prog = null;
+      if (m.days){
+        const n = st.loginDays || 0;
+        desc = `${Math.min(n, m.days)} / ${m.days} jours`;
+        prog = Math.min(n / m.days * 100, 100);
+      } else if (m.allGames && games0.length){
+        const n = games0.filter(g => play.includes(g.id)).length;
+        desc = `${n} / ${games0.length} jeux essayés`;
+        prog = Math.min(n / games0.length * 100, 100);
+      }
+
+      return misRow({ id:m.id, done:ok, label:m.label, desc, daily:m.daily,
+                      progress: ok ? null : prog,
                       badge: (m.daily && ok) ? '✓ aujourd’hui' : xpBadge(m.xp) });
     }).join('');
     const genDone = gen.filter(m => m.daily ? st.lastLogin === today : done[m.id]).length;
 
     /* JEUX */
-    const games = window.GAMES || [];
+    const games   = window.GAMES || [];
     const firstXP = M.gameFirstXP ?? 50;
+    const cnt     = st.counters || {};
     const gameRows = games.length ? games.map(g => {
       const played = play.includes(g.id);
       add(played, firstXP);
       let html = misRow({ id:'play_'+g.id, done:played,
-                          label:`${g.emoji} ${g.name} — première partie`, badge:xpBadge(firstXP) });
-      if (g.mission){
-        const ok = !!done[g.mission.id];
-        add(ok, g.mission.xp);
-        html += misRow({ id:g.mission.id, done:ok, label:g.mission.label,
-                         desc:g.name, badge:xpBadge(g.mission.xp) });
+                          label:`${g.emoji} ${g.name} — première partie`,
+                          badge:xpBadge(firstXP) });
+
+      /* Les missions du jeu, avec l'avancement du compteur */
+      for (const m of window.gameMissions(g)){
+        const ok = !!done[m.id];
+        add(ok, m.xp);
+        const n = window.counterOf(cnt, g.id, m.track);
+        const desc = m.need > 1 ? `${g.name} · ${Math.min(n, m.need)} / ${m.need}` : g.name;
+        html += misRow({ id:m.id, done:ok, label:m.label, desc, badge:xpBadge(m.xp),
+                         progress: ok ? null : window.missionProgress(cnt, g.id, m) });
       }
       return html;
     }).join('') : '<div class="mis-empty">Aucun jeu configuré.</div>';
-    const gameDone = games.filter(g => play.includes(g.id)).length;
+    const gameMisTotal = games.reduce((n, g) => n + window.gameMissions(g).length, 0);
+    const gameMisDone  = games.reduce((n, g) =>
+      n + window.gameMissions(g).filter(m => done[m.id]).length, 0);
 
     /* SCANS */
     const scans = window.ALL_SCANS || [];
@@ -628,7 +652,7 @@
       earned,
       sections:[
         { key:'general', rows:genRows,   count:`${genDone}/${gen.length}` },
-        { key:'jeux',    rows:gameRows,  count:`${gameDone}/${games.length}` },
+        { key:'jeux',    rows:gameRows,  count:`${gameMisDone}/${gameMisTotal}` },
         { key:'scans',   rows:scanRows,  count:`${read.length}/${scans.length}` },
         { key:'gacha',   rows:gachaRows, count:`${(M.gacha||[]).filter(m => done[m.id]).length}/${(M.gacha||[]).length}` },
       ],

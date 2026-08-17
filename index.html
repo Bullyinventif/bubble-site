@@ -14,6 +14,7 @@
 <script src="bubble_frames.js"></script>
 <script src="bubble_data.js"></script>
 <script type="module" src="bubble_missions.js"></script>
+<script type="module" src="bubble_scores.js"></script>
 <style>
   /* ── HERO ── */
   .hero{ text-align:center; padding:22px 0 40px; }
@@ -238,6 +239,17 @@
 
   <!-- Dernier post du vlog (masqué tant que VLOG est vide) -->
   <a class="vlog-strip fade-up d1" id="vlogStrip" href="bubble_site_vlog.html" style="display:none"></a>
+
+  <!-- Records des jeux (rempli par bubble_scores.js) -->
+  <section class="block fade-up d2">
+    <div class="block-head">
+      <h2>🏆 Records des jeux</h2>
+      <a href="https://bullyinventif.github.io/bubble_game/" class="more">Tous les jeux →</a>
+    </div>
+    <div class="sb-row" id="scoreboard">
+      <div class="sb-empty" style="width:100%">Chargement des records…</div>
+    </div>
+  </section>
 
   <!-- Reprendre la lecture -->
   <section class="block fade-up d2" id="blockResume" style="display:none">

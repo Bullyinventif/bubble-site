@@ -14,6 +14,7 @@
      BubbleMissions.gamePlayed(gameId) → à appeler quand un jeu est lancé
      BubbleMissions.complete(id, xp)   → valider une mission précise (missions de jeu)
      BubbleMissions.checkCollection(owned) → vérifie la collection complète
+     BubbleMissions.counters           → les compteurs d'actions des jeux
      BubbleMissions.onChange(fn)       → rappelé à chaque gain d'XP
    ══════════════════════════════════════════════════════════════════ */
 
@@ -39,7 +40,10 @@ const db   = getFirestore(app);
 /* ── État local ── */
 const state = {
   uid: null, xp: 0, sub: 'basic',
-  missions: {}, scansRead: [], gamesPlayed: [], lastLogin: null, loaded: false,
+  missions: {}, scansRead: [], gamesPlayed: [], lastLogin: null,
+  loginDays: 0,        /* nombre de jours différents où on s'est connecté */
+  counters: {},        /* { bubblecraft:{ terre:12 }, ... } compteurs des jeux */
+  loaded: false,
 };
 
 /* Combien rapporte une mission pour l'abonnement en cours
@@ -67,8 +71,13 @@ function labelOf(id){
   const pools = [ ...(M.general || []), ...(M.scanMilestones || []), ...(M.gacha || []) ];
   const hit = pools.find(m => m.id === id);
   if (hit) return hit.label;
-  const g = (window.GAMES || []).find(x => x.mission && x.mission.id === id);
-  if (g) return g.mission.label;
+  /* Missions de jeu (nouveau format missions:[…], ancien mission:{…}) */
+  for (const g of (window.GAMES || [])){
+    const list = window.gameMissions ? window.gameMissions(g)
+               : (g.missions || (g.mission ? [g.mission] : []));
+    const m = list.find(x => x.id === id);
+    if (m) return m.label;
+  }
   if (id === 'first_game') return 'Jouer à un jeu';
   return 'Mission accomplie !';
 }
@@ -139,8 +148,19 @@ async function dailyLogin(){
   const d = today();
   if (state.lastLogin === d) return false;
   state.lastLogin = d;
+  state.loginDays = (state.loginDays || 0) + 1;
   const m = (window.MISSIONS?.general || []).find(x => x.id === 'daily_login');
-  return push({ lastLogin: d }, gain(m?.xp ?? 20), 'Connexion du jour');
+  const ok = await push({ lastLogin: d, loginDays: increment(1) },
+                        gain(m?.xp ?? 20), 'Connexion du jour');
+  await checkLoyalty();
+  return ok;
+}
+
+/* ══ Paliers de fidélité : 7 jours, 30 jours… ══ */
+async function checkLoyalty(){
+  for (const m of (window.MISSIONS?.general || [])){
+    if (m.days && state.loginDays >= m.days) await complete(m.id, gain(m.xp), m.label);
+  }
 }
 
 /* ══ Un scan a été ouvert ══ */
@@ -179,6 +199,38 @@ async function gamePlayed(gameId){
   /* Mission générale : jouer à un jeu pour la première fois */
   const g = (window.MISSIONS?.general || []).find(x => x.id === 'first_game');
   if (g) await complete(g.id, gain(g.xp), g.label);
+
+  /* Mission générale : avoir essayé TOUS les jeux */
+  await checkAllGames();
+}
+
+/* ══ A-t-on essayé tous les jeux du catalogue ? ══ */
+async function checkAllGames(){
+  const all = (window.GAMES || []).map(g => g.id);
+  if (!all.length) return;
+  const m = (window.MISSIONS?.general || []).find(x => x.allGames);
+  if (!m) return;
+  if (all.every(id => state.gamesPlayed.includes(id)))
+    await complete(m.id, gain(m.xp), m.label);
+}
+
+/* ══ Rattrapage des missions de jeu ══
+   Si un compteur dépasse déjà un palier sans que la mission ait été
+   validée (mission ajoutée après coup, écriture ratée…), on valide ici.
+   Le classement des records n'a rien à voir là-dedans. ══ */
+async function checkCounters(){
+  await ready;
+  if (!state.uid) return;
+  for (const g of (window.GAMES || [])){
+    const list = window.gameMissions ? window.gameMissions(g)
+               : (g.missions || (g.mission ? [g.mission] : []));
+    for (const m of list){
+      if (!m.track || m.need == null) continue;
+      const n = window.counterOf ? window.counterOf(state.counters, g.id, m.track)
+              : Number(((state.counters || {})[g.id] || {})[m.track]) || 0;
+      if (n >= m.need) await complete(m.id, gain(m.xp), m.label);
+    }
+  }
 }
 
 /* ══ Collection complète ══ */
@@ -202,6 +254,9 @@ function absorb(d){
   state.scansRead   = d.scansRead   || [];
   state.gamesPlayed = d.gamesPlayed || [];
   state.lastLogin   = d.lastLogin   || null;
+  /* Number() par sécurité : si le champ est absent ou bizarre, on retombe sur 0 */
+  state.loginDays   = Number(d.loginDays) || 0;
+  state.counters    = (d.counters && typeof d.counters === 'object') ? d.counters : {};
 
   if (before){
     const gained  = state.xp - before.xp;
@@ -251,11 +306,19 @@ onAuthStateChanged(auth, async user => {
              e => console.warn('Missions — écoute interrompue :', e.message));
 
   await dailyLogin();
+
+  /* Rattrapage : si une mission était déjà remplie sans avoir été
+     validée (ancien compte, mission ajoutée après coup…), on la valide
+     maintenant. C'est ce qui évite les missions « bloquées ». */
+  await checkAllGames();
+  await checkCounters();
+  await checkLoyalty();
 });
 
 window.BubbleMissions = {
   ready, state, gain,
   complete, scanRead, gamePlayed, checkCollection, dailyLogin,
+  checkCounters, checkAllGames, checkLoyalty,
   onChange(fn){ listeners.push(fn); if (state.loaded) fn(state); },
   /* Prévenu à chaque gain d'XP : { xp, missions:[ids], label } */
   onGain(fn){ gainers.push(fn); },

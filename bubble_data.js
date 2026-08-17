@@ -294,33 +294,263 @@ window.ALL_EFFECTS = [
 ];
 
 /* ══════════════════════════════════════
-   LES JEUX
-   Les jeux sont sur l'autre site (bubble_game). Ici on décrit juste
-   ce qu'il faut pour afficher les missions sur la page Profil.
-     id      identifiant utilisé dans le code du jeu (voir bubble_game_hook.js)
-     mission la mission spéciale du jeu — change le texte et l'XP comme tu veux
+   LES JEUX ET LEURS MISSIONS
+
+   ⚠️ DEUX SYSTÈMES SÉPARÉS, qui n'ont RIEN à voir entre eux :
+
+     🏆 score:{…}     → le classement des records sur l'accueil
+     🎯 missions:[…]  → les missions, qui comptent une ACTION précise
+
+   Un jeu peut avoir les deux, un seul, ou aucun des deux.
+
+   ── 🎯 COMMENT MARCHE UNE MISSION ──
+   Chaque mission surveille un COMPTEUR, nommé dans le champ "track".
+   Dans le jeu, quand l'action arrive, tu appelles :
+
+       BubbleQuest.count('terre');        // +1 bloc de terre
+       BubbleQuest.count('poisson', 3);   // +3 d'un coup
+
+   Le compteur s'additionne d'une partie à l'autre et reste enregistré.
+   Dès qu'il atteint le "need" de la mission, elle se valide toute seule.
+
+   Exemple concret pour Bubblecraft :
+       mission  { track:'terre', need:1 }   →  poser 1 bloc de terre
+       dans le jeu, au moment où un bloc de terre est posé :
+                 BubbleQuest.count('terre');
+       ✅ la mission se valide, l'XP tombe, la bulle s'affiche.
+
+   ── LES CHAMPS D'UNE MISSION ──
+     id     identifiant unique (ne le change plus une fois en ligne !)
+     label  ce que le joueur lit
+     track  le nom du compteur — DOIT être le même mot que dans le jeu
+     need   combien il en faut
+     xp     valeur BASIC (×2,5 en +, ×4 en X, ×6 en MAX)
+
+   ── LES CHAMPS D'UN SCORE (le classement, à part) ──
+     label  ce qu'on compte · unit  le mot après le chiffre
+     order  'desc' = le plus grand gagne · 'asc' = le plus petit gagne
+   Dans le jeu, à la fin d'une partie :  BubbleQuest.score(monScore);
 ══════════════════════════════════════ */
 window.GAMES = [
-  { id:'bubblecraft', name:'Bubblecraft', emoji:'⛏️',
+
+  { id:'bubblecraft', name:'Bubblecraft', emoji:'⛏️', color:'#46CE62',
     url:'https://bullyinventif.github.io/bubblecraft/',
-    mission:{ id:'bubblecraft_terre', label:'Poser 10 blocs de terre', xp:80 } },
+    score:{ label:'Blocs posés', unit:'blocs', order:'desc' },
+    missions:[
+      { id:'bc_terre_1',  label:'Poser 1 bloc de terre',   track:'terre',  need:1,  xp:40  },
+      { id:'bc_terre_25', label:'Poser 25 blocs de terre', track:'terre',  need:25, xp:100 },
+      { id:'bc_pierre_10',label:'Poser 10 blocs de pierre',track:'pierre', need:10, xp:100 },
+      { id:'bc_casse_50', label:'Casser 50 blocs',         track:'casse',  need:50, xp:150 },
+    ] },
 
-  { id:'fishing_time', name:'Fishing Time', emoji:'🎣',
+  { id:'fishing_time', name:'Fishing Time', emoji:'🎣', color:'#2BB7F2',
     url:'https://bullyinventif.github.io/fishing_time/',
-    mission:{ id:'fishing_10', label:'Attraper 10 poissons', xp:80 } },
+    score:{ label:'Poissons attrapés', unit:'poissons', order:'desc' },
+    missions:[
+      { id:'ft_poisson_1',  label:'Attraper ton premier poisson', track:'poisson', need:1,  xp:40  },
+      { id:'ft_poisson_25', label:'Attraper 25 poissons',         track:'poisson', need:25, xp:100 },
+      { id:'ft_poisson_100',label:'Attraper 100 poissons',        track:'poisson', need:100,xp:200 },
+    ] },
 
-  { id:'box_run', name:'Box Run', emoji:'📦',
+  { id:'box_run', name:'Box Run', emoji:'📦', color:'#FFC53D',
     url:'https://bullyinventif.github.io/box_run/',
-    mission:{ id:'boxrun_100', label:'Atteindre 100 de score', xp:80 } },
+    score:{ label:'Meilleur score', unit:'pts', order:'desc' },
+    missions:[
+      { id:'br_partie_1',  label:'Faire une partie complète', track:'partie',   need:1,  xp:40  },
+      { id:'br_saut_100',  label:'Sauter 100 fois',           track:'saut',     need:100,xp:100 },
+      { id:'br_obstacle_50',label:'Éviter 50 obstacles',      track:'obstacle', need:50, xp:150 },
+    ] },
 
-  { id:'spacecraft_burster', name:'Spacecraft Burster', emoji:'🚀',
+  { id:'spacecraft_burster', name:'Spacecraft Burster', emoji:'🚀', color:'#A855F7',
     url:'https://bullyinventif.github.io/spacecraft-burster/',
-    mission:{ id:'spacecraft_20', label:'Détruire 20 vaisseaux', xp:80 } },   /* ← change le texte */
+    score:{ label:'Vaisseaux détruits', unit:'vaisseaux', order:'desc' },
+    missions:[
+      { id:'sb_kill_1',   label:'Détruire ton premier vaisseau', track:'kill',   need:1,  xp:40  },
+      { id:'sb_kill_50',  label:'Détruire 50 vaisseaux',         track:'kill',   need:50, xp:120 },
+      { id:'sb_boss_1',   label:'Battre un boss',                track:'boss',   need:1,  xp:200 },
+    ] },
 
-  { id:'block_craft', name:'Block Craft', emoji:'🧱',
+  { id:'block_craft', name:'Block Craft', emoji:'🧱', color:'#FF6363',
     url:'https://bullyinventif.github.io/block-craft/',
-    mission:{ id:'blockcraft_build', label:'Construire une maison', xp:80 } },  /* ← change le texte */
+    score:{ label:'Blocs posés', unit:'blocs', order:'desc' },
+    missions:[
+      { id:'bk_pose_1',   label:'Poser ton premier bloc', track:'pose',  need:1,   xp:40  },
+      { id:'bk_pose_100', label:'Poser 100 blocs',        track:'pose',  need:100, xp:120 },
+      { id:'bk_casse_25', label:'Casser 25 blocs',        track:'casse', need:25,  xp:100 },
+    ] },
 ];
+
+/* ══════════════════════════════════════
+   OUTILS PARTAGÉS
+══════════════════════════════════════ */
+
+/* Retrouver un jeu par son id */
+window.findGame = id => (window.GAMES || []).find(g => g.id === id) || null;
+
+/* Les missions d'un jeu, toujours sous forme de liste.
+   (comprend aussi l'ancien format  mission:{...}  au singulier) */
+window.gameMissions = function(g){
+  if (!g) return [];
+  if (Array.isArray(g.missions)) return g.missions;
+  if (g.mission) return [g.mission];
+  return [];
+};
+
+/* Toutes les missions de jeu, tous jeux confondus */
+window.allGameMissions = () =>
+  (window.GAMES || []).flatMap(g => window.gameMissions(g).map(m => ({ ...m, game:g })));
+
+/* Où en est un compteur, d'après la fiche du joueur.
+   counters = { bubblecraft:{ terre:12 }, box_run:{ saut:340 } } */
+window.counterOf = function(counters, gameId, track){
+  const c = (counters || {})[gameId] || {};
+  return Number(c[track]) || 0;
+};
+
+/* Avancement d'une mission en %, pour la petite barre du profil */
+window.missionProgress = function(counters, gameId, m){
+  if (!m || !m.need) return 0;
+  const n = window.counterOf(counters, gameId, m.track);
+  return Math.max(0, Math.min(100, Math.round(n / m.need * 100)));
+};
+
+/* ── 🏆 Le classement (rien à voir avec les missions) ── */
+
+/* Les jeux qui ont un record */
+window.scoredGames = () => (window.GAMES || []).filter(g => g.score);
+
+/* Écrire joliment un score : 1 240 pts · 12 poissons · 1:23 */
+window.fmtScore = function(game, v){
+  const cfg = (game && game.score) || {};
+  const n   = Number(v) || 0;
+  if (cfg.unit === 'time'){
+    const t = Math.max(0, Math.round(n));
+    return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
+  }
+  const nb = n.toLocaleString('fr-FR');
+  return cfg.unit ? `${nb} ${cfg.unit}` : nb;
+};
+
+/* Est-ce que "a" est un meilleur record que "b" ? (gère 'asc' et 'desc') */
+window.scoreIsBetter = function(game, a, b){
+  if (b === null || b === undefined) return true;
+  return (game && game.score && game.score.order === 'asc') ? (a < b) : (a > b);
+};
+
+/* Trier une liste de records du meilleur au moins bon */
+window.sortScores = function(game, rows){
+  const asc = !!(game && game.score && game.score.order === 'asc');
+  return rows.slice().sort((r1, r2) => asc ? (r1.value - r2.value) : (r2.value - r1.value));
+};
+
+/* 🥇🥈🥉 puis 4, 5, 6… */
+window.rankBadge = i => ['🥇','🥈','🥉'][i] || String(i + 1);
+
+/* ══════════════════════════════════════
+   LES RECORDS — petits outils partagés
+   Le tableau lui-même est dans bubble_scores.js.
+══════════════════════════════════════ */
+
+/* Retrouver un jeu par son id */
+window.findGame = id => (window.GAMES || []).find(g => g.id === id) || null;
+
+/* Les jeux qui ont un record (les autres ne s'affichent pas dans le tableau) */
+window.scoredGames = () => (window.GAMES || []).filter(g => g.score);
+
+/* Les missions d'un jeu, toujours sous forme de liste.
+   (comprend aussi l'ancien format  mission:{...}  au singulier) */
+window.gameMissions = function(g){
+  if (!g) return [];
+  if (Array.isArray(g.missions)) return g.missions;
+  if (g.mission) return [g.mission];
+  return [];
+};
+
+/* Toutes les missions de jeu, tous jeux confondus */
+window.allGameMissions = () =>
+  (window.GAMES || []).flatMap(g => window.gameMissions(g).map(m => ({ ...m, game:g })));
+
+/* Écrire joliment un score : 1 240 pts · 12 poissons · 1:23 */
+window.fmtScore = function(game, v){
+  const cfg = (game && game.score) || {};
+  const n   = Number(v) || 0;
+  if (cfg.unit === 'time'){
+    const t = Math.max(0, Math.round(n));
+    return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
+  }
+  const nb = n.toLocaleString('fr-FR');
+  return cfg.unit ? `${nb} ${cfg.unit}` : nb;
+};
+
+/* Est-ce que "a" est un meilleur record que "b" ? (gère 'asc' et 'desc') */
+window.scoreIsBetter = function(game, a, b){
+  if (b === null || b === undefined) return true;
+  return (game && game.score && game.score.order === 'asc') ? (a < b) : (a > b);
+};
+
+/* Le palier "need" est-il atteint avec le score "v" ? */
+window.needReached = function(game, v, need){
+  if (need === null || need === undefined) return false;
+  return (game && game.score && game.score.order === 'asc') ? (v <= need) : (v >= need);
+};
+
+/* Avancement vers un palier, en % (pour la petite barre du profil) */
+window.needProgress = function(game, v, need){
+  if (!need) return 0;
+  const val = Number(v) || 0;
+  if (game && game.score && game.score.order === 'asc'){
+    if (!val) return 0;
+    return Math.max(0, Math.min(100, Math.round(need / val * 100)));
+  }
+  return Math.max(0, Math.min(100, Math.round(val / need * 100)));
+};
+
+/* Trier une liste de records du meilleur au moins bon */
+window.sortScores = function(game, rows){
+  const asc = !!(game && game.score && game.score.order === 'asc');
+  return rows.slice().sort((r1, r2) => asc ? (r1.value - r2.value) : (r2.value - r1.value));
+};
+
+/* 🥇🥈🥉 puis 4, 5, 6… */
+window.rankBadge = i => ['🥇','🥈','🥉'][i] || String(i + 1);
+
+/* ══════════════════════════════════════
+   LES RECORDS — petits outils partagés
+   Le tableau lui-même est dans bubble_scores.js.
+══════════════════════════════════════ */
+
+/* Retrouver un jeu par son id */
+window.findGame = id => (window.GAMES || []).find(g => g.id === id) || null;
+
+/* Les jeux qui ont un record (les autres ne s'affichent pas dans le tableau) */
+window.scoredGames = () => (window.GAMES || []).filter(g => g.score);
+
+/* Écrire joliment un score : 1 240 pts · 12 poissons · 1:23 */
+window.fmtScore = function(game, v){
+  const cfg = (game && game.score) || {};
+  const n   = Number(v) || 0;
+  if (cfg.unit === 'time'){
+    const t = Math.max(0, Math.round(n));
+    return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
+  }
+  const nb = n.toLocaleString('fr-FR');
+  return cfg.unit ? `${nb} ${cfg.unit}` : nb;
+};
+
+/* Est-ce que "a" est un meilleur record que "b" ? (gère 'asc' et 'desc') */
+window.scoreIsBetter = function(game, a, b){
+  if (b === null || b === undefined) return true;
+  return (game && game.score && game.score.order === 'asc') ? (a < b) : (a > b);
+};
+
+/* Trier une liste de records du meilleur au moins bon */
+window.sortScores = function(game, rows){
+  const asc = !!(game && game.score && game.score.order === 'asc');
+  return rows.slice().sort((r1, r2) => asc ? (r1.value - r2.value) : (r2.value - r1.value));
+};
+
+/* 🥇🥈🥉 puis 4, 5, 6… */
+window.rankBadge = i => ['🥇','🥈','🥉'][i] || String(i + 1);
 
 
 /* ══════════════════════════════════════
@@ -493,10 +723,16 @@ window.MISSIONS = {
   /* Gagné la première fois qu'on lance un jeu */
   gameFirstXP: 50,
 
+  /* ── GÉNÉRAL ──
+     Toutes ces missions se valident TOUTES SEULES depuis le site :
+     aucune ligne de code à ajouter dans un jeu. */
   general: [
-    { id:'daily_login', label:'Se connecter',  desc:'Reviens sur le site chaque jour',        xp:20,  daily:true },
-    { id:'first_game',  label:'Jouer à un jeu', desc:"Lance n'importe quel Bubble Game",      xp:100 },
-    { id:'first_scan',  label:'Lire un scan',   desc:'Ouvre ton premier scan',                xp:100 },
+    { id:'daily_login', label:'Se connecter',        desc:'Reviens sur le site chaque jour',      xp:20,  daily:true },
+    { id:'login_7',     label:'Fidèle au poste',     desc:'Se connecter 7 jours différents',      xp:200, days:7 },
+    { id:'login_30',    label:'Habitué de la maison',desc:'Se connecter 30 jours différents',     xp:500, days:30 },
+    { id:'first_game',  label:'Jouer à un jeu',      desc:"Lance n'importe quel Bubble Game",     xp:100 },
+    { id:'all_games',   label:'Touche-à-tout',       desc:'Essayer tous les jeux au moins une fois', xp:250, allGames:true },
+    { id:'first_scan',  label:'Lire un scan',        desc:'Ouvre ton premier scan',               xp:100 },
   ],
 
   /* Paliers sur le nombre total de scans lus */
@@ -511,6 +747,7 @@ window.MISSIONS = {
       desc:'Obtenir les 11 cartes du premier tome', xp:100 },
   ],
 };
+
 
 /* ── Réglages communs ── */
 /* free = visiteur sans compte. Un contenu en "free" est visible par TOUT LE MONDE. */
