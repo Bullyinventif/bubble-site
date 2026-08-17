@@ -243,6 +243,7 @@ window.CATALOGUE = {
     { id:"frosty_1",          file:"frosty_1.png",          name:"Frosty",          sub:"basic" },
     { id:"zippy_1",           file:"zippy_1.png",           name:"Zippy",           sub:"basic" },
     { id:"rocky_1",           file:"rocky_1.png",           name:"Rocky",           sub:"basic" },
+    { id:"crystal_1",         file:"crystal_1.png",         name:"Crystal",         sub:"basic" },
   ],
   "Pixel": [
     { id:"bully_pixel_1",     file:"bully_pixel_1.png",     name:"Bully Pixel",     sub:"plus" },
@@ -260,11 +261,6 @@ window.CATALOGUE = {
     { id:"zippy_funny_1",     file:"zippy_funny_1.png",     name:"Zippy Rigolo",    sub:"plus" },
     { id:"rocky_funny_1",     file:"rocky_funny_1.png",     name:"Rocky Rigolo",    sub:"plus" },
   ],
-  "Enquête à la fête foraine": [
-    { id:"bully_ff_1",        file:"bully_ff_1.png",        name:"Bully Enquêteur",  sub:"plus" },
-    { id:"bulle_ff_1",        file:"bulle_ff_1.png",        name:"Bulle Enquêteuse", sub:"plus" },
-    { id:"loop_ff_1",         file:"loop_ff_1.png",         name:"Une loupe",        sub:"plus" },
-  ],
   "Bubble inc. Game IT!": [
     { id:"bully_game_it_1",   file:"bully_game_it_1.png",   name:"Bully Game IT",   sub:"x" },
     { id:"anthony_game_it_1", file:"anthony_game_it_1.png", name:"Anthony Game IT", sub:"x" },
@@ -272,6 +268,11 @@ window.CATALOGUE = {
     { id:"frosty_game_it_1",  file:"frosty_game_it_1.png",  name:"Frosty Game IT",  sub:"x" },
     { id:"zippy_game_it_1",   file:"zippy_game_it_1.png",   name:"Zippy Game IT",   sub:"x" },
     { id:"rocky_game_it_1",   file:"rocky_game_it_1.png",   name:"Rocky Game IT",   sub:"x" },
+  ],
+  "Enquête à la fête foraine": [
+    { id:"bully_ff_1",        file:"bully_ff_1.png",        name:"Bully Enquêteur",  sub:"plus" },
+    { id:"bulle_ff_1",        file:"bulle_ff_1.png",        name:"Bulle Enquêteuse", sub:"plus" },
+    { id:"loop_ff_1",         file:"loop_ff_1.png",         name:"Une loupe",        sub:"plus" },
   ],
 };
 
