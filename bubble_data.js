@@ -261,6 +261,7 @@ window.CATALOGUE = {
     { id:"frosty_funny_1",    file:"frosty_funny_1.png",    name:"Frosty Rigolo",   sub:"plus" },
     { id:"zippy_funny_1",     file:"zippy_funny_1.png",     name:"Zippy Rigolo",    sub:"plus" },
     { id:"rocky_funny_1",     file:"rocky_funny_1.png",     name:"Rocky Rigolo",    sub:"plus" },
+    { id:"crystal_funny_1",   file:"crystal_funny_1.png",   name:"Crystal Rigolo",  sub:"plus" },
   ],
   "Bubble inc. Game IT!": [
     { id:"bully_game_it_1",   file:"bully_game_it_1.png",   name:"Bully Game IT",   sub:"x" },
