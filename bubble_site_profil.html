@@ -562,7 +562,7 @@
     const add = (ok, xp) => { if (ok) earned += xp; };
 
     /* GÉNÉRAL */
-    const gen   = (M.general || []);
+    const gen    = (M.general || []);
     const games0 = window.GAMES || [];
     const genRows = gen.map(m => {
       const ok = m.daily ? (st.lastLogin === today) : !!done[m.id];
@@ -587,30 +587,24 @@
     const genDone = gen.filter(m => m.daily ? st.lastLogin === today : done[m.id]).length;
 
     /* JEUX */
-    const games   = window.GAMES || [];
+    const games = window.GAMES || [];
     const firstXP = M.gameFirstXP ?? 50;
-    const cnt     = st.counters || {};
     const gameRows = games.length ? games.map(g => {
       const played = play.includes(g.id);
       add(played, firstXP);
-      let html = misRow({ id:'play_'+g.id, done:played,
-                          label:`${g.emoji} ${g.name} — première partie`,
-                          badge:xpBadge(firstXP) });
+      /* Ton record sur ce jeu, s'il y en a un (info seulement : le
+         classement ne donne pas d'XP, c'est un système séparé) */
+      const rec = (window.BubbleScores && window.BubbleScores.myBest)
+                ? window.BubbleScores.myBest(g.id) : null;
+      const desc = rec
+        ? `🏆 Ton record : ${window.fmtScore(g, rec.value)} · ${rec.rank}ᵉ sur ${rec.total}`
+        : (played ? '🏆 Pas encore de record' : '');
 
-      /* Les missions du jeu, avec l'avancement du compteur */
-      for (const m of window.gameMissions(g)){
-        const ok = !!done[m.id];
-        add(ok, m.xp);
-        const n = window.counterOf(cnt, g.id, m.track);
-        const desc = m.need > 1 ? `${g.name} · ${Math.min(n, m.need)} / ${m.need}` : g.name;
-        html += misRow({ id:m.id, done:ok, label:m.label, desc, badge:xpBadge(m.xp),
-                         progress: ok ? null : window.missionProgress(cnt, g.id, m) });
-      }
-      return html;
+      return misRow({ id:'play_'+g.id, done:played, desc,
+                      label:`${g.emoji} ${g.name} — première partie`,
+                      badge:xpBadge(firstXP) });
     }).join('') : '<div class="mis-empty">Aucun jeu configuré.</div>';
-    const gameMisTotal = games.reduce((n, g) => n + window.gameMissions(g).length, 0);
-    const gameMisDone  = games.reduce((n, g) =>
-      n + window.gameMissions(g).filter(m => done[m.id]).length, 0);
+    const gameDone = games.filter(g => play.includes(g.id)).length;
 
     /* SCANS */
     const scans = window.ALL_SCANS || [];
@@ -652,7 +646,7 @@
       earned,
       sections:[
         { key:'general', rows:genRows,   count:`${genDone}/${gen.length}` },
-        { key:'jeux',    rows:gameRows,  count:`${gameMisDone}/${gameMisTotal}` },
+        { key:'jeux',    rows:gameRows,  count:`${gameDone}/${games.length}` },
         { key:'scans',   rows:scanRows,  count:`${read.length}/${scans.length}` },
         { key:'gacha',   rows:gachaRows, count:`${(M.gacha||[]).filter(m => done[m.id]).length}/${(M.gacha||[]).length}` },
       ],

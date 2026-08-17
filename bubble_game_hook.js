@@ -16,41 +16,30 @@
      • affiche une petite bulle "+50 XP" en bas à droite
 
    ══════════════════════════════════════════════════════════════════
-   ⭐ LES DEUX LIGNES À CONNAÎTRE ⭐
-   (deux systèmes séparés, tu peux n'en utiliser qu'un)
+   ⭐ LA SEULE LIGNE À AJOUTER DANS TON CODE ⭐
 
-   🎯 1. LES MISSIONS — compter une action précise
-   ─────────────────────────────────────────────
-   Au moment EXACT où l'action arrive dans ton jeu :
-
-       BubbleQuest.count('terre');        // +1 bloc de terre
-       BubbleQuest.count('poisson', 3);   // +3 d'un coup
-
-   Le mot ('terre') doit être le même que le champ "track" de la
-   mission, dans bubble_data.js. Le compteur s'additionne de partie
-   en partie et reste enregistré. Dès qu'il atteint le "need",
-   la mission se valide toute seule : XP + bulle.
-
-   Tu peux appeler count() des centaines de fois par seconde sans
-   ralentir ton jeu : les écritures sont regroupées automatiquement.
-
-   🏆 2. LE CLASSEMENT — le record affiché sur l'accueil
-   ─────────────────────────────────────────────
-   À la FIN d'une partie (game over, retour menu) :
+   À la FIN d'une partie (game over, retour au menu, victoire…) :
 
        BubbleQuest.score(monScore);
 
-   Seul le MEILLEUR est gardé. Ça n'a AUCUN lien avec les missions.
+   • le score part au classement affiché sur l'accueil du site
+   • seul le MEILLEUR est gardé : rejouer moins bien n'efface rien
+   • une bulle « 🏆 Nouveau record » s'affiche si c'en est un
 
+   « monScore » = ce que compte ton jeu : des points, des poissons,
+   des blocs posés… Peu importe, tant que c'est un nombre et que c'est
+   toujours le même compteur.
+
+   Le sens se règle dans bubble_data.js :
+       score:{ order:'desc' }  → le plus GRAND gagne (défaut)
+       score:{ order:'asc'  }  → le plus PETIT gagne (chrono…)
+
+   Si tu n'appelles pas score(), le jeu marche quand même : il apparaît
+   juste avec un classement vide.
    ══════════════════════════════════════════════════════════════════
 
-   ── FACULTATIF : valider une mission à la main ──
-   Pour une mission sans compteur, donne son id :
-
-       BubbleQuest.done('bc_terre_1');
-
-   Rien ne se passe si le joueur n'est pas connecté, si la mission est
-   déjà validée, ou si le site est hors ligne : ça ne peut pas casser ton jeu.
+   Rien ne se passe si le joueur n'est pas connecté ou si le site est
+   hors ligne : ça ne peut pas casser ton jeu.
    ══════════════════════════════════════════════════════════════════ */
 
 const SITE = 'https://bullyinventif.github.io/bubble-site';
@@ -75,15 +64,10 @@ if (!GAME_ID) console.warn('[Bubble] Ajoute data-game="..." sur la balise script
 /* ── API disponible tout de suite, même avant le chargement ── */
 const queue = [];
 window.BubbleQuest = {
-  /* 🎯 Une action vient d'arriver dans le jeu */
-  count(what, n){ queue.push({ type:'count', what:String(what||''), n: Number(n) || 1 }); flush(); },
-  /* 🏆 Fin de partie : le record pour le classement */
+  /* ⭐ Fin de partie : envoie le score au classement */
   score(value){ queue.push({ type:'score', value: Number(value) }); flush(); },
-  /* Facultatif : valider une mission à la main (donne son id) */
-  done(id){ queue.push({ type:'mission', id }); flush(); },
   ready: false,
-  best: null,      /* ton record actuel sur ce jeu */
-  totals: {},      /* tes compteurs actuels : { terre:12, pierre:3 } */
+  best: null,      /* ton record actuel sur ce jeu (rempli au chargement) */
 };
 
 let engine = null;
@@ -91,9 +75,7 @@ function flush(){
   if (!engine) return;
   while (queue.length){
     const job = queue.shift();
-    if (job.type === 'count')   engine.count(job.what, job.n);
-    if (job.type === 'mission') engine.mission(job.id);
-    if (job.type === 'score')   engine.score(job.value);
+    if (job.type === 'score') engine.score(job.value);
   }
 }
 
@@ -154,11 +136,6 @@ function xpToast(xp, label, ico, color){
   const cfg     = window.MISSIONS || {};
   const baseFirst = cfg.gameFirstXP ?? FALLBACK.gameFirstXP;
   const baseGen   = (cfg.general || []).find(m => m.id === 'first_game')?.xp ?? FALLBACK.firstGameXP;
-
-  /* Les missions de ce jeu (nouveau format missions:[…], ancien mission:{…}) */
-  const misList = window.gameMissions ? window.gameMissions(game)
-                : (game?.missions || (game?.mission ? [game.mission] : []));
-
   /* Les gains dépendent de l'abonnement du joueur */
   const forSub = (base, sub) => window.xpFor ? window.xpFor(base, sub) : base;
   const iconOf = sub => (window.currencyIcon ? window.currencyIcon(sub, 14) : '');
@@ -196,66 +173,14 @@ function xpToast(xp, label, ico, color){
       } catch(e){ console.warn('[Bubble]', e.message); }
     }
 
-    /* 3. La mission spéciale, déclenchée par BubbleQuest.done() */
-    /* ══ 4. LES MISSIONS — les compteurs d'actions ══ */
-
-    /* Les compteurs déjà enregistrés pour ce jeu : { terre:12, pierre:3 } */
-    const totals = { ...((data.counters || {})[GAME_ID] || {}) };
-    window.BubbleQuest.totals = totals;
-
-    /* Ce qui n'est pas encore écrit en base (on regroupe les écritures) */
-    let attente = {};
-    let minuteur = null;
-
-    /* Valider une mission : XP + bulle, une seule fois par compte */
-    async function grant(m){
-      if (!m || !m.id || done[m.id]) return false;
-      done[m.id] = true;                       /* tout de suite, pour ne pas doubler */
-      const xp = forSub(m.xp ?? FALLBACK.missionXP, sub);
-      try {
-        await setDoc(ref, { missions:{ [m.id]:true }, xp: increment(xp) }, { merge:true });
-      } catch(e){
-        done[m.id] = false;
-        console.warn('[Bubble] mission non enregistrée :', e.message);
-        return false;
-      }
-      try { xpToast('+' + xp, m.label || 'Mission accomplie !', ico); } catch(e){}
-      return true;
-    }
-
-    /* Écrire les compteurs en attente. On n'écrit pas à chaque bloc posé :
-       ça ferait des centaines d'écritures. On regroupe toutes les 2 secondes. */
-    async function ecrire(){
-      minuteur = null;
-      const paquet = attente; attente = {};
-      const keys = Object.keys(paquet);
-      if (!keys.length) return;
-      const patch = {};
-      keys.forEach(k => { patch[k] = increment(paquet[k]); });
-      try {
-        await setDoc(ref, { counters: { [GAME_ID]: patch } }, { merge:true });
-      } catch(e){
-        /* raté : on remet dans la file pour réessayer plus tard */
-        keys.forEach(k => { attente[k] = (attente[k] || 0) + paquet[k]; });
-        console.warn('[Bubble] compteurs non enregistrés :', e.message);
-      }
-    }
-    function planifier(){
-      if (minuteur) return;
-      minuteur = setTimeout(ecrire, 2000);
-    }
-    /* Si le joueur ferme l'onglet, on écrit ce qui reste tout de suite */
-    const vider = () => { if (minuteur){ clearTimeout(minuteur); minuteur = null; } ecrire(); };
-    window.addEventListener('pagehide', vider);
-    document.addEventListener('visibilitychange', () => { if (document.hidden) vider(); });
-
-    /* ══ 5. LE CLASSEMENT — le record (aucun lien avec les missions) ══ */
+    /* 3. Le record du jeu, envoyé par BubbleQuest.score(...) */
     const scoreRef = doc(db, 'scores', `${GAME_ID}__${user.uid}`);
     const unit     = game?.score?.unit || '';
     const showVal  = v => unit === 'time'
       ? `${Math.floor(v/60)}:${String(Math.round(v)%60).padStart(2,'0')}`
       : `${v}${unit ? ' ' + unit : ''}`;
 
+    /* On lit le record actuel une bonne fois pour toutes */
     let best = null;
     try {
       const s = await getDoc(scoreRef);
@@ -264,34 +189,11 @@ function xpToast(xp, label, ico, color){
     window.BubbleQuest.best = best;
 
     engine = {
-      /* 🎯 Une action vient d'arriver */
-      count(what, n){
-        if (!what) return;
-        const nb = Number(n) || 1;
-        totals[what]  = (totals[what]  || 0) + nb;
-        attente[what] = (attente[what] || 0) + nb;
-        planifier();
-
-        /* Toutes les missions qui surveillent ce compteur */
-        for (const m of misList){
-          if (m.track === what && m.need != null && totals[what] >= m.need && !done[m.id]){
-            grant(m);                     /* pas d'await : le jeu ne doit pas ralentir */
-          }
-        }
-      },
-
-      /* Validation manuelle : BubbleQuest.done('un_id') */
-      async mission(id){
-        const m = id ? misList.find(x => x.id === id) : misList[0];
-        if (!m) return console.warn('[Bubble] mission inconnue :', id);
-        await grant(m);
-      },
-
-      /* 🏆 Fin de partie : uniquement le classement */
       async score(value){
         const v = Number(value);
         if (!isFinite(v)) return console.warn('[Bubble] score invalide :', value);
 
+        /* On n'écrit que si c'est vraiment mieux qu'avant */
         const better = (best === null) ? true
                      : (game?.score?.order === 'asc' ? v < best : v > best);
         if (!better) return;
@@ -324,15 +226,6 @@ function xpToast(xp, label, ico, color){
         } catch(e){}
       }
     };
-
-    /* Rattrapage : si un compteur dépasse déjà un palier sans que la
-       mission ait été validée (mission ajoutée après coup), on valide. */
-    for (const m of misList){
-      if (m.track && m.need != null && (totals[m.track] || 0) >= m.need && !done[m.id]){
-        await grant(m);
-      }
-    }
-
     window.BubbleQuest.ready = true;
     flush();
   });
