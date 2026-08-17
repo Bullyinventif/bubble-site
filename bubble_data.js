@@ -252,6 +252,7 @@ window.CATALOGUE = {
     { id:"star_pixel_1",      file:"star_pixel_1.png",      name:"Étoile",          sub:"plus" },
     { id:"snowflake_pixel_1", file:"snowflake_pixel_1.png", name:"Flocon",          sub:"plus" },
     { id:"sun_pixel_1",       file:"sun_pixel_1.png",       name:"Soleil",          sub:"plus" },
+    { id:"amethyst_pixel_1",  file:"amethyst_pixel_1.png",  name:"Améthyste",       sub:"plus" },
   ],
   "Rigolo": [
     { id:"bully_funny_1",     file:"bully_funny_1.png",     name:"Bully Rigolo",    sub:"plus" },
