@@ -276,6 +276,11 @@ window.CATALOGUE = {
     { id:"bulle_ff_1",        file:"bulle_ff_1.png",        name:"Bulle Enquêteuse", sub:"plus" },
     { id:"loop_ff_1",         file:"loop_ff_1.png",         name:"Une loupe",        sub:"plus" },
   ],
+  "Le pays des étoiles filantes (": [
+    { id:"crystal_étoile_1",        file:"crystal_étoile_1.png",        name:"Crystal Cristalisée",  sub:"x" },
+    { id:"star_étoile_1",           file:"star_étoile_1.png",           name:"Étoile filante",       sub:"x" },
+    { id:"bully_étoile_1",          file:"bully_étoile_1.png",          name:"Bully Cristalisé",     sub:"x" },
+  ],
 };
 
 /* Toutes les icônes à plat + recherche par id */
