@@ -185,8 +185,14 @@
   const auth = getAuth(app);
   const db   = getFirestore(app);
 
-  /* Déjà connecté → on file à l'accueil */
-  onAuthStateChanged(auth, user => { if (user) window.location.href = './index.html'; });
+  /* Déjà connecté → on file à l'accueil.
+     ⚠️ Sauf pendant une inscription : createUserWithEmailAndPassword()
+     connecte automatiquement la personne DÈS que le compte est créé,
+     ce qui déclenchait cette redirection AVANT que updateProfile() et
+     le setDoc() du profil (pseudo, subscription…) aient eu le temps de
+     s'exécuter. Résultat : profil à moitié vide dans Firestore. */
+  let isRegistering = false;
+  onAuthStateChanged(auth, user => { if (user && !isRegistering) window.location.href = './index.html'; });
 
   const ERRORS = {
     'auth/invalid-email':        '❌ Email invalide.',
@@ -233,6 +239,7 @@
     if (!pseudo || !email || !pwd){ showError('⚠️ Remplis tous les champs !'); return; }
     if (pwd.length < 6){ showError('❌ Minimum 6 caractères !'); return; }
     setLoading('btnRegister', true);
+    isRegistering = true;      // on retient la redirection automatique
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, pwd);
       await updateProfile(cred.user, { displayName: pseudo });
@@ -242,7 +249,10 @@
         xp:0, activeEffect:null,
         gachaCollection:[], gachaHistory:[], gachaEffects:[]
       });
+      /* Le profil est écrit en entier : on peut y aller nous-mêmes */
+      window.location.href = './index.html';
     } catch(e){
+      isRegistering = false;   // raté : on redonne la main à la redirection normale
       showError(errMsg(e));
       setLoading('btnRegister', false);
     }
