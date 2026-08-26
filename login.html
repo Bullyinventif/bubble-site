@@ -245,9 +245,9 @@
       await updateProfile(cred.user, { displayName: pseudo });
       /* Document utilisateur complet dès la création */
       await setDoc(doc(db,'users',cred.user.uid), {
-        pseudo, subscription:'basic', avatarId:'bully_1',
-        xp:0, activeEffect:null,
-        gachaCollection:[], gachaHistory:[], gachaEffects:[]
+        pseudo: pseudo, subscription: 'basic', avatarId: 'bully_1',
+        xp: 0, activeEffect: null,
+        gachaCollection: [], gachaHistory: [], gachaEffects: [], framesUnlocked: [], iconsUnlocked: []
       });
       /* Le profil est écrit en entier : on peut y aller nous-mêmes */
       window.location.href = './index.html';

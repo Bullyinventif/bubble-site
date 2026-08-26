@@ -955,10 +955,19 @@
         renderLevel(d.xp || 0, userSub);
       } else {
         await setDoc(doc(db,'users',user.uid), {
-          subscription:'basic', avatarId:'bully_1',
-          pseudo: pseudo, xp:0, gachaEffects:[]
+          pseudo: pseudo,
+          subscription: 'basic',
+          avatarId: 'bully_1',
+          xp: 0,
+          activeEffect: null,
+          gachaCollection: [],
+          gachaHistory: [],
+          gachaEffects: [],
+          framesUnlocked: [],
+          iconsUnlocked: []
         }, { merge:true });
         renderLevel(0, 'basic');
+      }
       }
     } catch(e){ toast('⚠️ ' + e.message, 'err'); }
 
