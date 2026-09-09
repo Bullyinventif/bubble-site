@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bubble Game</title>
+  <link rel="icon" type="image/png" href="../bully_icon_site_1.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+  <nav>
+    <a href="../accueil.html" class="nav-logo">🫧</a>
+    <div class="brand">BUBBLE GAME</div>
+    <div class="nav-links">
+      <a href="../accueil.html" class="active">Accueil</a>
+      <a href="jeux.html">Jeux</a>
+      <a href="classement.html">Classement</a>
+      <a href="credits.html">Crédits</a>
+    </div>
+    <a href="../bubble_site_profil.html" class="nav-profile-widget">
+      <div class="nav-profile-info">
+        <span class="nav-profile-name" id="navProfileName">...</span>
+        <span class="nav-profile-sub" id="navProfileSub">—</span>
+      </div>
+      <div class="nav-avatar-bubble" id="navAvatarBubble">🧙</div>
+    </a>
+    <button class="nav-burger" id="menuToggle" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="menuClose" aria-label="Fermer">✕</button>
+    <a href="../accueil.html">Accueil</a>
+    <a href="jeux.html">Jeux</a>
+    <a href="classement.html">Classement</a>
+    <a href="credits.html">Crédits</a>
+  </div>
+
+  <div class="wrap">
+    <div class="hero" id="hero"></div>
+
+    <div class="rowhead">
+      <h2>AJOUTS RÉCENTS</h2>
+      <a class="btn small" href="jeux.html">VOIR TOUT →</a>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <footer>🫧 BUBBLE INC. — <span id="year"></span></footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="../firebase-init.js?v=5"></script>
+  <script src="games-data.js?v=5"></script>
+  <script src="render.js?v=5"></script>
+  <script>
+    requireAccess();
+    initChrome();
+    var recent = gamesByRecent();
+    document.getElementById('hero').innerHTML = heroMarkup(recent[0]);
+    document.getElementById('grid').innerHTML = recent.slice(0, 3).map(gameCard).join('');
+  </script>
+</body>
+</html>

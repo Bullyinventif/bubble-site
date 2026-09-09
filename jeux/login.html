@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion — Bubble Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#16130E;--cream:#F4EEE2;--pink:#FF5C8A;--green:#3DDC84;--blue:#5B8DEF;--yellow:#FFC93C}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:'Space Grotesk',sans-serif;min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;
+    background-image:radial-gradient(var(--ink) 1.4px,transparent 1.5px);background-size:26px 26px}
+  .container{width:min(420px,94vw);display:flex;flex-direction:column;align-items:center;gap:22px}
+  .logo{font-family:'Archivo Black',sans-serif;font-size:clamp(2rem,8vw,3rem);text-align:center;line-height:1}
+  .logo .g{color:var(--pink)}
+  .card{width:100%;background:#fff;border:3px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:26px 24px}
+  .card-title{font-weight:700;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:20px;opacity:.7}
+  .tabs{display:flex;gap:10px;margin-bottom:20px}
+  .tab{flex:1;padding:10px;border:3px solid var(--ink);background:#fff;font-family:'Space Grotesk';font-weight:700;
+    font-size:.9rem;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+  .tab.active{background:var(--yellow)}
+  .form-group{margin-bottom:14px}
+  .form-group label{display:block;font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;opacity:.65}
+  .form-group input{width:100%;padding:11px 13px;border:3px solid var(--ink);background:var(--cream);
+    font-family:'Space Grotesk';font-weight:600;font-size:.95rem;color:var(--ink)}
+  .form-group input:focus{outline:none;background:#fffdf5}
+  .btn-submit{width:100%;padding:13px;border:3px solid var(--ink);background:var(--green);
+    font-family:'Space Grotesk';font-weight:700;font-size:1rem;color:var(--ink);cursor:pointer;
+    box-shadow:4px 4px 0 var(--ink);margin-top:6px;transition:.1s}
+  .btn-submit:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+  .btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:4px 4px 0 var(--ink)}
+  .error-msg{background:var(--pink);border:3px solid var(--ink);padding:10px 13px;font-size:.82rem;font-weight:700;margin-bottom:14px;display:none}
+  .error-msg.show{display:block}
+  .no-abo-msg{background:var(--yellow);border:3px solid var(--ink);padding:12px 14px;font-size:.82rem;font-weight:600;margin-bottom:14px;display:none;text-align:center;line-height:1.6}
+  .no-abo-msg.show{display:block}
+  .no-abo-msg a{color:var(--ink);font-weight:700}
+  .form-panel{display:none}
+  .form-panel.active{display:block}
+  footer{margin-top:16px;font-weight:700;font-size:.7rem;letter-spacing:1px;opacity:.5}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">BUBBLE<span class="g">GAME</span></div>
+  <div class="card">
+    <div class="card-title">🎮 Accès membres</div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Connexion</button>
+      <button class="tab" onclick="switchTab('register')">Inscription</button>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="form-panel active" id="panelLogin">
+      <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="ton@email.com"></div>
+      <div class="form-group"><label>Mot de passe</label><input type="password" id="loginPwd" placeholder="••••••••"></div>
+      <button class="btn-submit" id="btnLogin" onclick="handleLogin()">🚀 JOUER !</button>
+    </div>
+
+    <div class="form-panel" id="panelRegister">
+      <div class="form-group"><label>Pseudo</label><input type="text" id="regPseudo" placeholder="Ton pseudo..."></div>
+      <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="ton@email.com"></div>
+      <div class="form-group"><label>Mot de passe</label><input type="password" id="regPwd" placeholder="Minimum 6 caractères"></div>
+      <button class="btn-submit" id="btnRegister" onclick="handleRegister()">✨ CRÉER MON COMPTE</button>
+    </div>
+  </div>
+</div>
+<footer>© BUBBLE INC.</footer>
+
+<script>
+  function switchTab(tab){
+    document.getElementById('panelLogin').classList.toggle('active',tab==='login');
+    document.getElementById('panelRegister').classList.toggle('active',tab==='register');
+    document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
+    hideError();
+  }
+  function showError(msg){const el=document.getElementById('errorMsg');el.textContent=msg;el.classList.add('show');}
+  function hideError(){document.getElementById('errorMsg').classList.remove('show');}
+  function setLoading(id,on){
+    const btn=document.getElementById(id);
+    btn.disabled=on;
+    btn.textContent=on?'⏳ VÉRIFICATION...':(id==='btnLogin'?'🚀 JOUER !':'✨ CRÉER MON COMPTE');
+  }
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+  const SUB_ORDER = {basic:0,plus:1,x:2,max:3};
+
+  async function checkAndRedirect(user) {
+    try {
+      window.location.href = './index.html';
+    } catch(e) { showError('❌ Erreur : '+e.message); }
+  }
+
+  auth.onAuthStateChanged(user => { if(user) checkAndRedirect(user); });
+
+  const ERRORS = {
+    'auth/invalid-email':'❌ Email invalide.','auth/user-not-found':'❌ Aucun compte avec cet email.',
+    'auth/wrong-password':'❌ Mot de passe incorrect.','auth/email-already-in-use':'❌ Email déjà utilisé.',
+    'auth/weak-password':'❌ Minimum 6 caractères.','auth/too-many-requests':'❌ Trop de tentatives, réessaie plus tard.',
+    'auth/invalid-credential':'❌ Email ou mot de passe incorrect.'
+  };
+
+  window.handleLogin = async function(){
+    hideError();
+    const email=document.getElementById('loginEmail').value.trim();
+    const pwd  =document.getElementById('loginPwd').value;
+    if(!email||!pwd){showError('⚠️ Remplis tous les champs !');return;}
+    setLoading('btnLogin',true);
+    try { const cred=await auth.signInWithEmailAndPassword(email,pwd); await checkAndRedirect(cred.user); }
+    catch(e){ showError(ERRORS[e.code]||'❌ '+e.message); setLoading('btnLogin',false); }
+  };
+
+  window.handleRegister = async function(){
+    hideError();
+    const pseudo=document.getElementById('regPseudo').value.trim();
+    const email =document.getElementById('regEmail').value.trim();
+    const pwd   =document.getElementById('regPwd').value;
+    if(!pseudo||!email||!pwd){showError('⚠️ Remplis tous les champs !');return;}
+    if(pwd.length<6){showError('❌ Minimum 6 caractères !');return;}
+    setLoading('btnRegister',true);
+    try {
+      const cred=await auth.createUserWithEmailAndPassword(email,pwd);
+      await cred.user.updateProfile({displayName:pseudo});
+      await db.collection('users').doc(cred.user.uid).set({pseudo: pseudo, subscription: 'basic', avatarId: 'bully_1', xp: 0, activeEffect: null, gachaCollection: [], gachaHistory: [], gachaEffects: [], framesUnlocked: [], iconsUnlocked: []});
+      await checkAndRedirect(cred.user);
+    } catch(e){ showError(ERRORS[e.code]||'❌ '+e.message); setLoading('btnRegister',false); }
+  };
+</script>
+</body>
+</html>
