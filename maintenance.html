@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#16283F">
+  <title>Bubble Site - Maintenance</title>
+  <link rel="icon" type="image/png" href="bully_icon_site_1.png">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: linear-gradient(135deg, #16283F 0%, #2BB7F2 100%);
+      min-height: 100vh;
+      font-family: 'Baloo 2', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .maintenance-container {
+      max-width: 600px;
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    .maintenance-logo {
+      font-size: clamp(4rem, 12vw, 8rem);
+      font-weight: 800;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    
+    .maintenance-logo span {
+      display: inline-block;
+    }
+    
+    .t-b { color: #2BB7F2; }
+    .t-u { color: #46CE62; }
+    .t-b2 { color: #FFC53D; }
+    .t-b3 { color: #A855F7; }
+    .t-l { color: #FF5FA2; }
+    .t-e { color: #1690C6; }
+    .t-site { color: #fff; font-size: 0.3em; margin-left: 10px; }
+    
+    .maintenance-title {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+    
+    .maintenance-message {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      font-weight: 600;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      opacity: 0.95;
+    }
+    
+    .maintenance-icon {
+      font-size: 4rem;
+      margin: 20px 0;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .maintenance-bar {
+      width: 200px;
+      height: 6px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 3px;
+      margin: 20px auto;
+      overflow: hidden;
+    }
+    
+    .maintenance-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #fff;
+      border-radius: 3px;
+      animation: loadingBar 2s ease-in-out infinite;
+    }
+    
+    .maintenance-eta {
+      font-size: 0.95rem;
+      font-weight: 600;
+      opacity: 0.8;
+      margin-top: 15px;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
+    @keyframes loadingBar {
+      0% { width: 0%; margin-left: 0%; }
+      50% { width: 60%; margin-left: 20%; }
+      100% { width: 0%; margin-left: 100%; }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="maintenance-container">
+    <div class="maintenance-logo">
+      <span class="t-b">B</span><span class="t-u">u</span><span class="t-b2">b</span><span class="t-b3">b</span><span class="t-l">l</span><span class="t-e">e</span><span class="t-site">site.</span>
+    </div>
+    
+    <div class="maintenance-icon">🛠️</div>
+    
+    <h1 class="maintenance-title">🚧 SITE EN MAINTENANCE 🚧</h1>
+    
+    <p class="maintenance-message" id="maintenanceMessage">
+      Nous effectuons actuellement des mises à jour pour améliorer votre expérience.
+      Le site sera de retour très bientôt !
+    </p>
+    
+    <div class="maintenance-bar">
+      <div class="maintenance-bar-fill"></div>
+    </div>
+    
+    <p class="maintenance-eta" id="maintenanceEta">
+      Temps estimé : ~5 minutes
+    </p>
+    
+    <p style="margin-top: 30px; font-size: 0.85rem; opacity: 0.7;">
+      © 2026 BUBBLE INC. - Tous droits réservés
+    </p>
+  </div>
+  
+  <script>
+    // Message personnalisé si disponible
+    const customMessage = localStorage.getItem('maintenanceMessage');
+    if (customMessage) {
+      document.getElementById('maintenanceMessage').textContent = customMessage;
+    }
+    
+    // ETA personnalisé
+    const customEta = localStorage.getItem('maintenanceEta');
+    if (customEta) {
+      document.getElementById('maintenanceEta').textContent = customEta;
+    }
+  </script>
+</body>
+</html>
