@@ -143,13 +143,15 @@
   
   <script>
     // Message personnalisé si disponible
-    const customMessage = localStorage.getItem('maintenanceMessage');
+    const customMessage = sessionStorage.getItem('maintenanceMessage');
     if (customMessage) {
       document.getElementById('maintenanceMessage').textContent = customMessage;
     }
     
     // ETA personnalisé
-    const customEta = localStorage.getItem('maintenanceEta');
+    const customEta = sessionStorage.getItem('maintenanceEta');
+    sessionStorage.removeItem("maintenanceMessage");
+    sessionStorage.removeItem("maintenanceEta");
     if (customEta) {
       document.getElementById('maintenanceEta').textContent = customEta;
     }
