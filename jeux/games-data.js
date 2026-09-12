@@ -1,5 +1,5 @@
-// Liste centrale de tous les jeux  ajouter un jeu ici suffit pour qu'il apparaisse automatiquement
-// id : numrique, plus grand = plus r9cent
+// Liste centrale de tous les jeux - ajouter un jeu ici suffit pour qu'il apparaisse automatiquement
+// id : numerique, plus grand = plus recent
 var GAMES = [
   {
     id: 1,
@@ -9,7 +9,7 @@ var GAMES = [
     url: "https://bullyinventif.github.io/bubblecraft/index.html",
     gameType: "bubblecraft",
     categories: ["popular"],
-    requiredSubscription: "plus"
+    requiredSubscription: "basic"
   },
   {
     id: 2,
@@ -49,7 +49,7 @@ var GAMES = [
     url: "https://bullyinventif.github.io/block-craft/index.html",
     gameType: "blockcraft",
     categories: ["popular"],
-    requiredSubscription: "plus"
+    requiredSubscription: "basic"
   },
   {
     id: 6,
