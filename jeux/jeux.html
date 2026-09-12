@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeux | Bubble Game</title>
+  <link rel="icon" type="image/png" href="../bully_icon_site_1.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+  <nav>
+    <a href="../accueil.html" class="nav-logo">\ud83e\udee7</a>
+    <div class="brand">BUBBLE GAME</div>
+    <div class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="jeux.html" class="active">Jeux</a>
+      <a href="classement.html">Classement</a>
+      <a href="credits.html">Cr\u00e9dits</a>
+    </div>
+    <a href="../bubble_site_profil.html" class="nav-profile-widget">
+      <div class="nav-profile-info">
+        <span class="nav-profile-name" id="navProfileName">...</span>
+        <span class="nav-profile-sub" id="navProfileSub">\u2014</span>
+      </div>
+      <div class="nav-avatar-bubble" id="navAvatarBubble">\ud83e\uddd9</div>
+    </a>
+    <button class="nav-burger" id="menuToggle" aria-label="Menu">\u2630</button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="menuClose" aria-label="Fermer">\u2715</button>
+    <a href="index.html">Accueil</a>
+    <a href="jeux.html">Jeux</a>
+    <a href="classement.html">Classement</a>
+    <a href="credits.html">Cr\u00e9dits</a>
+  </div>
+
+  <div class="wrap">
+    <div class="rowhead"><h2>TOUS LES JEUX</h2></div>
+
+    <div class="tools">
+      <div class="search">
+        <input id="search" type="text" placeholder="\ud83d\udd0d Rechercher un jeu\u2026" aria-label="Rechercher un jeu">
+      </div>
+      <div class="chips">
+        <button class="chip active" data-f="all">Tous</button>
+        <button class="chip" data-f="new">Nouveaux</button>
+        <button class="chip" data-f="popular">Populaires</button>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <footer>\ud83e\udee7 BUBBLE INC. \u2014 <span id="year"></span></footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-init.js?v=5"></script>
+  <script src="games-data.js?v=5"></script>
+  <script src="render.js?v=5"></script>
+  <script>
+    requireAccess();
+    initChrome();
+
+    var grid = document.getElementById('grid');
+    var search = document.getElementById('search');
+    var filter = 'all';
+
+    function renderGames() {
+      var q = search.value.toLowerCase().trim();
+      var list = gamesByRecent().filter(function (g) {
+        if (q && !g.name.toLowerCase().includes(q)) return false;
+        if (filter === 'new') return isNew(g);
+        if (filter === 'popular') return isPopular(g);
+        return true;
+      });
+      grid.innerHTML = list.length
+        ? list.map(gameCard).join('')
+        : '<div class="empty">Aucun jeu trouv\u00e9\u2026</div>';
+    }
+
+    document.querySelectorAll('.chip').forEach(function (c) {
+      c.addEventListener('click', function () {
+        document.querySelectorAll('.chip').forEach(function (x) { x.classList.remove('active'); });
+        c.classList.add('active');
+        filter = c.dataset.f;
+        renderGames();
+      });
+    });
+    search.addEventListener('input', renderGames);
+    renderGames();
+  </script>
+</body>
+</html>

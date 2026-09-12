@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crédits | Bubble Game</title>
+  <link rel="icon" type="image/png" href="../bully_icon_site_1.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+  <nav>
+    <a href="../accueil.html" class="nav-logo">\ud83e\udee7</a>
+    <div class="brand">BUBBLE GAME</div>
+    <div class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="jeux.html">Jeux</a>
+      <a href="classement.html">Classement</a>
+      <a href="credits.html" class="active">Cr\u00e9dits</a>
+    </div>
+    <a href="../bubble_site_profil.html" class="nav-profile-widget">
+      <div class="nav-profile-info">
+        <span class="nav-profile-name" id="navProfileName">...</span>
+        <span class="nav-profile-sub" id="navProfileSub">\u2014</span>
+      </div>
+      <div class="nav-avatar-bubble" id="navAvatarBubble">\ud83e\uddd9</div>
+    </a>
+    <button class="nav-burger" id="menuToggle" aria-label="Menu">\u2630</button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="menuClose" aria-label="Fermer">\u2715</button>
+    <a href="index.html">Accueil</a>
+    <a href="jeux.html">Jeux</a>
+    <a href="classement.html">Classement</a>
+    <a href="credits.html">Cr\u00e9dits</a>
+  </div>
+
+  <div class="wrap">
+    <div class="rowhead"><h2>CREDITS</h2></div>
+    <div class="credits-content">
+      <p>Bubble Game est un projet de Bully Inventif.</p>
+      <p>Tous droits reserv\u00e9s &copy; 2026</p>
+    </div>
+  </div>
+
+  <footer>\ud83e\udee7 BUBBLE INC. \u2014 <span id="year"></span></footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-init.js?v=5"></script>
+  <script>
+    requireAccess();
+    initChrome();
+  </script>
+</body>
+</html>
