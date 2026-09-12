@@ -250,14 +250,24 @@
       await setDoc(doc(db,'users',cred.user.uid), {
         pseudo: pseudo, subscription: 'basic', avatarId: 'bully_1',
         xp: 0, activeEffect: null,
-        gachaCollection: [], gachaHistory: [], gachaEffects: [], framesUnlocked: [], iconsUnlocked: []
+        gachaCollection: [], gachaHistory: [], gachaEffects: [], framesUnlocked: [], iconsUnlocked: [],
+        gamesPlayed: [], scansRead: [], missions: {}, lastLogin: null, loginDays: 0
       });
-      /* Le profil est écrit en entier : on peut y aller nous-mêmes */
+      /* On attend que le profil soit complètement sauvegardé avant de rediriger */
+      await new Promise(resolve => setTimeout(resolve, 500));
+      isRegistering = false;   // autoriser la redirection normale
       window.location.href = './index.html';
     } catch(e){
       isRegistering = false;   // raté : on redonne la main à la redirection normale
       showError(errMsg(e));
       setLoading('btnRegister', false);
+    }
+  };
+
+  /* Fix: Ensure isRegistering is reset after registration completes */
+  window.addEventListener('beforeunload', () => {
+    isRegistering = false;
+  });
     }
   };
 
