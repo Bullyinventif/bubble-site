@@ -1,1 +1,40 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Accueil</title><link rel="stylesheet" href="style.css"></head><body><h1>Bienvenue sur BUBBLE SITE</h1><p>Site en construction</p></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accueil — Bubble Site</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <button class="nav-logo" id="menuToggle">🫧</button>
+  <div class="nav-title"><span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span></div>
+  <div class="nav-links">
+    <a href="accueil" class="nav-btn active">🏠 Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
+    <a href="jeux/jeux.html" class="nav-btn gray">🎮 Games</a>
+    <a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
+    <a href="bubble_site_gacha.html" class="nav-btn purple">🎁 Coffres</a>
+    <a href="bubble_site_vlog.html" class="nav-btn pink">🎬 Vlog</a>
+  </div>
+  <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
+    <div class="profile-bubble" id="navAvatar">🫧</div>
+    <div class="nav-profile-meta"><span class="nav-profile-name" id="navName">Invité</span><span class="nav-profile-sub" id="navSub">BASIC</span></div>
+  </a>
+</nav>
+<div class="mobile-menu" id="mobileMenu"></div>
+<div class="menu-overlay" id="menuOverlay"></div>
+<main>
+  <section class="hero-card"><h1>Bienvenue sur BUBBLE SITE</h1><p>Le site ultime pour les fans de bulles !</p>
+    <div class="hero-actions"><a href="jeux/jeux.html" class="btn btn-blue">🎮 Jeux</a><a href="bubble_site_abonnements.html" class="btn btn-yellow">✨ Abonnements</a></div>
+  </section>
+</main>
+<footer>BUBBLE INC. · © 2026</footer>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script src="utils.js"></script>
+</body>
+</html>
