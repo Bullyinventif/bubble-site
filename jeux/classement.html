@@ -1,133 +1,27 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Classement | Bubble Game</title>
-  <link rel="icon" type="image/png" href="../bully_icon_site_1.png">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5">
-</head>
-<body>
-  <nav>
-    <a href="../accueil.html" class="nav-logo">\ud83e\udee7</a>
-    <div class="brand">BUBBLE GAME</div>
-    <div class="nav-links">
-      <a href="index.html">Accueil</a>
-      <a href="jeux.html">Jeux</a>
-      <a href="classement.html" class="active">Classement</a>
-      <a href="credits.html">Cr\u00e9dits</a>
-    </div>
-    <a href="../bubble_site_profil.html" class="nav-profile-widget">
-      <div class="nav-profile-info">
-        <span class="nav-profile-name" id="navProfileName">...</span>
-        <span class="nav-profile-sub" id="navProfileSub">\u2014</span>
-      </div>
-      <div class="nav-avatar-bubble" id="navAvatarBubble">\ud83e\uddd9</div>
-    </a>
-    <button class="nav-burger" id="menuToggle" aria-label="Menu">\u2630</button>
-  </nav>
-
-  <div class="mobile-menu" id="mobileMenu">
-    <button class="mobile-menu-close" id="menuClose" aria-label="Fermer">\u2715</button>
-    <a href="index.html">Accueil</a>
-    <a href="jeux.html">Jeux</a>
-    <a href="classement.html">Classement</a>
-    <a href="credits.html">Cr\u00e9dits</a>
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Classement</title><link rel="stylesheet" href="../style.css"></head><body>
+<nav>
+  <button class="nav-logo" id="menuToggle">🫧</button>
+  <div class="nav-title"><span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span></div>
+  <div class="nav-links">
+    <a href="../accueil" class="nav-btn">🏠 Accueil</a>
+    <a href="../bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
+    <a href="jeux.html" class="nav-btn gray active">🎮 Games</a>
+    <a href="../bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
+    <a href="../bubble_site_gacha.html" class="nav-btn purple">🎁 Coffres</a>
+    <a href="../bubble_site_vlog.html" class="nav-btn pink">🎬 Vlog</a>
   </div>
-
-  <div class="wrap">
-    <div class="rowhead"><h2>\ud83c\udfc6 CLASSEMENT DES RECORDS</h2></div>
-    <div class="lb-grid" id="lbGrid">
-      <div class="empty">Chargement des records\u2026</div>
-    </div>
-  </div>
-
-  <footer>\ud83e\udee7 BUBBLE INC. \u2014 <span id="year"></span></footer>
-
-  <!-- Le classement complet d'un jeu -->
-  <div class="lb-overlay" id="lbOverlay">
-    <div class="lb-sheet">
-      <div class="lb-sheet-top">
-        <div class="lb-shot" id="lbSheetShot"></div>
-        <div class="lb-title">
-          <div class="lb-name" id="lbSheetName">\u2014</div>
-          <div class="lb-metric" id="lbSheetMetric">\u2014</div>
-        </div>
-        <button class="lb-sheet-close" id="lbSheetClose" aria-label="Fermer">\u2715</button>
-      </div>
-      <div class="lb-sheet-body" id="lbSheetBody"></div>
-    </div>
-  </div>
-
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="firebase-init.js?v=5"></script>
-  <script src="games-data.js?v=5"></script>
-  <script src="render.js?v=5"></script>
-  <script src="leaderboard-data.js?v=5"></script>
-  <script src="leaderboard-render.js?v=5"></script>
-  <script>
-    requireAccess();
-    initChrome();
-
-    var GAMES_LB = scoreGamesResolved();
-    var scoresByGame = {};   // { bubblecraft: [ {uid,pseudo,avatarId,value}, ... ], ... }
-    var currentUid = null;
-
-    function draw() {
-      document.getElementById('lbGrid').innerHTML = lbGrid(GAMES_LB, scoresByGame, currentUid);
-      document.querySelectorAll('.lb-full-btn').forEach(function (b) {
-        b.addEventListener('click', function () { openFull(b.dataset.game); });
-      });
-    }
-
-    // Le classement complet d'un jeu, en modale
-    var lbOv = document.getElementById('lbOverlay');
-    function openFull(scoreId) {
-      var cfg = GAMES_LB.find(function (g) { return g.scoreId === scoreId; });
-      if (!cfg) return;
-      document.getElementById('lbSheetShot').innerHTML =
-        '<img src="' + cfg.image + '" alt="" onerror="this.style.opacity=.2">';
-      document.getElementById('lbSheetName').textContent = cfg.name;
-      document.getElementById('lbSheetMetric').textContent = cfg.label;
-      document.getElementById('lbSheetBody').innerHTML =
-        lbFullRanking(cfg, scoresByGame[scoreId] || [], currentUid);
-      lbOv.classList.add('open');
-    }
-    function closeFull() { lbOv.classList.remove('open'); }
-    document.getElementById('lbSheetClose').addEventListener('click', closeFull);
-    lbOv.addEventListener('click', function (e) { if (e.target === lbOv) closeFull(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeFull(); });
-
-    // Premier rendu (avant que Firebase ait repondu)
-    draw();
-
-    // Firebase : lecture en direct de la collection "scores"
-    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-    var auth = firebase.auth();
-    var db = firebase.firestore();
-
-    auth.onAuthStateChanged(function (user) { currentUid = user ? user.uid : null; draw(); });
-
-    db.collection('scores').onSnapshot(function (snap) {
-      var byGame = {};
-      snap.forEach(function (doc) {
-        var d = doc.data();
-        var g = d.game;
-        if (!g) return;
-        (byGame[g] = byGame[g] || []).push({
-          uid: d.uid, pseudo: d.pseudo, avatarId: d.avatarId, value: Number(d.value) || 0,
-        });
-      });
-      scoresByGame = byGame;
-      draw();
-    }, function (e) {
-      console.warn('Classement \u2014 lecture impossible :', e.message);
-      document.getElementById('lbGrid').innerHTML =
-        '<div class="empty">Impossible de charger le classement pour le moment.</div>';
-    });
-  </script>
-</body>
-</html>
+  <a href="../bubble_site_profil.html" class="nav-profile" id="navProfile">
+    <div class="profile-bubble" id="navAvatar">🫧</div>
+    <div class="nav-profile-meta"><span class="nav-profile-name" id="navName">Invité</span><span class="nav-profile-sub" id="navSub">BASIC</span></div>
+  </a>
+</nav>
+<div class="mobile-menu" id="mobileMenu"></div>
+<div class="menu-overlay" id="menuOverlay"></div>
+<main><section class="hero-card"><h2>Classement</h2><p>Meilleurs scores</p></section></main>
+<footer>BUBBLE INC. · © 2026</footer>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="../firebase-init.js"></script>
+<script src="../utils.js"></script>
+</body></html>

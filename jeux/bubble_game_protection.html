@@ -1,61 +1,27 @@
-<!-- ========== BUBBLE GAME PROTECTION ========== -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const BUBBLE_SITE = "../";
-
-  const app  = initializeApp({
-    apiKey:            "AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
-    authDomain:        "bubble-game-fa894.firebaseapp.com",
-    projectId:         "bubble-game-fa894",
-    storageBucket:     "bubble-game-fa894.firebasestorage.app",
-    messagingSenderId: "60256418096",
-    appId:             "1:60256418096:web:dbdc555819793d8c20f0f5"
-  });
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
-  const SUB_ORDER = { basic:0, plus:1, x:2, max:3 };
-
-  onAuthStateChanged(auth, async user => {
-    if (!user) {
-      // Pas connecté → login du Bubble Site
-      window.location.href = BUBBLE_SITE + "login.html";
-      return;
-    }
-    try {
-      const snap = await getDoc(doc(db, 'users', user.uid));
-      let sub = 'basic';
-      if (snap.exists()) {
-        const data = snap.data();
-        sub = data.subscription || 'basic';
-        // Si le document n'a pas de champ subscription, on le crée avec basic
-        if (!data.subscription) {
-          await setDoc(doc(db, 'users', user.uid), { subscription: 'basic' }, { merge: true });
-        }
-      } else {
-        // Si le document utilisateur n'existe pas du tout, on le crée
-        await setDoc(doc(db, 'users', user.uid), {
-          pseudo: user.displayName || user.email.split('@')[0],
-          subscription: 'basic',
-          avatarId: 'bully_1',
-          xp: 0,
-          activeEffect: null,
-          gachaCollection: [],
-          gachaHistory: [],
-          gachaEffects: [],
-          framesUnlocked: [],
-          iconsUnlocked: []
-        });
-      }
-      if (SUB_ORDER[sub] < SUB_ORDER['x']) {
-        // Pas le bon abo → page abonnements
-        window.location.href = BUBBLE_SITE + "bubble_site_abonnements.html";
-      }
-    } catch(e) {
-      window.location.href = BUBBLE_SITE + "login.html";
-    }
-  });
-</script>
-<!-- ========== FIN PROTECTION ========== -->
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Jeu</title><link rel="stylesheet" href="../style.css"></head><body>
+<nav>
+  <button class="nav-logo" id="menuToggle">🫧</button>
+  <div class="nav-title"><span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span></div>
+  <div class="nav-links">
+    <a href="../accueil" class="nav-btn">🏠 Accueil</a>
+    <a href="../bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
+    <a href="jeux.html" class="nav-btn gray active">🎮 Games</a>
+    <a href="../bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
+    <a href="../bubble_site_gacha.html" class="nav-btn purple">🎁 Coffres</a>
+    <a href="../bubble_site_vlog.html" class="nav-btn pink">🎬 Vlog</a>
+  </div>
+  <a href="../bubble_site_profil.html" class="nav-profile" id="navProfile">
+    <div class="profile-bubble" id="navAvatar">🫧</div>
+    <div class="nav-profile-meta"><span class="nav-profile-name" id="navName">Invité</span><span class="nav-profile-sub" id="navSub">BASIC</span></div>
+  </a>
+</nav>
+<div class="mobile-menu" id="mobileMenu"></div>
+<div class="menu-overlay" id="menuOverlay"></div>
+<main><section class="hero-card"><h2>Jeu</h2><p>Redirection vers le jeu...</p><script>window.location.href='../../bubble_game/index.html';</script></section></main>
+<footer>BUBBLE INC. · © 2026</footer>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="../firebase-init.js"></script>
+<script src="../utils.js"></script>
+</body></html>
