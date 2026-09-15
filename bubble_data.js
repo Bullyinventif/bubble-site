@@ -24,7 +24,7 @@ window.SCANS = {
       id:"mag1", title:"Bubble inc. — N°1",
       cover:"", logo:"",
       desc:"Le magazine quotidien de Bubble inc.",
-      year:"2025", type:"Magazine", sub:"max", emoji:"📰"
+      year:"2025", type:"Magazine", sub:"plus", emoji:"📰"
     },
   ],
   aventures: [
@@ -32,19 +32,19 @@ window.SCANS = {
       id:"gi2", title:"Bubble inc. Game IT Pt.2 !", pdf:"scans/game_it_pt_2.pdf",
       cover:"game_it_cover_2.png", logo:"game_it_logo_2.png",
       desc:"Découvrez tous les personnages de Bubble Inc. dans cette incroyable et déjantée aventure ! Bully et ses amis partent à la conquête du monde numérique.",
-      year:"2025", type:"Aventure, Fantastique", sub:"max", emoji:"🎮"
+      year:"2025", type:"Aventure, Fantastique", sub:"x", emoji:"🎮"
     },
     {
       id:"gi1", title:"Bubble inc. Game IT !", pdf:"scans/game_it_pt_1.pdf",
       cover:"game_it_cover_1.png", logo:"game_it_logo_1.png",
       desc:"Découvrez tous les personnages de Bubble Inc. dans cette incroyable et déjantée aventure ! Bully et ses amis partent à la conquête du monde numérique.",
-      year:"2025", type:"Aventure, Fantastique", sub:"max", emoji:"🎮"
+      year:"2025", type:"Aventure, Fantastique", sub:"x", emoji:"🎮"
     },
     {
       id:"eff1", title:"Enquête à la Fête Foraine", pdf:"scans/enquete_ff_1.pdf",
       cover:"enquete_ff_cover_1.png", logo:"",
       desc:"Bully et ses amis doivent savoir qui a volé le trophée dans le parc d'attractions !",
-      year:"2025", type:"Aventure, Mystère", sub:"max", emoji:"🎡"
+      year:"2025", type:"Aventure, Mystère", sub:"plus", emoji:"🎡"
     },
   ],
   direct: [
@@ -52,7 +52,7 @@ window.SCANS = {
       id:"bd1", title:"Bubble News #1",
       cover:"", logo:"",
       desc:"Le premier Bubble DIRECT !",
-      year:"2026", type:"News, Direct", sub:"max", emoji:"📡"
+      year:"2026", type:"News, Direct", sub:"basic", emoji:"📡"
     },
   ]
 };
@@ -237,49 +237,49 @@ window.tagChip = function(tag, small){
    Utilisé par la page Profil (le sélecteur) ET la page Abonnements. */
 window.CATALOGUE = {
   "Classique": [
-    { id:"bully_1",           file:"bully_1.png",           name:"Bully",           sub:"max" },
-    { id:"anthony_1",         file:"anthony_1.png",         name:"Anthony",         sub:"max" },
-    { id:"luna_1",            file:"luna_1.png",            name:"Luna",            sub:"max" },
-    { id:"frosty_1",          file:"frosty_1.png",          name:"Frosty",          sub:"max" },
-    { id:"zippy_1",           file:"zippy_1.png",           name:"Zippy",           sub:"max" },
-    { id:"rocky_1",           file:"rocky_1.png",           name:"Rocky",           sub:"max" },
-    { id:"crystal_1",         file:"crystal_1.png",         name:"Crystal",         sub:"max" },
+    { id:"bully_1",           file:"bully_1.png",           name:"Bully",           sub:"basic" },
+    { id:"anthony_1",         file:"anthony_1.png",         name:"Anthony",         sub:"basic" },
+    { id:"luna_1",            file:"luna_1.png",            name:"Luna",            sub:"basic" },
+    { id:"frosty_1",          file:"frosty_1.png",          name:"Frosty",          sub:"basic" },
+    { id:"zippy_1",           file:"zippy_1.png",           name:"Zippy",           sub:"basic" },
+    { id:"rocky_1",           file:"rocky_1.png",           name:"Rocky",           sub:"basic" },
+    { id:"crystal_1",         file:"crystal_1.png",         name:"Crystal",         sub:"basic" },
   ],
   "Pixel": [
-    { id:"bully_pixel_1",     file:"bully_pixel_1.png",     name:"Bully Pixel",     sub:"max" },
-    { id:"plant_pixel_1",     file:"plant_pixel_1.png",     name:"Plante",          sub:"max" },
-    { id:"rock_pixel_1",      file:"rock_pixel_1.png",      name:"Roche",           sub:"max" },
-    { id:"star_pixel_1",      file:"star_pixel_1.png",      name:"Étoile",          sub:"max" },
-    { id:"snowflake_pixel_1", file:"snowflake_pixel_1.png", name:"Flocon",          sub:"max" },
-    { id:"sun_pixel_1",       file:"sun_pixel_1.png",       name:"Soleil",          sub:"max" },
-    { id:"amethyst_pixel_1",  file:"amethyst_pixel_1.png",  name:"Améthyste",       sub:"max" },
+    { id:"bully_pixel_1",     file:"bully_pixel_1.png",     name:"Bully Pixel",     sub:"plus" },
+    { id:"plant_pixel_1",     file:"plant_pixel_1.png",     name:"Plante",          sub:"plus" },
+    { id:"rock_pixel_1",      file:"rock_pixel_1.png",      name:"Roche",           sub:"plus" },
+    { id:"star_pixel_1",      file:"star_pixel_1.png",      name:"Étoile",          sub:"plus" },
+    { id:"snowflake_pixel_1", file:"snowflake_pixel_1.png", name:"Flocon",          sub:"plus" },
+    { id:"sun_pixel_1",       file:"sun_pixel_1.png",       name:"Soleil",          sub:"plus" },
+    { id:"amethyst_pixel_1",  file:"amethyst_pixel_1.png",  name:"Améthyste",       sub:"plus" },
   ],
   "Rigolo": [
-    { id:"bully_funny_1",     file:"bully_funny_1.png",     name:"Bully Rigolo",    sub:"max" },
-    { id:"anthony_funny_1",   file:"anthony_funny_1.png",   name:"Anthony Rigolo",  sub:"max" },
-    { id:"luna_funny_1",      file:"luna_funny_1.png",      name:"Luna Rigolo",     sub:"max" },
-    { id:"frosty_funny_1",    file:"frosty_funny_1.png",    name:"Frosty Rigolo",   sub:"max" },
-    { id:"zippy_funny_1",     file:"zippy_funny_1.png",     name:"Zippy Rigolo",    sub:"max" },
-    { id:"rocky_funny_1",     file:"rocky_funny_1.png",     name:"Rocky Rigolo",    sub:"max" },
-    { id:"crystal_funny_1",   file:"crystal_funny_1.png",   name:"Crystal Rigolo",  sub:"max" },
+    { id:"bully_funny_1",     file:"bully_funny_1.png",     name:"Bully Rigolo",    sub:"plus" },
+    { id:"anthony_funny_1",   file:"anthony_funny_1.png",   name:"Anthony Rigolo",  sub:"plus" },
+    { id:"luna_funny_1",      file:"luna_funny_1.png",      name:"Luna Rigolo",     sub:"plus" },
+    { id:"frosty_funny_1",    file:"frosty_funny_1.png",    name:"Frosty Rigolo",   sub:"plus" },
+    { id:"zippy_funny_1",     file:"zippy_funny_1.png",     name:"Zippy Rigolo",    sub:"plus" },
+    { id:"rocky_funny_1",     file:"rocky_funny_1.png",     name:"Rocky Rigolo",    sub:"plus" },
+    { id:"crystal_funny_1",   file:"crystal_funny_1.png",   name:"Crystal Rigolo",  sub:"plus" },
   ],
   "Bubble inc. Game IT!": [
-    { id:"bully_game_it_1",   file:"bully_game_it_1.png",   name:"Bully Game IT",   sub:"max" },
-    { id:"anthony_game_it_1", file:"anthony_game_it_1.png", name:"Anthony Game IT", sub:"max" },
-    { id:"luna_game_it_1",    file:"luna_game_it_1.png",    name:"Luna Game IT",    sub:"max" },
-    { id:"frosty_game_it_1",  file:"frosty_game_it_1.png",  name:"Frosty Game IT",  sub:"max" },
-    { id:"zippy_game_it_1",   file:"zippy_game_it_1.png",   name:"Zippy Game IT",   sub:"max" },
-    { id:"rocky_game_it_1",   file:"rocky_game_it_1.png",   name:"Rocky Game IT",   sub:"max" },
+    { id:"bully_game_it_1",   file:"bully_game_it_1.png",   name:"Bully Game IT",   sub:"x" },
+    { id:"anthony_game_it_1", file:"anthony_game_it_1.png", name:"Anthony Game IT", sub:"x" },
+    { id:"luna_game_it_1",    file:"luna_game_it_1.png",    name:"Luna Game IT",    sub:"x" },
+    { id:"frosty_game_it_1",  file:"frosty_game_it_1.png",  name:"Frosty Game IT",  sub:"x" },
+    { id:"zippy_game_it_1",   file:"zippy_game_it_1.png",   name:"Zippy Game IT",   sub:"x" },
+    { id:"rocky_game_it_1",   file:"rocky_game_it_1.png",   name:"Rocky Game IT",   sub:"x" },
   ],
   "Enquête à la fête foraine": [
-    { id:"bully_ff_1",        file:"bully_ff_1.png",        name:"Bully Enquêteur",  sub:"max" },
-    { id:"bulle_ff_1",        file:"bulle_ff_1.png",        name:"Bulle Enquêteuse", sub:"max" },
-    { id:"loop_ff_1",         file:"loop_ff_1.png",         name:"Une loupe",        sub:"max" },
+    { id:"bully_ff_1",        file:"bully_ff_1.png",        name:"Bully Enquêteur",  sub:"plus" },
+    { id:"bulle_ff_1",        file:"bulle_ff_1.png",        name:"Bulle Enquêteuse", sub:"plus" },
+    { id:"loop_ff_1",         file:"loop_ff_1.png",         name:"Une loupe",        sub:"plus" },
   ],
   "Le pays des étoiles filantes (": [
-    { id:"crystal_étoile_1",        file:"crystal_étoile_1.png",        name:"Crystal Cristalisée",  sub:"max" },
-    { id:"star_étoile_1",           file:"star_étoile_1.png",           name:"Étoile filante",       sub:"max" },
-    { id:"bully_étoile_1",          file:"bully_étoile_1.png",          name:"Bully Cristalisé",     sub:"max" },
+    { id:"crystal_étoile_1",        file:"crystal_étoile_1.png",        name:"Crystal Cristalisée",  sub:"x" },
+    { id:"star_étoile_1",           file:"star_étoile_1.png",           name:"Étoile filante",       sub:"x" },
+    { id:"bully_étoile_1",          file:"bully_étoile_1.png",          name:"Bully Cristalisé",     sub:"x" },
   ],
 };
 

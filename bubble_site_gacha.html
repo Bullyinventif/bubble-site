@@ -1,1 +1,709 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Coffres</title><link rel="stylesheet" href="style.css"></head><body><nav><button class="nav-logo" id="menuToggle">🫧</button><div class="nav-title"><span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span></div><div class="nav-links"><a href="accueil" class="nav-btn">🏠 Accueil</a><a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a><a href="jeux/jeux.html" class="nav-btn gray">🎮 Games</a><a href="bubble_site_scans.html" class="nav-btn green">📜 Scans</a><a href="bubble_site_gacha.html" class="nav-btn purple active">🎁 Coffres</a><a href="bubble_site_vlog.html" class="nav-btn pink">🎬 Vlog</a></div><a href="bubble_site_profil.html" class="nav-profile" id="navProfile"><div class="profile-bubble" id="navAvatar">🫧</div><div class="nav-profile-meta"><span class="nav-profile-name" id="navName">Invité</span><span class="nav-profile-sub" id="navSub">BASIC</span></div></a></nav><div class="mobile-menu" id="mobileMenu"></div><div class="menu-overlay" id="menuOverlay"></div><main><section class="hero-card"><h2>Coffres à Bulles</h2><p>Ouvre des coffres pour collectionner des cartes !</p></section></main><footer>BUBBLE INC. · © 2026</footer><script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script><script src="firebase-init.js"></script><script src="utils.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#EFF4FA">
+<title>Coffres — Bubble Site</title>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="bubble_effects.js"></script>
+<script src="bubble_frames.js"></script>
+<script src="bubble_data.js"></script>
+<script type="module" src="bubble_missions.js"></script>
+<style>
+  /* ── LES COFFRES ── */
+  .chests{ display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:18px; margin-bottom:38px; }
+
+  .chest{
+    position:relative; overflow:hidden;
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-xl); padding:0 0 20px;
+    box-shadow:var(--shadow-1);
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+    transition:transform .2s, box-shadow .2s, border-color .2s;
+  }
+  .chest:not(.locked):hover{ transform:translateY(-5px); box-shadow:var(--shadow-2); }
+  .chest-top{ height:6px; width:100%; }
+  .chest.std  .chest-top{ background:var(--yellow); }
+  .chest.str  .chest-top{ background:#38BDF8; }
+  .chest.mega .chest-top{ background:var(--purple); }
+  .chest.std  { border-color:rgba(255,197,61,.5); }
+  .chest.str  { border-color:rgba(56,189,248,.5); }
+  .chest.mega { border-color:rgba(168,85,247,.45); }
+
+  .chest-label{ font-size:.78rem; font-weight:800; color:var(--ink-soft); letter-spacing:1px; margin-top:6px; }
+  .chest-name{ font-size:1.5rem; font-weight:800; letter-spacing:-.4px; margin-top:-4px; }
+  .chest.std  .chest-name{ color:#B98400 }
+  .chest.str  .chest-name{ color:#0284C7 }
+  .chest.mega .chest-name{ color:var(--purple-d) }
+
+  .chest-visual{ position:relative; width:150px; height:130px; display:flex; align-items:center; justify-content:center; }
+  .chest-halo{
+    position:absolute; inset:-10px; border-radius:50%; opacity:0; transition:opacity .3s;
+  }
+  .chest:not(.locked):hover .chest-halo{ opacity:1; animation:haloPulse 1.6s ease-in-out infinite; }
+  .chest.std  .chest-halo{ background:radial-gradient(circle,rgba(255,197,61,.35),transparent 70%); }
+  .chest.str  .chest-halo{ background:radial-gradient(circle,rgba(56,189,248,.35),transparent 70%); }
+  .chest.mega .chest-halo{ background:radial-gradient(circle,rgba(168,85,247,.35),transparent 70%); }
+  @keyframes haloPulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
+
+  .chest-img{ width:118px; height:118px; object-fit:contain; position:relative;
+              filter:drop-shadow(0 8px 14px rgba(22,40,63,.18)); transition:transform .2s; }
+  .chest:not(.locked):hover .chest-img{ transform:translateY(-4px) scale(1.05); }
+  .chest-fallback{ font-size:4rem; }
+
+  .chest.locked .chest-visual{ filter:grayscale(.85) opacity(.55); }
+  .lock-badge{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2rem; }
+
+  .rates{ width:calc(100% - 40px); background:var(--surface-2); border:2px solid var(--line);
+          border-radius:var(--r-md); padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .rate{ display:flex; align-items:center; gap:9px; font-size:.85rem; font-weight:700; }
+  .rate .dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .rate .name{ flex:1; color:var(--ink-soft); }
+  .rate .pct{ color:var(--ink); }
+
+  .chest-foot{ width:calc(100% - 40px); display:flex; flex-direction:column; gap:9px; align-items:center; }
+
+  /* ── COLLECTION ── */
+  .coll-head{ display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+  .coll-head h2{ font-size:1.25rem; font-weight:800; }
+  .coll-progress{ flex:1; min-width:140px; max-width:280px; height:10px; background:var(--surface-2);
+                  border:2px solid var(--line); border-radius:999px; overflow:hidden; }
+  .coll-progress i{ display:block; height:100%; background:var(--accent); border-radius:999px; transition:width .8s; }
+  .coll-count{ font-size:.9rem; font-weight:800; color:var(--ink-soft); }
+
+  .coll-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:12px; }
+  .coll-card{
+    aspect-ratio:1; border-radius:var(--r-md); position:relative;
+    border:2px solid var(--line); background:var(--surface);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    box-shadow:var(--shadow-1); transition:transform .18s;
+  }
+  .coll-card.got:hover{ transform:scale(1.06); }
+  .coll-card.got img{ width:76%; height:76%; object-fit:contain; }
+  .coll-card.miss{ background:var(--surface-2); border-style:dashed; box-shadow:none;
+                   color:#B4C4D6; font-size:1.6rem; font-weight:800; }
+  .coll-dot{ position:absolute; top:7px; right:7px; width:10px; height:10px; border-radius:50%; }
+
+  /* ══ OVERLAY D'OUVERTURE ══ */
+  #openOverlay{ display:none; position:fixed; inset:0; z-index:3000;
+                align-items:center; justify-content:center; overflow:hidden; }
+  #openOverlay.active{ display:flex; }
+  #overlayBg{ position:absolute; inset:0; background:rgba(16,28,46,.94); transition:background .6s; }
+  #particleCanvas{ position:absolute; inset:0; pointer-events:none; }
+  #rays{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+         pointer-events:none; opacity:0; }
+
+  #animCenter{ position:relative; z-index:10; display:flex; flex-direction:column;
+               align-items:center; gap:22px; padding:20px; }
+
+  #animChest{ position:relative; width:clamp(180px,30vw,270px); height:clamp(180px,30vw,270px);
+              display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  #animChestInner{ width:clamp(160px,26vw,240px); height:clamp(160px,26vw,240px);
+                   transform-origin:center; }
+  #animChestInner img{ width:100%; height:100%; object-fit:contain;
+                       filter:drop-shadow(0 10px 30px rgba(0,0,0,.5)); }
+  #animGlow{ position:absolute; inset:-30px; border-radius:50%; pointer-events:none; transition:background .4s; }
+  .tap-hint{ color:rgba(255,255,255,.75); font-size:1rem; font-weight:800; animation:tapPulse 1.4s ease-in-out infinite; }
+  @keyframes tapPulse{ 0%,100%{opacity:.45; transform:translateY(0)} 50%{opacity:1; transform:translateY(-4px)} }
+
+  /* La carte révélée */
+  #cardReveal{ display:none; perspective:1200px; }
+  #cardInner{
+    width:clamp(230px,32vw,330px); height:clamp(310px,44vw,450px);
+    position:relative; transform-style:preserve-3d;
+    transform:rotateY(180deg) scale(.6);
+    transition:transform .75s cubic-bezier(.4,0,.2,1);
+  }
+  #cardInner.flipped{ transform:rotateY(0deg) scale(1); }
+  .card-face{
+    position:absolute; inset:0; border-radius:26px; backface-visibility:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:12px; padding:24px; overflow:hidden;
+  }
+  .card-back{
+    background:linear-gradient(150deg,#2BB7F2,#1690C6);
+    border:5px solid rgba(255,255,255,.9);
+    transform:rotateY(180deg); font-size:4rem;
+    box-shadow:0 18px 50px rgba(0,0,0,.45);
+  }
+  .card-front{
+    background:var(--surface);
+    border:5px solid var(--rarity,#CBD8E8);
+    box-shadow:0 18px 50px rgba(0,0,0,.45);
+  }
+  .card-rarity{
+    padding:5px 16px; border-radius:999px; font-size:.8rem; font-weight:800;
+    background:var(--rarity,#CBD8E8); color:#fff;
+  }
+  .card-art{
+    width:clamp(120px,17vw,190px); height:clamp(120px,17vw,190px);
+    border-radius:20px; background:var(--surface-2);
+    display:flex; align-items:center; justify-content:center; font-size:3.4rem;
+  }
+  .card-art img{ width:82%; height:82%; object-fit:contain; }
+  .card-title{ font-size:clamp(1.1rem,2vw,1.45rem); font-weight:800; text-align:center; letter-spacing:-.3px; }
+  .card-desc{ font-size:clamp(.8rem,1.2vw,.92rem); font-weight:600; color:var(--ink-soft); text-align:center; line-height:1.4; }
+  .card-fx{
+    padding:6px 14px; border-radius:999px; font-size:.78rem; font-weight:800;
+    border:2px solid; display:none;
+  }
+  .card-shine{
+    position:absolute; inset:0; pointer-events:none; opacity:0;
+    background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);
+    background-size:250% 100%; animation:shine 2.2s linear infinite;
+  }
+  @keyframes shine{ 0%{background-position:220% 0} 100%{background-position:-220% 0} }
+
+  #overlayActions{ display:none; gap:10px; flex-wrap:wrap; justify-content:center; }
+
+  /* Animations du coffre */
+  @keyframes chestShake{
+    0%,100%{transform:translateX(0) rotate(0)}
+    15%{transform:translateX(-9px) rotate(-4deg)}
+    30%{transform:translateX(9px) rotate(4deg)}
+    45%{transform:translateX(-7px) rotate(-3deg)}
+    60%{transform:translateX(7px) rotate(3deg)}
+    80%{transform:translateX(-3px) rotate(-1deg)}
+  }
+  @keyframes chestJump{
+    0%{transform:scale(1) translateY(0)}
+    30%{transform:scale(1.16,.84) translateY(0)}
+    55%{transform:scale(.9,1.12) translateY(-36px)}
+    75%{transform:scale(1.06,.94) translateY(0)}
+    100%{transform:scale(1) translateY(0)}
+  }
+  @keyframes popIn2{ 0%{transform:scale(0) rotate(-12deg);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1) rotate(0);opacity:1} }
+  @keyframes raysSpin{ to{ transform:rotate(360deg) } }
+
+  @media(max-width:760px){
+    .chests{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body data-v2>
+
+<nav>
+  <button class="nav-logo" id="menuToggle" aria-label="Menu">🫧</button>
+  <div class="nav-title">
+    <span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+    <a href="bubble_site_gacha.html"       class="nav-btn purple active"><span class="ico">🎁</span>Coffres</a>
+    <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
+  </div>
+  <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
+    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🫧</span></div>
+    <div class="nav-profile-meta">
+      <span class="nav-profile-name" id="navName">Invité</span>
+      <span class="nav-profile-sub"  id="navSub">BASIC</span>
+    </div>
+  </a>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+  <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+  <a href="bubble_site_gacha.html"       class="nav-btn purple active"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
+  <a href="bubble_site_profil.html"      class="nav-btn"><span class="ico">🎭</span>Mon profil</a>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<main>
+  <h1 class="page-title fade-up">🎁 Bubble Gacha</h1>
+  <p class="page-subtitle fade-up d1">Ouvre des coffres, complète ta collection et débloque des effets de profil.</p>
+
+  <div class="chests" id="chests"></div>
+
+  <section class="fade-up d3">
+    <div class="coll-head">
+      <h2>📚 Ta collection</h2>
+      <div class="coll-progress"><i id="collBar"></i></div>
+      <span class="coll-count" id="collCount">0/0</span>
+    </div>
+    <div class="coll-grid" id="collGrid"></div>
+  </section>
+</main>
+
+<!-- ══ OVERLAY ══ -->
+<div id="openOverlay">
+  <div id="overlayBg"></div>
+  <canvas id="particleCanvas"></canvas>
+  <div id="rays"><div id="raysInner"></div></div>
+
+  <div id="animCenter">
+    <div id="animChest">
+      <div id="animGlow"></div>
+      <div id="animChestInner"></div>
+    </div>
+    <div class="tap-hint" id="tapHint">👆 Clique sur le coffre pour l'ouvrir !</div>
+
+    <div id="cardReveal">
+      <div id="cardInner">
+        <div class="card-face card-back">🫧</div>
+        <div class="card-face card-front" id="cardFront">
+          <span class="card-rarity" id="cardRarity">—</span>
+          <div class="card-art" id="cardArt">?</div>
+          <div class="card-title" id="cardName">—</div>
+          <div class="card-desc" id="cardDesc">—</div>
+          <span class="card-fx" id="cardFx"></span>
+          <div class="card-shine" id="cardShine"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="overlayActions">
+      <button class="btn btn-purple" id="btnAgain">🔄 Encore un !</button>
+      <button class="btn btn-ghost"  id="btnClose">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer><span class="footer-logo">BUBBLE INC.</span> · © 2026</footer>
+
+<script>
+/* ── Menu mobile ── */
+const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
+function closeMenu(){ menu.classList.remove('open'); ov.classList.remove('open'); }
+toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
+ov.addEventListener('click',closeMenu);
+window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
+
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show'+(type?' '+type:'');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+/* ══════════════════════════════════════
+   CONFIG DES COFFRES
+   (les cartes, elles, sont dans bubble_data.js)
+══════════════════════════════════════ */
+const CHESTS = [
+  { key:'standard',  cls:'std',  name:'Standard',  emoji:'✦',  label:'COFFRE',
+    img:'./img_chests/chest_+.png',   needs:'plus', btn:'✨ Ouvrir !', btnCls:'btn-yellow',
+    glow:'rgba(255,197,61,.55)',
+    rates:{ "Commun":50, "Peu commun":25, "Rare":14, "Épique":8, "Super rare":2, "Légendaire":1 } },
+
+  { key:'stellaire', cls:'str',  name:'Stellaire', emoji:'❄️', label:'COFFRE',
+    img:'./img_chests/chest_x.png',   needs:'x',    btn:'❄️ Ouvrir !', btnCls:'btn-blue',
+    glow:'rgba(56,189,248,.55)',
+    rates:{ "Commun":25, "Peu commun":25, "Rare":22, "Épique":16, "Super rare":8, "Légendaire":4 } },
+
+  { key:'mega',      cls:'mega', name:'MÉGA',      emoji:'👑', label:'COFFRE',
+    img:'./img_chests/chest_MAX.png', needs:'max',  btn:'👑 Ouvrir !', btnCls:'btn-purple',
+    glow:'rgba(168,85,247,.55)',
+    rates:{ "Rare":30, "Épique":28, "Super rare":25, "Légendaire":17 } },
+];
+
+/* Couleur d'une rareté (reprise des cartes) */
+const RARITY_COLOR = {
+  "Commun":"#8A8A80", "Peu commun":"#2FA648", "Rare":"#2B8FE0",
+  "Épique":"#8B5CF6", "Super rare":"#EF5A3C", "Légendaire":"#E0A011",
+};
+/* Teinte du fond de l'overlay selon la rareté */
+const RARITY_BG = {
+  "Commun":"rgba(22,32,46,.94)", "Peu commun":"rgba(10,38,22,.94)",
+  "Rare":"rgba(10,28,54,.94)",   "Épique":"rgba(30,12,54,.94)",
+  "Super rare":"rgba(52,14,10,.94)", "Légendaire":"rgba(48,34,4,.95)",
+};
+
+/* État (rempli par Firebase) */
+window.collection   = [];
+window.gachaHistory = [];
+window.gachaEffects = [];
+let userSub    = 'basic';
+let isAnimating = false;
+let currentChest = null;
+let currentItem  = null;
+
+/* ── Construit les 3 cartes de coffre ── */
+function buildChests(){
+  const wrap = document.getElementById('chests');
+  wrap.innerHTML = CHESTS.map((c,i) => `
+    <div class="chest ${c.cls} locked fade-up ${i===1?'d1':i===2?'d2':''}" id="chest-${c.key}">
+      <div class="chest-top"></div>
+      <div class="chest-label">${c.label}</div>
+      <div class="chest-name">${c.name} ${c.emoji}</div>
+      <div class="chest-visual">
+        <div class="chest-halo"></div>
+        <span class="lock-badge" id="lock-${c.key}">🔒</span>
+        <img class="chest-img" src="${c.img}" alt="Coffre ${c.name}"
+             onerror="this.outerHTML='<div class=chest-fallback>🎁</div>'">
+      </div>
+      <div class="rates">
+        ${Object.entries(c.rates).map(([r,p]) => `
+          <div class="rate">
+            <span class="dot" style="background:${RARITY_COLOR[r]}"></span>
+            <span class="name">${r}</span>
+            <span class="pct">${p}%</span>
+          </div>`).join('')}
+      </div>
+      <div class="chest-foot">
+        <span class="chip chip-${c.cls==='std'?'yellow':c.cls==='str'?'cyan':'purple'}" id="req-${c.key}">
+          Nécessite ${window.SUB_LABELS[c.needs]}
+        </span>
+        <button class="btn ${c.btnCls} btn-block is-locked" id="btn-${c.key}" disabled>🔒 Abonnement requis</button>
+      </div>
+    </div>`).join('');
+
+  CHESTS.forEach(c => {
+    document.getElementById('btn-' + c.key).addEventListener('click', () => openChest(c.key));
+  });
+}
+
+/* ── Déverrouille selon l'abonnement ── */
+function unlockChests(sub){
+  CHESTS.forEach(c => {
+    const ok   = window.SUB_ORDER[sub] >= window.SUB_ORDER[c.needs];
+    const card = document.getElementById('chest-' + c.key);
+    const btn  = document.getElementById('btn-' + c.key);
+    const req  = document.getElementById('req-' + c.key);
+    const lock = document.getElementById('lock-' + c.key);
+    card.classList.toggle('locked', !ok);
+    lock.style.display = ok ? 'none' : '';
+    btn.disabled = !ok;
+    btn.classList.toggle('is-locked', !ok);
+    btn.textContent = ok ? c.btn : '🔒 Abonnement requis';
+    if (ok) req.style.display = 'none';
+  });
+}
+
+/* ── Collection ── */
+function renderCollection(){
+  const grid  = document.getElementById('collGrid');
+  const owned = window.collection || [];
+  const total = window.CARD_POOL.length;
+
+  document.getElementById('collCount').textContent = `${owned.length}/${total}`;
+  document.getElementById('collBar').style.width   = (owned.length / total * 100) + '%';
+
+  grid.innerHTML = window.CARD_POOL.map(card => {
+    if (owned.includes(String(card.id))){
+      return `<div class="coll-card got" title="${card.name} — ${card.rarity}">
+                <img src="${card.img}" alt="${card.name}" onerror="this.replaceWith(document.createTextNode('🃏'))">
+                <span class="coll-dot" style="background:${card.color}"></span>
+              </div>`;
+    }
+    return `<div class="coll-card miss" title="Pas encore obtenue">?</div>`;
+  }).join('');
+}
+
+/* ── Tirage pondéré ── */
+function drawCard(chestKey){
+  const chest = CHESTS.find(c => c.key === chestKey);
+  const pool  = [];
+  window.CARD_POOL.forEach(card => {
+    const w = chest.rates[card.rarity] || 0;
+    for (let i = 0; i < w; i++) pool.push(card);
+  });
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/* ══════════════════════════════════════
+   OUVERTURE : overlay → clic → animation
+══════════════════════════════════════ */
+function openChest(key){
+  if (isAnimating) return;
+  const chest = CHESTS.find(c => c.key === key);
+  currentChest = key;
+  currentItem  = drawCard(key);
+
+  /* Prépare le coffre */
+  const inner = document.getElementById('animChestInner');
+  inner.innerHTML = `<img src="${chest.img}" alt="Coffre"
+      onerror="this.outerHTML='<div style=font-size:7rem;text-align:center>🎁</div>'">`;
+  inner.style.cssText = 'transform:scale(1);opacity:1;transition:none;animation:none;';
+
+  document.getElementById('animGlow').style.background =
+    `radial-gradient(circle,${chest.glow},transparent 70%)`;
+
+  /* Reset */
+  document.getElementById('overlayBg').style.background = 'rgba(16,28,46,.94)';
+  document.getElementById('animChest').style.display = 'flex';
+  document.getElementById('tapHint').style.display   = '';
+  document.getElementById('cardReveal').style.display = 'none';
+  document.getElementById('cardInner').classList.remove('flipped');
+  document.getElementById('overlayActions').style.display = 'none';
+  document.getElementById('rays').style.opacity = '0';
+  document.getElementById('cardShine').style.opacity = '0';
+
+  document.getElementById('openOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function startAnimation(){
+  if (isAnimating) return;
+  isAnimating = true;
+
+  const inner = document.getElementById('animChestInner');
+  const item  = currentItem;
+  document.getElementById('tapHint').style.display = 'none';
+
+  /* 1. Le coffre tremble (3 fois, de plus en plus vite) */
+  inner.style.animation = 'chestShake .5s ease';
+  setTimeout(() => { inner.style.animation = 'chestShake .4s ease'; }, 520);
+  setTimeout(() => { inner.style.animation = 'chestShake .3s ease'; }, 940);
+
+  /* 2. Il saute */
+  setTimeout(() => {
+    inner.style.animation = 'chestJump .55s cubic-bezier(.4,0,.2,1)';
+    document.getElementById('animGlow').style.animation = 'haloPulse .45s ease-in-out 2';
+  }, 1250);
+
+  /* 3. Il explose : rayons + particules + fond teinté */
+  setTimeout(() => {
+    inner.style.animation = 'none';
+    inner.style.transition = 'transform .32s, opacity .32s';
+    inner.style.transform  = 'scale(1.5)';
+    inner.style.opacity    = '0';
+
+    const bg = document.getElementById('overlayBg');
+    bg.style.transition = 'background .5s';
+    bg.style.background = RARITY_BG[item.rarity] || RARITY_BG["Commun"];
+
+    spawnRays(item.color);
+    spawnParticles(item.color);
+  }, 1820);
+
+  /* 4. La carte se retourne */
+  setTimeout(() => {
+    document.getElementById('animChest').style.display = 'none';
+
+    const front = document.getElementById('cardFront');
+    front.style.setProperty('--rarity', item.color);
+    document.getElementById('cardRarity').textContent = item.rarity;
+    document.getElementById('cardArt').innerHTML =
+      `<img src="${item.img}" alt="${item.name}" onerror="this.replaceWith(document.createTextNode('🃏'))">`;
+    document.getElementById('cardName').textContent = item.name;
+    document.getElementById('cardDesc').textContent = item.desc;
+
+    /* Badge d'effet débloqué */
+    const fxEl = document.getElementById('cardFx');
+    if (item.effect){
+      const isNew = !window.gachaEffects.includes(item.effect.type);
+      fxEl.textContent = (isNew ? '🎉 NOUVEL EFFET : ' : '✦ Effet : ') + item.effect.label;
+      fxEl.style.display     = 'inline-block';
+      fxEl.style.background  = item.effect.color + '22';
+      fxEl.style.borderColor = item.effect.color;
+      fxEl.style.color       = item.effect.color;
+    } else fxEl.style.display = 'none';
+
+    document.getElementById('cardReveal').style.display = 'block';
+    requestAnimationFrame(() => document.getElementById('cardInner').classList.add('flipped'));
+
+    setTimeout(() => { document.getElementById('cardShine').style.opacity = '1'; }, 520);
+    setTimeout(() => {
+      const act = document.getElementById('overlayActions');
+      act.style.display = 'flex';
+      act.style.animation = 'popIn2 .45s cubic-bezier(.34,1.56,.64,1)';
+    }, 900);
+
+    /* Sauvegarde */
+    addToCollection(item);
+  }, 2280);
+}
+
+/* ── Rayons ── */
+function spawnRays(color){
+  const inner = document.getElementById('raysInner');
+  inner.style.cssText =
+    'position:absolute;top:50%;left:50%;width:4px;height:4px;transform:translate(-50%,-50%);animation:raysSpin 9s linear infinite;';
+  inner.innerHTML = '';
+  const count = 18;
+  for (let i = 0; i < count; i++){
+    const ray = document.createElement('div');
+    const len = 130 + Math.random()*90;
+    const wid = 2 + Math.random()*5;
+    ray.style.cssText = `position:absolute;left:50%;top:50%;width:${wid}px;height:${len}px;
+      background:linear-gradient(to top,${color}99,transparent);border-radius:3px;
+      transform-origin:0 0;transform:rotate(${(i/count)*360}deg) translateX(-50%);opacity:.8;`;
+    inner.appendChild(ray);
+  }
+  const r = document.getElementById('rays');
+  r.style.transition = 'opacity .3s';
+  r.style.opacity = '1';
+}
+
+/* ── Particules ── */
+function spawnParticles(color){
+  const canvas = document.getElementById('particleCanvas');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width/2, cy = canvas.height/2;
+
+  const parts = [];
+  for (let i = 0; i < 90; i++){
+    const a = Math.random()*Math.PI*2;
+    const s = 3 + Math.random()*9;
+    parts.push({
+      x:cx, y:cy,
+      vx:Math.cos(a)*s, vy:Math.sin(a)*s - Math.random()*3,
+      size:3 + Math.random()*8,
+      shape: Math.random() > .5 ? 'circle' : 'rect',
+      color: Math.random() > .35 ? color : '#ffffff',
+      alpha:1, decay:.012 + Math.random()*.016, g:.16 + Math.random()*.1,
+      rot: Math.random()*Math.PI, vr:(Math.random()-.5)*.3,
+    });
+  }
+
+  (function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let alive = false;
+    for (const p of parts){
+      p.vy += p.g; p.x += p.vx; p.y += p.vy; p.alpha -= p.decay; p.rot += p.vr;
+      if (p.alpha <= 0) continue;
+      alive = true;
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      if (p.shape === 'circle'){
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size/2, 0, Math.PI*2); ctx.fill();
+      } else {
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+        ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size); ctx.restore();
+      }
+    }
+    ctx.globalAlpha = 1;
+    if (alive) requestAnimationFrame(loop);
+  })();
+}
+
+/* ── Fermer ── */
+function closeOverlay(){
+  isAnimating = false;
+  document.getElementById('openOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+  const c = document.getElementById('particleCanvas');
+  c.getContext('2d').clearRect(0,0,c.width,c.height);
+  document.getElementById('cardInner').classList.remove('flipped');
+  renderCollection();
+}
+
+/* ── Enregistrement ── */
+function addToCollection(card){
+  const id = String(card.id);
+  if (!window.collection.includes(id)){
+    window.collection.push(id);
+    if (card.effect && !window.gachaEffects.includes(card.effect.type)){
+      window.gachaEffects.push(card.effect.type);
+    }
+  }
+  window.gachaHistory.unshift({
+    id, name:card.name, rarity:card.rarity, chest:currentChest,
+    time: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
+  });
+  if (window.gachaHistory.length > 20) window.gachaHistory.pop();
+
+  renderCollection();
+  if (window._fbSaveGacha) window._fbSaveGacha().catch(e => console.error(e));
+  /* Mission : collection complète ? */
+  if (window.BubbleMissions) window.BubbleMissions.checkCollection(window.collection);
+}
+
+/* ── Boutons de l'overlay ── */
+document.getElementById('animChest').addEventListener('click', startAnimation);
+document.getElementById('btnClose').addEventListener('click', closeOverlay);
+document.getElementById('btnAgain').addEventListener('click', () => {
+  const key = currentChest;
+  closeOverlay();
+  setTimeout(() => openChest(key), 120);
+});
+document.getElementById('openOverlay').addEventListener('click', e => {
+  if (e.target.id === 'openOverlay' || e.target.id === 'overlayBg'){
+    if (document.getElementById('overlayActions').style.display !== 'none') closeOverlay();
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('overlayActions').style.display !== 'none') closeOverlay();
+});
+
+/* Premier rendu */
+buildChests();
+renderCollection();
+</script>
+
+<script type="module">
+  import { initializeApp }                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  let _uid = null;
+
+  /* Sauvegarde de la collection */
+  window._fbSaveGacha = async function(){
+    if (!_uid) return console.warn('Pas connecté : sauvegarde ignorée.');
+    try {
+      await setDoc(doc(db,'users',_uid), {
+        gachaCollection: (window.collection   || []).filter(Boolean).map(String),
+        gachaHistory:    (window.gachaHistory || []).filter(Boolean).slice(0,20),
+        gachaEffects:    (window.gachaEffects || []).filter(Boolean),
+      }, { merge:true });
+    } catch(e){ console.error('Firestore:', e); toast('⚠️ Sauvegarde impossible', 'err'); }
+  };
+
+  onAuthStateChanged(auth, async user => {
+    if (!user){ window.location.href = './login.html'; return; }
+    _uid = user.uid;
+
+    try {
+      const ref  = doc(db,'users',user.uid);
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()){
+        await setDoc(ref, { gachaCollection:[], gachaHistory:[], gachaEffects:[] }, { merge:true });
+        unlockChests('basic');
+        return;
+      }
+
+      const d = snap.data();
+      userSub = d.subscription || 'basic';
+
+      window.collection   = (d.gachaCollection || []).map(String);
+      window.gachaHistory =  d.gachaHistory    || [];
+      window.gachaEffects =  d.gachaEffects    || [];
+
+      const avatarId = d.avatarId || 'bully_1';
+      document.getElementById('navAvatar').innerHTML =
+        `<img src="${avatarId}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
+      document.getElementById('navName').textContent = user.displayName || user.email.split('@')[0];
+      document.getElementById('navSub').textContent  = window.SUB_LABELS[userSub];
+
+      if (window.applyTheme) window.applyTheme(d.activeEffect || null);
+      window.__frameGrants = (d.framesUnlocked || []).slice();
+      window.__iconGrants  = (d.iconsUnlocked  || []).slice();
+      window.__userSub     = userSub;
+      window.applyFrame(userSub, window.getLevel(d.xp || 0, userSub).level, d.frameId || null);
+
+      renderCollection();
+      unlockChests(userSub);
+      if (window.BubbleMissions) window.BubbleMissions.checkCollection(window.collection);
+
+    } catch(e){ console.error('Chargement Firestore:', e); }
+  });
+</script>
+
+</body>
+</html>

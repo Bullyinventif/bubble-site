@@ -1,1 +1,419 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Scans</title><link rel="stylesheet" href="style.css"></head><body><nav><button class="nav-logo" id="menuToggle">🫧</button><div class="nav-title"><span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span></div><div class="nav-links"><a href="accueil" class="nav-btn">🏠 Accueil</a><a href="bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a><a href="jeux/jeux.html" class="nav-btn gray">🎮 Games</a><a href="bubble_site_scans.html" class="nav-btn green active">📜 Scans</a><a href="bubble_site_gacha.html" class="nav-btn purple">🎁 Coffres</a><a href="bubble_site_vlog.html" class="nav-btn pink">🎬 Vlog</a></div><a href="bubble_site_profil.html" class="nav-profile" id="navProfile"><div class="profile-bubble" id="navAvatar">🫧</div><div class="nav-profile-meta"><span class="nav-profile-name" id="navName">Invité</span><span class="nav-profile-sub" id="navSub">BASIC</span></div></a></nav><div class="mobile-menu" id="mobileMenu"></div><div class="menu-overlay" id="menuOverlay"></div><main><section class="hero-card"><h2>Scans</h2><p>Accès réservé aux abonnés MAX</p></section></main><footer>BUBBLE INC. · © 2026</footer><script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script><script src="firebase-init.js"></script><script src="utils.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#EFF4FA">
+<title>Scans — Bubble Site</title>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="bubble_effects.js"></script>
+<script src="bubble_frames.js"></script>
+<script src="bubble_data.js"></script>
+<script type="module" src="bubble_missions.js"></script>
+<style>
+  /* ── EN VEDETTE ── */
+  .vedette{
+    display:grid; grid-template-columns:300px 1fr; gap:0;
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-xl); overflow:hidden;
+    box-shadow:var(--shadow-2); margin-bottom:38px;
+  }
+  .vedette-cover{ position:relative; background:var(--surface-2); min-height:260px; }
+  .vedette-cover img{ width:100%; height:100%; object-fit:cover; object-position:center top; display:block; }
+  .vedette-cover .ph{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem; }
+  .vedette-body{ padding:26px 28px; display:flex; flex-direction:column; gap:12px; justify-content:center; }
+  .vedette-tag{
+    align-self:flex-start; padding:5px 13px; border-radius:999px;
+    background:var(--accent-soft); color:var(--accent);
+    font-size:.75rem; font-weight:800; letter-spacing:.5px;
+  }
+  .vedette-logo{ max-height:78px; max-width:80%; object-fit:contain; display:block; align-self:flex-start; }
+  .vedette-title{ font-size:clamp(1.5rem,3vw,2.1rem); font-weight:800; letter-spacing:-.5px; line-height:1.1; }
+  .vedette-desc{ font-size:.98rem; font-weight:600; color:var(--ink-soft); line-height:1.55; max-width:60ch; }
+  .vedette-meta{ font-size:.85rem; font-weight:700; color:var(--ink-soft); }
+  .vedette-actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:4px; }
+
+  /* ── RANGÉES ── */
+  .shelf{ margin-bottom:34px; }
+  .shelf-head{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .shelf-head h2{ font-size:1.25rem; font-weight:800; }
+  .shelf-head .count{ font-size:.85rem; font-weight:700; color:var(--ink-soft); }
+  .shelf-row{
+    display:flex; gap:16px; overflow-x:auto; padding:4px 2px 10px;
+    scroll-snap-type:x proximity; scrollbar-width:none;
+  }
+  .shelf-row::-webkit-scrollbar{ display:none; }
+  .shelf-row > *{ scroll-snap-align:start; }
+
+  .scan-card{
+    flex-shrink:0; width:168px; cursor:pointer;
+    background:transparent; border:none; padding:0; text-align:left;
+    font-family:inherit; color:inherit;
+  }
+  .scan-poster{
+    position:relative; width:100%; aspect-ratio:3/4;
+    border-radius:var(--r-md); overflow:hidden;
+    background:var(--surface-2); border:2px solid var(--line);
+    box-shadow:var(--shadow-1);
+    transition:transform .18s, box-shadow .18s, border-color .18s;
+    display:flex; align-items:center; justify-content:center; font-size:2.6rem;
+  }
+  .scan-card:hover .scan-poster{ transform:translateY(-6px); box-shadow:var(--shadow-2); border-color:var(--accent); }
+  .scan-poster img{ width:100%; height:100%; object-fit:cover; }
+  .scan-lock{
+    position:absolute; inset:0; background:rgba(255,255,255,.72);
+    backdrop-filter:blur(2px);
+    display:flex; align-items:center; justify-content:center; font-size:2rem;
+  }
+  .scan-badge{
+    position:absolute; top:9px; right:9px;
+    padding:4px 10px; border-radius:999px;
+    font-size:.65rem; font-weight:800; letter-spacing:.3px;
+    box-shadow:0 2px 6px rgba(22,40,63,.2);
+  }
+  .scan-badge.plus{ background:var(--yellow); color:#4A3200; }
+  .scan-badge.x   { background:#38BDF8; color:#00263D; }
+  .scan-badge.max { background:var(--purple); color:#fff; }
+  .scan-badge.free,.scan-badge.basic{ background:var(--surface); color:var(--ink-soft); border:1px solid var(--line-strong); }
+  .scan-name{ margin-top:9px; font-size:.93rem; font-weight:800; line-height:1.25; }
+  .scan-meta{ font-size:.78rem; font-weight:700; color:var(--ink-soft); margin-top:1px; }
+
+  /* Carte reprendre */
+  .resume-card{ flex-shrink:0; width:214px; cursor:pointer; text-align:left; }
+  .resume-card .scan-poster{ aspect-ratio:16/10; }
+  .resume-bar{ height:6px; background:var(--surface-2); border:1px solid var(--line); border-radius:999px; overflow:hidden; margin-top:8px; }
+  .resume-bar i{ display:block; height:100%; background:var(--green); }
+
+  /* ── MODALE ── */
+  .sheet-cover{ position:relative; height:210px; background:var(--surface-2); flex-shrink:0; }
+  .sheet-cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .sheet-cover .ph{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem; }
+  .sheet-close{
+    position:absolute; top:12px; right:12px;
+    width:36px; height:36px; border-radius:50%;
+    border:none; background:rgba(255,255,255,.92); color:var(--ink);
+    font-size:1rem; font-weight:800; cursor:pointer;
+    box-shadow:0 3px 10px rgba(22,40,63,.25);
+  }
+  .sheet-close:hover{ background:#fff; }
+  .sheet-body{ padding:20px 24px 26px; overflow-y:auto; display:flex; flex-direction:column; gap:14px; }
+  .sheet-title{ font-size:1.5rem; font-weight:800; letter-spacing:-.4px; }
+  .sheet-logo{ max-height:70px; max-width:70%; object-fit:contain; }
+  .sheet-desc{
+    background:var(--surface-2); border:2px solid var(--line);
+    border-radius:var(--r-md); padding:14px 16px;
+    font-size:.95rem; font-weight:600; color:var(--ink-soft); line-height:1.6;
+  }
+  .sheet-foot{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .sheet-meta{ font-size:.86rem; font-weight:700; color:var(--ink-soft); line-height:1.7; }
+
+  @media(max-width:760px){
+    .vedette{ grid-template-columns:1fr; }
+    .vedette-cover{ min-height:170px; max-height:190px; }
+    .vedette-body{ padding:20px; }
+    .vedette-logo{ max-height:54px; }
+    .vedette-desc{ display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .scan-card{ width:142px; }
+  }
+</style>
+</head>
+<body data-v2>
+
+<nav>
+  <button class="nav-logo" id="menuToggle" aria-label="Menu">🫧</button>
+  <div class="nav-title">
+    <span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="bubble_site_scans.html"       class="nav-btn green active"><span class="ico">📜</span>Scans</a>
+    <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+    <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
+  </div>
+  <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
+    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🫧</span></div>
+    <div class="nav-profile-meta">
+      <span class="nav-profile-name" id="navName">Invité</span>
+      <span class="nav-profile-sub"  id="navSub">BASIC</span>
+    </div>
+  </a>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+  <a href="bubble_site_scans.html"       class="nav-btn green active"><span class="ico">📜</span>Scans</a>
+  <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
+  <a href="bubble_site_profil.html"      class="nav-btn"><span class="ico">🎭</span>Mon profil</a>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<main>
+
+  <!-- EN VEDETTE -->
+  <section class="vedette fade-up" id="vedette"></section>
+
+  <!-- REPRENDRE -->
+  <section class="shelf fade-up d1" id="shelfResume" style="display:none">
+    <div class="shelf-head"><h2>📚 Reprendre la lecture</h2></div>
+    <div class="shelf-row" id="rowResume"></div>
+  </section>
+
+  <section class="shelf fade-up d2">
+    <div class="shelf-head"><h2>📰 Magazines</h2><span class="count" id="cMag"></span></div>
+    <div class="shelf-row" id="rowMagazines"></div>
+  </section>
+
+  <section class="shelf fade-up d3">
+    <div class="shelf-head"><h2>⚔️ Aventures</h2><span class="count" id="cAvt"></span></div>
+    <div class="shelf-row" id="rowAventures"></div>
+  </section>
+
+  <section class="shelf fade-up d4">
+    <div class="shelf-head"><h2>🫧 Bubble Direct</h2><span class="count" id="cDir"></span></div>
+    <div class="shelf-row" id="rowDirect"></div>
+  </section>
+
+</main>
+
+<!-- MODALE -->
+<div class="overlay" id="modalOverlay">
+  <div class="sheet">
+    <div class="sheet-cover" id="sheetCover">
+      <button class="sheet-close" id="sheetClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer><span class="footer-logo">BUBBLE INC.</span> · © 2026</footer>
+
+<script>
+/* ── Menu mobile ── */
+const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
+function closeMenu(){ menu.classList.remove('open'); ov.classList.remove('open'); }
+toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
+ov.addEventListener('click',closeMenu);
+window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
+
+/* ── État ── */
+let userSubLevel = 'basic';
+
+const canRead = s => window.SUB_ORDER[userSubLevel] >= window.SUB_ORDER[s.sub];
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function coverHTML(scan, cls){
+  return scan.cover
+    ? `<img src="${scan.cover}" alt="${scan.title}" onerror="this.outerHTML='<div class=ph>${scan.emoji}</div>'">`
+    : `<div class="ph">${scan.emoji}</div>`;
+}
+
+function readerURL(scan){
+  return `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}`
+       + `&title=${encodeURIComponent(scan.title)}&id=${encodeURIComponent(scan.id)}`;
+}
+
+/* ── Poster d'un scan ── */
+function makeCard(scan){
+  const ok = canRead(scan);
+  const el = document.createElement('button');
+  el.className = 'scan-card';
+  el.innerHTML = `
+    <div class="scan-poster">
+      ${coverHTML(scan)}
+      ${scan.sub !== 'free' && scan.sub !== 'basic'
+        ? `<span class="scan-badge ${scan.sub}">${window.SUB_LABELS[scan.sub]}</span>` : ''}
+      ${ok ? '' : '<div class="scan-lock">🔒</div>'}
+    </div>
+    <div class="scan-name">${scan.title}</div>
+    <div class="scan-meta">${scan.year} · ${scan.type.split(',')[0]}</div>`;
+  el.addEventListener('click', () => openSheet(scan));
+  return el;
+}
+
+/* ── Carte "reprendre" ── */
+function makeResumeCard(scan, prog){
+  const el = document.createElement('button');
+  el.className = 'scan-card resume-card';
+  const label = prog.total ? `Page ${prog.page} / ${prog.total}` : `Page ${prog.page}`;
+  el.innerHTML = `
+    <div class="scan-poster">${coverHTML(scan)}</div>
+    <div class="scan-name">${scan.title}</div>
+    <div class="scan-meta">${label}</div>
+    <div class="resume-bar"><i style="width:${prog.pct}%"></i></div>`;
+  el.addEventListener('click', () => {
+    if (canRead(scan) && scan.pdf) location.href = readerURL(scan);
+    else openSheet(scan);
+  });
+  return el;
+}
+
+/* ── Modale ── */
+function openSheet(scan){
+  const ok = canRead(scan);
+  document.getElementById('sheetCover').innerHTML =
+    `<button class="sheet-close" id="sheetClose" aria-label="Fermer">✕</button>` + coverHTML(scan);
+  document.getElementById('sheetClose').addEventListener('click', closeSheet);
+
+  const titleHTML = scan.logo
+    ? `<img class="sheet-logo" src="${scan.logo}" alt="${scan.title}" onerror="this.outerHTML='<div class=sheet-title>${scan.title}</div>'">`
+    : `<div class="sheet-title">${scan.title}</div>`;
+
+  const action = ok
+    ? `<button class="btn btn-green" onclick="startReading('${scan.id}')">▶ Lecture</button>`
+    : `<div style="display:flex;flex-direction:column;gap:8px">
+         <span class="btn btn-green is-locked">🔒 Lecture</span>
+         <a href="bubble_site_abonnements.html" class="chip chip-yellow">Nécessite ${window.SUB_LABELS[scan.sub]} → voir les offres</a>
+       </div>`;
+
+  document.getElementById('sheetBody').innerHTML = `
+    ${titleHTML}
+    <div class="sheet-desc">${scan.desc}</div>
+    <div class="sheet-foot">
+      ${action}
+      <div class="sheet-meta">Créé en : <b>${scan.year}</b><br>Type : <b>${scan.type}</b></div>
+    </div>`;
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSheet(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── Lancer la lecture (progression sauvegardée) ── */
+function startReading(id){
+  const scan = window.ALL_SCANS.find(s => s.id === id);
+  if (!scan) return;
+  /* On marque le scan comme "commencé" ; c'est le lecteur qui enregistre
+     ensuite la vraie page au fil de la lecture. */
+  if (!window.progressOf(id)) window.saveProgress(id, 1, 0);
+  closeSheet();
+  if (scan.pdf) location.href = readerURL(scan);
+  else toast('📖 PDF bientôt disponible !');
+}
+window.startReading = startReading;
+
+/* ── En vedette ── */
+function buildVedette(){
+  const scan = window.ALL_SCANS.find(s => s.id === window.VEDETTE_ID);
+  if (!scan) return;
+  const ok = canRead(scan);
+
+  const titleHTML = (scan.logo)
+    ? `<img class="vedette-logo" src="${scan.logo}" alt="${scan.title}" onerror="this.outerHTML='<div class=vedette-title>${scan.title}</div>'">`
+    : `<div class="vedette-title">${scan.title}</div>`;
+
+  let btn;
+  if (ok && scan.pdf)  btn = `<button class="btn btn-green btn-lg" onclick="startReading('${scan.id}')">▶ Lecture</button>`;
+  else if (!ok)        btn = `<a class="btn btn-yellow btn-lg" href="bubble_site_abonnements.html">🔒 Nécessite ${window.SUB_LABELS[scan.sub]}</a>`;
+  else                 btn = `<span class="btn btn-green btn-lg is-locked">⏳ Bientôt</span>`;
+
+  document.getElementById('vedette').innerHTML = `
+    <div class="vedette-cover">${coverHTML(scan)}</div>
+    <div class="vedette-body">
+      <span class="vedette-tag">✦ EN VEDETTE</span>
+      ${titleHTML}
+      <p class="vedette-desc">${scan.desc}</p>
+      <div class="vedette-meta">${scan.year} · ${scan.type}</div>
+      <div class="vedette-actions">
+        ${btn}
+        <button class="btn btn-ghost btn-lg" onclick="openSheetById('${scan.id}')">ℹ Plus d'infos</button>
+      </div>
+    </div>`;
+}
+window.openSheetById = id => openSheet(window.ALL_SCANS.find(s => s.id === id));
+
+/* ── Construction des rangées ── */
+function buildRows(){
+  const map = { magazines:'rowMagazines', aventures:'rowAventures', direct:'rowDirect' };
+  const counts = { magazines:'cMag', aventures:'cAvt', direct:'cDir' };
+  for (const key in map){
+    const row = document.getElementById(map[key]);
+    row.innerHTML = '';
+    window.SCANS[key].forEach(s => row.appendChild(makeCard(s)));
+    document.getElementById(counts[key]).textContent =
+      window.SCANS[key].length + (window.SCANS[key].length > 1 ? ' titres' : ' titre');
+  }
+  buildVedette();
+  buildResume();
+}
+
+function buildResume(){
+  const row = document.getElementById('rowResume');
+  const list = window.ALL_SCANS
+    .map(s => ({ scan:s, prog: window.progressOf(s.id) }))
+    .filter(x => x.prog);
+  row.innerHTML = '';
+  document.getElementById('shelfResume').style.display = list.length ? '' : 'none';
+  list.forEach(({scan, prog}) => row.appendChild(makeResumeCard(scan, prog)));
+}
+
+/* ── Fermeture modale ── */
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target.id === 'modalOverlay') closeSheet();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+/* Premier rendu (avant que Firebase réponde) */
+buildRows();
+</script>
+
+<script type="module">
+  import { initializeApp }               from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  onAuthStateChanged(auth, async user => {
+    if (!user){ window.location.href = './login.html'; return; }
+    try {
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if (snap.exists()){
+        const d = snap.data();
+        const sub = d.subscription || 'basic';
+        const avatarId = d.avatarId || 'bully_1';
+        document.getElementById('navAvatar').innerHTML =
+          `<img src="${avatarId}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
+        document.getElementById('navName').textContent = user.displayName || user.email.split('@')[0];
+        document.getElementById('navSub').textContent  = window.SUB_LABELS[sub];
+        if (window.applyTheme) window.applyTheme(d.activeEffect || null);
+        window.__frameGrants = (d.framesUnlocked || []).slice();
+        window.__iconGrants  = (d.iconsUnlocked  || []).slice();
+        window.__userSub     = sub;
+        window.applyFrame(sub, window.getLevel(d.xp || 0, sub).level, d.frameId || null);
+        window.userSubLevel = sub;
+        userSubLevel = sub;
+      }
+    } catch(e){ console.warn(e); }
+    buildRows();   /* on reconstruit avec le bon niveau d'abonnement */
+  });
+</script>
+
+</body>
+</html>

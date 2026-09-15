@@ -2,16 +2,500 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=accueil.html">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Redirection - Bubble Site</title>
-<script>
-  window.location.href = "accueil.html";
-</script>
+<meta name="theme-color" content="#EFF4FA">
+<title>Bubble Site</title>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="bubble_effects.js"></script>
+<script src="bubble_frames.js"></script>
+<script src="bubble_data.js"></script>
+<script type="module" src="bubble_missions.js"></script>
+<script type="module" src="bubble_scores.js"></script>
+<style>
+  /* ── HERO ── */
+  .hero{ text-align:center; padding:22px 0 40px; }
+  .hero-logo{
+    font-size: clamp(3rem, 11vw, 6rem);
+    font-weight:800; line-height:1; letter-spacing:-2px;
+    display:inline-flex; align-items:baseline; flex-wrap:wrap; justify-content:center;
+  }
+  .hero-logo span{ text-shadow: 0 4px 0 rgba(22,40,63,.08); }
+  .t-b { color:#1FA8E8 } .t-u { color:#37C359 } .t-b2{ color:#F5B700 }
+  .t-b3{ color:#4eb8ff } .t-l { color:#FF8A3D } .t-e { color:#7E93AC }
+  .hero-logo .t-site{ color:#000000;font-size:.22em; font-weight:800; letter-spacing:2px; color:var(--ink-soft); margin-left:10px; text-shadow:none; }
+  .hero-welcome{ margin-top:16px; font-size:clamp(1.05rem,2.4vw,1.35rem); font-weight:600; color:var(--ink-soft); }
+  .hero-welcome b{ color:var(--ink); font-weight:800; }
+  .hero-cta{ margin-top:26px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+  /* ── BANDEAU PROFIL ── */
+  .me-strip{
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+    padding:18px 22px; margin-bottom:14px;
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-lg); box-shadow:var(--shadow-1);
+  }
+  .me-avatar{
+    width:64px; height:64px; border-radius:50%;
+    background:linear-gradient(160deg,#DCEEFF,#9AC8F0);
+    border:3px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center;
+    position:relative; flex-shrink:0; font-size:1.7rem;
+  }
+  .me-avatar img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .me-info{ flex:1; min-width:170px; max-width:560px; }
+  .me-name{ font-size:1.2rem; font-weight:800; }
+  .me-sub{ font-size:.88rem; font-weight:700; color:var(--ink-soft); margin-top:2px; }
+  .me-xp{ margin-top:9px; }
+  .xp-track{ height:9px; background:var(--surface-2); border:1px solid var(--line); border-radius:999px; overflow:hidden; }
+  .xp-fill{ height:100%; width:0%; border-radius:999px; background:var(--accent); transition:width .8s cubic-bezier(.34,1.56,.64,1); }
+  .xp-text{ font-size:.78rem; font-weight:700; color:var(--ink-soft); margin-top:5px; }
+
+  /* ── STATS ── */
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:34px; }
+  .stat{
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-md); padding:16px 14px; text-align:center;
+    box-shadow:var(--shadow-1);
+  }
+  .stat-ico{ font-size:1.3rem; }
+  .stat-num{ font-size:1.7rem; font-weight:800; line-height:1.1; margin-top:2px; }
+  .stat-lbl{ font-size:.78rem; font-weight:700; color:var(--ink-soft); margin-top:2px; }
+
+  /* ── DERNIER POST VLOG ── */
+  .vlog-strip{
+    display:grid; grid-template-columns:190px 1fr; gap:0;
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow-1);
+    margin-bottom:34px; text-decoration:none; color:inherit;
+    transition:transform .18s, box-shadow .18s;
+  }
+  .vlog-strip:hover{ transform:translateY(-4px); box-shadow:var(--shadow-2); }
+  .vlog-cover{ background:var(--surface-2); min-height:130px; display:flex;
+               align-items:center; justify-content:center; font-size:2.8rem; }
+  .vlog-cover img{ width:100%; height:100%; object-fit:cover; }
+  .vlog-body{ padding:18px 22px; display:flex; flex-direction:column; gap:6px; justify-content:center; }
+  .vlog-tag{ align-self:flex-start; padding:4px 12px; border-radius:999px;
+             background:rgba(255,95,162,.14); color:var(--pink-d); font-size:.72rem; font-weight:800; }
+  .vlog-title{ font-size:1.2rem; font-weight:800; line-height:1.25; }
+  .vlog-date{ font-size:.82rem; font-weight:700; color:var(--ink-soft); }
+  .vlog-desc{ font-size:.9rem; font-weight:600; color:var(--ink-soft); line-height:1.45; }
+  @media(max-width:760px){ .vlog-strip{ grid-template-columns:1fr; } .vlog-cover{ min-height:120px; max-height:140px; } }
+
+  /* ── SECTIONS ── */
+  .block{ margin-bottom:38px; }
+  .block-head{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .block-head h2{ font-size:1.25rem; font-weight:800; }
+  .block-head .more{ margin-left:auto; font-size:.9rem; font-weight:800; color:var(--ink-soft); }
+  .block-head .more:hover{ color:var(--ink); }
+
+  /* Rangée horizontale scrollable */
+  .row{
+    display:flex; gap:14px; overflow-x:auto; padding-bottom:8px;
+    scroll-snap-type:x proximity; scrollbar-width:none;
+  }
+  .row::-webkit-scrollbar{ display:none; }
+  .row > *{ scroll-snap-align:start; }
+
+  /* Carte "reprendre" */
+  .resume-card{
+    flex-shrink:0; width:208px;
+    background:var(--surface); border:2px solid var(--line);
+    border-radius:var(--r-md); overflow:hidden; cursor:pointer;
+    box-shadow:var(--shadow-1);
+    transition:transform .18s, box-shadow .18s;
+  }
+  .resume-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-2); }
+  .resume-cover{ width:100%; height:112px; object-fit:cover; display:block; background:var(--surface-2); }
+  .resume-ph{ width:100%; height:112px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:2.2rem; }
+  .resume-body{ padding:11px 13px 13px; }
+  .resume-name{ font-size:.95rem; font-weight:800; line-height:1.2; }
+  .resume-page{ font-size:.8rem; font-weight:700; color:var(--ink-soft); margin:3px 0 8px; }
+  .resume-bar{ height:6px; background:var(--surface-2); border-radius:999px; overflow:hidden; }
+  .resume-bar i{ display:block; height:100%; background:var(--green); border-radius:999px; }
+
+  /* Collection */
+  .coll-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(78px,1fr)); gap:10px; }
+  .coll-card{
+    aspect-ratio:1; border-radius:16px;
+    border:2px solid var(--line); background:var(--surface);
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+    transition:transform .18s;
+  }
+  .coll-card.got{ background:var(--surface); box-shadow:var(--shadow-1); }
+  .coll-card.got:hover{ transform:scale(1.06); }
+  .coll-card.got img{ width:78%; height:78%; object-fit:contain; }
+  .coll-card.miss{ background:var(--surface-2); border-style:dashed; color:#B4C4D6; font-size:1.4rem; font-weight:800; }
+  .coll-dot{ position:absolute; top:6px; right:6px; width:9px; height:9px; border-radius:50%; }
+
+  /* Personnages */
+  .chars{ display:flex; gap:18px; overflow-x:auto; padding:4px 2px 10px; scrollbar-width:none; }
+  .chars::-webkit-scrollbar{ display:none; }
+  .char{ flex-shrink:0; width:104px; text-align:center; }
+  .char-bubble{
+    width:96px; height:96px; border-radius:50%; margin:0 auto;
+    background:linear-gradient(160deg,#EAF4FF,#C6E1F8);
+    border:3px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; font-size:2rem;
+    transition:transform .2s, border-color .2s;
+  }
+  .char:hover .char-bubble{ transform:translateY(-5px) scale(1.05); border-color:var(--accent); }
+  .char-bubble img{ width:100%; height:100%; object-fit:cover; }
+  .char-name{ margin-top:9px; font-size:.95rem; font-weight:800; }
+  .char-desc{ font-size:.78rem; font-weight:600; color:var(--ink-soft); line-height:1.3; margin-top:2px; }
+
+  .empty-note{
+    background:var(--surface); border:2px dashed var(--line-strong);
+    border-radius:var(--r-md); padding:22px; text-align:center;
+    color:var(--ink-soft); font-weight:700; font-size:.95rem;
+  }
+
+  @media(max-width:760px){
+    .hero{ padding:10px 0 30px; }
+    .stats{ gap:9px; }
+    .stat-num{ font-size:1.4rem; }
+    .stat-lbl{ font-size:.7rem; }
+  }
+</style>
 </head>
-<body>
-  <p style="text-align:center; margin-top:50px; font-family:Arial,sans-serif;">
-    Redirection vers <a href="accueil">accueil.html</a>...
-  </p>
+<body data-v2>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <button class="nav-logo" id="menuToggle" aria-label="Menu">🫧</button>
+
+  <div class="nav-title">
+    <span class="t-b">B</span><span class="t-u">u</span><span class="t-b2">b</span><span class="t-b3">b</span><span class="t-l">l</span><span class="t-e">e</span><span class="t-site">site.</span>
+  </div>
+
+  <div class="nav-links">
+    <a href="index.html"                   class="nav-btn red active"><span class="ico">🏠</span>Accueil</a>
+    <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+    <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+    <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
+  </div>
+
+  <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
+    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🫧</span></div>
+    <div class="nav-profile-meta">
+      <span class="nav-profile-name" id="navName">Invité</span>
+      <span class="nav-profile-sub"  id="navSub">BASIC</span>
+    </div>
+  </a>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"                   class="nav-btn red active"><span class="ico">🏠</span>Accueil</a>
+  <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+  <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+  <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
+  <a href="bubble_site_profil.html"      class="nav-btn"><span class="ico">🎭</span>Mon profil</a>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<!-- ══ CONTENU ══ -->
+<main>
+
+  <section class="hero fade-up">
+    <h1 class="hero-logo">
+      <span class="t-b">B</span><span class="t-u">u</span><span class="t-b2">b</span><span class="t-b3">b</span><span class="t-l">l</span><span class="t-e">e</span><span class="t-site">site.</span>
+    </h1>
+    <p class="hero-welcome" id="welcomeMsg">Bienvenue sur <b>Bubble Site</b> 🫧</p>
+    <div class="hero-cta">
+      <a href="bubble_site_scans.html" class="btn btn-green btn-lg">📜 Lire les scans</a>
+      <a href="bubble_site_gacha.html" class="btn btn-ghost btn-lg">🎁 Ouvrir un coffre</a>
+    </div>
+  </section>
+
+  <!-- Profil -->
+  <a href="bubble_site_profil.html" class="me-strip fade-up d1" id="meStrip" style="display:none">
+    <div class="me-avatar" id="meAvatar">🫧</div>
+    <div class="me-info">
+      <div class="me-name" id="meName">—</div>
+      <div class="me-sub"  id="meSub">BASIC · Niveau 1</div>
+      <div class="me-xp">
+        <div class="xp-track"><div class="xp-fill" id="meXpFill"></div></div>
+        <div class="xp-text" id="meXpText">0 XP</div>
+      </div>
+    </div>
+    <span class="btn btn-ghost btn-sm">Mon profil →</span>
+  </a>
+
+  <!-- Stats -->
+  <div class="stats fade-up d1" id="statsRow" style="display:none">
+    <div class="stat"><div class="stat-ico">📖</div><div class="stat-num" id="statScans">0</div><div class="stat-lbl">scans ouverts</div></div>
+    <div class="stat"><div class="stat-ico">🃏</div><div class="stat-num" id="statCards">0</div><div class="stat-lbl">cartes obtenues</div></div>
+    <div class="stat"><div class="stat-ico">✨</div><div class="stat-num" id="statFx">0</div><div class="stat-lbl">effets débloqués</div></div>
+  </div>
+
+  <!-- Dernier post du vlog (masqué tant que VLOG est vide) -->
+  <a class="vlog-strip fade-up d1" id="vlogStrip" href="bubble_site_vlog.html" style="display:none"></a>
+
+  <!-- Records des jeux (rempli par bubble_scores.js) -->
+  <section class="block fade-up d2">
+    <div class="block-head">
+      <h2>🏆 Records des jeux</h2>
+      <a href="https://bullyinventif.github.io/bubble_game/" class="more">Tous les jeux →</a>
+    </div>
+    <div class="sb-row" id="scoreboard">
+      <div class="sb-empty" style="width:100%">Chargement des records…</div>
+    </div>
+  </section>
+
+  <!-- Reprendre la lecture -->
+  <section class="block fade-up d2" id="blockResume" style="display:none">
+    <div class="block-head">
+      <h2>📚 Reprendre la lecture</h2>
+      <a href="bubble_site_scans.html" class="more">Tous les scans →</a>
+    </div>
+    <div class="row" id="resumeRow"></div>
+  </section>
+
+  <!-- Collection -->
+  <section class="block fade-up d3">
+    <div class="block-head">
+      <h2>🃏 Ta collection</h2>
+      <a href="bubble_site_gacha.html" class="more" id="collCount">0/0 →</a>
+    </div>
+    <div class="coll-grid" id="collGrid"></div>
+  </section>
+
+  <!-- Personnages -->
+  <section class="block fade-up d4">
+    <div class="block-head">
+      <h2>🫧 Les personnages Bubble inc.</h2>
+    </div>
+    <div class="chars" id="charsRow"></div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="footer-logo">BUBBLE INC.</span> · © 2026
+</footer>
+
+<!-- ══ MENU MOBILE ══ -->
+<script>
+  const toggle  = document.getElementById('menuToggle');
+  const menu    = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('menuOverlay');
+  function closeMenu(){ menu.classList.remove('open'); overlay.classList.remove('open'); }
+  toggle.addEventListener('click', () => {
+    const open = menu.classList.contains('open');
+    menu.classList.toggle('open', !open);
+    overlay.classList.toggle('open', !open);
+  });
+  overlay.addEventListener('click', closeMenu);
+  window.addEventListener('resize', () => { if (window.innerWidth > 760) closeMenu(); });
+</script>
+
+<!-- ══ RENDU DES SECTIONS ══ -->
+<script>
+  /* ── Personnages ── */
+  function renderChars(){
+    const row = document.getElementById('charsRow');
+    row.innerHTML = window.CHARACTERS.map(c => `
+      <div class="char">
+        <div class="char-bubble">
+          <img src="${c.file}" alt="${c.name}" onerror="this.replaceWith(document.createTextNode('🫧'))">
+        </div>
+        <div class="char-name">${c.name}</div>
+        ${c.desc ? `<div class="char-desc">${c.desc}</div>` : ''}
+      </div>`).join('');
+  }
+
+  /* ── Collection (grille des cartes) ── */
+  function renderCollection(owned){
+    const grid  = document.getElementById('collGrid');
+    const total = window.CARD_POOL.length;
+    document.getElementById('collCount').textContent = `${owned.length}/${total} →`;
+    grid.innerHTML = window.CARD_POOL.map(card => {
+      if (owned.includes(String(card.id))){
+        return `<div class="coll-card got" title="${card.name} — ${card.rarity}">
+                  <img src="${card.img}" alt="${card.name}" onerror="this.replaceWith(document.createTextNode('🃏'))">
+                  <span class="coll-dot" style="background:${card.color}"></span>
+                </div>`;
+      }
+      return `<div class="coll-card miss" title="Carte non obtenue">?</div>`;
+    }).join('');
+  }
+
+  /* ── Reprendre la lecture ── */
+  function renderResume(sub){
+    const list = window.ALL_SCANS
+      .map(s => ({ scan:s, prog: window.progressOf(s.id) }))
+      .filter(x => x.prog);
+    if (!list.length) return;
+
+    document.getElementById('blockResume').style.display = '';
+    document.getElementById('resumeRow').innerHTML = list.map(({scan:s, prog}) => {
+      const cover = s.cover
+        ? `<img class="resume-cover" src="${s.cover}" alt="${s.title}" onerror="this.outerHTML='<div class=resume-ph>${s.emoji}</div>'">`
+        : `<div class="resume-ph">${s.emoji}</div>`;
+      const label = prog.total ? `Page ${prog.page} / ${prog.total}` : `Page ${prog.page}`;
+      return `<a class="resume-card" href="${linkFor(s, sub)}">
+                ${cover}
+                <div class="resume-body">
+                  <div class="resume-name">${s.title}</div>
+                  <div class="resume-page">${label}</div>
+                  <div class="resume-bar"><i style="width:${prog.pct}%"></i></div>
+                </div>
+              </a>`;
+    }).join('');
+  }
+
+  function linkFor(scan, sub){
+    const ok = window.SUB_ORDER[sub || 'basic'] >= window.SUB_ORDER[scan.sub];
+    if (ok && scan.pdf)
+      return `bubble_site_reader.html?pdf=${encodeURIComponent(scan.pdf)}&title=${encodeURIComponent(scan.title)}&id=${encodeURIComponent(scan.id)}`;
+    return 'bubble_site_scans.html';
+  }
+
+  /* ── Dernier post du vlog ── */
+  const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  function prettyDate(d){
+    const [y,m,j] = String(d||'').split('-');
+    if (!y || !m || !j) return d || '';
+    return `${parseInt(j,10)} ${MOIS[parseInt(m,10)-1]} ${y}`;
+  }
+  window.__VLOG_POSTS = (window.VLOG || []).slice();
+  window.__VLOG_TAGS  = (window.VLOG_TAGS || []).slice();
+  function renderVlog(){
+    const posts = window.__VLOG_POSTS.filter(p => p.published !== false)
+      /* les épinglés d'abord, puis du plus récent au plus ancien */
+      .sort((a,b) => (b.pinned?1:0) - (a.pinned?1:0)
+                  || String(b.date||'').localeCompare(String(a.date||'')));
+    if (!posts.length) return;                 /* pas encore de post : on n'affiche rien */
+    const p      = posts[0];
+    const accent = p.accent || '#FF5FA2';
+    const cover  = (p.images||[])[0] || p.cover;
+    const chips  = (p.tags||[])
+      .map(id => window.__VLOG_TAGS.find(t => t.id === id))
+      .filter(Boolean).map(t => window.tagChip(t, true)).join('');
+    const el = document.getElementById('vlogStrip');
+    el.style.borderColor = accent + '55';
+    el.innerHTML = `
+      <div class="vlog-cover">${cover
+        ? `<img src="${cover}" alt="${window.bbEscape(p.title)}" onerror="this.replaceWith(document.createTextNode('🎬'))">`
+        : '🎬'}</div>
+      <div class="vlog-body">
+        <span class="vlog-tag" style="background:${accent}22;color:${accent}">
+          ${p.pinned ? '📌 ÉPINGLÉ' : '🎬 DERNIER POST'}</span>
+        <div class="vlog-title">${window.bbEscape(p.title)}</div>
+        <div class="vlog-date">${prettyDate(p.date)}</div>
+        ${chips ? `<div class="tag-row" style="margin:4px 0">${chips}</div>` : ''}
+        <p class="vlog-desc">${window.bbEscape(window.bbPlain(p.desc, 180))}</p>
+      </div>`;
+    el.style.display = 'grid';
+  }
+
+  /* Rendu immédiat de ce qui ne dépend pas du compte */
+  renderVlog();
+  renderChars();
+  renderCollection([]);
+</script>
+
+<!-- ══ FIREBASE (logique inchangée) ══ -->
+<script type="module">
+  import { initializeApp }               from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, collection, getDocs }
+         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  /* Les posts publiés depuis le panneau admin (sinon ceux de bubble_data.js) */
+  (async () => {
+    try {
+      const snap = await getDocs(collection(db,'vlog'));
+      const live = snap.docs.map(s => ({ id:s.id, ...s.data() }));
+      if (live.length) window.__VLOG_POSTS = live;
+      const tv = await getDocs(collection(db,'vlogTags'));
+      const tags = tv.docs.map(s => ({ id:s.id, ...s.data() }));
+      if (tags.length) window.__VLOG_TAGS = tags;
+      if (live.length || tags.length) renderVlog();
+    } catch(e){ console.warn('Vlog indisponible :', e); }
+  })();
+
+  onAuthStateChanged(auth, async user => {
+    if (!user){
+      document.getElementById('navProfile').href     = './login.html';
+      document.getElementById('navName').textContent = 'Connexion';
+      document.getElementById('navSub').textContent  = 'Se connecter';
+      renderResume('basic');
+      return;
+    }
+
+    const pseudo = user.displayName || user.email.split('@')[0];
+    document.getElementById('welcomeMsg').innerHTML = `Content de te revoir, <b>${pseudo}</b> 👋`;
+    document.getElementById('navName').textContent  = pseudo;
+    document.getElementById('meName').textContent   = pseudo;
+
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if (!snap.exists()){ renderResume('basic'); return; }
+
+      const d        = snap.data();
+      const sub      = d.subscription || 'basic';
+      const avatarId = d.avatarId     || 'bully_1';
+      const xp       = d.xp           || 0;
+      const owned    = (d.gachaCollection || []).map(String);
+      const fx       = (d.gachaEffects    || []).length;
+
+      const avatarHTML = `<img src="${avatarId}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
+      document.getElementById('navAvatar').innerHTML = avatarHTML;
+      document.getElementById('meAvatar').innerHTML  = avatarHTML;
+      document.getElementById('navSub').textContent  = window.SUB_LABELS[sub] || 'BASIC';
+
+      if (window.applyTheme) window.applyTheme(d.activeEffect || null);
+
+      const lv = window.getLevel(xp, sub);
+      window.__frameGrants = (d.framesUnlocked || []).slice();
+      window.__iconGrants  = (d.iconsUnlocked  || []).slice();
+      window.__userSub     = sub;
+      window.applyFrame(sub, lv.level, d.frameId || null);
+
+      /* Bandeau profil */
+      document.getElementById('meStrip').style.display = 'flex';
+      document.getElementById('meSub').textContent   = `${window.SUB_LABELS[sub]} · Niveau ${lv.level}/${lv.maxLevel}`;
+      const cur  = window.currencyOf(sub);
+      const fill = document.getElementById('meXpFill');
+      fill.style.width      = lv.progress + '%';
+      fill.style.background = `linear-gradient(90deg, ${cur.grad[0]}, ${cur.grad[1]})`;
+      document.getElementById('meXpText').innerHTML = lv.isMax
+        ? `${window.amountLabel(xp, sub, 14)} · 🏆 Niveau max atteint !`
+        : `${window.amountLabel(xp, sub, 14)} · encore ${lv.xpNeeded} ${window.currencyIcon(sub,13)} pour le niveau ${lv.level + 1}`;
+
+      /* Stats */
+      document.getElementById('statsRow').style.display = 'grid';
+      document.getElementById('statScans').textContent = Object.keys(window.getProgress()).length;
+      document.getElementById('statCards').textContent = owned.length;
+      document.getElementById('statFx').textContent    = fx;
+
+      renderCollection(owned);
+      renderResume(sub);
+
+    } catch(e){ console.warn('Firestore:', e); renderResume('basic'); }
+  });
+</script>
+
 </body>
 </html>
