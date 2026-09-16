@@ -1,27 +1,66 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Accueil Jeux</title><link rel="stylesheet" href="../style.css"></head><body>
-<nav>
-  <button class="nav-logo" id="menuToggle">🫧</button>
-  <div class="nav-title"><span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span></div>
-  <div class="nav-links">
-    <a href="../accueil" class="nav-btn">🏠 Accueil</a>
-    <a href="../bubble_site_abonnements.html" class="nav-btn yellow">✨ Abonnements</a>
-    <a href="jeux.html" class="nav-btn gray active">🎮 Games</a>
-    <a href="../bubble_site_scans.html" class="nav-btn green">📜 Scans</a>
-    <a href="../bubble_site_gacha.html" class="nav-btn purple">🎁 Coffres</a>
-    <a href="../bubble_site_vlog.html" class="nav-btn pink">🎬 Vlog</a>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bubble Game</title>
+  <link rel="icon" type="image/png" href="../bully_icon_site_1.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css?v=5">
+</head>
+<body>
+  <nav>
+    <a href="../accueil.html" class="nav-logo">🫧</a>
+    <div class="brand">BUBBLE GAME</div>
+    <div class="nav-links">
+      <a href="../accueil.html" class="active">Accueil</a>
+      <a href="jeux.html">Jeux</a>
+      <a href="classement.html">Classement</a>
+      <a href="credits.html">Crédits</a>
+    </div>
+    <a href="../bubble_site_profil.html" class="nav-profile-widget">
+      <div class="nav-profile-info">
+        <span class="nav-profile-name" id="navProfileName">...</span>
+        <span class="nav-profile-sub" id="navProfileSub">—</span>
+      </div>
+      <div class="nav-avatar-bubble" id="navAvatarBubble">🧙</div>
+    </a>
+    <button class="nav-burger" id="menuToggle" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="menuClose" aria-label="Fermer">✕</button>
+    <a href="../accueil.html">Accueil</a>
+    <a href="jeux.html">Jeux</a>
+    <a href="classement.html">Classement</a>
+    <a href="credits.html">Crédits</a>
   </div>
-  <a href="../bubble_site_profil.html" class="nav-profile" id="navProfile">
-    <div class="profile-bubble" id="navAvatar">🫧</div>
-    <div class="nav-profile-meta"><span class="nav-profile-name" id="navName">Invité</span><span class="nav-profile-sub" id="navSub">BASIC</span></div>
-  </a>
-</nav>
-<div class="mobile-menu" id="mobileMenu"></div>
-<div class="menu-overlay" id="menuOverlay"></div>
-<main><section class="hero-card"><h2>Bienvenue dans les Jeux</h2><p>Explore nos jeux !</p></section></main>
-<footer>BUBBLE INC. · © 2026</footer>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="../firebase-init.js"></script>
-<script src="../utils.js"></script>
-</body></html>
+
+  <div class="wrap">
+    <div class="hero" id="hero"></div>
+
+    <div class="rowhead">
+      <h2>AJOUTS RÉCENTS</h2>
+      <a class="btn small" href="jeux.html">VOIR TOUT →</a>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <footer>🫧 BUBBLE INC. — <span id="year"></span></footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="../firebase-init.js?v=5"></script>
+  <script src="../games-data.js?v=5"></script>
+  <script src="../render.js?v=5"></script>
+  <script>
+    requireAccess();
+    initChrome();
+    var recent = gamesByRecent();
+    document.getElementById('hero').innerHTML = heroMarkup(recent[0]);
+    document.getElementById('grid').innerHTML = recent.slice(0, 3).map(gameCard).join('');
+  </script>
+</body>
+</html>
