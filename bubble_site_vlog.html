@@ -37,7 +37,8 @@
   .featured-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
 
   /* ── Liste des posts ── */
-  .posts{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; }
+  .posts{ display:grid; grid-te
+mplate-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; }
   .post{
     background:var(--surface); border:2px solid var(--line);
     border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow-1);
@@ -71,7 +72,8 @@
   /* ── Lecteur d'un post ── */
   .read-sheet{ width:min(760px,96vw); max-height:90vh; display:flex; flex-direction:column; }
   .read-top{ display:flex; align-items:center; gap:12px; padding:20px 24px 0; flex-shrink:0; }
-  .read-top h2{ font-size:1.3rem; font-weight:800; flex:1; line-height:1.2; }
+  .read-top h2{ font-size:1.3rem; font-weight:800; flex:1
+; line-height:1.2; }
   .read-close{
     width:34px; height:34px; border-radius:50%; flex-shrink:0;
     border:2px solid var(--line); background:var(--surface);
@@ -107,7 +109,8 @@
   @keyframes newPulse{ 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.07) } }
 
   /* ── Galerie d'images ── */
-  .gal{ display:grid; gap:14px; margin-top:20px; }
+  .gal{ display:g
+rid; gap:14px; margin-top:20px; }
   .gal.grande{ grid-template-columns:1fr; }
   .gal.deux{ grid-template-columns:1fr 1fr; }
   .gal.galerie{ grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
@@ -145,7 +148,8 @@
     background:var(--surface); border:2px dashed var(--line-strong);
     border-radius:var(--r-lg); padding:16px 20px; margin-bottom:24px;
   }
-  .invite p{ flex:1; min-width:200px; font-size:.92rem; font-weight:700; color:var(--ink-soft); }
+  .invite p{ flex:
+1; min-width:200px; font-size:.92rem; font-weight:700; color:var(--ink-soft); }
 
   @media(max-width:760px){
     .featured{ grid-template-columns:1fr; }
@@ -166,7 +170,7 @@
   <div class="nav-links">
     <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
     <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
-    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="jeux/index.html" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
     <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
     <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
     <a href="bubble_site_vlog.html"        class="nav-btn pink active"><span class="ico">🎬</span>Vlog</a>
@@ -183,7 +187,8 @@
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
   <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
-  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+
+  <a href="jeux/index.html" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
   <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
   <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
   <a href="bubble_site_vlog.html"        class="nav-btn pink active"><span class="ico">🎬</span>Vlog</a>
@@ -230,7 +235,8 @@
 /* ── Menu mobile ── */
 const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
 function closeMenu(){ menu.classList.remove('open'); ov.classList.remove('open'); }
-toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
+toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu
+.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
 ov.addEventListener('click',closeMenu);
 window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
 
@@ -283,7 +289,8 @@ function lbShow(i){
 }
 function lbClose(){ lb.classList.remove('open'); }
 document.getElementById('lbClose').addEventListener('click', lbClose);
-document.getElementById('lbPrev').addEventListener('click', () => lbShow(lbAt - 1));
+document.getElementById('lbPrev').addEv
+entListener('click', () => lbShow(lbAt - 1));
 document.getElementById('lbNext').addEventListener('click', () => lbShow(lbAt + 1));
 lb.addEventListener('click', e => { if (e.target === lb) lbClose(); });
 
@@ -322,7 +329,8 @@ function openPost(id){
     cta.push(`<a class="btn" style="background:${esc(accent)};box-shadow:0 4px 0 rgba(22,40,63,.22)" href="${esc(p.btnUrl)}" target="_blank" rel="noopener">${esc(p.btnText)}</a>`);
   if (p.video)
     cta.push(`<a class="btn btn-red" href="${esc(p.video)}" target="_blank" rel="noopener">▶ Regarder la vidéo</a>`);
-  document.getElementById('readCta').innerHTML = cta.join('');
+  document.getElementById('readCta').i
+nnerHTML = cta.join('');
 
   readOv.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -369,7 +377,8 @@ function cardOf(p){
     <div class="post-body">
       <div class="badge-row">
         ${p.pinned ? '<span class="pin-badge">📌 ÉPINGLÉ</span>' : ''}
-        ${isNew(p)  ? '<span class="new-badge">NOUVEAU</span>' : ''}
+        ${isNew(p)  ? '<sp
+an class="new-badge">NOUVEAU</span>' : ''}
         <span class="post-date" style="color:${esc(accent)}">${prettyDate(p.date)}</span>
       </div>
       <div class="post-title">${esc(p.title)}</div>
@@ -415,7 +424,8 @@ function render(){
     : `<a class="btn btn-yellow btn-lg" href="bubble_site_abonnements.html">🔒 Nécessite ${window.SUB_LABELS[first.sub||'basic']}</a>`;
 
   box.innerHTML = `
-    ${(userSub === 'free' && all.some(p => !canSee(p))) ? `
+ 
+   ${(userSub === 'free' && all.some(p => !canSee(p))) ? `
       <div class="invite fade-up">
         <span style="font-size:1.6rem">🫧</span>
         <p>Certains posts sont réservés aux abonnés. Crée ton compte, c'est gratuit !</p>
@@ -457,7 +467,8 @@ render();
          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const app = initializeApp({
-    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    apiKey:"AIzaSyAbtOtU3
+EZd3yccR8gPCef_wME-5qoNk3Y",
     authDomain:"bubble-game-fa894.firebaseapp.com",
     projectId:"bubble-game-fa894",
     storageBucket:"bubble-game-fa894.firebasestorage.app",
@@ -502,7 +513,8 @@ render();
         document.getElementById('navAvatar').innerHTML =
           `<img src="${(d.avatarId||'bully_1')}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
         document.getElementById('navName').textContent = user.displayName || user.email.split('@')[0];
-        document.getElementById('navSub').textContent  = window.SUB_LABELS[sub];
+        document.getElementById('navSub').textContent  = window.SUB_LABELS[su
+b];
         if (window.applyTheme) window.applyTheme(d.activeEffect || null);
         window.__frameGrants = (d.framesUnlocked || []).slice();
         window.applyFrame(sub, window.getLevel(d.xp || 0, sub).level, d.frameId || null);
