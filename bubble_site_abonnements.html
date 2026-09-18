@@ -51,8 +51,7 @@
     padding:5px 40px; box-shadow:0 2px 8px rgba(22,40,63,.2);
   }
 
-  .plan-head{ padding:20px 22px 0; tex
-t-align:center; }
+  .plan-head{ padding:20px 22px 0; text-align:center; }
   .plan-logo{ height:64px; object-fit:contain; margin:0 auto; display:block; }
   .plan-label{ font-size:.82rem; font-weight:700; color:var(--ink-soft); letter-spacing:1px; }
   .plan-name{ font-size:1.7rem; font-weight:800; letter-spacing:-.5px; margin-top:-2px; }
@@ -90,8 +89,7 @@ t-align:center; }
     width:36px; height:36px; border-radius:50%;
     background:var(--surface-2); border:2px dashed var(--line-strong);
     display:flex; align-items:center; justify-content:center;
-    font-size:.72
-rem; font-weight:800; color:var(--ink-soft);
+    font-size:.72rem; font-weight:800; color:var(--ink-soft);
   }
 
   .plan-foot{ padding:0 22px; margin-top:4px; }
@@ -112,7 +110,7 @@ rem; font-weight:800; color:var(--ink-soft);
   <div class="nav-links">
     <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
     <a href="bubble_site_abonnements.html" class="nav-btn yellow active"><span class="ico">✨</span>Abonnements</a>
-    <a href="jeux/index.html" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
     <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
     <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
     <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
@@ -129,8 +127,7 @@ rem; font-weight:800; color:var(--ink-soft);
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
   <a href="bubble_site_abonnements.html" class="nav-btn yellow active"><span class="ico">✨</span>Abonnements</a>
-  <a href="jeux/index.html" class="nav-btn gray"><span cl
-ass="ico">🎮</span>Games</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
   <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
   <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
   <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
@@ -175,8 +172,7 @@ ass="ico">🎮</span>Games</a>
       </div>
       <div class="features">
         <div class="feat"><span class="tick">✓</span>Création de compte</div>
-        <div class="feat"><span class=
-"tick">✓</span>Accès aux icônes premium</div>
+        <div class="feat"><span class="tick">✓</span>Accès aux icônes premium</div>
         <div class="feat"><span class="tick">✓</span>Tous les magazines (+)</div>
         <div class="feat"><span class="tick">✓</span>Accès aux scans (+)</div>
         <div class="feat"><span class="tick">✓</span>Patreon premium</div>
@@ -213,8 +209,7 @@ ass="ico">🎮</span>Games</a>
       </div>
       <div class="icons-block">
         <div class="icons-label">ICÔNES DÉBLOQUÉES</div>
-        <div class=
-"icons-row" data-icons="x"></div>
+        <div class="icons-row" data-icons="x"></div>
       </div>
       <div class="plan-foot">
         <a href="#" class="btn btn-blue btn-block" id="btn-x">❄️ Let's go !</a>
@@ -259,7 +254,6 @@ ass="ico">🎮</span>Games</a>
   /* ── Menu mobile ── */
   const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
   function closeMenu(){ menu.classList.remove('open'); ov.classList.remove('open'); }
-
   toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
   ov.addEventListener('click',closeMenu);
   window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
@@ -301,8 +295,7 @@ ass="ico">🎮</span>Games</a>
     try {
       const snap = await getDoc(doc(db,'users',user.uid));
       if (snap.exists()){
-        const d = sn
-ap.data();
+        const d = snap.data();
         sub = d.subscription || 'basic';
         const avatarId = d.avatarId || 'bully_1';
         document.getElementById('navAvatar').innerHTML =
@@ -346,8 +339,7 @@ ap.data();
     if (lvl >= 1) setBtn('btn-basic', 'btn btn-ghost btn-block is-locked', '✓ Inclus');
     if (lvl === 1) setBtn('btn-plus',  'btn btn-ghost btn-block is-locked', '✦ Ton offre actuelle');
     if (lvl >= 2) setBtn('btn-plus',  'btn btn-ghost btn-block is-locked', '✓ Inclus');
- 
-   if (lvl === 2) setBtn('btn-x',     'btn btn-ghost btn-block is-locked', '✦ Ton offre actuelle');
+    if (lvl === 2) setBtn('btn-x',     'btn btn-ghost btn-block is-locked', '✦ Ton offre actuelle');
     if (lvl >= 3){
       setBtn('btn-x',   'btn btn-ghost btn-block is-locked', '✓ Inclus');
       setBtn('btn-max', 'btn btn-ghost btn-block is-locked', '✦ Ton offre actuelle');

@@ -46,8 +46,7 @@
     box-shadow:0 2px 8px rgba(22,40,63,.2);
     transition:transform .15s;
   }
-  .edit-badge:hover{ 
-transform:scale(1.1); }
+  .edit-badge:hover{ transform:scale(1.1); }
 
   .hero-id{ flex:1; min-width:190px; }
   .hero-name{ font-size:1.7rem; font-weight:800; letter-spacing:-.5px; }
@@ -73,8 +72,7 @@ transform:scale(1.1); }
   .lvl-symbol.off{ opacity:.22; filter:grayscale(1); }
   .xp-track{ height:12px; background:var(--surface-2); border:2px solid var(--line); border-radius:999px; overflow:hidden; }
   .xp-fill{ height:100%; width:0%; border-radius:999px; background:var(--accent); transition:width .9s cubic-bezier(.34,1.56,.64,1); }
-  .xp-line{ display:flex; jus
-tify-content:space-between; gap:12px; margin-top:8px; font-size:.85rem; font-weight:700; color:var(--ink-soft); }
+  .xp-line{ display:flex; justify-content:space-between; gap:12px; margin-top:8px; font-size:.85rem; font-weight:700; color:var(--ink-soft); }
 
   /* ── RÉSUMÉ DES MISSIONS (sur la page) ── */
   .mis-card{
@@ -116,8 +114,7 @@ tify-content:space-between; gap:12px; margin-top:8px; font-size:.85rem; font-wei
   .mis-xp-line b{ color:var(--ink); }
 
   /* Onglets de catégorie */
-  .m
-is-tabs{ display:flex; gap:8px; padding:14px 22px; overflow-x:auto; scrollbar-width:none; }
+  .mis-tabs{ display:flex; gap:8px; padding:14px 22px; overflow-x:auto; scrollbar-width:none; }
   .mis-tabs::-webkit-scrollbar{ display:none; }
   .mis-tab{
     flex-shrink:0; padding:9px 16px; border-radius:999px;
@@ -153,8 +150,7 @@ is-tabs{ display:flex; gap:8px; padding:14px 22px; overflow-x:auto; scrollbar-wi
   .mis-txt{ flex:1; min-width:0; }
   .mis-label{ font-size:.98rem; font-weight:800; line-height:1.25; }
   .mis.done .mis-label{ color:var(--ink-soft); }
-  .mis-desc{ font-size:.83rem; font-weight:600; color:var(--ink-soft); margin-to
-p:1px; }
+  .mis-desc{ font-size:.83rem; font-weight:600; color:var(--ink-soft); margin-top:1px; }
   .mis-badge{
     flex-shrink:0; padding:5px 12px; border-radius:999px;
     font-size:.82rem; font-weight:800;
@@ -191,8 +187,7 @@ p:1px; }
   .xp-hit{ animation:xpShake .55s ease; }
   .xp-fill.flash{ filter:brightness(1.35); box-shadow:0 0 14px var(--accent); }
   .xp-gain-float{
-    position:fixed; z-index:50
-01; pointer-events:none;
+    position:fixed; z-index:5001; pointer-events:none;
     font-weight:800; font-size:1.05rem; color:var(--green-d);
     text-shadow:0 2px 6px rgba(255,255,255,.9);
     transition:transform .9s cubic-bezier(.2,.8,.3,1), opacity .9s;
@@ -228,8 +223,7 @@ p:1px; }
   .cat-note{ font-size:.72rem; font-weight:700; color:var(--ink-soft); margin-left:6px; }
 
   /* ── GRILLE DES CARTES ── */
-  .cards-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px
-; }
+  .cards-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
 
   /* ── SÉLECTEUR (overlay) ── */
   .picker-top{
@@ -271,8 +265,7 @@ p:1px; }
     width:74px; height:74px; border-radius:50%;
     background:var(--surface-2); border:3px solid var(--line);
     overflow:hidden; position:relative;
-    display:fl
-ex; align-items:center; justify-content:center; font-size:1.6rem;
+    display:flex; align-items:center; justify-content:center; font-size:1.6rem;
     transition:transform .16s, border-color .16s, box-shadow .16s;
   }
   .icon-item:not(.locked):hover .icon-bubble{ transform:translateY(-4px); border-color:var(--accent); }
@@ -312,8 +305,7 @@ ex; align-items:center; justify-content:center; font-size:1.6rem;
 
   @media(max-width:760px){
     .hero-card{ padding:20px 18px; }
-    .big-avatar{ width:86px; hei
-ght:86px; }
+    .big-avatar{ width:86px; height:86px; }
     .hero-name{ font-size:1.4rem; }
     .picker-top{ padding:16px; }
     .picker-actions{ width:100%; }
@@ -332,7 +324,7 @@ ght:86px; }
   <div class="nav-links">
     <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
     <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
-    <a href="jeux/index.html" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
     <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
     <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
     <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
@@ -349,9 +341,8 @@ ght:86px; }
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
   <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
-  <a href="jeux/index.html" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
-  <a href="bubble_
-site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+  <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
   <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
   <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
   <a href="bubble_site_profil.html"      class="nav-btn active"><span class="ico">🎭</span>Mon profil</a>
@@ -399,8 +390,7 @@ site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans<
     <div class="mis-card-ico">🎯</div>
     <div class="mis-card-txt">
       <h2>Missions</h2>
-      <p>C'est en accomplissant des missions que tu g
-agnes de l'XP et que tu montes de niveau.</p>
+      <p>C'est en accomplissant des missions que tu gagnes de l'XP et que tu montes de niveau.</p>
       <div class="mis-card-stat" id="misSummary">—</div>
     </div>
     <button class="btn btn-blue" onclick="openMissions()">Voir les missions</button>
@@ -447,8 +437,7 @@ agnes de l'XP et que tu montes de niveau.</p>
       <button class="btn btn-red btn-block" onclick="handleLogout()">🚪 Se déconnecter</button>
     </section>
 
- 
- </div>
+  </div>
 </main>
 
 <!-- ── POP-UP DES MISSIONS ── -->
@@ -501,8 +490,7 @@ agnes de l'XP et que tu montes de niveau.</p>
 </div>
 
 <div class="toast" id="toast"></div>
-<footer><span class="footer-logo">BUBBLE INC.</spa
-n> · © 2026</footer>
+<footer><span class="footer-logo">BUBBLE INC.</span> · © 2026</footer>
 
 <script>
   /* ── Menu mobile ── */
@@ -548,8 +536,7 @@ n> · © 2026</footer>
 
   /* La pastille d'une mission : le montant dépend de ton abonnement */
   function xpBadge(base){
-    const sub = window.__userSub |
-| 'basic';
+    const sub = window.__userSub || 'basic';
     return window.gainLabel(window.xpFor(base, sub), sub, 14);
   }
 
@@ -599,8 +586,7 @@ n> · © 2026</footer>
     }).join('');
     const genDone = gen.filter(m => m.daily ? st.lastLogin === today : done[m.id]).length;
 
-    /* JEUX 
-*/
+    /* JEUX */
     const games = window.GAMES || [];
     const firstXP = M.gameFirstXP ?? 50;
     const gameRows = games.length ? games.map(g => {
@@ -642,8 +628,7 @@ n> · © 2026</footer>
     scanRows += (M.scanMilestones || []).map(p => {
       const ok = !!done[p.id];
       add(ok, p.xp);
-      return misRow({ id:p.id, done:ok, label:p.label, desc:`${read.len
-gth} / ${p.count} scans lus`,
+      return misRow({ id:p.id, done:ok, label:p.label, desc:`${read.length} / ${p.count} scans lus`,
                       badge:xpBadge(p.xp), progress:Math.min(read.length / p.count * 100, 100) });
     }).join('');
 
@@ -688,8 +673,7 @@ gth} / ${p.count} scans lus`,
     /* Contenu : on garde la position de défilement */
     const box = document.getElementById('misScroll');
     const keep = box.scrollTop;
-    box.innerHT
-ML = sections.map(sec => {
+    box.innerHTML = sections.map(sec => {
       const cat = CATS.find(c => c.key === sec.key);
       return `<section class="mis-sec" id="cat-${sec.key}">
                 <div class="mis-sec-title">${cat.ico} ${cat.title}
@@ -705,6 +689,554 @@ ML = sections.map(sec => {
     const cur2 = window.currencyOf(sub);
     document.getElementById('misLevel').textContent = lv.level;
     document.getElementById('misXpNum').innerHTML   = `${st.xp || 0} ${window.currencyIcon(sub,14)}`;
-    const mf = document.getElemen
+    const mf = document.getElementById('misXpFill');
+    mf.style.width      = lv.progress + '%';
+    mf.style.background = `linear-gradient(90deg, ${cur2.grad[0]}, ${cur2.grad[1]})`;
 
-... [Content truncated]
+    /* Barre d'XP de la page */
+    if (window._renderLevelUI) window._renderLevelUI(st.xp || 0, sub);
+  }
+
+  /* ── Ouvrir / fermer ── */
+  function openMissions(){
+    document.getElementById('misOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (lastState) renderMissions(lastState);
+    syncTabs();
+  }
+  function closeMissions(){
+    document.getElementById('misOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function setActiveTab(key){
+    activeCat = key;
+    document.querySelectorAll('.mis-tab').forEach(t => t.classList.toggle('active', t.dataset.go === key));
+  }
+
+  function goToCat(key){
+    const sec = document.getElementById('cat-' + key);
+    const box = document.getElementById('misScroll');
+    if (!sec || !box) return;
+    /* On mesure à l'écran : plus fiable que offsetTop selon les parents positionnés */
+    const delta = sec.getBoundingClientRect().top - box.getBoundingClientRect().top;
+    box.scrollTo({ top: box.scrollTop + delta - 6, behavior:'smooth' });
+    setActiveTab(key);
+    box.dataset.locked = '1';                        /* on fige pendant le défilement animé */
+    clearTimeout(box._unlock);
+    box._unlock = setTimeout(() => { box.dataset.locked = ''; }, 700);
+  }
+
+  /* L'onglet actif suit le défilement */
+  function syncTabs(){
+    const box = document.getElementById('misScroll');
+    if (!box || box.dataset.hooked) return;
+    box.dataset.hooked = '1';
+    box.addEventListener('scroll', () => {
+      if (box.dataset.locked) return;
+      const top = box.getBoundingClientRect().top;
+      let current = CATS[0].key;
+      CATS.forEach(c => {
+        const el = document.getElementById('cat-' + c.key);
+        if (el && el.getBoundingClientRect().top - top <= 70) current = c.key;
+      });
+      setActiveTab(current);
+    }, { passive:true });
+  }
+
+  /* ══════════════════════════════════════
+     ANIMATION : des bulles filent vers la barre d'XP
+  ══════════════════════════════════════ */
+  function bubblesToXP(xp, missionIds){
+    const popupOpen = document.getElementById('misOverlay').classList.contains('open');
+    const target = popupOpen ? document.getElementById('misXpTrack')
+                             : document.querySelector('.xp-track');
+    if (!target) return;
+
+    /* D'où partent les bulles : de la mission validée si on la voit, sinon du centre */
+    let from = null;
+    if (popupOpen && missionIds && missionIds.length){
+      const row = document.querySelector(`.mis[data-mission="${missionIds[0]}"]`);
+      if (row){
+        row.classList.add('just-done');
+        setTimeout(() => row.classList.remove('just-done'), 700);
+        from = row.getBoundingClientRect();
+      }
+    }
+    const t = target.getBoundingClientRect();
+    if (!from) from = { left:innerWidth/2 - 20, top:innerHeight/2 - 20, width:40, height:40 };
+
+    const fx = from.left + from.width / 2;
+    const fy = from.top  + from.height / 2;
+    const tx = t.left + t.width * .35;
+    const ty = t.top  + t.height / 2;
+
+    const count = Math.min(4 + Math.round(xp / 20), 16);
+    for (let i = 0; i < count; i++){
+      const b = document.createElement('div');
+      b.className = 'xp-bubble';
+      const size = 9 + Math.random() * 15;
+      const jx = (Math.random() - .5) * 90;
+      const jy = (Math.random() - .5) * 50;
+      b.style.cssText =
+        `width:${size}px;height:${size}px;left:${fx + jx}px;top:${fy + jy}px;opacity:0;` +
+        `transition:transform .85s cubic-bezier(.45,.05,.35,1), opacity .85s;` +
+        `transition-delay:${i * 45}ms`;
+      document.body.appendChild(b);
+
+      requestAnimationFrame(() => {
+        b.style.opacity = '1';
+        b.style.transform = `translate(${tx - fx - jx}px, ${ty - fy - jy}px) scale(.35)`;
+      });
+      setTimeout(() => { b.style.opacity = '0'; }, 700 + i * 45);
+      setTimeout(() => b.remove(), 1100 + i * 45);
+    }
+
+    /* La barre encaisse : elle tremble et s'illumine */
+    setTimeout(() => {
+      target.classList.add('xp-hit');
+      const fill = target.querySelector('.xp-fill');
+      if (fill) fill.classList.add('flash');
+      setTimeout(() => { target.classList.remove('xp-hit'); fill && fill.classList.remove('flash'); }, 600);
+
+      /* Le "+X XP" qui s'envole */
+      const f = document.createElement('div');
+      f.className = 'xp-gain-float';
+      f.textContent = '+' + xp + ' XP';
+      f.style.left = (tx - 20) + 'px';
+      f.style.top  = (ty - 34) + 'px';
+      document.body.appendChild(f);
+      requestAnimationFrame(() => { f.style.transform = 'translateY(-34px)'; f.style.opacity = '0'; });
+      setTimeout(() => f.remove(), 1000);
+    }, 620);
+  }
+
+  /* ── Branchement au moteur ── */
+  function hookMissions(){
+    if (!window.BubbleMissions) return setTimeout(hookMissions, 120);
+    window.BubbleMissions.silent = true;          /* la page gère son propre affichage */
+    window.BubbleMissions.onChange(renderMissions);
+    window.BubbleMissions.onGain(({ xp, missions }) => bubblesToXP(xp, missions));
+  }
+  hookMissions();
+
+  /* Fermeture du pop-up */
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMissions(); });
+  document.getElementById('misOverlay').addEventListener('click', e => {
+    if (e.target.id === 'misOverlay') closeMissions();
+  });
+
+  /* Ponts vers le module (les onclick du HTML) */
+  function openPicker()      { window._openPicker      && window._openPicker(); }
+  function closePicker()     { window._closePicker     && window._closePicker(); }
+  function confirmSelection(){ window._confirmSelection&& window._confirmSelection(); }
+  function savePseudo()      { window._savePseudo      && window._savePseudo(); }
+  function savePassword()    { window._savePassword    && window._savePassword(); }
+  function handleLogout()    { window._handleLogout    && window._handleLogout(); }
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut, updatePassword, updateProfile,
+           EmailAuthProvider, reauthenticateWithCredential }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey:"AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+    authDomain:"bubble-game-fa894.firebaseapp.com",
+    projectId:"bubble-game-fa894",
+    storageBucket:"bubble-game-fa894.firebasestorage.app",
+    messagingSenderId:"60256418096",
+    appId:"1:60256418096:web:dbdc555819793d8c20f0f5"
+  });
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  const SUB_DESCS = {
+    basic:"Accès gratuit — les icônes classiques et les scans offerts.",
+    plus: "Abonné Bubble+ — icônes premium, magazines et scans (+).",
+    x:    "Abonné Bubble X — icônes stellaires, scans (X) et Bubble Game.",
+    max:  "Abonné Bubble MAX — tout est inclus, accès prioritaire partout.",
+  };
+
+  let currentUser    = null;
+  let userSub        = 'basic';
+  let activeIconId   = 'bully_1';
+  let activeEffect   = null;
+  let unlockedFx     = [];
+  let selectedIcon   = null;
+  let selectedEffect = null;      /* null = inchangé, 'none' = retirer */
+  let activeFrame    = null;      /* le cadre choisi (id) */
+  let selectedFrame  = null;
+
+  const canUse = sub => window.SUB_ORDER[userSub] >= window.SUB_ORDER[sub];
+  /* Une icône est utilisable si l'abonnement suffit OU si un admin l'a offerte */
+  const iconOk = icon => canUse(icon.sub) || (window.__iconGrants || []).includes(icon.id);
+
+  /* ── Affichage ── */
+  function setAvatarUI(icon){
+    const html = `<img src="${icon.file}" alt="${icon.name}" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
+    document.getElementById('bigAvatar').innerHTML = html;
+    document.getElementById('navAvatar').innerHTML = html;
+    /* ⚠️ innerHTML efface le cadre SVG : on le redessine juste après */
+    window.applyFrame(userSub, window.__level || 1, activeFrame);
+  }
+
+  function setSubUI(sub){
+    const label = window.SUB_LABELS[sub] || 'BASIC';
+    document.getElementById('subChip').textContent = label;
+    document.getElementById('subChip').className   = 'sub-chip ' + sub;
+    const cur = window.currencyOf(sub);
+    const cc  = document.getElementById('curChip');
+    if (cc) cc.innerHTML = `${window.currencyIcon(sub,15)} Tes ${cur.name}`;
+    document.getElementById('navSub').textContent  = label;
+    document.getElementById('subDesc').textContent = SUB_DESCS[sub] || SUB_DESCS.basic;
+  }
+
+  function setFxChip(type){
+    const fx = window.ALL_EFFECTS.find(e => e.type === type);
+    document.getElementById('fxChip').textContent = fx ? `${fx.emoji} ${fx.label}` : '✨ Aucun effet';
+  }
+
+  function renderLevel(xp, sub){
+    const lv  = window.getLevel(xp, sub);
+    const cfg = lv.cfg;
+    document.getElementById('levelNum').innerHTML = `${lv.level} <small>/ ${lv.maxLevel}</small>`;
+    document.getElementById('levelSymbols').innerHTML = window.renderLevelBadges(lv.level, sub);
+    const cur  = window.currencyOf(sub);
+    const fill = document.getElementById('xpFill');
+    fill.style.width      = lv.progress + '%';
+    fill.style.background = `linear-gradient(90deg, ${cur.grad[0]}, ${cur.grad[1]})`;
+    document.getElementById('xpCurrent').innerHTML = window.amountLabel(xp, sub, 15);
+    document.getElementById('xpNext').innerHTML  = lv.isMax
+      ? 'Palier maximum atteint'
+      : `encore ${lv.xpNeeded} ${window.currencyIcon(sub,14)} pour le niveau ${lv.level + 1}`;
+    document.getElementById('levelMax').style.display = lv.isMax ? 'inline-block' : 'none';
+    window.applyFrame(sub, lv.level, activeFrame);
+    window.__level = lv.level;
+  }
+  /* Le moteur de missions s'en sert pour remettre le niveau à jour sans Ctrl+R */
+  window._renderLevelUI = renderLevel;
+
+  /* ── Connexion ── */
+  onAuthStateChanged(auth, async user => {
+    if (!user){ window.location.href = './login.html'; return; }
+    currentUser = user;
+
+    const pseudo = user.displayName || user.email.split('@')[0];
+    document.getElementById('heroName').textContent    = pseudo;
+    document.getElementById('heroMail').textContent    = user.email;
+    document.getElementById('navName').textContent     = pseudo;
+    document.getElementById('pseudoInput').value       = pseudo;
+
+    try {
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if (snap.exists()){
+        const d = snap.data();
+        userSub      = d.subscription || 'basic';
+        window.__userSub = userSub;
+        activeIconId = d.avatarId     || 'bully_1';
+        activeEffect = d.activeEffect || null;
+        activeFrame  = d.frameId      || null;
+        unlockedFx   = (d.gachaEffects || []).slice();
+        /* Cadres offerts par un admin (page patesbolognaise.html) */
+        window.__frameGrants = (d.framesUnlocked || []).slice();
+        window.__iconGrants  = (d.iconsUnlocked  || []).slice();
+        window.__collectionCount = (d.gachaCollection || []).length;
+
+        /* Déblocage rétroactif : une carte possédée débloque son effet */
+        const owned = (d.gachaCollection || []).map(String);
+        window.ALL_EFFECTS.forEach(fx => {
+          if (fx.cardId && owned.includes(String(fx.cardId)) && !unlockedFx.includes(fx.type))
+            unlockedFx.push(fx.type);
+        });
+
+        renderLevel(d.xp || 0, userSub);
+      } else {
+        await setDoc(doc(db,'users',user.uid), {
+          pseudo: pseudo,
+          subscription: 'basic',
+          avatarId: 'bully_1',
+          xp: 0,
+          activeEffect: null,
+          gachaCollection: [],
+          gachaHistory: [],
+          gachaEffects: [],
+          framesUnlocked: [],
+          iconsUnlocked: []
+        }, { merge:true });
+        renderLevel(0, 'basic');
+      }
+      }
+    } catch(e){ toast('⚠️ ' + e.message, 'err'); }
+
+    setSubUI(userSub);
+    setFxChip(activeEffect);
+    const icon = window.findIcon(activeIconId) || window.ALL_ICONS[0];
+    setAvatarUI(icon);
+
+    if (window.applyTheme) window.applyTheme(activeEffect);
+  });
+
+  /* ── Sélecteur ── */
+  window._openPicker = function(){
+    selectedIcon   = window.findIcon(activeIconId) || window.ALL_ICONS[0];
+    selectedEffect = activeEffect;
+    selectedFrame  = activeFrame;
+    buildIcons();
+    buildEffects();
+    buildFrames();
+    updatePreview();
+    document.getElementById('pickerOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window._closePicker = function(){
+    document.getElementById('pickerOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    if (window.applyTheme) window.applyTheme(activeEffect);   /* annule l'aperçu */
+    window.applyFrame(userSub, window.__level || 1, activeFrame);
+  };
+
+  /* ── Les cadres : toutes les séries jusqu'à ton abonnement ── */
+  const TIER_TITLES = {
+    basic: '🫧 Série BASIC',
+    plus:  '✦ Série BUBBLE+',
+    x:     '💎 Série BUBBLE X',
+    max:   '🔮 Série BUBBLE MAX',
+    admin: '🛠️ Série ADMIN',
+  };
+
+  function buildFrames(){
+    const panel = document.getElementById('panel-frames');
+    const level = window.__level || 1;
+    const list  = window.framesFor(userSub);
+    panel.innerHTML = '';
+
+    const ic = window.findIcon(selectedIcon?.id || activeIconId) || { file:'bully_1.png', name:'' };
+
+    /* On regroupe par série : ton abonnement te donne aussi ceux d'en dessous */
+    const byTier = {};
+    list.forEach(f => (byTier[f.tier] = byTier[f.tier] || []).push(f));
+
+    Object.keys(byTier).forEach(tier => {
+      const t = document.createElement('div');
+      t.className = 'cat-title';
+      t.innerHTML = (TIER_TITLES[tier] || tier)
+        + (tier !== userSub && tier !== 'admin'
+            ? ' <span class="cat-note">déjà tout débloqué 🎁</span>'
+            : ' <span class="cat-note">à débloquer en montant de niveau</span>');
+      panel.appendChild(t);
+
+      const grid = document.createElement('div');
+      grid.className = 'frm-grid';
+
+      byTier[tier].forEach(f => {
+        const ok    = window.frameUnlocked(f, level, userSub);
+        const bonus = window.frameIsBonus(f, userSub);
+        const item  = document.createElement('div');
+        item.className = 'frm-item' + (ok ? '' : ' locked') + (f.id === selectedFrame ? ' selected' : '');
+        item.innerHTML = `
+          <div class="frm-av"><img src="${ic.file}" alt=""></div>
+          <div class="frm-name">${f.name}</div>
+          ${bonus ? `<div class="frm-gift">🎁 offert</div>`
+                  : ok ? `<div class="frm-lvl">niveau ${f.level}</div>`
+                       : `<div class="frm-lock">🔒 niveau ${f.level}</div>`}`;
+
+        grid.appendChild(item);
+        window.drawFrame(item.querySelector('.frm-av'), f.id, userSub);
+
+        if (ok){
+          item.addEventListener('click', () => {
+            selectedFrame = f.id;
+            panel.querySelectorAll('.frm-item').forEach(el => el.classList.remove('selected'));
+            item.classList.add('selected');
+            updatePreview();
+          });
+        }
+      });
+      panel.appendChild(grid);
+    });
+  }
+
+  function updatePreview(){
+    const pb = document.getElementById('previewBubble');
+    pb.innerHTML = selectedIcon
+      ? `<img src="${selectedIcon.file}" alt="${selectedIcon.name}" onerror="this.replaceWith(document.createTextNode('🫧'))">`
+      : '🫧';
+    document.getElementById('previewName').textContent =
+      selectedIcon ? selectedIcon.name : 'Choisis une icône';
+    window.drawFrame(pb, selectedFrame, userSub);
+  }
+
+  function buildIcons(){
+    const panel = document.getElementById('panel-icons');
+    panel.innerHTML = '';
+    for (const [cat, icons] of Object.entries(window.CATALOGUE)){
+      const t = document.createElement('div');
+      t.className = 'cat-title'; t.textContent = cat;
+      panel.appendChild(t);
+
+      const grid = document.createElement('div');
+      grid.className = 'icons-grid';
+
+      icons.forEach(icon => {
+        const locked = !iconOk(icon);
+        const item = document.createElement('div');
+        item.className = 'icon-item' + (locked ? ' locked' : '')
+                       + (icon.id === selectedIcon?.id ? ' selected' : '');
+        item.innerHTML = `
+          <div class="icon-bubble">
+            <img src="${icon.file}" alt="${icon.name}" onerror="this.replaceWith(document.createTextNode('🫧'))">
+            ${locked ? '<div class="lock-overlay">🔒</div>' : ''}
+          </div>
+          <div class="icon-name">${icon.name}</div>
+          ${locked ? `<span class="lock-tag">${window.SUB_LABELS[icon.sub]}</span>` : ''}`;
+
+        if (!locked){
+          item.addEventListener('click', () => {
+            selectedIcon = icon;
+            panel.querySelectorAll('.icon-item').forEach(el => el.classList.remove('selected'));
+            item.classList.add('selected');
+            updatePreview();
+          });
+        }
+        grid.appendChild(item);
+      });
+      panel.appendChild(grid);
+    }
+  }
+
+  function buildEffects(){
+    const panel = document.getElementById('panel-effects');
+    panel.innerHTML = '';
+
+    const t = document.createElement('div');
+    t.className = 'cat-title';
+    t.textContent = 'Effets débloqués en ouvrant des coffres';
+    panel.appendChild(t);
+
+    const grid = document.createElement('div');
+    grid.className = 'fx-grid';
+
+    /* Option "aucun" */
+    const none = document.createElement('div');
+    none.className = 'fx-item' + (!selectedEffect || selectedEffect === 'none' ? ' selected' : '');
+    none.innerHTML = `<div class="fx-dot" style="background:var(--surface-2)">🚫</div>
+                      <div class="fx-name">Aucun</div>`;
+    none.addEventListener('click', () => {
+      selectedEffect = 'none';
+      grid.querySelectorAll('.fx-item').forEach(el => el.classList.remove('selected'));
+      none.classList.add('selected');
+      if (window.applyTheme) window.applyTheme(null);
+    });
+    grid.appendChild(none);
+
+    window.ALL_EFFECTS.forEach(fx => {
+      const unlocked = unlockedFx.includes(fx.type);
+      const item = document.createElement('div');
+      item.className = 'fx-item' + (unlocked ? '' : ' locked')
+                     + (selectedEffect === fx.type ? ' selected' : '');
+      const soft = fx.color + '22';
+      item.innerHTML = `
+        <div class="fx-dot" style="background:${soft};color:${fx.color}">${fx.emoji}</div>
+        <div class="fx-name" style="color:${unlocked ? fx.color : 'var(--ink-soft)'}">${fx.label}</div>
+        ${unlocked ? '' : '<div class="fx-hint">🎁 Coffre</div>'}`;
+
+      if (unlocked){
+        item.addEventListener('click', () => {
+          selectedEffect = fx.type;
+          grid.querySelectorAll('.fx-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          if (window.applyTheme) window.applyTheme(fx.type);   /* aperçu en direct */
+        });
+      }
+      grid.appendChild(item);
+    });
+
+    panel.appendChild(grid);
+  }
+
+  /* ── Enregistrer icône + effet ── */
+  window._confirmSelection = async function(){
+    if (!currentUser) return;
+    const updates = {};
+    if (selectedIcon) updates.avatarId = selectedIcon.id;
+    if (selectedEffect !== null) updates.activeEffect = selectedEffect === 'none' ? null : selectedEffect;
+    if (selectedFrame) updates.frameId = selectedFrame;
+
+    /* On enregistre aussi les effets débloqués rétroactivement */
+    updates.gachaEffects = unlockedFx;
+
+    try {
+      await setDoc(doc(db,'users',currentUser.uid), updates, { merge:true });
+      if (selectedIcon){ activeIconId = selectedIcon.id; setAvatarUI(selectedIcon); }
+      if (selectedEffect !== null) activeEffect = selectedEffect === 'none' ? null : selectedEffect;
+      if (selectedFrame){ activeFrame = selectedFrame; window.applyFrame(userSub, window.__level || 1, activeFrame); }
+      setFxChip(activeEffect);
+      if (window.applyTheme) window.applyTheme(activeEffect);
+      document.getElementById('pickerOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+      toast('✅ Profil mis à jour !', 'ok');
+    } catch(e){ toast('❌ ' + e.message, 'err'); }
+  };
+
+  /* ── Pseudo ── */
+  window._savePseudo = async function(){
+    const p = document.getElementById('pseudoInput').value.trim();
+    if (!p){ toast('⚠️ Entre un pseudo !', 'err'); return; }
+    try {
+      await updateProfile(currentUser, { displayName:p });
+      await setDoc(doc(db,'users',currentUser.uid), { pseudo:p }, { merge:true });
+      document.getElementById('heroName').textContent = p;
+      document.getElementById('navName').textContent  = p;
+      toast('✅ Pseudo mis à jour !', 'ok');
+    } catch(e){ toast('❌ ' + e.message, 'err'); }
+  };
+
+  /* ── Mot de passe ── */
+  window._savePassword = async function(){
+    const a = document.getElementById('newPwd').value;
+    const b = document.getElementById('confirmPwd').value;
+    if (!a || !b)      { toast('⚠️ Remplis les deux champs !', 'err'); return; }
+    if (a !== b)       { toast('❌ Les mots de passe ne correspondent pas !', 'err'); return; }
+    if (a.length < 6)  { toast('❌ Minimum 6 caractères !', 'err'); return; }
+
+    const clear = () => {
+      document.getElementById('newPwd').value = '';
+      document.getElementById('confirmPwd').value = '';
+    };
+
+    try {
+      await updatePassword(currentUser, a);
+      clear(); toast('✅ Mot de passe changé !', 'ok');
+    } catch(e){
+      if (e.code === 'auth/requires-recent-login'){
+        const old = prompt('Entre ton mot de passe actuel pour confirmer :');
+        if (!old) return;
+        try {
+          const cred = EmailAuthProvider.credential(currentUser.email, old);
+          await reauthenticateWithCredential(currentUser, cred);
+          await updatePassword(currentUser, a);
+          clear(); toast('✅ Mot de passe changé !', 'ok');
+        } catch(e2){ toast('❌ ' + e2.message, 'err'); }
+      } else toast('❌ ' + e.message, 'err');
+    }
+  };
+
+  /* ── Déconnexion ── */
+  window._handleLogout = async function(){
+    await signOut(auth);
+    window.location.href = './login.html';
+  };
+
+  /* ── Fermeture du sélecteur ── */
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') window._closePicker(); });
+  document.getElementById('pickerOverlay').addEventListener('click', e => {
+    if (e.target.id === 'pickerOverlay') window._closePicker();
+  });
+</script>
+
+</body>
+</html>

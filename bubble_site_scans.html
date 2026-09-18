@@ -34,8 +34,7 @@
   .vedette-logo{ max-height:78px; max-width:80%; object-fit:contain; display:block; align-self:flex-start; }
   .vedette-title{ font-size:clamp(1.5rem,3vw,2.1rem); font-weight:800; letter-spacing:-.5px; line-height:1.1; }
   .vedette-desc{ font-size:.98rem; font-weight:600; color:var(--ink-soft); line-height:1.55; max-width:60ch; }
-  .vedette-meta{ font-size:.85
-rem; font-weight:700; color:var(--ink-soft); }
+  .vedette-meta{ font-size:.85rem; font-weight:700; color:var(--ink-soft); }
   .vedette-actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:4px; }
 
   /* ── RANGÉES ── */
@@ -79,8 +78,7 @@ rem; font-weight:700; color:var(--ink-soft); }
   .scan-badge.plus{ background:var(--yellow); color:#4A3200; }
   .scan-badge.x   { background:#38BDF8; color:#00263D; }
   .scan-badge.max { background:var(--purple); color:#fff; }
-  .scan-badge.free,.scan-badge.basic{ bac
-kground:var(--surface); color:var(--ink-soft); border:1px solid var(--line-strong); }
+  .scan-badge.free,.scan-badge.basic{ background:var(--surface); color:var(--ink-soft); border:1px solid var(--line-strong); }
   .scan-name{ margin-top:9px; font-size:.93rem; font-weight:800; line-height:1.25; }
   .scan-meta{ font-size:.78rem; font-weight:700; color:var(--ink-soft); margin-top:1px; }
 
@@ -115,8 +113,7 @@ kground:var(--surface); color:var(--ink-soft); border:1px solid var(--line-stron
 
   @media(max-width:760px){
     .vedette{ grid-template-columns:1fr; }
-    .vedette-cover{ min-height
-:170px; max-height:190px; }
+    .vedette-cover{ min-height:170px; max-height:190px; }
     .vedette-body{ padding:20px; }
     .vedette-logo{ max-height:54px; }
     .vedette-desc{ display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
@@ -134,7 +131,7 @@ kground:var(--surface); color:var(--ink-soft); border:1px solid var(--line-stron
   <div class="nav-links">
     <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
     <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
-    <a href="jeux/index.html" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
     <a href="bubble_site_scans.html"       class="nav-btn green active"><span class="ico">📜</span>Scans</a>
     <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
     <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
@@ -151,8 +148,7 @@ kground:var(--surface); color:var(--ink-soft); border:1px solid var(--line-stron
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
   <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
-  <a href="jeux/index.html" class="nav-btn gray"><s
-pan class="ico">🎮</span>Games</a>
+  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
   <a href="bubble_site_scans.html"       class="nav-btn green active"><span class="ico">📜</span>Scans</a>
   <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
   <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
@@ -204,8 +200,7 @@ pan class="ico">🎮</span>Games</a>
 <script>
 /* ── Menu mobile ── */
 const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
-function closeMenu(){ menu.class
-List.remove('open'); ov.classList.remove('open'); }
+function closeMenu(){ menu.classList.remove('open'); ov.classList.remove('open'); }
 toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
 ov.addEventListener('click',closeMenu);
 window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
@@ -257,8 +252,7 @@ function makeResumeCard(scan, prog){
   const label = prog.total ? `Page ${prog.page} / ${prog.total}` : `Page ${prog.page}`;
   el.innerHTML = `
     <div class="scan-poster">${coverHTML(scan)}</div>
-    <div class="scan-name">${scan.title}<
-/div>
+    <div class="scan-name">${scan.title}</div>
     <div class="scan-meta">${label}</div>
     <div class="resume-bar"><i style="width:${prog.pct}%"></i></div>`;
   el.addEventListener('click', () => {
@@ -308,7 +302,6 @@ function startReading(id){
   if (!scan) return;
   /* On marque le scan comme "commencé" ; c'est le lecteur qui enregistre
      ensuite la vraie page au fil de la lecture. */
-
   if (!window.progressOf(id)) window.saveProgress(id, 1, 0);
   closeSheet();
   if (scan.pdf) location.href = readerURL(scan);
@@ -354,8 +347,7 @@ function buildRows(){
     const row = document.getElementById(map[key]);
     row.innerHTML = '';
     window.SCANS[key].forEach(s => row.appendChild(makeCard(s)));
-    document.getElementById(co
-unts[key]).textContent =
+    document.getElementById(counts[key]).textContent =
       window.SCANS[key].length + (window.SCANS[key].length > 1 ? ' titres' : ' titre');
   }
   buildVedette();
@@ -407,8 +399,7 @@ buildRows();
         const sub = d.subscription || 'basic';
         const avatarId = d.avatarId || 'bully_1';
         document.getElementById('navAvatar').innerHTML =
-          `<i
-mg src="${avatarId}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
+          `<img src="${avatarId}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
         document.getElementById('navName').textContent = user.displayName || user.email.split('@')[0];
         document.getElementById('navSub').textContent  = window.SUB_LABELS[sub];
         if (window.applyTheme) window.applyTheme(d.activeEffect || null);
