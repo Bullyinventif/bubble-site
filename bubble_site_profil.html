@@ -17,52 +17,25 @@
 <script type="module" src="bubble_scores.js"></script>
 <style>
   main{ max-width:900px; }
-
-  /* ── CARTE PRINCIPALE ── */
-  .hero-card{
-    background:var(--surface); border:2px solid var(--line);
-    border-radius:var(--r-xl); padding:26px 28px;
-    box-shadow:var(--shadow-1); margin-bottom:16px;
-  }
+  .hero-card{ background:var(--surface); border:2px solid var(--line); border-radius:var(--r-xl); padding:26px 28px; box-shadow:var(--shadow-1); margin-bottom:16px; }
   .hero-row{ display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
-  .big-avatar{
-    width:104px; height:104px; border-radius:50%;
-    background:linear-gradient(160deg,#EAF4FF,#C6E1F8);
-    border:3px solid var(--line-strong);
-    display:flex; align-items:center; justify-content:center;
-    font-size:2.6rem; cursor:pointer; flex-shrink:0;
-    transition:transform .2s;
-  }
+  .big-avatar{ width:104px; height:104px; border-radius:50%; background:linear-gradient(160deg,#EAF4FF,#C6E1F8); border:3px solid var(--line-strong); display:flex; align-items:center; justify-content:center; font-size:2.6rem; cursor:pointer; flex-shrink:0; transition:transform .2s; }
   .big-avatar:hover{ transform:scale(1.04); }
   .big-avatar img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
   .avatar-wrap{ position:relative; flex-shrink:0; }
-  .edit-badge{
-    position:absolute; bottom:2px; right:2px;
-    width:34px; height:34px; border-radius:50%;
-    background:var(--yellow); color:#4A3200;
-    border:3px solid var(--surface);
-    display:flex; align-items:center; justify-content:center;
-    font-size:.9rem; cursor:pointer;
-    box-shadow:0 2px 8px rgba(22,40,63,.2);
-    transition:transform .15s;
-  }
-  .edit-badge:ho
-ver{ 
-transform:scale(1.1); }
-
+  .edit-badge{ position:absolute; bottom:2px; right:2px; width:34px; height:34px; border-radius:50%; background:var(--yellow); color:#4A3200; border:3px solid var(--surface); display:flex; align-items:center; justify-content:center; font-size:.9rem; cursor:pointer; box-shadow:0 2px 8px rgba(22,40,63,.2); transition:transform .15s; }
+  .edit-badge:hover{ transform:scale(1.1); }
   .hero-id{ flex:1; min-width:190px; }
   .hero-name{ font-size:1.7rem; font-weight:800; letter-spacing:-.5px; }
   .hero-mail{ font-size:.88rem; font-weight:600; color:var(--ink-soft); margin-top:1px; }
   .hero-chips{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
-
   .sub-chip{ padding:6px 14px; border-radius:999px; font-size:.8rem; font-weight:800; border:2px solid; }
-  .sub-chip.basic{ background:rgba(43,183,242,.10); color:var(--blue-d);   border-color:rgba(43,183,242,.35); }
-  .sub-chip.plus { background:rgba(255,197,61,.16); color:#9C6D00;         border-color:rgba(255,197,61,.45); }
-  .sub-chip.x    { background:rgba(56,189,248,.14); color:#0284C7;         border-color:rgba(56,189,248,.4); }
-  .sub-chip.max  { background:rgba(168,85,247,.12); color:var(--purple-d); border-color:rgba(168,85,247,.35); }
-  .sub-chip.admin{ background:rgba(255,95,162,.14); color:var(--pink-d);   border-color:rgba(255,95,162,.4); }
-
-  /* ── NIVEAU ── */
+  .sub-chip.basic{ background:rgba(43,183,242,.10); color:var(--blue-d); border-color:rgba(43,183,242,.35); }
+  .sub-chip.plus{ background:rgba(255,197,61,.16); color:#9C6D00; border-color:rgba(255,197,61,.45); }
+  .sub-chip.x{ background:rgba(56,189,248,.14); color:#0284C7; border-color:rgba(56,189,248,.4); }
+  .sub-chip.max{ background:rgba(168,85,247,.12); color:var(--purple-d); border-color:rgba(168,85,247,.35); }
+  .sub-chip.admin{ background:rgba(255,95,162,.14); color:var(--pink-d); border-color:rgba(255,95,162,.4); }
+  .chip{ display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; font-size:.8rem; font-weight:800; background:var(--surface-2); border:2px solid var(--line); color:var(--ink-soft); }
   .level-box{ margin-top:22px; padding-top:20px; border-top:2px solid var(--line); }
   .level-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
   .level-head h3{ font-size:1rem; font-weight:800; }
@@ -74,254 +47,110 @@ transform:scale(1.1); }
   .lvl-symbol.off{ opacity:.22; filter:grayscale(1); }
   .xp-track{ height:12px; background:var(--surface-2); border:2px solid var(--line); border-radius:999px; overflow:hidden; }
   .xp-fill{ height:100%; width:0%; border-radius:999px; background:var(--accent); transition:width .9s cubic-bezier(.34,1.56,.64,1); }
-  .xp-line{ display:fle
-x; jus
-tify-content:space-between; gap:12px; margin-top:8px; font-size:.85rem; font-weight:700; color:var(--ink-soft); }
-
-  /* ── RÉSUMÉ DES MISSIONS (sur la page) ── */
-  .mis-card{
-    background:var(--surface); border:2px solid var(--line);
-    border-radius:var(--r-lg); padding:20px 22px; box-shadow:var(--shadow-1);
-    margin-bottom:16px; display:flex; align-items:center; gap:18px; flex-wrap:wrap;
-  }
-  .mis-card-ico{
-    width:52px; height:52px; border-radius:16px; flex-shrink:0;
-    background:var(--accent-soft); display:flex; align-items:center;
-    justify-content:center; font-size:1.5rem;
-  }
+  .xp-line{ display:flex; justify-content:space-between; gap:12px; margin-top:8px; font-size:.85rem; font-weight:700; color:var(--ink-soft); }
+  .mis-card{ background:var(--surface); border:2px solid var(--line); border-radius:var(--r-lg); padding:20px 22px; box-shadow:var(--shadow-1); margin-bottom:16px; display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+  .mis-card-ico{ width:52px; height:52px; border-radius:16px; flex-shrink:0; background:var(--accent-soft); display:flex; align-items:center; justify-content:center; font-size:1.5rem; }
   .mis-card-txt{ flex:1; min-width:170px; }
   .mis-card-txt h2{ font-size:1.15rem; font-weight:800; }
   .mis-card-txt p{ font-size:.9rem; font-weight:600; color:var(--ink-soft); margin-top:2px; }
   .mis-card-stat{ font-size:.85rem; font-weight:800; color:var(--green-d); margin-top:6px; }
-
-  /* ── LE POP-UP ── */
   .mis-sheet{ width:min(680px,96vw); max-height:88vh; }
   .mis-top{ flex-shrink:0; border-bottom:2px solid var(--line); }
   .mis-top-row{ display:flex; align-items:center; gap:12px; padding:20px 22px 0; }
   .mis-top-row h2{ font-size:1.25rem; font-weight:800; flex:1; }
-  .mis-total{
-    padding:5px 13px; border-radius:999px;
-    background:rgba(70,206,98,.14); color:var(--green-d);
-    font-size:.82rem; font-weight:800; border:2px solid rgba(70,206,98,.3);
-    white-space:nowrap;
-  }
-  .mis-close{
-    width:34px; height:34px; border-radius:50%; flex-shrink:0;
-    border:2px solid var(--line); background:var(--surface);
-    font-size:.95rem; font-weight:800; color:var(--ink-soft); cursor:pointer;
-  }
+  .mis-total{ padding:5px 13px; border-radius:999px; background:rgba(70,206,98,.14); color:var(--green-d); font-size:.82rem; font-weight:800; border:2px solid rgba(70,206,98,.3); white-space:nowrap; }
+  .mis-close{ width:34px; height:34px; border-radius:50%; flex-shrink:0; border:2px solid var(--line); background:var(--surface); font-size:.95rem; font-weight:800; color:var(--ink-soft); cursor:pointer; }
   .mis-close:hover{ background:var(--surface-2); color:var(--ink); }
-
-  /* Mini barre d'XP dans le pop-up (cible des bulles) */
   .mis-xp{ padding:12px 22px 0; }
   .mis-xp-line{ display:flex; justify-content:space-between; font-size:.82rem; font-weight:800; color:var(--ink-soft); margin-bottom:6px; }
   .mis-xp-line b{ color:var(--ink); }
-
-  /* Onglets de catégorie 
-*/
-  .m
-is-tabs{ display:flex; gap:8px; padding:14px 22px; overflow-x:auto; scrollbar-width:none; }
+  .mis-tabs{ display:flex; gap:8px; padding:14px 22px; overflow-x:auto; scrollbar-width:none; }
   .mis-tabs::-webkit-scrollbar{ display:none; }
-  .mis-tab{
-    flex-shrink:0; padding:9px 16px; border-radius:999px;
-    border:2px solid var(--line); background:var(--surface);
-    font-family:'Baloo 2',sans-serif; font-size:.9rem; font-weight:800;
-    color:var(--ink-soft); cursor:pointer; transition:all .18s; white-space:nowrap;
-  }
+  .mis-tab{ flex-shrink:0; padding:9px 16px; border-radius:999px; border:2px solid var(--line); background:var(--surface); font-family:Baloo 2,sans-serif; font-size:.9rem; font-weight:800; color:var(--ink-soft); cursor:pointer; transition:all .18s; white-space:nowrap; }
   .mis-tab:hover{ border-color:var(--line-strong); color:var(--ink); }
   .mis-tab.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
-
-  /* Zone qui défile */
   .mis-scroll{ overflow-y:auto; padding:4px 22px 24px; flex:1; scroll-behavior:smooth; }
   .mis-sec{ scroll-margin-top:8px; padding-top:16px; }
-  .mis-sec-title{
-    display:flex; align-items:center; gap:9px;
-    font-size:1rem; font-weight:800; margin-bottom:6px;
-    position:sticky; top:0; background:var(--surface); padding:8px 0; z-index:2;
-  }
+  .mis-sec-title{ display:flex; align-items:center; gap:9px; font-size:1rem; font-weight:800; margin-bottom:6px; position:sticky; top:0; background:var(--surface); padding:8px 0; z-index:2; }
   .mis-sec-count{ margin-left:auto; font-size:.82rem; font-weight:800; color:var(--ink-soft); }
-
-  /* Une mission */
   .mis{ display:flex; align-items:center; gap:13px; padding:13px 0; border-bottom:1px solid var(--line); }
   .mis:last-child{ border-bottom:none; }
-  .mis-check{
-    width:26px; height:26px; border-radius:50%; flex-shrink:0;
-    border:2px solid var(--line-strong); background:var(--surface-2);
-    display:flex; align-items:center; justify-content:center;
-    font-size:.8rem; font-weight:800; color:transparent; transition:all .3s;
-  }
+  .mis-check{ width:26px; height:26px; border-radius:50%; flex-shrink:0; border:2px solid var(--line-strong); background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:800; color:transparent; transition:all .3s; }
   .mis.done .mis-check{ background:var(--green); border-color:var(--green); color:#fff; }
   .mis.just-done{ animation:misPop .6s cubic-bezier(.34,1.56,.64,1); }
   @keyframes misPop{ 0%{background:rgba(70,206,98,.25)} 100%{background:transparent} }
   .mis-txt{ flex:1; min-width:0; }
   .mis-label{ font-size:.98rem; font-weight:800; line-height:1.25; }
   .mis.done .mis-label{ color:var(--ink-soft); }
-  .mis-desc{ font-size:.83rem; font-weight:600; color:var(--ink-soft); m
-argin-to
-p:1px; }
-  .mis-badge{
-    flex-shrink:0; padding:5px 12px; border-radius:999px;
-    font-size:.82rem; font-weight:800;
-    background:var(--surface-2); color:var(--ink-soft); border:2px solid var(--line);
-  }
+  .mis-desc{ font-size:.83rem; font-weight:600; color:var(--ink-soft); margin-top:1px; }
+  .mis-badge{ flex-shrink:0; padding:5px 12px; border-radius:999px; font-size:.82rem; font-weight:800; background:var(--surface-2); color:var(--ink-soft); border:2px solid var(--line); }
   .mis.done .mis-badge{ background:rgba(70,206,98,.14); color:var(--green-d); border-color:rgba(70,206,98,.3); }
   .mis-daily .mis-badge{ background:rgba(43,183,242,.12); color:var(--blue-d); border-color:rgba(43,183,242,.3); }
-
-  .mis-prog{ margin-top:7px; height:7px; background:var(--surface-2); border:1px solid var(--line);
-             border-radius:999px; overflow:hidden; }
+  .mis-prog{ margin-top:7px; height:7px; background:var(--surface-2); border:1px solid var(--line); border-radius:999px; overflow:hidden; }
   .mis-prog i{ display:block; height:100%; background:var(--accent); border-radius:999px; transition:width .7s; }
-
   .mis-chips{ display:flex; flex-wrap:wrap; gap:7px; padding:10px 0 4px; }
-  .mis-chip{ padding:6px 12px; border-radius:999px; font-size:.8rem; font-weight:700;
-             background:var(--surface-2); border:2px solid var(--line); color:var(--ink-soft); }
+  .mis-chip{ padding:6px 12px; border-radius:999px; font-size:.8rem; font-weight:700; background:var(--surface-2); border:2px solid var(--line); color:var(--ink-soft); }
   .mis-chip.ok{ background:rgba(70,206,98,.12); border-color:rgba(70,206,98,.35); color:var(--green-d); }
   .mis-empty{ font-size:.9rem; font-weight:600; color:var(--ink-soft); padding:12px 0; }
-
-  /* ── LES BULLES QUI FILENT VERS LA BARRE D'XP ── */
-  .xp-bubble{
-    position:fixed; z-index:5000; pointer-events:none;
-    border-radius:50%;
-    background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.95), var(--accent) 62%, transparent 74%);
-    box-shadow:0 0 12px var(--accent-soft);
-    will-change:transform,opacity;
-  }
-  /* la barre tremble quand les bulles arrivent */
-  @keyframes xpShake{
-    0%,100%{ transform:translateX(0) }
-    12%{ transform:translateX(-4px) } 26%{ transform:translateX(4px) }
-    40%{ transform:translateX(-3px) } 55%{ transform:translateX(3px) }
-    70%{ transform:translateX(-2px) } 85%{ transform:translateX(2px) }
-  }
+  .xp-bubble{ position:fixed; z-index:5000; pointer-events:none; border-radius:50%; background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.95), var(--accent) 62%, transparent 74%); box-shadow:0 0 12px var(--accent-soft); will-change:transform,opacity; }
+  @keyframes xpShake{ 0%,100%{ transform:translateX(0) } 12%{ transform:translateX(-4px) } 26%{ transform:translateX(4px) } 40%{ transform:translateX(-3px) } 55%{ transform:translateX(3px) } 70%{ transform:translateX(-2px) } 85%{ transform:translateX(2px) } }
   .xp-hit{ animation:xpShake .55s ease; }
   .xp-fill.flash{ filter:brightness(1.35); box-shadow:0 0 14px var(--accent); }
-  .xp-gain-float{
-    position:fixed; z
--index:50
-01; pointer-events:none;
-    font-weight:800; font-size:1.05rem; color:var(--green-d);
-    text-shadow:0 2px 6px rgba(255,255,255,.9);
-    transition:transform .9s cubic-bezier(.2,.8,.3,1), opacity .9s;
-  }
-
-    /* ── CHOIX DU CADRE ── */
+  .xp-gain-float{ position:fixed; z-index:5001; pointer-events:none; font-weight:800; font-size:1.05rem; color:var(--green-d); text-shadow:0 2px 6px rgba(255,255,255,.9); transition:transform .9s cubic-bezier(.2,.8,.3,1), opacity .9s; }
   .frm-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(116px,1fr)); gap:18px 14px; margin-bottom:8px; }
-  /* Les cadres débordent de l'avatar : on laisse de la place autour */
-  .frm-item{ display:flex; flex-direction:column; align-items:center; gap:7px; cursor:pointer;
-             text-align:center; padding-top:14px; }
+  .frm-item{ display:flex; flex-direction:column; align-items:center; gap:7px; cursor:pointer; text-align:center; padding-top:14px; }
   .frm-item .frm-av{ margin-bottom:14px; }
-  .frm-av{
-    width:76px; height:76px; border-radius:50%; position:relative;
-    background:linear-gradient(160deg,#EAF4FF,#C6E1F8);
-    display:flex; align-items:center; justify-content:center; overflow:visible;
-    transition:transform .16s;
-  }
+  .frm-av{ width:76px; height:76px; border-radius:50%; position:relative; background:linear-gradient(160deg,#EAF4FF,#C6E1F8); display:flex; align-items:center; justify-content:center; overflow:visible; transition:transform .16s; }
   .frm-av img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
   .frm-item:not(.locked):hover .frm-av{ transform:translateY(-4px); }
   .frm-item.selected .frm-name{ color:var(--accent); }
-  .frm-item.selected .frm-av::after{
-    content:''; position:absolute; inset:-13px; border-radius:50%;
-    border:3px solid var(--accent); opacity:.55;
-  }
+  .frm-item.selected .frm-av::after{ content:''; position:absolute; inset:-13px; border-radius:50%; border:3px solid var(--accent); opacity:.55; }
   .frm-item.locked .frm-av{ filter:grayscale(.9); opacity:.45; }
   .frm-item.locked{ cursor:not-allowed; }
   .frm-name{ font-size:.82rem; font-weight:800; line-height:1.2; }
   .frm-lvl{ font-size:.72rem; font-weight:700; color:var(--ink-soft); }
-  .frm-lock{ font-size:.68rem; font-weight:800; padding:2px 9px; border-radius:999px;
-             background:rgba(255,197,61,.2); color:#9C6D00; }
-  .frm-gift{ font-size:.68rem; font-weight:800; padding:2px 9px; border-radius:999px;
-             background:rgba(70,206,98,.16); color:var(--green-d); }
+  .frm-lock{ font-size:.68rem; font-weight:800; padding:2px 9px; border-radius:999px; background:rgba(255,197,61,.2); color:#9C6D00; }
+  .frm-gift{ font-size:.68rem; font-weight:800; padding:2px 9px; border-radius:999px; background:rgba(70,206,98,.16); color:var(--green-d); }
   .cat-note{ font-size:.72rem; font-weight:700; color:var(--ink-soft); margin-left:6px; }
-
-  /* ── GRILLE DES CARTES ── */
-  .cards-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr))
-; gap:16px
-; }
-
-  /* ── SÉLECTEUR (overlay) ── */
-  .picker-top{
-    display:flex; align-items:center; gap:18px;
-    padding:22px 24px; border-bottom:2px solid var(--line); flex-shrink:0; flex-wrap:wrap;
-  }
-  .preview-bubble{
-    width:76px; height:76px; border-radius:50%; flex-shrink:0;
-    background:linear-gradient(160deg,#EAF4FF,#C6E1F8);
-    border:3px solid var(--line-strong);
-    display:flex; align-items:center; justify-content:center;
-    overflow:hidden; font-size:2rem; position:relative;
-  }
+  .cards-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+  .picker-top{ display:flex; align-items:center; gap:18px; padding:22px 24px; border-bottom:2px solid var(--line); flex-shrink:0; flex-wrap:wrap; }
+  .preview-bubble{ width:76px; height:76px; border-radius:50%; flex-shrink:0; background:linear-gradient(160deg,#EAF4FF,#C6E1F8); border:3px solid var(--line-strong); display:flex; align-items:center; justify-content:center; overflow:hidden; font-size:2rem; position:relative; }
   .preview-bubble img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
   .picker-info{ flex:1; min-width:150px; }
   .picker-info h2{ font-size:1.15rem; font-weight:800; }
   .picker-info p{ font-size:.9rem; font-weight:600; color:var(--ink-soft); margin-top:2px; }
   .picker-actions{ display:flex; gap:9px; flex-shrink:0; }
-
   .picker-tabs{ display:flex; gap:8px; padding:14px 24px 0; flex-shrink:0; }
-  .picker-tab{
-    padding:9px 18px; border-radius:999px;
-    border:2px solid var(--line); background:var(--surface);
-    color:var(--ink-soft); font-family:'Baloo 2',sans-serif;
-    font-size:.92rem; font-weight:800; cursor:pointer; transition:all .18s;
-  }
+  .picker-tab{ padding:9px 18px; border-radius:999px; border:2px solid var(--line); background:var(--surface); color:var(--ink-soft); font-family:Baloo 2,sans-serif; font-size:.92rem; font-weight:800; cursor:pointer; transition:all .18s; }
   .picker-tab:hover{ border-color:var(--line-strong); color:var(--ink); }
   .picker-tab.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
-
   .picker-panel{ display:none; overflow-y:auto; padding:18px 24px 26px; flex:1; }
   .picker-panel.active{ display:block; }
-
   .cat-title{ font-size:.82rem; font-weight:800; color:var(--ink-soft); letter-spacing:.5px; margin:22px 0 12px; }
   .cat-title:first-child{ margin-top:0; }
-
   .icons-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); gap:14px; }
   .icon-item{ display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; }
-  .icon-bubble{
-    width:74px; height:74px; border-radius:50%;
-    background:var(--surface-2); border:3px solid var(--line);
-    overflow:hidden; position:relative;
-   
- display:fl
-ex; align-items:center; justify-content:center; font-size:1.6rem;
-    transition:transform .16s, border-color .16s, box-shadow .16s;
-  }
+  .icon-bubble{ width:74px; height:74px; border-radius:50%; background:var(--surface-2); border:3px solid var(--line); overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; font-size:1.6rem; transition:transform .16s, border-color .16s, box-shadow .16s; }
   .icon-item:not(.locked):hover .icon-bubble{ transform:translateY(-4px); border-color:var(--accent); }
   .icon-item.selected .icon-bubble{ border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
   .icon-bubble img{ width:100%; height:100%; object-fit:cover; }
   .icon-item.locked{ cursor:not-allowed; }
   .icon-item.locked .icon-bubble{ opacity:.45; }
-  .lock-overlay{
-    position:absolute; inset:0; border-radius:50%;
-    background:rgba(255,255,255,.55); backdrop-filter:blur(1px);
-    display:flex; align-items:center; justify-content:center; font-size:1.3rem;
-  }
+  .lock-overlay{ position:absolute; inset:0; border-radius:50%; background:rgba(255,255,255,.55); backdrop-filter:blur(1px); display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
   .icon-name{ font-size:.76rem; font-weight:700; color:var(--ink-soft); text-align:center; line-height:1.2; }
   .icon-item.selected .icon-name{ color:var(--ink); }
-  .lock-tag{
-    font-size:.62rem; font-weight:800; padding:2px 8px; border-radius:999px;
-    background:rgba(255,197,61,.2); color:#9C6D00;
-  }
-
-  /* Effets */
+  .lock-tag{ font-size:.62rem; font-weight:800; padding:2px 8px; border-radius:999px; background:rgba(255,197,61,.2); color:#9C6D00; }
   .fx-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:12px; }
-  .fx-item{
-    display:flex; flex-direction:column; align-items:center; gap:7px;
-    padding:14px 10px; border-radius:var(--r-md);
-    border:2px solid var(--line); background:var(--surface);
-    cursor:pointer; transition:all .18s; text-align:center;
-  }
+  .fx-item{ display:flex; flex-direction:column; align-items:center; gap:7px; padding:14px 10px; border-radius:var(--r-md); border:2px solid var(--line); background:var(--surface); cursor:pointer; transition:all .18s; text-align:center; }
   .fx-item:not(.locked):hover{ transform:translateY(-3px); border-color:var(--line-strong); }
   .fx-item.selected{ border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
   .fx-item.locked{ opacity:.5; cursor:not-allowed; }
-  .fx-dot{
-    width:46px; height:46px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center; font-size:1.4rem;
-  }
+  .fx-dot{ width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.4rem; }
   .fx-name{ font-size:.8rem; font-weight:800; }
   .fx-hint{ font-size:.68rem; font-weight:700; color:var(--ink-soft); }
-
   @media(max-width:760px){
     .hero-card{ padding:20px 18px; }
-    .big-avatar{ wid
-th:86px; hei
-ght:86px; }
+    .big-avatar{ width:86px; height:86px; }
     .hero-name{ font-size:1.4rem; }
     .picker-top{ padding:16px; }
     .picker-actions{ width:100%; }
@@ -338,38 +167,34 @@ ght:86px; }
     <span style="color:#1FA8E8">B</span><span style="color:#FF8A3D">u</span><span style="color:#37C359">b</span><span style="color:#FF4E96">b</span><span style="color:#F5B700">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span>
   </div>
   <div class="nav-links">
-    <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+    <a href="index.html" class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
     <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
-    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
-    <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
-    <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
-    <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
+    <a href="jeux/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="bubble_site_scans.html" class="nav-btn green"><span class="ico">📜</span>Scans</a>
+    <a href="bubble_site_gacha.html" class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+    <a href="bubble_site_vlog.html" class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
-    <div class="profile-bubble" id="navAvatar"><img src="bully_icon_site_1.png" alt="avatar" class="profile-bubble-icon"></div>
+    <div class="profile-bubble" id="navAvatar"><img src="bully_icon_site_1.png" alt="avatar"></div>
     <div class="nav-profile-meta">
       <span class="nav-profile-name" id="navName">Invité</span>
-      <span class="nav-profile-sub"  id="navSub">BASIC</span>
+      <span class="nav-profile-sub" id="navSub">BASIC</span>
     </div>
   </a>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
-  <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
+  <a href="index.html" class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
   <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
-  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
-  <a 
-href="bubble_
-site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
-  <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
-  <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
-  <a href="bubble_site_profil.html"      class="nav-btn active"><span class="ico">🎭</span>Mon profil</a>
+  <a href="jeux/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+  <a href="bubble_site_scans.html" class="nav-btn green"><span class="ico">📜</span>Scans</a>
+  <a href="bubble_site_gacha.html" class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
+  <a href="bubble_site_vlog.html" class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
+  <a href="bubble_site_profil.html" class="nav-btn active"><span class="ico">🎭</span>Mon profil</a>
 </div>
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <main>
-
-  <!-- ── CARTE PRINCIPALE ── -->
   <section class="hero-card fade-up">
     <div class="hero-row">
       <div class="avatar-wrap">
@@ -387,7 +212,6 @@ site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans<
       </div>
       <button class="btn btn-blue" onclick="openPicker()">🎭 Personnaliser</button>
     </div>
-
     <div class="level-box">
       <div class="level-head">
         <h3>Niveau</h3>
@@ -403,22 +227,17 @@ site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans<
     </div>
   </section>
 
-  <!-- ── MISSIONS : carte résumé ── -->
   <section class="mis-card fade-up d1">
     <div class="mis-card-ico">🎯</div>
     <div class="mis-card-txt">
       <h2>Missions</h2>
-      <p>C'est en accomplissant des mis
-sions que tu g
-agnes de l'XP et que tu montes de niveau.</p>
+      <p>C'est en accomplissant des missions que tu gagnes de l'XP et que tu montes de niveau.</p>
       <div class="mis-card-stat" id="misSummary">—</div>
     </div>
     <button class="btn btn-blue" onclick="openMissions()">Voir les missions</button>
   </section>
 
-  <!-- ── RÉGLAGES ── -->
   <div class="cards-grid">
-
     <section class="card fade-up d1">
       <div class="card-head"><span class="ico">✍️</span><h2>Pseudo</h2></div>
       <div class="field">
@@ -443,26 +262,18 @@ agnes de l'XP et que tu montes de niveau.</p>
 
     <section class="card fade-up d3">
       <div class="card-head"><span class="ico">✨</span><h2>Abonnement</h2></div>
-      <p style="font-size:.95rem;font-weight:600;color:var(--ink-soft);line-height:1.5;margin-bottom:14px" id="subDesc">
-        Accès gratuit
-      </p>
+      <p style="font-size:.95rem;font-weight:600;color:var(--ink-soft);line-height:1.5;margin-bottom:14px" id="subDesc">Accès gratuit</p>
       <a href="bubble_site_abonnements.html" class="btn btn-yellow btn-block">✨ Voir les offres</a>
     </section>
 
     <section class="card fade-up d4">
       <div class="card-head"><span class="ico">🚪</span><h2>Session</h2></div>
-      <p style="font-size:.95rem;font-weight:600;color:var(--ink-soft);line-height:1.5;margin-bottom:14px">
-        Tu seras redirigé vers la page de connexion.
-      </p>
+      <p style="font-size:.95rem;font-weight:600;color:var(--ink-soft);line-height:1.5;margin-bottom:14px">Tu seras redirigé vers la page de connexion.</p>
       <button class="btn btn-red btn-block" onclick="handleLogout()">🚪 Se déconnecter</button>
-  
-  </section>
-
- 
- </div>
+    </section>
+  </div>
 </main>
 
-<!-- ── POP-UP DES MISSIONS ── -->
 <div class="overlay" id="misOverlay">
   <div class="sheet mis-sheet">
     <div class="mis-top">
@@ -484,7 +295,6 @@ agnes de l'XP et que tu montes de niveau.</p>
   </div>
 </div>
 
-<!-- ── SÉLECTEUR ── -->
 <div class="overlay" id="pickerOverlay">
   <div class="sheet">
     <div class="picker-top">
@@ -498,229 +308,393 @@ agnes de l'XP et que tu montes de niveau.</p>
         <button class="btn btn-green btn-sm" onclick="confirmSelection()">Enregistrer</button>
       </div>
     </div>
-
     <div class="picker-tabs">
-      <button class="picker-tab active" data-tab="icons"   onclick="switchTab('icons')">🎭 Icônes</button>
-      <button class="picker-tab"        data-tab="effects" onclick="switchTab('effects')">✨ Effets</button>
-      <button class="picker-tab"        data-tab="frames"  onclick="switchTab('frames')">🖼️ Cadres</button>
+      <button class="picker-tab active" data-tab="icons" onclick="switchTab('icons')">🎭 Icônes</button>
+      <button class="picker-tab" data-tab="effects" onclick="switchTab('effects')">✨ Effets</button>
+      <button class="picker-tab" data-tab="frames" onclick="switchTab('frames')">🖼️ Cadres</button>
     </div>
-
     <div class="picker-panel active" id="panel-icons"></div>
-    <div class="picker-panel"        id="panel-effects"></div>
-    <div class="picker-panel"        id="panel-frames"></div>
+    <div class="picker-panel" id="panel-effects"></div>
+    <div class="picker-panel" id="panel-frames"></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<footer><span class="footer-logo">
-BUBBLE INC.</spa
-n> · © 2026</footer>
+<footer><span class="footer-logo">BUBBLE INC.</span> · © 2026</footer>
 
-<script>
-  /* ── Menu mobile ── */
-  const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
-  function closeMenu(){ menu.classList.remove('open'); ov.classList.remove('open'); }
-  toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
-  ov.addEventListener('click',closeMenu);
-  window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  /* ── Onglets du sélecteur ── */
-  function switchTab(tab){
-    document.querySelectorAll('.picker-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-    document.querySelectorAll('.picker-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel-' + tab).classList.add('active');
+const firebaseConfig = {
+  apiKey: "AIzaSyAbtOtU3EZd3yccR8gPCef_wME-5qoNk3Y",
+  authDomain: "bubble-game-fa894.firebaseapp.com",
+  projectId: "bubble-game-fa894",
+  storageBucket: "bubble-game-fa894.firebasestorage.app",
+  messagingSenderId: "60256418096",
+  appId: "1:60256418096:web:dbdc555819793d8c20f0f5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+let currentUserData = null;
+let lastState = null;
+let activeCat = 'general';
+let selectedIcon = null;
+let selectedEffect = null;
+let selectedFrame = null;
+
+function toast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+async function loadUserProfile(user) {
+  if (!user) {
+    currentUser = null;
+    currentUserData = null;
+    updateUIForGuest();
+    return;
   }
 
-  /* ── Toast ── */
-  function toast(msg, type){
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'toast show' + (type ? ' ' + type : '');
-    setTimeout(() => t.classList.remove('show'), 3200);
+  currentUser = user;
+  
+  try {
+    const userDocRef = doc(db, 'users', user.uid);
+    const userDocSnap = await getDoc(userDocRef);
+    
+    if (userDocSnap.exists()) {
+      currentUserData = userDocSnap.data();
+      updateUIWithUserData(user, currentUserData);
+    } else {
+      currentUserData = {
+        subscription: 'basic',
+        xp: 0,
+        avatarId: 'bully_icon_site_1',
+        pseudo: user.displayName || user.email.split('@')[0],
+        framesUnlocked: [],
+        iconsUnlocked: ['bully_icon_site_1'],
+        activeFrame: null,
+        activeEffect: null,
+        missions: {},
+        scansRead: [],
+        gamesPlayed: [],
+        lastLogin: new Date().toISOString().split('T')[0]
+      };
+      await setDoc(userDocRef, currentUserData);
+      updateUIWithUserData(user, currentUserData);
+    }
+  } catch (e) {
+    console.error('Erreur chargement profil:', e);
+    toast('Erreur de chargement', 'error');
   }
+}
 
-  /* ══════════════════════════════════════
-     LES MISSIONS
-     Définitions : bubble_data.js (window.MISSIONS / window.GAMES)
-     Avancement  : bubble_missions.js (window.BubbleMissions), en direct
-  ══════════════════════════════════════ */
-  const CATS = [
-    { key:'general', ico:'⭐', title:'Général' },
-    { key:'jeux',    ico:'🎮', title:'Jeux' },
-    { key:'scans',   ico:'📜', title:'Scans' },
-    { key:'gacha',   ico:'🎁', title:'Gacha' },
+function updateUIForGuest() {
+  document.getElementById('navName').textContent = 'Invité';
+  document.getElementById('navSub').textContent = 'BASIC';
+  document.getElementById('heroName').textContent = 'Invité';
+  document.getElementById('heroMail').textContent = '—';
+  document.getElementById('subChip').textContent = 'BASIC';
+  document.getElementById('subChip').className = 'sub-chip basic';
+  document.getElementById('subDesc').textContent = 'Accès gratuit';
+  
+  const defaultAvatar = '<img src="bully_icon_site_1.png" alt="avatar">';
+  document.getElementById('navAvatar').innerHTML = defaultAvatar;
+  document.getElementById('bigAvatar').innerHTML = defaultAvatar;
+  document.getElementById('previewBubble').innerHTML = defaultAvatar;
+  document.getElementById('curChip').innerHTML = '<img src="bully_icon_site_1.png" style="width:16px;height:16px;border-radius:50%;"> Tes bulles';
+  document.getElementById('fxChip').textContent = '✨ Aucun effet';
+  
+  document.getElementById('pseudoInput').disabled = true;
+  document.getElementById('newPwd').disabled = true;
+  document.getElementById('confirmPwd').disabled = true;
+  
+  document.getElementById('levelNum').innerHTML = '1 <small>/ —</small>';
+  document.getElementById('xpCurrent').textContent = '0 XP';
+  document.getElementById('xpNext').textContent = '—';
+  document.getElementById('xpFill').style.width = '0%';
+}
+
+function updateUIWithUserData(user, data) {
+  const pseudo = data.pseudo || user.displayName || user.email.split('@')[0];
+  const email = user.email || '—';
+  const subscription = data.subscription || 'basic';
+  const avatarId = data.avatarId || 'bully_icon_site_1';
+  
+  document.getElementById('navName').textContent = pseudo;
+  document.getElementById('navSub').textContent = subscription.toUpperCase();
+  document.getElementById('heroName').textContent = pseudo;
+  document.getElementById('heroMail').textContent = email;
+  
+  document.getElementById('subChip').textContent = subscription.toUpperCase();
+  document.getElementById('subChip').className = 'sub-chip ' + subscription;
+  
+  const subDescriptions = {
+    basic: 'Accès gratuit',
+    plus: 'Abonnement Bubble+',
+    x: 'Abonnement Bubble X',
+    max: 'Abonnement Bubble MAX'
+  };
+  document.getElementById('subDesc').textContent = subDescriptions[subscription] || 'Accès gratuit';
+  
+  const avatarHtml = '<img src="' + avatarId + '.png" alt="avatar">';
+  document.getElementById('navAvatar').innerHTML = avatarHtml;
+  document.getElementById('bigAvatar').innerHTML = avatarHtml;
+  document.getElementById('previewBubble').innerHTML = avatarHtml;
+  document.getElementById('curChip').innerHTML = '<img src="' + avatarId + '.png" style="width:16px;height:16px;border-radius:50%;"> Tes bulles';
+  
+  const effectName = data.activeEffect ? (window.EFFECTS && window.EFFECTS.find(e => e.id === data.activeEffect)?.name || data.activeEffect) : 'Aucun effet';
+  document.getElementById('fxChip').innerHTML = '✨ ' + effectName;
+  
+  document.getElementById('pseudoInput').disabled = false;
+  document.getElementById('pseudoInput').value = pseudo;
+  document.getElementById('newPwd').disabled = false;
+  document.getElementById('confirmPwd').disabled = false;
+  
+  updateLevelUI(data);
+}
+
+function updateLevelUI(data) {
+  const xp = data.xp || 0;
+  const level = Math.floor(xp / 1000) + 1;
+  const xpForNextLevel = (level + 1) * 1000;
+  const xpProgress = ((xp % 1000) / 1000) * 100;
+  
+  document.getElementById('levelNum').innerHTML = level + ' <small>/ —</small>';
+  document.getElementById('xpCurrent').textContent = xp + ' XP';
+  document.getElementById('xpNext').textContent = xpForNextLevel + ' XP';
+  document.getElementById('xpFill').style.width = xpProgress + '%';
+}
+
+function openPicker() {
+  if (!currentUser) {
+    toast('Connecte-toi pour personnaliser', 'error');
+    return;
+  }
+  document.getElementById('pickerOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  loadPickerContent();
+}
+
+function closePicker() {
+  document.getElementById('pickerOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  selectedIcon = null;
+  selectedEffect = null;
+  selectedFrame = null;
+}
+
+async function confirmSelection() {
+  if (!currentUser || !currentUserData) {
+    toast('Erreur: utilisateur non connecté', 'error');
+    return;
+  }
+  
+  try {
+    if (selectedIcon) {
+      currentUserData.avatarId = selectedIcon;
+    }
+    if (selectedEffect) {
+      currentUserData.activeEffect = selectedEffect;
+    }
+    if (selectedFrame) {
+      currentUserData.activeFrame = selectedFrame;
+    }
+    
+    await setDoc(doc(db, 'users', currentUser.uid), currentUserData, { merge: true });
+    updateUIWithUserData(currentUser, currentUserData);
+    toast('Personnalisation enregistrée !', 'success');
+    closePicker();
+  } catch (e) {
+    console.error('Erreur sauvegarde personnalisation:', e);
+    toast('Erreur de sauvegarde', 'error');
+  }
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.picker-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  document.querySelectorAll('.picker-panel').forEach(p => {
+    p.classList.remove('active');
+  });
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+function loadPickerContent() {
+  const iconsPanel = document.getElementById('panel-icons');
+  const icons = [
+    { id: 'bully_icon_site_1', name: 'Bully' },
+    { id: 'anthony_1', name: 'Anthony' },
+    { id: 'luna_1', name: 'Luna' },
+    { id: 'frosty_1', name: 'Frosty' },
+    { id: 'zippy_1', name: 'Zippy' },
+    { id: 'rocky_1', name: 'Rocky' },
+    { id: 'bully_pixel_1', name: 'Bully Pixel' },
+    { id: 'bully_funny_1', name: 'Bully Funny' },
+    { id: 'anthony_game_it_1', name: 'Anthony IT' },
+    { id: 'luna_game_it_1', name: 'Luna IT' }
   ];
-  let lastState = null;
-  let activeCat = 'general';   /* onglet en cours, conservé pendant les mises à jour */
+  
+  let iconsHtml = '<div class="icons-grid">';
+  icons.forEach(icon => {
+    const isCurrent = currentUserData && currentUserData.avatarId === icon.id;
+    const selectedClass = isCurrent ? 'selected' : '';
+    iconsHtml += `
+    <div class="icon-item ${selectedClass}" onclick="selectIcon('${icon.id}')">
+      <div class="icon-bubble">
+        <img src="${icon.id}.png" alt="${icon.name}">
+      </div>
+      <div class="icon-name">${icon.name}</div>
+    </div>`;
+  });
+  iconsHtml += '</div>';
+  iconsPanel.innerHTML = iconsHtml;
+  
+  const effectsPanel = document.getElementById('panel-effects');
+  effectsPanel.innerHTML = '<p style="text-align:center;color:var(--ink-soft);padding:20px;">Effets à venir...</p>';
+  
+  const framesPanel = document.getElementById('panel-frames');
+  framesPanel.innerHTML = '<p style="text-align:center;color:var(--ink-soft);padding:20px;">Cadres à venir...</p>';
+}
 
-  function todayStr(){
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function selectIcon(iconId) {
+  if (!currentUser) return;
+  selectedIcon = iconId;
+  const avatarHtml = '<img src="' + iconId + '.png" alt="avatar">';
+  document.getElementById('previewBubble').innerHTML = avatarHtml;
+  document.getElementById('previewName').textContent = iconId;
+  
+  document.querySelectorAll('.icon-item').forEach(item => {
+    item.classList.remove('selected');
+  });
+  event.target.closest('.icon-item').classList.add('selected');
+}
+
+async function updateUserDoc() {
+  if (!currentUser || !currentUserData) return;
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid), currentUserData, { merge: true });
+    updateUIWithUserData(currentUser, currentUserData);
+    toast('Modifications sauvegardées !');
+  } catch (e) {
+    console.error('Erreur sauvegarde:', e);
+    toast('Erreur de sauvegarde', 'error');
   }
+}
 
-  /* La pastille d'une mission : le montant dépend de ton abonnement */
-  function xpBadge(base){
-    const sub = w
-indow.__userSub |
-| 'basic';
-    return window.gainLabel(window.xpFor(base, sub), sub, 14);
+function savePseudo() {
+  if (!currentUser) {
+    toast('Connecte-toi pour modifier', 'error');
+    return;
   }
-
-  function misRow({ id, done, label, desc, badge, daily, progress }){
-    return `
-      <div class="mis${done ? ' done' : ''}${daily ? ' mis-daily' : ''}" data-mission="${id || ''}">
-        <div class="mis-check">✓</div>
-        <div class="mis-txt">
-          <div class="mis-label">${label}</div>
-          ${desc ? `<div class="mis-desc">${desc}</div>` : ''}
-          ${progress != null ? `<div class="mis-prog"><i style="width:${progress}%"></i></div>` : ''}
-        </div>
-        <span class="mis-badge">${badge}</span>
-      </div>`;
+  const pseudo = document.getElementById('pseudoInput').value.trim();
+  if (!pseudo) {
+    toast('Entrez un pseudo', 'error');
+    return;
   }
+  currentUserData.pseudo = pseudo;
+  updateUserDoc();
+}
 
-  /* Construit les 4 sections + calcule les compteurs */
-  function buildSections(st){
-    const M = window.MISSIONS || {};
-    const done = st.missions || {}, read = st.scansRead || [], play = st.gamesPlayed || [];
-    const today = todayStr();
-    let earned = 0;
-    const add = (ok, xp) => { if (ok) earned += xp; };
-
-    /* GÉNÉRAL */
-    const gen    = (M.general || []);
-    const games0 = window.GAMES || [];
-    const genRows = gen.map(m => {
-      const ok = m.daily ? (st.lastLogin === today) : !!done[m.id];
-      add(ok, m.xp);
-
-      /* Avancement : « 4 / 7 jours » ou « 3 / 5 jeux essayés » */
-      let desc = m.desc, prog = null;
-      if (m.days){
-        const n = st.loginDays || 0;
-        desc = `${Math.min(n, m.days)} / ${m.days} jours`;
-        prog = Math.min(n / m.days * 100, 100);
-      } else if (m.allGames && games0.length){
-        const n = games0.filter(g => play.includes(g.id)).length;
-        desc = `${n} / ${games0.length} jeux essayés`;
-        prog = Math.min(n / games0.length * 100, 100);
-      }
-
-      return misRow({ id:m.id, done:ok, label:m.label, desc, daily:m.daily,
-                      progress: ok ? null : prog,
-                      badge: (m.daily && ok) ? '✓ aujourd’hui' : xpBadge(m.xp) });
-    }).join('');
-    const genDone = gen.filter(m => m.daily ? st.lastLogin === today : done[m.id]).len
-gth;
-
-    /* JEUX 
-*/
-    const games = window.GAMES || [];
-    const firstXP = M.gameFirstXP ?? 50;
-    const gameRows = games.length ? games.map(g => {
-      const played = play.includes(g.id);
-      add(played, firstXP);
-      /* Ton record sur ce jeu, s'il y en a un (info seulement : le
-         classement ne donne pas d'XP, c'est un système séparé) */
-      const rec = (window.BubbleScores && window.BubbleScores.myBest)
-                ? window.BubbleScores.myBest(g.id) : null;
-      const desc = rec
-        ? `🏆 Ton record : ${window.fmtScore(g, rec.value)} · ${rec.rank}ᵉ sur ${rec.total}`
-        : (played ? '🏆 Pas encore de record' : '');
-
-      return misRow({ id:'play_'+g.id, done:played, desc,
-                      label:`${g.emoji} ${g.name} — première partie`,
-                      badge:xpBadge(firstXP) });
-    }).join('') : '<div class="mis-empty">Aucun jeu configuré.</div>';
-    const gameDone = games.filter(g => play.includes(g.id)).length;
-
-    /* SCANS */
-    const scans = window.ALL_SCANS || [];
-    const scanXP = M.scanXP ?? 10;
-    earned += read.length * scanXP;
-    const chips = scans.map(sc => {
-      const ok = read.includes(sc.id);
-      return `<span class="mis-chip${ok ? ' ok' : ''}">${ok ? '✓' : '○'} ${sc.title}</span>`;
-    }).join('');
-    const allRead = scans.length && read.length >= scans.length;
-    let scanRows = `
-      <div class="mis${allRead ? ' done' : ''}">
-        <div class="mis-check">✓</div>
-        <div class="mis-txt">
-          <div class="mis-label">Lire un scan</div>
-          <div class="mis-desc">${xpBadge(scanXP)} par scan, une seule fois par scan</div>
-          <div class="mis-chips">${chips || '<span class="mis-empty">Aucun scan au catalogue.</span>'}</div>
-        </div>
-        <span class="mis-badge">${read.length}/${scans.length}</span>
-      </div>`;
-    scanRows += (M.scanMilestones || []).map(p => {
-      const ok = !!done[p.id];
-      add(ok, p.xp);
-      return misRow({ id:p.id, done:ok, label:p.labe
-l, desc:`${read.len
-gth} / ${p.count} scans lus`,
-                      badge:xpBadge(p.xp), progress:Math.min(read.length / p.count * 100, 100) });
-    }).join('');
-
-    /* GACHA */
-    const owned = window.__collectionCount ?? 0;
-    const total = (window.CARD_POOL || []).length;
-    const gachaRows = (M.gacha || []).map(m => {
-      const ok = !!done[m.id];
-      add(ok, m.xp);
-      return misRow({ id:m.id, done:ok, label:m.label, desc:`${owned} / ${total} cartes obtenues`,
-                      badge:xpBadge(m.xp), progress: total ? Math.min(owned / total * 100, 100) : 0 });
-    }).join('');
-
-    return {
-      earned,
-      sections:[
-        { key:'general', rows:genRows,   count:`${genDone}/${gen.length}` },
-        { key:'jeux',    rows:gameRows,  count:`${gameDone}/${games.length}` },
-        { key:'scans',   rows:scanRows,  count:`${read.length}/${scans.length}` },
-        { key:'gacha',   rows:gachaRows, count:`${(M.gacha||[]).filter(m => done[m.id]).length}/${(M.gacha||[]).length}` },
-      ],
-    };
+async function savePassword() {
+  if (!currentUser) {
+    toast('Connecte-toi pour changer le mot de passe', 'error');
+    return;
   }
+  const newPwd = document.getElementById('newPwd').value;
+  const confirmPwd = document.getElementById('confirmPwd').value;
+  if (!newPwd || !confirmPwd) {
+    toast('Remplissez tous les champs', 'error');
+    return;
+  }
+  if (newPwd !== confirmPwd) {
+    toast('Mots de passe différents', 'error');
+    return;
+  }
+  if (newPwd.length < 6) {
+    toast('Le mot de passe doit faire au moins 6 caractères', 'error');
+    return;
+  }
+  
+  try {
+    await updatePassword(currentUser, newPwd);
+    toast('Mot de passe changé !');
+    document.getElementById('newPwd').value = '';
+    document.getElementById('confirmPwd').value = '';
+  } catch (e) {
+    console.error('Erreur mot de passe:', e);
+    if (e.code === 'auth/requires-recent-login') {
+      toast('Reconnecte-toi pour changer le mot de passe', 'error');
+    } else {
+      toast('Erreur de changement', 'error');
+    }
+  }
+}
 
-  /* Rendu complet (appelé à chaque changement, même pop-up ouvert) */
-  function renderMissions(st){
-    lastState = st;
-    const { earned, sections } = buildSections(st);
+async function handleLogout() {
+  if (confirm('Se déconnecter ?')) {
+    try {
+      await signOut(auth);
+      window.location.href = 'login.html';
+    } catch (e) {
+      console.error('Erreur déconnexion:', e);
+      toast('Erreur de déconnexion', 'error');
+    }
+  }
+}
 
-    /* Carte résumé sur la page (dans la monnaie de ton abonnement) */
-    const sub0 = window.__userSub || 'basic';
-    const earnedCur = window.xpFor(earned, sub0);
-    document.getElementById('misSummary').innerHTML =
-      `${window.amountLabel(earnedCur, sub0, 15)} gagné(e)s grâce aux missions`;
-    document.getElementById('misTotal').innerHTML = window.amountLabel(earnedCur, sub0, 14);
+function openMissions() {
+  document.getElementById('misOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
 
-    /* Onglets */
-    document.getElementById('misTabs').innerHTML = CATS.map(c =>
-      `<button class="mis-tab${c.key === activeCat ? ' active' : ''}" data-go="${c.key}"
-               onclick="goToCat('${c.key}')">${c.ico} ${c.title}</button>`).join('');
+function closeMissions() {
+  document.getElementById('misOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
 
-    /* Contenu : on garde la position de défilement */
-    const box = document.getElementById('misScroll');
-    const keep = box.scroll
-Top;
-    box.innerHT
-ML = sections.map(sec => {
-      const cat = CATS.find(c => c.key === sec.key);
-      return `<section class="mis-sec" id="cat-${sec.key}">
-                <div class="mis-sec-title">${cat.ico} ${cat.title}
-                  <span class="mis-sec-count">${sec.count}</span></div>
-                ${sec.rows}
-              </section>`;
-    }).join('');
-    box.scrollTop = keep;
+function goToCat(key) {
+  activeCat = key;
+  if (typeof renderMissions === 'function') {
+    renderMissions(lastState);
+  }
+}
 
-    /* Niveau + barre d'XP du pop-up */
-    const sub = window.__userSub || 'basic';
-    const lv = window.getLevel(st.xp || 0, sub);
-    const cur2 = window.currencyOf(sub);
-    document.getElementById('misLevel').textContent = lv.level;
-    document.getElementById('misXpNum').innerHTML   = `${st.xp || 0} ${window.currencyIcon(sub,14)}`;
-    const mf
+// Initialisation
+onAuthStateChanged(auth, (user) => {
+  loadUserProfile(user);
+});
 
-... [Content truncated]
+// Menu mobile
+const toggle = document.getElementById('menuToggle');
+const menu = document.getElementById('mobileMenu');
+const ov = document.getElementById('menuOverlay');
+function closeMenu() {
+  if (menu && ov) {
+    menu.classList.remove('open');
+    ov.classList.remove('open');
+  }
+}
+if (toggle && menu && ov) {
+  toggle.addEventListener('click', () => {
+    const o = menu.classList.contains('open');
+    menu.classList.toggle('open', !o);
+    ov.classList.toggle('open', !o);
+  });
+  ov.addEventListener('click', closeMenu);
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 760) closeMenu();
+  });
+}
+</script>
+
+</body>
+</html>
