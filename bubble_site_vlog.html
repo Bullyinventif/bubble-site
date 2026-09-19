@@ -71,7 +71,8 @@
   /* ── Lecteur d'un post ── */
   .read-sheet{ width:min(760px,96vw); max-height:90vh; display:flex; flex-direction:column; }
   .read-top{ display:flex; align-items:center; gap:12px; padding:20px 24px 0; flex-shrink:0; }
-  .read-top h2{ font-size:1.3rem; font-weight:800; flex:1; line-height:1.2; }
+  .read-top h2{ font-size:1.3rem; font-weight:800; flex:1
+; line-height:1.2; }
   .read-close{
     width:34px; height:34px; border-radius:50%; flex-shrink:0;
     border:2px solid var(--line); background:var(--surface);
@@ -145,7 +146,8 @@
     background:var(--surface); border:2px dashed var(--line-strong);
     border-radius:var(--r-lg); padding:16px 20px; margin-bottom:24px;
   }
-  .invite p{ flex:1; min-width:200px; font-size:.92rem; font-weight:700; color:var(--ink-soft); }
+  .invite p{ flex:
+1; min-width:200px; font-size:.92rem; font-weight:700; color:var(--ink-soft); }
 
   @media(max-width:760px){
     .featured{ grid-template-columns:1fr; }
@@ -166,7 +168,7 @@
   <div class="nav-links">
     <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
     <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
-    <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+    <a href="jeux/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
     <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
     <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
     <a href="bubble_site_vlog.html"        class="nav-btn pink active"><span class="ico">🎬</span>Vlog</a>
@@ -183,7 +185,7 @@
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
   <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
-  <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
+  <a href="jeux/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
   <a href="bubble_site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
   <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
   <a href="bubble_site_vlog.html"        class="nav-btn pink active"><span class="ico">🎬</span>Vlog</a>
@@ -230,7 +232,8 @@
 /* ── Menu mobile ── */
 const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu'),ov=document.getElementById('menuOverlay');
 function closeMenu(){ menu.classList.remove('open'); ov.classList.remove('open'); }
-toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
+toggle.addEventListener('click',()=>{const o=menu.classList.contains('open');menu
+.classList.toggle('open',!o);ov.classList.toggle('open',!o);});
 ov.addEventListener('click',closeMenu);
 window.addEventListener('resize',()=>{ if(innerWidth>760) closeMenu(); });
 
@@ -415,7 +418,8 @@ function render(){
     : `<a class="btn btn-yellow btn-lg" href="bubble_site_abonnements.html">🔒 Nécessite ${window.SUB_LABELS[first.sub||'basic']}</a>`;
 
   box.innerHTML = `
-    ${(userSub === 'free' && all.some(p => !canSee(p))) ? `
+ 
+   ${(userSub === 'free' && all.some(p => !canSee(p))) ? `
       <div class="invite fade-up">
         <span style="font-size:1.6rem">🫧</span>
         <p>Certains posts sont réservés aux abonnés. Crée ton compte, c'est gratuit !</p>
@@ -500,7 +504,7 @@ render();
         userSub = sub;
         window.userSub = sub;
         document.getElementById('navAvatar').innerHTML =
-          `<img src="${(d.avatarId||'bully_1')}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
+          `<img src="${(d.avatarId||'bully_icon_site_1')}.png" alt="avatar" onerror="this.replaceWith(document.createTextNode('🫧'))">`;
         document.getElementById('navName').textContent = user.displayName || user.email.split('@')[0];
         document.getElementById('navSub').textContent  = window.SUB_LABELS[sub];
         if (window.applyTheme) window.applyTheme(d.activeEffect || null);
