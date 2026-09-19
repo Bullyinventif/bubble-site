@@ -46,7 +46,8 @@
     box-shadow:0 2px 8px rgba(22,40,63,.2);
     transition:transform .15s;
   }
-  .edit-badge:hover{ 
+  .edit-badge:ho
+ver{ 
 transform:scale(1.1); }
 
   .hero-id{ flex:1; min-width:190px; }
@@ -73,7 +74,8 @@ transform:scale(1.1); }
   .lvl-symbol.off{ opacity:.22; filter:grayscale(1); }
   .xp-track{ height:12px; background:var(--surface-2); border:2px solid var(--line); border-radius:999px; overflow:hidden; }
   .xp-fill{ height:100%; width:0%; border-radius:999px; background:var(--accent); transition:width .9s cubic-bezier(.34,1.56,.64,1); }
-  .xp-line{ display:flex; jus
+  .xp-line{ display:fle
+x; jus
 tify-content:space-between; gap:12px; margin-top:8px; font-size:.85rem; font-weight:700; color:var(--ink-soft); }
 
   /* ── RÉSUMÉ DES MISSIONS (sur la page) ── */
@@ -115,7 +117,8 @@ tify-content:space-between; gap:12px; margin-top:8px; font-size:.85rem; font-wei
   .mis-xp-line{ display:flex; justify-content:space-between; font-size:.82rem; font-weight:800; color:var(--ink-soft); margin-bottom:6px; }
   .mis-xp-line b{ color:var(--ink); }
 
-  /* Onglets de catégorie */
+  /* Onglets de catégorie 
+*/
   .m
 is-tabs{ display:flex; gap:8px; padding:14px 22px; overflow-x:auto; scrollbar-width:none; }
   .mis-tabs::-webkit-scrollbar{ display:none; }
@@ -153,7 +156,8 @@ is-tabs{ display:flex; gap:8px; padding:14px 22px; overflow-x:auto; scrollbar-wi
   .mis-txt{ flex:1; min-width:0; }
   .mis-label{ font-size:.98rem; font-weight:800; line-height:1.25; }
   .mis.done .mis-label{ color:var(--ink-soft); }
-  .mis-desc{ font-size:.83rem; font-weight:600; color:var(--ink-soft); margin-to
+  .mis-desc{ font-size:.83rem; font-weight:600; color:var(--ink-soft); m
+argin-to
 p:1px; }
   .mis-badge{
     flex-shrink:0; padding:5px 12px; border-radius:999px;
@@ -191,7 +195,8 @@ p:1px; }
   .xp-hit{ animation:xpShake .55s ease; }
   .xp-fill.flash{ filter:brightness(1.35); box-shadow:0 0 14px var(--accent); }
   .xp-gain-float{
-    position:fixed; z-index:50
+    position:fixed; z
+-index:50
 01; pointer-events:none;
     font-weight:800; font-size:1.05rem; color:var(--green-d);
     text-shadow:0 2px 6px rgba(255,255,255,.9);
@@ -228,7 +233,8 @@ p:1px; }
   .cat-note{ font-size:.72rem; font-weight:700; color:var(--ink-soft); margin-left:6px; }
 
   /* ── GRILLE DES CARTES ── */
-  .cards-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px
+  .cards-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr))
+; gap:16px
 ; }
 
   /* ── SÉLECTEUR (overlay) ── */
@@ -271,7 +277,8 @@ p:1px; }
     width:74px; height:74px; border-radius:50%;
     background:var(--surface-2); border:3px solid var(--line);
     overflow:hidden; position:relative;
-    display:fl
+   
+ display:fl
 ex; align-items:center; justify-content:center; font-size:1.6rem;
     transition:transform .16s, border-color .16s, box-shadow .16s;
   }
@@ -312,7 +319,8 @@ ex; align-items:center; justify-content:center; font-size:1.6rem;
 
   @media(max-width:760px){
     .hero-card{ padding:20px 18px; }
-    .big-avatar{ width:86px; hei
+    .big-avatar{ wid
+th:86px; hei
 ght:86px; }
     .hero-name{ font-size:1.4rem; }
     .picker-top{ padding:16px; }
@@ -338,7 +346,7 @@ ght:86px; }
     <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
   </div>
   <a href="bubble_site_profil.html" class="nav-profile" id="navProfile">
-    <div class="profile-bubble" id="navAvatar"><span class="profile-bubble-icon">🫧</span></div>
+    <div class="profile-bubble" id="navAvatar"><img src="bully_icon_site_1.png" alt="avatar" class="profile-bubble-icon"></div>
     <div class="nav-profile-meta">
       <span class="nav-profile-name" id="navName">Invité</span>
       <span class="nav-profile-sub"  id="navSub">BASIC</span>
@@ -350,7 +358,8 @@ ght:86px; }
   <a href="index.html"                   class="nav-btn red"><span class="ico">🏠</span>Accueil</a>
   <a href="bubble_site_abonnements.html" class="nav-btn yellow"><span class="ico">✨</span>Abonnements</a>
   <a href="https://bullyinventif.github.io/bubble_game/" class="nav-btn gray"><span class="ico">🎮</span>Games</a>
-  <a href="bubble_
+  <a 
+href="bubble_
 site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans</a>
   <a href="bubble_site_gacha.html"       class="nav-btn purple"><span class="ico">🎁</span>Coffres</a>
   <a href="bubble_site_vlog.html"        class="nav-btn pink"><span class="ico">🎬</span>Vlog</a>
@@ -364,7 +373,7 @@ site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans<
   <section class="hero-card fade-up">
     <div class="hero-row">
       <div class="avatar-wrap">
-        <div class="big-avatar" id="bigAvatar" onclick="openPicker()">🫧</div>
+        <div class="big-avatar" id="bigAvatar" onclick="openPicker()"><img src="bully_icon_site_1.png" alt="avatar"></div>
         <div class="edit-badge" onclick="openPicker()" title="Changer d'icône">✏️</div>
       </div>
       <div class="hero-id">
@@ -372,7 +381,7 @@ site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans<
         <div class="hero-mail" id="heroMail">—</div>
         <div class="hero-chips">
           <span class="sub-chip basic" id="subChip">BASIC</span>
-          <span class="chip" id="curChip">🫧 Tes bulles</span>
+          <span class="chip" id="curChip"><img src="bully_icon_site_1.png" style="width:16px;height:16px;border-radius:50%;"> Tes bulles</span>
           <span class="chip" id="fxChip">✨ Aucun effet</span>
         </div>
       </div>
@@ -399,7 +408,8 @@ site_scans.html"       class="nav-btn green"><span class="ico">📜</span>Scans<
     <div class="mis-card-ico">🎯</div>
     <div class="mis-card-txt">
       <h2>Missions</h2>
-      <p>C'est en accomplissant des missions que tu g
+      <p>C'est en accomplissant des mis
+sions que tu g
 agnes de l'XP et que tu montes de niveau.</p>
       <div class="mis-card-stat" id="misSummary">—</div>
     </div>
@@ -445,7 +455,8 @@ agnes de l'XP et que tu montes de niveau.</p>
         Tu seras redirigé vers la page de connexion.
       </p>
       <button class="btn btn-red btn-block" onclick="handleLogout()">🚪 Se déconnecter</button>
-    </section>
+  
+  </section>
 
  
  </div>
@@ -477,7 +488,7 @@ agnes de l'XP et que tu montes de niveau.</p>
 <div class="overlay" id="pickerOverlay">
   <div class="sheet">
     <div class="picker-top">
-      <div class="preview-bubble" id="previewBubble">🫧</div>
+      <div class="preview-bubble" id="previewBubble"><img src="bully_icon_site_1.png" alt="avatar"></div>
       <div class="picker-info">
         <h2>Personnalisation</h2>
         <p id="previewName">Choisis une icône et un effet</p>
@@ -501,7 +512,8 @@ agnes de l'XP et que tu montes de niveau.</p>
 </div>
 
 <div class="toast" id="toast"></div>
-<footer><span class="footer-logo">BUBBLE INC.</spa
+<footer><span class="footer-logo">
+BUBBLE INC.</spa
 n> · © 2026</footer>
 
 <script>
@@ -548,7 +560,8 @@ n> · © 2026</footer>
 
   /* La pastille d'une mission : le montant dépend de ton abonnement */
   function xpBadge(base){
-    const sub = window.__userSub |
+    const sub = w
+indow.__userSub |
 | 'basic';
     return window.gainLabel(window.xpFor(base, sub), sub, 14);
   }
@@ -597,7 +610,8 @@ n> · © 2026</footer>
                       progress: ok ? null : prog,
                       badge: (m.daily && ok) ? '✓ aujourd’hui' : xpBadge(m.xp) });
     }).join('');
-    const genDone = gen.filter(m => m.daily ? st.lastLogin === today : done[m.id]).length;
+    const genDone = gen.filter(m => m.daily ? st.lastLogin === today : done[m.id]).len
+gth;
 
     /* JEUX 
 */
@@ -642,7 +656,8 @@ n> · © 2026</footer>
     scanRows += (M.scanMilestones || []).map(p => {
       const ok = !!done[p.id];
       add(ok, p.xp);
-      return misRow({ id:p.id, done:ok, label:p.label, desc:`${read.len
+      return misRow({ id:p.id, done:ok, label:p.labe
+l, desc:`${read.len
 gth} / ${p.count} scans lus`,
                       badge:xpBadge(p.xp), progress:Math.min(read.length / p.count * 100, 100) });
     }).join('');
@@ -687,7 +702,8 @@ gth} / ${p.count} scans lus`,
 
     /* Contenu : on garde la position de défilement */
     const box = document.getElementById('misScroll');
-    const keep = box.scrollTop;
+    const keep = box.scroll
+Top;
     box.innerHT
 ML = sections.map(sec => {
       const cat = CATS.find(c => c.key === sec.key);
@@ -705,6 +721,6 @@ ML = sections.map(sec => {
     const cur2 = window.currencyOf(sub);
     document.getElementById('misLevel').textContent = lv.level;
     document.getElementById('misXpNum').innerHTML   = `${st.xp || 0} ${window.currencyIcon(sub,14)}`;
-    const mf = document.getElemen
+    const mf
 
 ... [Content truncated]
