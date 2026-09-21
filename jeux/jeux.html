@@ -37,20 +37,31 @@
   </div>
 
   <div class="wrap">
-    <div class="rowhead"><h2>TOUS LES JEUX</h2></div>
+    <div class="games-shell">
+      <aside class="featured-column" aria-label="Jeux mis en avant et récents">
+        <section class="showcase" aria-label="Jeux mis en avant">
+          <div class="showcase-feature" id="featuredGame"></div>
+          <div class="showcase-recent" id="recentGame"></div>
+        </section>
+      </aside>
 
-    <div class="tools">
-      <div class="search">
-        <input id="search" type="text" placeholder="🔍 Rechercher un jeu…" aria-label="Rechercher un jeu">
-      </div>
-      <div class="chips">
-        <button class="chip active" data-f="all">Tous</button>
-        <button class="chip" data-f="new">Nouveaux</button>
-        <button class="chip" data-f="popular">Populaires</button>
+      <div class="library-panel">
+        <div class="rowhead"><h2>TOUS LES JEUX</h2></div>
+
+        <div class="tools">
+          <div class="search">
+            <input id="search" type="text" placeholder="🔍 Rechercher un jeu…" aria-label="Rechercher un jeu">
+          </div>
+          <div class="chips">
+            <button class="chip active" data-f="all">Tous</button>
+            <button class="chip" data-f="new">Nouveaux</button>
+            <button class="chip" data-f="popular">Populaires</button>
+          </div>
+        </div>
+
+        <div class="game-list" id="grid"></div>
       </div>
     </div>
-
-    <div class="grid" id="grid"></div>
   </div>
 
   <footer>🫧 BUBBLE INC. — <span id="year"></span></footer>
@@ -66,8 +77,19 @@
     initChrome();
 
     var grid = document.getElementById('grid');
+    var featuredGame = document.getElementById('featuredGame');
+    var recentGame = document.getElementById('recentGame');
     var search = document.getElementById('search');
     var filter = 'all';
+
+    var popularGames = GAMES.filter(isPopular).sort(function (a, b) { return b.id - a.id; });
+    var recentGames = gamesByRecent();
+    featuredGame.innerHTML = popularGames.length
+      ? showcaseMarkup(popularGames[0], '★ JEU À LA UNE · POPULAIRE')
+      : '<div class="showcase-empty">Aucun jeu populaire configuré.</div>';
+    recentGame.innerHTML = recentGames.length
+      ? showcaseMarkup(recentGames[0], '✦ AJOUT LE PLUS RÉCENT')
+      : '<div class="showcase-empty">Aucun jeu récent.</div>';
 
     function renderGames() {
       var q = search.value.toLowerCase().trim();
