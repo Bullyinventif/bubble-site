@@ -19,7 +19,7 @@
 
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot, increment, arrayUnion }
+import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, increment, arrayUnion }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const CONFIG = {
@@ -128,8 +128,16 @@ async function push(patch, xpGain, label){
 async function complete(id, xp, label){
   if (!state.uid || !id) return false;
   if (state.missions[id]) return false;          /* déjà faite */
-  state.missions[id] = true;
-  return push({ missions: { [id]: true } }, xp, label);
+  try {
+    const patch = { [`missions.${id}`]: true };
+    if (xp) patch.xp = increment(xp);
+    await updateDoc(doc(db, 'users', state.uid), patch);
+    state.missions[id] = true;
+    return true;
+  } catch(e){
+    console.error('Missions — validation impossible :', e);
+    return false;
+  }
 }
 
 /* ══ Connexion du jour ══ */

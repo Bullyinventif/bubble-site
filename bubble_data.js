@@ -142,6 +142,7 @@ function bbSafeUrl(u){
   if (/^[\w\-./]+\.(html|png|jpe?g|gif|webp|pdf)(\?.*)?$/i.test(s)) return s;
   return '';
 }
+window.bbSafeUrl = bbSafeUrl;
 
 /* Les codes couleur d'UNE ligne. Toute couleur ouverte est refermée
    à la fin de la ligne : impossible de déteindre sur le reste du texte. */
