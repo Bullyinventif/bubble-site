@@ -99,6 +99,41 @@ function heroMarkup(g) {
   }
 }
 
+function showcaseMarkup(g, kickText) {
+  const accessible = canAccessGame(g);
+  const SUB_LABELS = { basic: "BASIC", plus: "BUBBLE+", x: "BUBBLE X", max: "BUBBLE MAX" };
+  const req = g.requiredSubscription || 'basic';
+  const reqLabel = SUB_LABELS[req] || req;
+
+  if (accessible) {
+    return `
+      <a class="showcase-card" href="${g.url}" target="_blank" rel="noopener">
+        ${sticker(g)}
+        <div class="showcase-shot"><img src="${g.image}" alt="${g.name}" onerror="this.style.opacity=.2"></div>
+        <div class="showcase-body">
+          <div class="showcase-kick">${kickText}</div>
+          <div class="showcase-name">${g.name}</div>
+          <div class="showcase-desc">${g.desc}</div>
+          <span class="showcase-play">▶ JOUER</span>
+        </div>
+      </a>`;
+  } else {
+    return `
+      <div class="showcase-card disabled" onclick="alert('Il te faut un abonnement ${reqLabel} ou supérieur pour jouer à ce jeu !')">
+        ${sticker(g)}
+        <div class="showcase-shot" style="opacity:.5; filter:grayscale(80%) brightness(1.2);">
+          <img src="${g.image}" alt="${g.name}" onerror="this.style.opacity=.2">
+        </div>
+        <div class="showcase-body">
+          <div class="showcase-kick">${kickText}</div>
+          <div class="showcase-name">${g.name} <span class="sub-badge locked">🔒 ${reqLabel}</span></div>
+          <div class="showcase-desc">${g.desc}</div>
+          <span class="showcase-play">▶ JOUER</span>
+        </div>
+      </div>`;
+  }
+}
+
 // Menu mobile + année du footer
 function initChrome() {
   const toggle = document.getElementById('menuToggle');
