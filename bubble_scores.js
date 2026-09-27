@@ -75,6 +75,16 @@ const state = {
 let resolveReady;
 const ready = new Promise(r => { resolveReady = r; });
 let mountEl = null;
+let scoreReturnFocus = null;
+
+function closeScoreModal(){
+  const ov = document.getElementById('sb-overlay');
+  if (!ov?.classList.contains('open')) return;
+  ov.classList.remove('open');
+  ov.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+  scoreReturnFocus?.focus?.();
+}
 
 /* ── Petits raccourcis vers bubble_data.js (avec secours si absent) ── */
 const games      = () => (window.scoredGames ? window.scoredGames() : (window.GAMES || []).filter(g => g.score));
@@ -220,19 +230,27 @@ function openGame(gameId){
     ov = document.createElement('div');
     ov.id = 'sb-overlay';
     ov.className = 'overlay';
+    ov.setAttribute('aria-hidden','true');
     document.body.appendChild(ov);
-    ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+    ov.addEventListener('click', e => { if (e.target === ov) closeScoreModal(); });
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && ov.classList.contains('open')) ov.classList.remove('open');
+      if (e.key === 'Escape') closeScoreModal();
+      if (e.key === 'Tab' && ov.classList.contains('open')){
+        const focusable = [...ov.querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')];
+        if (!focusable.length) return;
+        const first = focusable[0], last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+      }
     });
   }
 
   ov.innerHTML = `
-    <div class="sheet sb-sheet" style="--gc:${g.color || 'var(--blue)'}">
+    <div class="sheet sb-sheet" role="dialog" aria-modal="true" aria-labelledby="scoreModalTitle" style="--gc:${g.color || 'var(--blue)'}">
       <div class="sb-sheet-head">
         <span class="sb-emoji big">${g.emoji || '🎮'}</span>
         <span class="sb-titles">
-          <span class="sb-name">${esc(g.name)}</span>
+          <span class="sb-name" id="scoreModalTitle">${esc(g.name)}</span>
           <span class="sb-metric">${esc((g.score && g.score.label) || 'Record')}
             ${g.score && g.score.order === 'asc' ? '· le plus petit gagne' : ''}</span>
         </span>
@@ -247,8 +265,13 @@ function openGame(gameId){
         <a class="btn btn-lg" style="background:var(--gc)" href="${g.url}" target="_blank" rel="noopener">▶ Jouer à ${esc(g.name)}</a>
       </div>` : ''}
     </div>`;
+  scoreReturnFocus = document.activeElement;
   ov.classList.add('open');
-  ov.querySelector('.sb-close').addEventListener('click', () => ov.classList.remove('open'));
+  ov.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  const close = ov.querySelector('.sb-close');
+  close.addEventListener('click', closeScoreModal);
+  requestAnimationFrame(() => close.focus());
 }
 
 /* Dessiner le tableau dans un élément */
@@ -263,7 +286,7 @@ function mount(el){
 
 /* On lit TOUTE la collection et on trie ici : pas d'index Firestore à créer.
    (Quelques dizaines de documents, c'est largement assez rapide.) */
-onSnapshot(collection(db, 'scores'),
+const stopScoresSync = onSnapshot(collection(db, 'scores'),
   snap => {
     state.rows = snap.docs.map(d => {
       const x = d.data();
@@ -279,7 +302,7 @@ onSnapshot(collection(db, 'scores'),
   });
 
 /* Qui est connecté ? (pour surligner sa ligne et signer ses records) */
-onAuthStateChanged(auth, async user => {
+const stopScoresAuth = onAuthStateChanged(auth, async user => {
   if (!user){ state.uid = null; render(); return; }
   state.uid = user.uid;
   state.me.pseudo = user.displayName || user.email.split('@')[0];
@@ -293,6 +316,11 @@ onAuthStateChanged(auth, async user => {
     }
   } catch(e){ console.warn('[Records] profil illisible :', e.message); }
   render();
+});
+
+window.addEventListener('beforeunload', () => {
+  stopScoresSync();
+  stopScoresAuth();
 });
 
 /* ── Montage automatique sur #scoreboard s'il existe ── */

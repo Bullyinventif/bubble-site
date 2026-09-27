@@ -51,6 +51,7 @@ const listeners = [];      /* changement d'état  */
 const gainers   = [];      /* gain d'XP en direct */
 let resolveReady;
 const ready = new Promise(r => { resolveReady = r; });
+let stopMissionSync = null;
 
 /* Date du jour au format 2026-08-16 (heure locale) */
 function today(){
@@ -236,7 +237,9 @@ function absorb(d){
 }
 
 onAuthStateChanged(auth, async user => {
-  if (!user){ state.loaded = true; resolveReady(state); return; }
+  stopMissionSync?.();
+  stopMissionSync = null;
+  if (!user){ state.uid = null; state.loaded = true; resolveReady(state); return; }
   state.uid = user.uid;
   const ref = doc(db, 'users', user.uid);
 
@@ -253,11 +256,13 @@ onAuthStateChanged(auth, async user => {
   /* ── SYNCHRO EN DIRECT ──
      Plus besoin de recharger la page : dès qu'une mission est validée
      (ici, dans un autre onglet, ou depuis un jeu), tout se met à jour. */
-  onSnapshot(ref, snap => { if (snap.exists()) absorb(snap.data()); },
-             e => console.warn('Missions — écoute interrompue :', e.message));
+  stopMissionSync = onSnapshot(ref, snap => { if (snap.exists()) absorb(snap.data()); },
+                               e => console.warn('Missions — écoute interrompue :', e.message));
 
   await dailyLogin();
 });
+
+window.addEventListener('beforeunload', () => stopMissionSync?.());
 
 window.BubbleMissions = {
   ready, state, gain,

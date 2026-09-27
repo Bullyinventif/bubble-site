@@ -16,7 +16,7 @@
 <script type="module" src="bubble_missions.js"></script>
 <script type="module" src="bubble_scores.js"></script>
 <style>
-  main{ max-width:900px; }
+  main{ max-width:1100px; }
 
   /* ── CARTE PRINCIPALE ── */
   .hero-card{
@@ -312,6 +312,109 @@
     .picker-actions .btn{ flex:1; }
     .picker-panel{ padding:16px 16px 22px; }
   }
+
+  /* ── ESPACE PROFIL À ONGLETS ── */
+  .hero-card{ min-height:164px; }
+  .hero-level-brief{
+    min-width:168px; padding:13px 16px; border-radius:var(--r-md);
+    background:var(--surface-2); border:2px solid var(--line); text-align:center;
+  }
+  .hero-name{ overflow-wrap:anywhere; }
+  .hero-level-brief strong{ display:block; font-size:1.25rem; line-height:1.1; }
+  .hero-level-brief span{ font-size:.78rem; font-weight:700; color:var(--ink-soft); }
+  .profile-status{
+    display:inline-flex; align-items:center; gap:7px; min-height:27px; margin-top:8px;
+    padding:4px 10px; border-radius:999px; background:var(--surface-2);
+    color:var(--ink-soft); font-size:.76rem; font-weight:800;
+  }
+  .profile-status::before{ content:''; width:8px; height:8px; border-radius:50%; background:var(--yellow); }
+  .profile-status.ready::before{ background:var(--green); }
+  .profile-status.syncing::before{ background:var(--blue); animation:statusPulse .9s infinite alternate; }
+  .profile-status.error{ color:var(--red-d); background:rgba(255,95,95,.12); }
+  .profile-status.error::before{ background:var(--red); }
+  @keyframes statusPulse{ to{ transform:scale(1.5); opacity:.45; } }
+
+  .profile-tabs{
+    display:flex; gap:8px; padding:7px; margin:0 0 16px; overflow-x:auto;
+    background:var(--surface); border:2px solid var(--line); border-radius:var(--r-lg);
+    box-shadow:var(--shadow-1); scrollbar-width:none;
+  }
+  .profile-tabs::-webkit-scrollbar{ display:none; }
+  .profile-tab{
+    flex:1 0 170px; min-height:48px; padding:10px 18px; border:0; border-radius:14px;
+    background:transparent; color:var(--ink-soft); font:800 .98rem 'Baloo 2',sans-serif;
+    cursor:pointer; transition:background .2s,color .2s,transform .2s,box-shadow .2s;
+  }
+  .profile-tab:hover{ background:var(--surface-2); color:var(--ink); }
+  .profile-tab[aria-selected="true"]{ background:var(--accent); color:#fff; box-shadow:0 6px 18px var(--accent-soft); }
+  .profile-tab:focus-visible{ outline:3px solid var(--yellow); outline-offset:2px; }
+  .profile-panel{ display:none; }
+  .profile-panel.active{ display:block; animation:panelIn .32s ease both; }
+  @keyframes panelIn{ from{ opacity:0; transform:translateY(8px); } }
+
+  .profile-section{
+    background:var(--surface); border:2px solid var(--line); border-radius:var(--r-lg);
+    padding:22px; box-shadow:var(--shadow-1); margin-bottom:16px;
+  }
+  .section-heading{ display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:18px; }
+  .section-heading h2{ font-size:1.25rem; }
+  .section-heading p,.muted-copy{ color:var(--ink-soft); font-weight:600; line-height:1.5; }
+
+  .appearance-layout{ display:grid; grid-template-columns:280px minmax(0,1fr); gap:22px; align-items:start; }
+  .appearance-preview{
+    position:sticky; top:84px; display:flex; flex-direction:column; align-items:center;
+    padding:28px 18px; border-radius:var(--r-lg); border:2px solid var(--line);
+    background:linear-gradient(145deg,var(--surface-2),var(--surface)); text-align:center;
+  }
+  .appearance-preview .preview-bubble{ width:156px; height:156px; font-size:3rem; margin:4px auto 16px; }
+  .appearance-preview h3{ font-size:1.15rem; }
+  .appearance-preview p{ min-height:24px; color:var(--ink-soft); font-weight:700; }
+  .appearance-actions{ display:grid; gap:9px; width:100%; margin-top:18px; }
+  .appearance-actions .btn:disabled{ opacity:.48; cursor:not-allowed; transform:none; }
+  .appearance-choices{ min-width:0; }
+  .appearance-choices .picker-tabs{ padding:0 0 14px; border-bottom:2px solid var(--line); }
+  .appearance-choices .picker-panel{ max-height:620px; overflow:auto; padding:18px 4px 4px; }
+  .none-frame{
+    min-height:98px; display:flex; flex-direction:column; justify-content:center; align-items:center;
+    border:2px dashed var(--line-strong); border-radius:var(--r-md); cursor:pointer; font-weight:800;
+  }
+  .none-frame.selected{ border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
+
+  .progress-hero{ padding:26px; }
+  .progress-hero .level-box{ margin:0; padding:0; border:0; }
+  .profile-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px; }
+  .profile-stat{ min-height:112px; padding:17px; border:2px solid var(--line); border-radius:var(--r-md); background:var(--surface); box-shadow:var(--shadow-1); }
+  .profile-stat .stat-icon{ font-size:1.35rem; }
+  .profile-stat strong{ display:block; margin-top:8px; font-size:1.55rem; line-height:1; }
+  .profile-stat span{ display:block; margin-top:6px; color:var(--ink-soft); font-size:.8rem; font-weight:700; }
+  .collection-row{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .collection-copy{ flex:1; min-width:180px; }
+  .collection-track{ flex:2; min-width:220px; height:14px; overflow:hidden; border:2px solid var(--line); border-radius:999px; background:var(--surface-2); }
+  .collection-fill{ width:0; height:100%; border-radius:999px; background:linear-gradient(90deg,var(--purple),var(--pink)); transition:width .7s ease; }
+  .account-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .account-grid .profile-section{ margin:0; }
+  .security-card{ grid-column:1/-1; border-color:rgba(255,95,95,.28); }
+  .security-actions{ display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:22px; align-items:start; }
+  .logout-zone{ padding:18px; border-radius:var(--r-md); background:rgba(255,95,95,.08); border:2px solid rgba(255,95,95,.18); }
+  .readonly-field{ opacity:.82; }
+  .loading-placeholder{ color:transparent!important; border-radius:8px; background:linear-gradient(90deg,var(--surface-2),var(--line),var(--surface-2)); background-size:200% 100%; animation:skeleton 1.2s infinite; }
+  @keyframes skeleton{ to{ background-position:-200% 0; } }
+
+  @media(max-width:860px){
+    .appearance-layout,.security-actions{ grid-template-columns:1fr; }
+    .appearance-preview{ position:static; }
+    .profile-stats{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media(max-width:620px){
+    main{ padding-left:12px; padding-right:12px; }
+    .hero-row{ align-items:flex-start; }
+    .hero-level-brief{ width:100%; }
+    .profile-section{ padding:17px; }
+    .profile-tab{ flex-basis:145px; }
+    .account-grid{ grid-template-columns:1fr; }
+    .security-card{ grid-column:auto; }
+    .profile-stats{ grid-template-columns:1fr 1fr; }
+  }
 </style>
 </head>
 <body data-v2>
@@ -350,102 +453,134 @@
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <main>
-
-  <!-- ── CARTE PRINCIPALE ── -->
-  <section class="hero-card fade-up">
+  <section class="hero-card fade-up" id="profileHero" aria-busy="true">
     <div class="hero-row">
       <div class="avatar-wrap">
-        <div class="big-avatar" id="bigAvatar" onclick="openPicker()">🫧</div>
-        <div class="edit-badge" onclick="openPicker()" title="Changer d'icône">✏️</div>
+        <button class="big-avatar" id="bigAvatar" type="button" onclick="showProfileTab('apparence')" aria-label="Modifier mon apparence">🫧</button>
+        <button class="edit-badge" type="button" onclick="showProfileTab('apparence')" title="Changer d'icône" aria-label="Changer d'icône">✏️</button>
       </div>
       <div class="hero-id">
-        <div class="hero-name" id="heroName">—</div>
-        <div class="hero-mail" id="heroMail">—</div>
+        <div class="hero-name loading-placeholder" id="heroName">Chargement du profil</div>
         <div class="hero-chips">
           <span class="sub-chip basic" id="subChip">BASIC</span>
           <span class="chip" id="curChip">🫧 Tes bulles</span>
-          <span class="chip" id="fxChip">✨ Aucun effet</span>
         </div>
+        <div class="profile-status syncing" id="profileStatus" role="status" aria-live="polite">Chargement du profil…</div>
       </div>
-      <button class="btn btn-blue" onclick="openPicker()">🎭 Personnaliser</button>
-    </div>
-
-    <div class="level-box">
-      <div class="level-head">
-        <h3>Niveau</h3>
-        <span class="level-num" id="levelNum">1 <small>/ —</small></span>
-        <span class="level-max" id="levelMax" style="display:none">🏆 Niveau max !</span>
+      <div class="hero-level-brief" aria-label="Résumé du niveau">
+        <strong id="heroLevelBrief">Niveau —</strong>
+        <span id="heroXpBrief">Synchronisation…</span>
       </div>
-      <div class="level-symbols" id="levelSymbols"></div>
-      <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
-      <div class="xp-line">
-        <span id="xpCurrent">0 XP</span>
-        <span id="xpNext">—</span>
-      </div>
+      <button class="btn btn-blue" type="button" onclick="showProfileTab('apparence')">🎭 Personnaliser</button>
     </div>
   </section>
 
-  <!-- ── MISSIONS : carte résumé ── -->
-  <section class="mis-card fade-up d1">
-    <div class="mis-card-ico">🎯</div>
-    <div class="mis-card-txt">
-      <h2>Missions</h2>
-      <p>C'est en accomplissant des missions que tu gagnes de l'XP et que tu montes de niveau.</p>
-      <div class="mis-card-stat" id="misSummary">—</div>
-    </div>
-    <button class="btn btn-blue" onclick="openMissions()">Voir les missions</button>
-  </section>
-
-  <!-- ── RÉGLAGES ── -->
-  <div class="cards-grid">
-
-    <section class="card fade-up d1">
-      <div class="card-head"><span class="ico">✍️</span><h2>Pseudo</h2></div>
-      <div class="field">
-        <label for="pseudoInput">Ton pseudo</label>
-        <input type="text" id="pseudoInput" placeholder="Entre ton pseudo...">
-      </div>
-      <button class="btn btn-green btn-block" onclick="savePseudo()">💾 Sauvegarder</button>
-    </section>
-
-    <section class="card fade-up d2">
-      <div class="card-head"><span class="ico">🔐</span><h2>Mot de passe</h2></div>
-      <div class="field">
-        <label for="newPwd">Nouveau mot de passe</label>
-        <input type="password" id="newPwd" placeholder="••••••••">
-      </div>
-      <div class="field">
-        <label for="confirmPwd">Confirmer</label>
-        <input type="password" id="confirmPwd" placeholder="••••••••">
-      </div>
-      <button class="btn btn-green btn-block" onclick="savePassword()">💾 Changer</button>
-    </section>
-
-    <section class="card fade-up d3">
-      <div class="card-head"><span class="ico">✨</span><h2>Abonnement</h2></div>
-      <p style="font-size:.95rem;font-weight:600;color:var(--ink-soft);line-height:1.5;margin-bottom:14px" id="subDesc">
-        Accès gratuit
-      </p>
-      <a href="bubble_site_abonnements.html" class="btn btn-yellow btn-block">✨ Voir les offres</a>
-    </section>
-
-    <section class="card fade-up d4">
-      <div class="card-head"><span class="ico">🚪</span><h2>Session</h2></div>
-      <p style="font-size:.95rem;font-weight:600;color:var(--ink-soft);line-height:1.5;margin-bottom:14px">
-        Tu seras redirigé vers la page de connexion.
-      </p>
-      <button class="btn btn-red btn-block" onclick="handleLogout()">🚪 Se déconnecter</button>
-    </section>
-
+  <div class="profile-tabs fade-up d1" role="tablist" aria-label="Sections du profil">
+    <button class="profile-tab" id="tab-apparence" role="tab" aria-selected="true" aria-controls="profile-apparence" tabindex="0" data-profile-tab="apparence">🎭 Apparence</button>
+    <button class="profile-tab" id="tab-progression" role="tab" aria-selected="false" aria-controls="profile-progression" tabindex="-1" data-profile-tab="progression">🏆 Progression</button>
+    <button class="profile-tab" id="tab-compte" role="tab" aria-selected="false" aria-controls="profile-compte" tabindex="-1" data-profile-tab="compte">⚙️ Compte</button>
   </div>
+
+  <section class="profile-panel active" id="profile-apparence" role="tabpanel" aria-labelledby="tab-apparence" tabindex="0">
+    <div class="profile-section appearance-layout">
+      <aside class="appearance-preview">
+        <div class="preview-bubble" id="previewBubble">🫧</div>
+        <h3>Aperçu</h3>
+        <p id="previewName">Chargement de ton icône…</p>
+        <div class="appearance-actions">
+          <button class="btn btn-green btn-block" id="appearanceSaveBtn" type="button" onclick="saveAppearance()" disabled>💾 Enregistrer les changements</button>
+          <button class="btn btn-ghost btn-block" id="appearanceResetBtn" type="button" onclick="resetAppearance()" disabled>↩ Annuler les modifications</button>
+        </div>
+      </aside>
+      <div class="appearance-choices">
+        <div class="section-heading">
+          <div><h2>Ton style</h2><p>Choisis une icône et un cadre. Les effets de coffres restent disponibles dans le Gacha.</p></div>
+        </div>
+        <div class="picker-tabs" role="tablist" aria-label="Choix d'apparence">
+          <button class="picker-tab active" role="tab" aria-selected="true" data-tab="icons" onclick="switchTab('icons')">🎭 Icônes</button>
+          <button class="picker-tab" role="tab" aria-selected="false" data-tab="frames" onclick="switchTab('frames')">🖼️ Cadres</button>
+        </div>
+        <div class="picker-panel active" id="panel-icons" role="tabpanel"></div>
+        <div class="picker-panel" id="panel-frames" role="tabpanel"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="profile-panel" id="profile-progression" role="tabpanel" aria-labelledby="tab-progression" tabindex="0" hidden>
+    <section class="profile-section progress-hero">
+      <div class="level-box">
+        <div class="level-head">
+          <h2>Niveau et expérience</h2>
+          <span class="level-num" id="levelNum">1 <small>/ —</small></span>
+          <span class="level-max" id="levelMax" style="display:none">🏆 Niveau max !</span>
+        </div>
+        <div class="level-symbols" id="levelSymbols"></div>
+        <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
+        <div class="xp-line"><span id="xpCurrent">0 XP</span><span id="xpNext">—</span></div>
+      </div>
+    </section>
+
+    <div class="profile-stats" aria-label="Statistiques personnelles">
+      <div class="profile-stat"><span class="stat-icon">✅</span><strong id="statMissions">0</strong><span>Missions terminées</span></div>
+      <div class="profile-stat"><span class="stat-icon">📜</span><strong id="statScans">0</strong><span>Scans lus</span></div>
+      <div class="profile-stat"><span class="stat-icon">🎮</span><strong id="statGames">0</strong><span>Jeux découverts</span></div>
+      <div class="profile-stat"><span class="stat-icon">🎴</span><strong id="statCards">0</strong><span>Cartes possédées</span></div>
+    </div>
+
+    <section class="mis-card">
+      <div class="mis-card-ico">🎯</div>
+      <div class="mis-card-txt"><h2>Missions</h2><p>Accomplis-les pour gagner de l'XP et monter de niveau.</p><div class="mis-card-stat" id="misSummary">Aucune mission chargée.</div></div>
+      <button class="btn btn-blue" type="button" onclick="openMissions()">Voir les missions</button>
+    </section>
+
+    <section class="profile-section">
+      <div class="section-heading"><div><h2>🎴 Collection</h2><p id="collectionSummary">Aucune carte possédée pour le moment.</p></div><strong id="collectionCount">0 / 0</strong></div>
+      <div class="collection-row"><div class="collection-copy muted-copy">Ta collection se complète en ouvrant des coffres.</div><div class="collection-track" aria-label="Complétion de la collection"><div class="collection-fill" id="collectionFill"></div></div></div>
+    </section>
+
+    <section class="profile-section">
+      <div class="section-heading"><div><h2>🎮 Meilleurs scores personnels</h2><p>Tes meilleurs résultats enregistrés dans Bubble Games.</p></div></div>
+      <div id="scoreboard"><p class="muted-copy">Chargement des performances…</p></div>
+    </section>
+  </section>
+
+  <section class="profile-panel" id="profile-compte" role="tabpanel" aria-labelledby="tab-compte" tabindex="0" hidden>
+    <div class="account-grid">
+      <section class="profile-section">
+        <div class="section-heading"><div><h2>✍️ Identité</h2><p>Les informations visibles sur Bubble Site.</p></div></div>
+        <div class="field"><label for="pseudoInput">Ton pseudo</label><input type="text" id="pseudoInput" maxlength="32" autocomplete="nickname" placeholder="Entre ton pseudo..."></div>
+        <div class="field readonly-field"><label for="emailInput">Adresse email</label><input type="email" id="emailInput" value="Chargement…" readonly aria-readonly="true"></div>
+        <button class="btn btn-green btn-block" id="pseudoSaveBtn" type="button" onclick="savePseudo()">💾 Sauvegarder le pseudo</button>
+      </section>
+
+      <section class="profile-section">
+        <div class="section-heading"><div><h2>✨ Abonnement</h2><p id="accountSubLabel">Formule BASIC</p></div></div>
+        <p class="muted-copy" id="subDesc">Accès gratuit</p>
+        <a href="bubble_site_abonnements.html" class="btn btn-yellow btn-block" style="margin-top:18px">✨ Voir les offres</a>
+      </section>
+
+      <section class="profile-section security-card">
+        <div class="section-heading"><div><h2>🔐 Sécurité et session</h2><p>Protège ton compte ou ferme ta session sur cet appareil.</p></div></div>
+        <div class="security-actions">
+          <div>
+            <div class="field"><label for="currentPwd">Mot de passe actuel <small>(utile si Firebase demande une reconnexion)</small></label><input type="password" id="currentPwd" autocomplete="current-password" placeholder="••••••••"></div>
+            <div class="field"><label for="newPwd">Nouveau mot de passe</label><input type="password" id="newPwd" minlength="6" autocomplete="new-password" placeholder="6 caractères minimum"></div>
+            <div class="field"><label for="confirmPwd">Confirmer le nouveau mot de passe</label><input type="password" id="confirmPwd" autocomplete="new-password" placeholder="Retape le mot de passe"></div>
+            <button class="btn btn-green btn-block" id="passwordSaveBtn" type="button" onclick="savePassword()">💾 Changer le mot de passe</button>
+          </div>
+          <div class="logout-zone"><h3>Déconnexion</h3><p class="muted-copy">Tu seras redirigé vers la page de connexion.</p><button class="btn btn-red btn-block" id="logoutBtn" type="button" onclick="handleLogout()" style="margin-top:14px">🚪 Se déconnecter</button></div>
+        </div>
+      </section>
+    </div>
+  </section>
 </main>
 
 <!-- ── POP-UP DES MISSIONS ── -->
-<div class="overlay" id="misOverlay">
-  <div class="sheet mis-sheet">
+<div class="overlay" id="misOverlay" aria-hidden="true">
+  <div class="sheet mis-sheet" role="dialog" aria-modal="true" aria-labelledby="missionsTitle">
     <div class="mis-top">
       <div class="mis-top-row">
-        <h2>🎯 Missions</h2>
+        <h2 id="missionsTitle">🎯 Missions</h2>
         <span class="mis-total" id="misTotal">0 XP gagnés</span>
         <button class="mis-close" onclick="closeMissions()" aria-label="Fermer">✕</button>
       </div>
@@ -458,34 +593,7 @@
       </div>
       <div class="mis-tabs" id="misTabs"></div>
     </div>
-    <div class="mis-scroll" id="misScroll"></div>
-  </div>
-</div>
-
-<!-- ── SÉLECTEUR ── -->
-<div class="overlay" id="pickerOverlay">
-  <div class="sheet">
-    <div class="picker-top">
-      <div class="preview-bubble" id="previewBubble">🫧</div>
-      <div class="picker-info">
-        <h2>Personnalisation</h2>
-        <p id="previewName">Choisis une icône et un effet</p>
-      </div>
-      <div class="picker-actions">
-        <button class="btn btn-ghost btn-sm" onclick="closePicker()">Annuler</button>
-        <button class="btn btn-green btn-sm" onclick="confirmSelection()">Enregistrer</button>
-      </div>
-    </div>
-
-    <div class="picker-tabs">
-      <button class="picker-tab active" data-tab="icons"   onclick="switchTab('icons')">🎭 Icônes</button>
-      <button class="picker-tab"        data-tab="effects" onclick="switchTab('effects')">✨ Effets</button>
-      <button class="picker-tab"        data-tab="frames"  onclick="switchTab('frames')">🖼️ Cadres</button>
-    </div>
-
-    <div class="picker-panel active" id="panel-icons"></div>
-    <div class="picker-panel"        id="panel-effects"></div>
-    <div class="picker-panel"        id="panel-frames"></div>
+    <div class="mis-scroll" id="misScroll"><p class="mis-empty">Chargement des missions…</p></div>
   </div>
 </div>
 
@@ -502,10 +610,49 @@
 
   /* ── Onglets du sélecteur ── */
   function switchTab(tab){
-    document.querySelectorAll('.picker-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('.picker-tab').forEach(t => {
+      const active = t.dataset.tab === tab;
+      t.classList.toggle('active', active);
+      t.setAttribute('aria-selected', String(active));
+    });
     document.querySelectorAll('.picker-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel-' + tab).classList.add('active');
+    document.getElementById('panel-' + tab)?.classList.add('active');
   }
+
+  /* ── Navigation principale du profil ── */
+  const PROFILE_TABS = ['apparence','progression','compte'];
+  function showProfileTab(tab, updateHash = true){
+    if (!PROFILE_TABS.includes(tab)) tab = 'apparence';
+    document.querySelectorAll('[data-profile-tab]').forEach(btn => {
+      const active = btn.dataset.profileTab === tab;
+      btn.setAttribute('aria-selected', String(active));
+      btn.tabIndex = active ? 0 : -1;
+    });
+    PROFILE_TABS.forEach(key => {
+      const panel = document.getElementById('profile-' + key);
+      const active = key === tab;
+      panel.classList.toggle('active', active);
+      panel.hidden = !active;
+    });
+    if (updateHash && location.hash !== '#' + tab) history.replaceState(null, '', '#' + tab);
+  }
+  document.querySelectorAll('[data-profile-tab]').forEach(btn => {
+    btn.addEventListener('click', () => showProfileTab(btn.dataset.profileTab));
+    btn.addEventListener('keydown', event => {
+      const current = PROFILE_TABS.indexOf(btn.dataset.profileTab);
+      let next = current;
+      if (event.key === 'ArrowRight') next = (current + 1) % PROFILE_TABS.length;
+      else if (event.key === 'ArrowLeft') next = (current - 1 + PROFILE_TABS.length) % PROFILE_TABS.length;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = PROFILE_TABS.length - 1;
+      else return;
+      event.preventDefault();
+      showProfileTab(PROFILE_TABS[next]);
+      document.getElementById('tab-' + PROFILE_TABS[next]).focus();
+    });
+  });
+  window.addEventListener('hashchange', () => showProfileTab(location.hash.slice(1), false));
+  showProfileTab(location.hash.slice(1), false);
 
   /* ── Toast ── */
   function toast(msg, type){
@@ -665,6 +812,13 @@
       `${window.amountLabel(earnedCur, sub0, 15)} gagné(e)s grâce aux missions`;
     document.getElementById('misTotal').innerHTML = window.amountLabel(earnedCur, sub0, 14);
 
+    const completed = Object.values(st.missions || {}).filter(Boolean).length;
+    const scans = Array.isArray(st.scansRead) ? st.scansRead.length : Object.keys(st.scansRead || {}).length;
+    const games = Array.isArray(st.gamesPlayed) ? st.gamesPlayed.length : Object.keys(st.gamesPlayed || {}).length;
+    document.getElementById('statMissions').textContent = completed;
+    document.getElementById('statScans').textContent = scans;
+    document.getElementById('statGames').textContent = games;
+
     /* Onglets */
     document.getElementById('misTabs').innerHTML = CATS.map(c =>
       `<button class="mis-tab${c.key === activeCat ? ' active' : ''}" data-go="${c.key}"
@@ -698,15 +852,24 @@
   }
 
   /* ── Ouvrir / fermer ── */
+  let missionReturnFocus = null;
   function openMissions(){
-    document.getElementById('misOverlay').classList.add('open');
+    missionReturnFocus = document.activeElement;
+    const overlay = document.getElementById('misOverlay');
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden','false');
     document.body.style.overflow = 'hidden';
     if (lastState) renderMissions(lastState);
     syncTabs();
+    requestAnimationFrame(() => overlay.querySelector('.mis-close')?.focus());
   }
   function closeMissions(){
-    document.getElementById('misOverlay').classList.remove('open');
+    const overlay = document.getElementById('misOverlay');
+    if (!overlay.classList.contains('open')) return;
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden','true');
     document.body.style.overflow = '';
+    missionReturnFocus?.focus?.();
   }
   function setActiveTab(key){
     activeCat = key;
@@ -820,15 +983,23 @@
   hookMissions();
 
   /* Fermeture du pop-up */
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMissions(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMissions();
+    if (e.key === 'Tab' && document.getElementById('misOverlay').classList.contains('open')){
+      const focusable = [...document.querySelectorAll('#misOverlay button:not([disabled]), #misOverlay [href], #misOverlay [tabindex]:not([tabindex="-1"])')];
+      if (!focusable.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+  });
   document.getElementById('misOverlay').addEventListener('click', e => {
     if (e.target.id === 'misOverlay') closeMissions();
   });
 
   /* Ponts vers le module (les onclick du HTML) */
-  function openPicker()      { window._openPicker      && window._openPicker(); }
-  function closePicker()     { window._closePicker     && window._closePicker(); }
-  function confirmSelection(){ window._confirmSelection&& window._confirmSelection(); }
+  function saveAppearance()  { window._saveAppearance  && window._saveAppearance(); }
+  function resetAppearance() { window._resetAppearance && window._resetAppearance(); }
   function savePseudo()      { window._savePseudo      && window._savePseudo(); }
   function savePassword()    { window._savePassword    && window._savePassword(); }
   function handleLogout()    { window._handleLogout    && window._handleLogout(); }
@@ -858,18 +1029,20 @@
     plus: "Abonné Bubble+ — icônes premium, magazines et scans (+).",
     x:    "Abonné Bubble X — icônes stellaires, scans (X) et Bubble Game.",
     max:  "Abonné Bubble MAX — tout est inclus, accès prioritaire partout.",
+    admin:"Compte administrateur — tous les outils et apparences sont disponibles.",
   };
 
   let currentUser    = null;
   let userSub        = 'basic';
   let activeIconId   = 'bully_1';
-  let activeEffect   = null;
-  let unlockedFx     = [];
   let selectedIcon   = null;
-  let selectedEffect = null;      /* null = inchangé, 'none' = retirer */
   let activeFrame    = null;      /* le cadre choisi (id) */
   let selectedFrame  = null;
   let stopProfileSync = null;
+  let appearanceDirty = false;
+  let appearanceSaving = false;
+  let pseudoSaving = false;
+  let passwordSaving = false;
 
   const canUse = sub => window.SUB_ORDER[userSub] >= window.SUB_ORDER[sub];
   /* Une icône est utilisable si l'abonnement suffit OU si un admin l'a offerte */
@@ -893,11 +1066,7 @@
     if (cc) cc.innerHTML = `${window.currencyIcon(sub,15)} Tes ${cur.name}`;
     document.getElementById('navSub').textContent  = label;
     document.getElementById('subDesc').textContent = SUB_DESCS[sub] || SUB_DESCS.basic;
-  }
-
-  function setFxChip(type){
-    const fx = window.ALL_EFFECTS.find(e => e.type === type);
-    document.getElementById('fxChip').textContent = fx ? `${fx.emoji} ${fx.label}` : '✨ Aucun effet';
+    document.getElementById('accountSubLabel').textContent = 'Formule ' + label;
   }
 
   function renderLevel(xp, sub){
@@ -914,22 +1083,47 @@
       ? 'Palier maximum atteint'
       : `encore ${lv.xpNeeded} ${window.currencyIcon(sub,14)} pour le niveau ${lv.level + 1}`;
     document.getElementById('levelMax').style.display = lv.isMax ? 'inline-block' : 'none';
+    document.getElementById('heroLevelBrief').textContent = `Niveau ${lv.level}`;
+    document.getElementById('heroXpBrief').innerHTML = lv.isMax
+      ? 'Palier maximum atteint'
+      : `${window.amountLabel(xp, sub, 13)} · prochain niveau`;
     window.applyFrame(sub, lv.level, activeFrame);
     window.__level = lv.level;
   }
   /* Le moteur de missions s'en sert pour remettre le niveau à jour sans Ctrl+R */
   window._renderLevelUI = renderLevel;
 
+  function setProfileStatus(message, state = 'syncing'){
+    const el = document.getElementById('profileStatus');
+    el.textContent = message;
+    el.className = 'profile-status ' + state;
+  }
+
+  function updateCollectionUI(){
+    const owned = window.__collectionCount || 0;
+    const total = (window.CARD_POOL || []).length;
+    document.getElementById('statCards').textContent = owned;
+    document.getElementById('collectionCount').textContent = `${owned} / ${total}`;
+    document.getElementById('collectionSummary').textContent = owned
+      ? `${owned} carte${owned > 1 ? 's' : ''} sur ${total} dans ta collection.`
+      : 'Aucune carte possédée pour le moment.';
+    document.getElementById('collectionFill').style.width = (total ? Math.min(100, owned / total * 100) : 0) + '%';
+  }
+
   /* ── Connexion ── */
-  onAuthStateChanged(auth, async user => {
+  const stopAuth = onAuthStateChanged(auth, async user => {
+    stopProfileSync?.();
+    stopProfileSync = null;
     if (!user){ window.location.href = './login.html'; return; }
     currentUser = user;
 
-    const pseudo = user.displayName || user.email.split('@')[0];
+    const pseudo = user.displayName || user.email?.split('@')[0] || 'Bubblien';
     document.getElementById('heroName').textContent    = pseudo;
-    document.getElementById('heroMail').textContent    = user.email;
+    document.getElementById('heroName').classList.remove('loading-placeholder');
     document.getElementById('navName').textContent     = pseudo;
     document.getElementById('pseudoInput').value       = pseudo;
+    document.getElementById('emailInput').value        = user.email || 'Adresse indisponible';
+    setProfileStatus('Synchronisation…', 'syncing');
 
     try {
       const userRef = doc(db,'users',user.uid);
@@ -939,20 +1133,11 @@
         userSub      = d.subscription || 'basic';
         window.__userSub = userSub;
         activeIconId = d.avatarId     || 'bully_1';
-        activeEffect = d.activeEffect || null;
         activeFrame  = d.frameId      || null;
-        unlockedFx   = (d.gachaEffects || []).slice();
         /* Cadres offerts par un admin (page patesbolognaise.html) */
         window.__frameGrants = (d.framesUnlocked || []).slice();
         window.__iconGrants  = (d.iconsUnlocked  || []).slice();
         window.__collectionCount = (d.gachaCollection || []).length;
-
-        /* Déblocage rétroactif : une carte possédée débloque son effet */
-        const owned = (d.gachaCollection || []).map(String);
-        window.ALL_EFFECTS.forEach(fx => {
-          if (fx.cardId && owned.includes(String(fx.cardId)) && !unlockedFx.includes(fx.type))
-            unlockedFx.push(fx.type);
-        });
 
         renderLevel(d.xp || 0, userSub);
       } else {
@@ -975,56 +1160,62 @@
       stopProfileSync = onSnapshot(userRef, liveSnap => {
         if (!liveSnap.exists()) return;
         const d = liveSnap.data();
-        const livePseudo = d.pseudo || currentUser.displayName || currentUser.email.split('@')[0];
+        setProfileStatus('Synchronisation…', 'syncing');
+        const livePseudo = d.pseudo || currentUser.displayName || currentUser.email?.split('@')[0] || 'Bubblien';
         document.getElementById('heroName').textContent = livePseudo;
         document.getElementById('navName').textContent = livePseudo;
-        document.getElementById('pseudoInput').value = livePseudo;
+        const pseudoInput = document.getElementById('pseudoInput');
+        if (document.activeElement !== pseudoInput) pseudoInput.value = livePseudo;
         userSub      = d.subscription || 'basic';
         window.__userSub = userSub;
         activeIconId = d.avatarId || 'bully_1';
-        activeEffect = d.activeEffect || null;
         activeFrame  = d.frameId || null;
-        unlockedFx   = (d.gachaEffects || []).slice();
         window.__frameGrants = (d.framesUnlocked || []).slice();
         window.__iconGrants  = (d.iconsUnlocked || []).slice();
         window.__collectionCount = (d.gachaCollection || []).length;
-        const owned = (d.gachaCollection || []).map(String);
-        window.ALL_EFFECTS.forEach(fx => {
-          if (fx.cardId && owned.includes(String(fx.cardId)) && !unlockedFx.includes(fx.type))
-            unlockedFx.push(fx.type);
-        });
         renderLevel(d.xp || 0, userSub);
         setSubUI(userSub);
-        setFxChip(activeEffect);
         setAvatarUI(window.findIcon(activeIconId) || window.ALL_ICONS[0]);
+        updateCollectionUI();
+        if (!appearanceDirty) initAppearanceDraft(true);
+        document.getElementById('profileHero').setAttribute('aria-busy','false');
+        setProfileStatus('Profil à jour', 'ready');
+      }, error => {
+        console.error('Synchronisation du profil:', error);
+        setProfileStatus('Synchronisation interrompue', 'error');
+        toast('⚠️ Le profil ne peut pas être synchronisé pour le moment.', 'err');
       });
-    } catch(e){ toast('⚠️ ' + e.message, 'err'); }
+    } catch(e){
+      console.error('Chargement du profil:', e);
+      setProfileStatus('Erreur de chargement', 'error');
+      toast('⚠️ Impossible de charger toutes les données du profil.', 'err');
+    }
 
     setSubUI(userSub);
-    setFxChip(activeEffect);
     const icon = window.findIcon(activeIconId) || window.ALL_ICONS[0];
     setAvatarUI(icon);
+    updateCollectionUI();
+    if (!appearanceDirty) initAppearanceDraft(true);
+    document.getElementById('profileHero').setAttribute('aria-busy','false');
 
   });
 
-  /* ── Sélecteur ── */
-  window._openPicker = function(){
-    selectedIcon   = window.findIcon(activeIconId) || window.ALL_ICONS[0];
-    selectedEffect = activeEffect;
-    selectedFrame  = activeFrame;
+  /* ── Sélecteur intégré ── */
+  function initAppearanceDraft(force = false){
+    if (appearanceDirty && !force) return;
+    selectedIcon = window.findIcon(activeIconId) || window.ALL_ICONS[0];
+    selectedFrame = activeFrame;
     buildIcons();
-    buildEffects();
     buildFrames();
     updatePreview();
-    document.getElementById('pickerOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  };
+    setAppearanceDirty(false);
+  }
 
-  window._closePicker = function(){
-    document.getElementById('pickerOverlay').classList.remove('open');
-    document.body.style.overflow = '';
-    window.applyFrame(userSub, window.__level || 1, activeFrame);
-  };
+  function setAppearanceDirty(value = true){
+    appearanceDirty = value;
+    document.getElementById('appearanceSaveBtn').disabled = !value || appearanceSaving || !currentUser;
+    document.getElementById('appearanceResetBtn').disabled = !value || appearanceSaving;
+  }
 
   /* ── Les cadres : toutes les séries jusqu'à ton abonnement ── */
   const TIER_TITLES = {
@@ -1042,6 +1233,25 @@
     panel.innerHTML = '';
 
     const ic = window.findIcon(selectedIcon?.id || activeIconId) || { file:'bully_1.png', name:'' };
+
+    const noneTitle = document.createElement('div');
+    noneTitle.className = 'cat-title';
+    noneTitle.textContent = 'Choix du cadre';
+    panel.appendChild(noneTitle);
+    const noneGrid = document.createElement('div');
+    noneGrid.className = 'frm-grid';
+    const none = document.createElement('button');
+    none.type = 'button';
+    none.className = 'none-frame' + (selectedFrame === null ? ' selected' : '');
+    none.innerHTML = '<span style="font-size:1.6rem">✨</span><span>Cadre automatique</span>';
+    none.addEventListener('click', () => {
+      selectedFrame = null;
+      buildFrames();
+      updatePreview();
+      setAppearanceDirty(selectedIcon?.id !== activeIconId || selectedFrame !== activeFrame);
+    });
+    noneGrid.appendChild(none);
+    panel.appendChild(noneGrid);
 
     /* On regroupe par série : ton abonnement te donne aussi ceux d'en dessous */
     const byTier = {};
@@ -1080,6 +1290,7 @@
             panel.querySelectorAll('.frm-item').forEach(el => el.classList.remove('selected'));
             item.classList.add('selected');
             updatePreview();
+            setAppearanceDirty(selectedIcon?.id !== activeIconId || selectedFrame !== activeFrame);
           });
         }
       });
@@ -1094,7 +1305,8 @@
       : '🫧';
     document.getElementById('previewName').textContent =
       selectedIcon ? selectedIcon.name : 'Choisis une icône';
-    window.drawFrame(pb, selectedFrame, userSub);
+    const previewFrame = selectedFrame || window.defaultFrame(userSub, window.__level || 1)?.id || null;
+    window.drawFrame(pb, previewFrame, userSub);
   }
 
   function buildIcons(){
@@ -1127,6 +1339,8 @@
             panel.querySelectorAll('.icon-item').forEach(el => el.classList.remove('selected'));
             item.classList.add('selected');
             updatePreview();
+            buildFrames();
+            setAppearanceDirty(selectedIcon?.id !== activeIconId || selectedFrame !== activeFrame);
           });
         }
         grid.appendChild(item);
@@ -1135,99 +1349,89 @@
     }
   }
 
-  function buildEffects(){
-    const panel = document.getElementById('panel-effects');
-    panel.innerHTML = '';
-
-    const t = document.createElement('div');
-    t.className = 'cat-title';
-    t.textContent = 'Effets débloqués en ouvrant des coffres';
-    panel.appendChild(t);
-
-    const grid = document.createElement('div');
-    grid.className = 'fx-grid';
-
-    /* Option "aucun" */
-    const none = document.createElement('div');
-    none.className = 'fx-item' + (!selectedEffect || selectedEffect === 'none' ? ' selected' : '');
-    none.innerHTML = `<div class="fx-dot" style="background:var(--surface-2)">🚫</div>
-                      <div class="fx-name">Aucun</div>`;
-    none.addEventListener('click', () => {
-      selectedEffect = 'none';
-      grid.querySelectorAll('.fx-item').forEach(el => el.classList.remove('selected'));
-      none.classList.add('selected');
-    });
-    grid.appendChild(none);
-
-    window.ALL_EFFECTS.forEach(fx => {
-      const unlocked = unlockedFx.includes(fx.type);
-      const item = document.createElement('div');
-      item.className = 'fx-item' + (unlocked ? '' : ' locked')
-                     + (selectedEffect === fx.type ? ' selected' : '');
-      const soft = fx.color + '22';
-      item.innerHTML = `
-        <div class="fx-dot" style="background:${soft};color:${fx.color}">${fx.emoji}</div>
-        <div class="fx-name" style="color:${unlocked ? fx.color : 'var(--ink-soft)'}">${fx.label}</div>
-        ${unlocked ? '' : '<div class="fx-hint">🎁 Coffre</div>'}`;
-
-      if (unlocked){
-        item.addEventListener('click', () => {
-          selectedEffect = fx.type;
-          grid.querySelectorAll('.fx-item').forEach(el => el.classList.remove('selected'));
-          item.classList.add('selected');
-        });
-      }
-      grid.appendChild(item);
-    });
-
-    panel.appendChild(grid);
-  }
-
-  /* ── Enregistrer icône + effet ── */
-  window._confirmSelection = async function(){
-    if (!currentUser) return;
-    const updates = {};
-    if (selectedIcon) updates.avatarId = selectedIcon.id;
-    if (selectedEffect !== null) updates.activeEffect = selectedEffect === 'none' ? null : selectedEffect;
-    if (selectedFrame) updates.frameId = selectedFrame;
-
-    /* On enregistre aussi les effets débloqués rétroactivement */
-    updates.gachaEffects = unlockedFx;
-
+  /* ── Enregistrer l'apparence sans toucher aux effets Gacha ── */
+  window._saveAppearance = async function(){
+    if (!currentUser || !appearanceDirty || appearanceSaving) return;
+    appearanceSaving = true;
+    const button = document.getElementById('appearanceSaveBtn');
+    const previousLabel = button.textContent;
+    button.textContent = 'Enregistrement…';
+    setAppearanceDirty(true);
+    setProfileStatus('Enregistrement de l’apparence…', 'syncing');
     try {
-      await setDoc(doc(db,'users',currentUser.uid), updates, { merge:true });
-      if (selectedIcon){ activeIconId = selectedIcon.id; setAvatarUI(selectedIcon); }
-      if (selectedEffect !== null) activeEffect = selectedEffect === 'none' ? null : selectedEffect;
-      if (selectedFrame){ activeFrame = selectedFrame; window.applyFrame(userSub, window.__level || 1, activeFrame); }
-      setFxChip(activeEffect);
-      document.getElementById('pickerOverlay').classList.remove('open');
-      document.body.style.overflow = '';
-      toast('✅ Profil mis à jour !', 'ok');
-    } catch(e){ toast('❌ ' + e.message, 'err'); }
+      await setDoc(doc(db,'users',currentUser.uid), {
+        avatarId: selectedIcon?.id || activeIconId,
+        frameId: selectedFrame
+      }, { merge:true });
+      activeIconId = selectedIcon?.id || activeIconId;
+      activeFrame = selectedFrame;
+      setAvatarUI(selectedIcon || window.findIcon(activeIconId) || window.ALL_ICONS[0]);
+      appearanceDirty = false;
+      toast('✅ Apparence enregistrée !', 'ok');
+      setProfileStatus('Profil à jour', 'ready');
+    } catch(e){
+      console.error('Enregistrement de l’apparence:', e);
+      toast('❌ Échec de l’enregistrement. Tes choix sont conservés à l’écran.', 'err');
+      setProfileStatus('Enregistrement impossible', 'error');
+    } finally {
+      appearanceSaving = false;
+      button.textContent = previousLabel;
+      setAppearanceDirty(appearanceDirty);
+    }
+  };
+
+  window._resetAppearance = function(){
+    if (appearanceSaving) return;
+    initAppearanceDraft(true);
+    toast('↩ Modifications annulées.', 'ok');
   };
 
   /* ── Pseudo ── */
   window._savePseudo = async function(){
+    if (!currentUser || pseudoSaving) return;
     const p = document.getElementById('pseudoInput').value.trim();
     if (!p){ toast('⚠️ Entre un pseudo !', 'err'); return; }
+    if (p.length > 32){ toast('⚠️ Le pseudo est limité à 32 caractères.', 'err'); return; }
+    pseudoSaving = true;
+    const button = document.getElementById('pseudoSaveBtn');
+    const previous = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Enregistrement…';
     try {
       await updateProfile(currentUser, { displayName:p });
       await setDoc(doc(db,'users',currentUser.uid), { pseudo:p }, { merge:true });
       document.getElementById('heroName').textContent = p;
       document.getElementById('navName').textContent  = p;
       toast('✅ Pseudo mis à jour !', 'ok');
-    } catch(e){ toast('❌ ' + e.message, 'err'); }
+    } catch(e){
+      console.error('Enregistrement du pseudo:', e);
+      toast('❌ Le pseudo n’a pas pu être enregistré.', 'err');
+    } finally {
+      pseudoSaving = false;
+      button.disabled = false;
+      button.textContent = previous;
+    }
   };
 
   /* ── Mot de passe ── */
   window._savePassword = async function(){
+    if (!currentUser || passwordSaving) return;
     const a = document.getElementById('newPwd').value;
     const b = document.getElementById('confirmPwd').value;
+    const old = document.getElementById('currentPwd').value;
     if (!a || !b)      { toast('⚠️ Remplis les deux champs !', 'err'); return; }
     if (a !== b)       { toast('❌ Les mots de passe ne correspondent pas !', 'err'); return; }
     if (a.length < 6)  { toast('❌ Minimum 6 caractères !', 'err'); return; }
+    if (a.length > 128) { toast('❌ Le mot de passe est trop long.', 'err'); return; }
+
+    passwordSaving = true;
+    const button = document.getElementById('passwordSaveBtn');
+    const previous = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Modification…';
 
     const clear = () => {
+      document.getElementById('currentPwd').value = '';
       document.getElementById('newPwd').value = '';
       document.getElementById('confirmPwd').value = '';
     };
@@ -1237,28 +1441,51 @@
       clear(); toast('✅ Mot de passe changé !', 'ok');
     } catch(e){
       if (e.code === 'auth/requires-recent-login'){
-        const old = prompt('Entre ton mot de passe actuel pour confirmer :');
-        if (!old) return;
+        if (!old){
+          toast('🔐 Firebase exige une reconnexion récente : renseigne ton mot de passe actuel puis réessaie.', 'err');
+          return;
+        }
         try {
           const cred = EmailAuthProvider.credential(currentUser.email, old);
           await reauthenticateWithCredential(currentUser, cred);
           await updatePassword(currentUser, a);
           clear(); toast('✅ Mot de passe changé !', 'ok');
-        } catch(e2){ toast('❌ ' + e2.message, 'err'); }
-      } else toast('❌ ' + e.message, 'err');
+        } catch(e2){
+          console.error('Reconnexion Firebase:', e2);
+          toast('❌ Reconnexion refusée. Vérifie ton mot de passe actuel.', 'err');
+        }
+      } else {
+        console.error('Modification du mot de passe:', e);
+        toast('❌ Le mot de passe n’a pas pu être modifié.', 'err');
+      }
+    } finally {
+      passwordSaving = false;
+      button.disabled = false;
+      button.textContent = previous;
     }
   };
 
   /* ── Déconnexion ── */
   window._handleLogout = async function(){
-    await signOut(auth);
-    window.location.href = './login.html';
+    const button = document.getElementById('logoutBtn');
+    if (button.disabled) return;
+    button.disabled = true;
+    button.textContent = 'Déconnexion…';
+    try {
+      stopProfileSync?.();
+      await signOut(auth);
+      window.location.href = './login.html';
+    } catch(e){
+      console.error('Déconnexion:', e);
+      button.disabled = false;
+      button.textContent = '🚪 Se déconnecter';
+      toast('❌ La déconnexion a échoué. Réessaie.', 'err');
+    }
   };
 
-  /* ── Fermeture du sélecteur ── */
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') window._closePicker(); });
-  document.getElementById('pickerOverlay').addEventListener('click', e => {
-    if (e.target.id === 'pickerOverlay') window._closePicker();
+  window.addEventListener('beforeunload', () => {
+    stopProfileSync?.();
+    stopAuth();
   });
 </script>
 
