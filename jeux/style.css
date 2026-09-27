@@ -56,6 +56,7 @@ body.game-mode-entering{visibility:visible}
 }
 #game-pixel-curtain span{background:var(--pixel,#20243a);animation-delay:var(--delay,0ms)!important}
 #game-pixel-curtain.revealing span{transform:scale(1.04);opacity:1;animation:gamePixelReveal .52s steps(5,end) forwards}
+#game-pixel-curtain.revealing{background:transparent}
 #game-pixel-curtain.covering{background:transparent}
 #game-pixel-curtain.covering span{transform:scale(0);opacity:0;animation:gamePixelCover .4s steps(4,end) forwards}
 @keyframes gamePixelReveal{to{transform:scale(0);opacity:0}}
