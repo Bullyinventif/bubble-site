@@ -193,7 +193,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
            createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail,
-           GoogleAuthProvider, signInWithPopup }
+           GoogleAuthProvider, signInWithPopup, getAdditionalUserInfo }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc, setDoc }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -303,6 +303,7 @@
       const profileRef = doc(db, 'users', cred.user.uid);
       const profileSnap = await getDoc(profileRef);
       const isNewProfile = !profileSnap.exists();
+      const isNewGoogleUser = !!getAdditionalUserInfo(cred)?.isNewUser;
 
       if(isNewProfile){
         const googleName = (cred.user.displayName || cred.user.email?.split('@')[0] || 'Nouveau membre').trim().slice(0, 32);
@@ -313,7 +314,10 @@
         });
       }
 
-      window.location.href = isNewProfile
+      /* Firebase sait si l'identité Google vient réellement d'être créée.
+         Le profil Firestore seul ne suffit pas : il peut déjà avoir été
+         initialisé par une autre partie du site pendant la première connexion. */
+      window.location.href = (isNewGoogleUser || isNewProfile)
         ? './bubble_site_tutoriel.html?onboarding=1'
         : './index.html';
     } catch(e){
