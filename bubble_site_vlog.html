@@ -24,7 +24,10 @@
   }
   .featured-cover{ position:relative; min-height:280px; background:var(--surface-2);
                    display:flex; align-items:center; justify-content:center; font-size:4rem; }
-  .featured-cover img{ width:100%; height:100%; object-fit:cover; }
+  .featured-cover img{
+    position:absolute; inset:0;
+    width:100%; height:100%; object-fit:cover;
+  }
   .featured-body{ padding:28px; display:flex; flex-direction:column; gap:12px; justify-content:center; }
   .featured-tag{
     align-self:flex-start; padding:5px 13px; border-radius:999px;
@@ -47,7 +50,10 @@
   .post:hover{ transform:translateY(-4px); box-shadow:var(--shadow-2); }
   .post-cover{ height:150px; background:var(--surface-2); display:flex; align-items:center;
                justify-content:center; font-size:2.6rem; position:relative; }
-  .post-cover img{ width:100%; height:100%; object-fit:cover; }
+  .post-cover img{
+    position:absolute; inset:0;
+    width:100%; height:100%; object-fit:cover;
+  }
   .post-lock{ position:absolute; inset:0; background:rgba(255,255,255,.72); backdrop-filter:blur(2px);
               display:flex; align-items:center; justify-content:center; font-size:1.8rem; }
   .post-body{ padding:16px 18px 18px; display:flex; flex-direction:column; gap:7px; flex:1; }
