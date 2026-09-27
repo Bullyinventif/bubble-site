@@ -50,6 +50,13 @@ const BUBBLE_PAGE = (() => {
   };
 })();
 
+/* Posé dès le <head> pour éviter que la navigation complète clignote avant
+   l'animation de retour depuis Bubble Games. */
+try {
+  if (new URL(window.location.href).searchParams.get('bubble-transition') === 'site')
+    document.documentElement.classList.add('game-return-pending');
+} catch (_) { /* URL locale inhabituelle : la page reste simplement visible. */ }
+
 (function initColorMode(){
   const STORAGE_KEY = 'bubble-color-mode';
   const root = document.documentElement;
@@ -215,6 +222,13 @@ const BUBBLE_PAGE = (() => {
   function revealEntry(){
     const gameState = gameModeState();
     const transitionMarker = new URL(window.location.href).searchParams.get('bubble-transition');
+    if (transitionMarker === 'site' && reducedMotion){
+      const clean = new URL(window.location.href);
+      clean.searchParams.delete('bubble-transition');
+      history.replaceState(null,'',clean.href);
+      document.documentElement.classList.remove('game-return-pending');
+      return;
+    }
     if ((gameState?.direction === 'to-site' && Date.now() - gameState.at < 5000 || transitionMarker === 'site') && !reducedMotion){
       if (transitionMarker){
         const clean = new URL(window.location.href);
@@ -222,10 +236,16 @@ const BUBBLE_PAGE = (() => {
         history.replaceState(null,'',clean.href);
       }
       const curtain = makePixelCurtain('revealing');
+      const nav = document.querySelector('body[data-v2] nav');
+      nav?.classList.add('nav-from-game');
       document.body.classList.add('game-mode-entering-site');
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.documentElement.classList.remove('game-return-pending');
+      }));
       window.setTimeout(() => {
         curtain.remove();
         document.body.classList.remove('game-mode-entering-site');
+        nav?.classList.remove('nav-from-game');
       }, 820);
       return;
     }

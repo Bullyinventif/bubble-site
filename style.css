@@ -304,6 +304,7 @@ nav.nav-to-game .game-arrival-link.credits{ --gate:#FF5C8A; --gate-deep:#A92D55;
   animation-delay:var(--delay,0ms)!important;
 }
 #game-pixel-curtain.covering{ background:transparent; }
+#game-pixel-curtain.revealing{ background:transparent; }
 #game-pixel-curtain.covering span{ animation:pixelCover .38s steps(4,end) forwards; }
 #game-pixel-curtain.revealing span{ transform:scale(1); opacity:1; animation:pixelReveal .5s steps(5,end) forwards; }
 @keyframes pixelCover{ 55%{opacity:1} to{transform:scale(1.04);opacity:1} }
@@ -314,6 +315,21 @@ body.game-mode-leaving > :not(nav):not(#game-pixel-curtain){
 body.game-mode-entering-site > :not(nav):not(#game-pixel-curtain){
   animation:sitePixelIn .58s steps(6,end) both;
 }
+html.game-return-pending nav .nav-btn,
+nav.nav-from-game .nav-btn{
+  transition:flex .56s cubic-bezier(.22,1,.36,1),opacity .38s ease,
+             transform .52s cubic-bezier(.2,1.25,.35,1),padding .4s ease,border-width .4s ease;
+}
+html.game-return-pending nav .nav-btn.red,
+html.game-return-pending nav .nav-btn.gray{ flex:1.55; transform:scaleX(1.02); }
+html.game-return-pending nav .nav-btn:not(.red):not(.gray){
+  flex:0 0 0; min-width:0; padding-left:0; padding-right:0; border-width:0;
+  opacity:0; transform:translateY(-72px) scale(.72); overflow:hidden;
+}
+nav.nav-from-game .nav-btn.yellow{ transition-delay:.03s; }
+nav.nav-from-game .nav-btn.green{ transition-delay:.08s; }
+nav.nav-from-game .nav-btn.purple{ transition-delay:.13s; }
+nav.nav-from-game .nav-btn.pink{ transition-delay:.18s; }
 @keyframes sitePixelOut{
   35%{filter:contrast(1.8) saturate(.4) blur(1px);transform:scale(.995)}
   to{filter:contrast(2.4) saturate(0) blur(9px);transform:scale(.96);opacity:.15}
