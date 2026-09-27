@@ -249,8 +249,8 @@
         xp: 0, activeEffect: null,
         gachaCollection: [], gachaHistory: [], gachaEffects: [], framesUnlocked: [], iconsUnlocked: []
       });
-      /* Le profil est écrit en entier : on peut y aller nous-mêmes */
-      window.location.href = './index.html';
+      /* Le profil est prêt : le nouveau membre découvre le site avant d'entrer. */
+      window.location.href = './bubble_site_tutoriel.html?onboarding=1';
     } catch(e){
       isRegistering = false;   // raté : on redonne la main à la redirection normale
       showError(errMsg(e));

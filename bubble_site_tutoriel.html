@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#EFF4FA">
+<title>Visite guidée — Bubble Site</title>
+<link rel="icon" type="image/png" href="bully_icon_site_1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="bubble_effects.js"></script>
+<style>
+  main{max-width:1180px;padding-bottom:70px}
+  .tour-intro{text-align:center;padding:24px 0 26px}
+  .tour-kicker{display:inline-flex;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:var(--blue-d);font-size:.75rem;font-weight:800}
+  .tour-intro h1{margin-top:10px;font-size:clamp(2rem,5vw,3.3rem);line-height:1}
+  .tour-intro p{max-width:680px;margin:10px auto 0;color:var(--ink-soft);font-weight:600;line-height:1.5}
+  .demo-warning{display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:7px 13px;border:2px solid var(--line);border-radius:12px;background:var(--surface);font-size:.76rem;font-weight:800;color:var(--ink-soft)}
+  .tour-exit{display:flex;justify-content:center;margin-top:13px}.tour-exit .btn{padding:8px 14px}
+
+  .tour-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(290px,.75fr);gap:18px;align-items:start}
+  .demo-browser{overflow:hidden;border:2px solid var(--line-strong);border-radius:24px;background:var(--surface);box-shadow:var(--shadow-2)}
+  .demo-top{display:flex;align-items:center;gap:9px;padding:11px 13px;border-bottom:2px solid var(--line);background:var(--surface)}
+  .demo-dots{display:flex;gap:5px}.demo-dots i{width:9px;height:9px;border-radius:50%;background:var(--line-strong)}
+  .demo-dots i:nth-child(1){background:#ff6363}.demo-dots i:nth-child(2){background:#ffc53d}.demo-dots i:nth-child(3){background:#46ce62}
+  .demo-address{flex:1;padding:5px 10px;border-radius:8px;background:var(--surface-2);color:var(--ink-soft);font-size:.7rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .fake-label{padding:4px 8px;border-radius:7px;background:rgba(255,95,162,.12);color:var(--pink-d);font-size:.62rem;font-weight:800}
+  .demo-nav{display:flex;gap:6px;padding:9px;background:#182333;overflow-x:auto;scrollbar-width:none}
+  .demo-nav::-webkit-scrollbar{display:none}
+  .demo-tab{flex:1 0 88px;padding:8px 9px;border:1px solid rgba(255,255,255,.16);border-radius:10px;background:#223146;color:#c7d4e4;font:700 .72rem 'Baloo 2',sans-serif;cursor:pointer;transition:.2s}
+  .demo-tab:hover{transform:translateY(-2px);background:#2b3d55}
+  .demo-tab[aria-selected="true"]{color:#fff;background:var(--demo-accent,#2bb7f2);border-color:#fff;box-shadow:0 0 14px color-mix(in srgb,var(--demo-accent,#2bb7f2) 55%,transparent)}
+  .demo-viewport{position:relative;min-height:500px;padding:22px;background:linear-gradient(145deg,var(--demo-bg1,#f5faff),var(--demo-bg2,#e7f2fc));transition:background .55s ease}
+  .fake-page{display:none}.fake-page.active{display:block;animation:fakePageIn .38s cubic-bezier(.22,1,.36,1) both}
+  @keyframes fakePageIn{from{opacity:0;transform:translateY(9px);filter:blur(3px)}}
+  .fake-hero{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
+  .fake-hero h2{font-size:clamp(1.35rem,3vw,2rem)}.fake-hero p{color:var(--ink-soft);font-size:.82rem;font-weight:600}
+  .fake-pill{padding:7px 11px;border-radius:999px;background:var(--surface);border:2px solid var(--line);font-size:.7rem;font-weight:800;white-space:nowrap}
+  .fake-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .fake-card{min-width:0;padding:13px;border:2px solid var(--line);border-radius:15px;background:var(--surface);box-shadow:0 4px 0 rgba(22,40,63,.08)}
+  .fake-card .emoji{font-size:1.6rem}.fake-card h3{margin-top:5px;font-size:.88rem;line-height:1.15}.fake-card p{margin-top:3px;color:var(--ink-soft);font-size:.68rem;font-weight:600;line-height:1.3}
+  .fake-cover{display:grid;place-items:center;height:92px;margin:-13px -13px 10px;border-radius:13px 13px 0 0;background:linear-gradient(145deg,#dff5ff,#acdff5);font-size:2.3rem;overflow:hidden}
+  .fake-button{display:inline-flex;align-items:center;justify-content:center;margin-top:9px;padding:7px 10px;border:0;border-radius:9px;background:var(--demo-accent,#2bb7f2);color:#fff;font:800 .7rem 'Baloo 2',sans-serif;cursor:pointer}
+  .fake-progress{height:7px;margin-top:9px;border-radius:999px;background:var(--surface-2);overflow:hidden}.fake-progress i{display:block;height:100%;width:64%;background:var(--demo-accent,#2bb7f2);border-radius:inherit}
+  .fake-wide{grid-column:1/-1;display:flex;align-items:center;gap:12px}.fake-wide .emoji{flex-shrink:0}
+  .fake-score{font-size:1.7rem;font-weight:800;color:var(--demo-accent,#2bb7f2)}
+  .fake-chest{display:grid;place-items:center;min-height:230px;text-align:center}.chest-icon{font-size:5rem;filter:drop-shadow(0 10px 8px rgba(22,40,63,.18));transition:.3s}.fake-chest.open .chest-icon{transform:scale(.75) translateY(10px);opacity:.25}.reward-card{display:none;padding:14px;border:3px solid #a855f7;border-radius:16px;background:linear-gradient(145deg,#fff,#efe0ff);color:#512080}.fake-chest.open .reward-card{display:block;animation:rewardPop .55s cubic-bezier(.2,1.45,.35,1)}@keyframes rewardPop{from{transform:scale(.35) rotate(-10deg);opacity:0}}
+  .fake-post{display:grid;grid-template-columns:115px 1fr;gap:12px}.fake-post+.fake-post{margin-top:10px}.fake-post-cover{display:grid;place-items:center;min-height:90px;border-radius:11px;background:linear-gradient(145deg,#f4cdf0,#b45aa6);font-size:2rem}.fake-post h3{font-size:.9rem}.fake-post p{font-size:.7rem;color:var(--ink-soft);font-weight:600;line-height:1.35}
+  .fake-profile{display:grid;grid-template-columns:130px 1fr;gap:14px}.fake-avatar-box{display:grid;place-items:center;padding:15px;border-radius:18px;background:var(--surface-2)}.fake-avatar{display:grid;place-items:center;width:86px;height:86px;border:5px solid var(--demo-accent);border-radius:50%;background:#d8f2ff;font-size:2.6rem}.fake-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}.fake-stat{padding:9px;border-radius:10px;background:var(--surface-2);text-align:center;font-size:.7rem;font-weight:800}.fake-stat b{display:block;font-size:1.1rem}
+
+  .guide-card{position:sticky;top:82px;padding:22px;border:2px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow-1)}
+  .guide-step{color:var(--blue-d);font-size:.74rem;font-weight:800;letter-spacing:.05em}.guide-card h2{margin-top:5px;font-size:1.45rem}.guide-card>p{margin-top:8px;color:var(--ink-soft);font-weight:600;line-height:1.5}.guide-list{display:grid;gap:8px;margin-top:16px}.guide-list li{list-style:none;padding:10px 12px;border-radius:12px;background:var(--surface-2);font-size:.82rem;font-weight:700}.guide-list li::before{content:'✓';margin-right:8px;color:var(--green-d)}
+  .guide-tip{margin-top:16px;padding:12px;border-left:4px solid var(--demo-accent,#2bb7f2);border-radius:0 12px 12px 0;background:var(--accent-soft);font-size:.78rem;font-weight:700;line-height:1.4}
+  .guide-actions{display:flex;gap:8px;margin-top:18px}.guide-actions .btn{flex:1;padding:9px 10px}.guide-dots{display:flex;justify-content:center;gap:6px;margin-top:15px}.guide-dots button{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:var(--line-strong);cursor:pointer}.guide-dots button.active{width:22px;border-radius:999px;background:var(--demo-accent,#2bb7f2)}
+  @media(max-width:900px){.tour-layout{grid-template-columns:1fr}.guide-card{position:static;order:-1}.demo-viewport{min-height:470px}}
+  @media(max-width:620px){main{padding-left:12px;padding-right:12px}.demo-viewport{padding:14px}.fake-grid{grid-template-columns:1fr 1fr}.fake-card:last-child:nth-child(odd){grid-column:1/-1}.fake-profile{grid-template-columns:1fr}.fake-post{grid-template-columns:82px 1fr}.fake-wide{grid-column:1/-1}.guide-actions{flex-direction:column}}
+</style>
+</head>
+<body data-v2>
+<nav>
+  <a class="nav-logo" href="index.html" aria-label="Passer la visite et aller à l’accueil">🫧</a>
+  <div class="nav-title"><span style="color:#1FA8E8">B</span><span style="color:#37C359">u</span><span style="color:#F5B700">b</span><span style="color:#4eb8ff">b</span><span style="color:#FF8A3D">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span></div>
+  <div class="nav-links"><a href="index.html" class="nav-btn red"><span class="ico">→</span>Passer la visite</a></div>
+</nav>
+
+<main>
+  <header class="tour-intro fade-up">
+    <span class="tour-kicker">🧭 VISITE GUIDÉE</span>
+    <h1>Bienvenue sur Bubble Site !</h1>
+    <p>Ton compte vient d’être créé. Avant de commencer, explore cette version miniature du site pour découvrir tout ce que tu peux y faire.</p>
+    <span class="demo-warning">🧪 Démonstration — fausses données, rien ne sera enregistré</span>
+    <div class="tour-exit"><a href="index.html" class="btn btn-ghost">Je connais déjà, passer →</a></div>
+  </header>
+
+  <div class="tour-layout">
+    <section class="demo-browser fade-up d1" aria-label="Simulation interactive de Bubble Site">
+      <div class="demo-top"><span class="demo-dots"><i></i><i></i><i></i></span><span class="demo-address" id="demoAddress">bubble-site.fr/accueil-demo</span><span class="fake-label">SIMULATION</span></div>
+      <div class="demo-nav" role="tablist" aria-label="Pages simulées">
+        <button class="demo-tab" role="tab" aria-selected="true" data-page="home">🏠 Accueil</button>
+        <button class="demo-tab" role="tab" aria-selected="false" data-page="scans">📜 Scans</button>
+        <button class="demo-tab" role="tab" aria-selected="false" data-page="games">🎮 Games</button>
+        <button class="demo-tab" role="tab" aria-selected="false" data-page="gacha">🎁 Coffres</button>
+        <button class="demo-tab" role="tab" aria-selected="false" data-page="vlog">🎬 Vlog</button>
+        <button class="demo-tab" role="tab" aria-selected="false" data-page="profile">🎭 Profil</button>
+      </div>
+      <div class="demo-viewport" id="demoViewport">
+        <article class="fake-page active" data-fake-page="home">
+          <div class="fake-hero"><div><h2>Bienvenue, Alex 👋</h2><p>Voici un aperçu de ton univers Bubble.</p></div><span class="fake-pill">Niveau 2 · 145 🫧</span></div>
+          <div class="fake-grid">
+            <div class="fake-card"><span class="emoji">📖</span><h3>Reprendre la lecture</h3><p>Les aventures de Bully — page 12/24</p><div class="fake-progress"><i style="width:50%"></i></div></div>
+            <div class="fake-card"><span class="emoji">🏆</span><h3>Ton meilleur score</h3><p>Box Run</p><div class="fake-score">2 480</div></div>
+            <div class="fake-card"><span class="emoji">🎴</span><h3>Ta collection</h3><p>8 cartes obtenues sur 24</p><div class="fake-progress"><i style="width:33%"></i></div></div>
+            <div class="fake-card fake-wide"><span class="emoji">🎯</span><div><h3>Mission du jour</h3><p>Découvre un nouveau jeu pour gagner 20 bulles.</p></div></div>
+          </div>
+        </article>
+
+        <article class="fake-page" data-fake-page="scans">
+          <div class="fake-hero"><div><h2>La bibliothèque</h2><p>Lis des histoires et retrouve automatiquement ta progression.</p></div><span class="fake-pill">3 lectures disponibles</span></div>
+          <div class="fake-grid">
+            <div class="fake-card"><div class="fake-cover">🚀</div><h3>Bully dans les étoiles</h3><p>Aventure · 24 pages</p><button class="fake-button" data-demo-action="read">Lire le scan</button></div>
+            <div class="fake-card"><div class="fake-cover" style="background:linear-gradient(145deg,#ddffd9,#80dda0)">🌳</div><h3>La forêt mousseuse</h3><p>Mystère · 18 pages</p><button class="fake-button" data-demo-action="read">Commencer</button></div>
+            <div class="fake-card"><div class="fake-cover" style="background:linear-gradient(145deg,#fff0bd,#ffb95d)">🏜️</div><h3>Le désert doré</h3><p>Réservé Bubble+</p><button class="fake-button" style="background:#d9a11c">Voir l’offre</button></div>
+          </div>
+        </article>
+
+        <article class="fake-page" data-fake-page="games">
+          <div class="fake-hero"><div><h2>Bubble Games</h2><p>Joue et essaie de battre tes propres records.</p></div><span class="fake-pill">Mode arcade</span></div>
+          <div class="fake-grid">
+            <div class="fake-card"><div class="fake-cover" style="background:#181b2b;color:#fff">📦</div><h3>Box Run</h3><p>Record fictif : <b id="demoScore">2 480</b></p><button class="fake-button" data-demo-action="score">Simuler une partie</button></div>
+            <div class="fake-card"><div class="fake-cover" style="background:#25375c;color:#fff">🚀</div><h3>Spacecraft Burster</h3><p>Détruis les obstacles.</p><button class="fake-button">Jouer</button></div>
+            <div class="fake-card"><div class="fake-cover" style="background:#4cbe81;color:#fff">🎣</div><h3>Fishing Time</h3><p>Détente et précision.</p><button class="fake-button">Jouer</button></div>
+          </div>
+        </article>
+
+        <article class="fake-page" data-fake-page="gacha">
+          <div class="fake-hero"><div><h2>Les Coffres</h2><p>Utilise tes récompenses pour compléter ta collection.</p></div><span class="fake-pill">2 clés fictives</span></div>
+          <div class="fake-chest" id="fakeChest"><div><div class="chest-icon">🎁</div><button class="fake-button" data-demo-action="chest">Ouvrir ce faux coffre</button></div><div class="reward-card"><div style="font-size:2.8rem">🌟</div><strong>Carte rare obtenue !</strong><p>Étoile Filante · Exemple fictif</p></div></div>
+        </article>
+
+        <article class="fake-page" data-fake-page="vlog">
+          <div class="fake-hero"><div><h2>Le Vlog</h2><p>Actualités, annonces et coulisses de Bubble Site.</p></div><span class="fake-pill">Contenu de démonstration</span></div>
+          <div class="fake-card fake-post"><div class="fake-post-cover">🎬</div><div><span class="tour-kicker">NOUVEAUTÉ</span><h3>Dans les coulisses du prochain jeu</h3><p>Ce faux article montre comment seront présentées les annonces sur le vrai Vlog.</p></div></div>
+          <div class="fake-card fake-post"><div class="fake-post-cover" style="background:linear-gradient(145deg,#dcd7ff,#8a7be0)">🖌️</div><div><span class="tour-kicker">CRÉATION</span><h3>Comment naît un personnage Bubble ?</h3><p>Images, petites histoires et étapes de création réunies dans un même post.</p></div></div>
+        </article>
+
+        <article class="fake-page" data-fake-page="profile">
+          <div class="fake-hero"><div><h2>Ton espace personnel</h2><p>Retrouve ton apparence, ta progression et ton compte.</p></div><span class="fake-pill">Formule BASIC</span></div>
+          <div class="fake-profile">
+            <div class="fake-avatar-box"><div class="fake-avatar">🫧</div><button class="fake-button">Changer l’apparence</button></div>
+            <div class="fake-card"><h3>Alex · Niveau 2</h3><p>145 bulles obtenues</p><div class="fake-progress"><i style="width:45%"></i></div><div class="fake-stats"><div class="fake-stat"><b>5</b>Missions</div><div class="fake-stat"><b>3</b>Scans</div><div class="fake-stat"><b>8</b>Cartes</div><div class="fake-stat"><b>2</b>Records</div></div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <aside class="guide-card fade-up d2" id="guideCard" aria-live="polite">
+      <span class="guide-step" id="guideStep">ÉTAPE 1 SUR 6</span>
+      <h2 id="guideTitle">Ton point de départ</h2>
+      <p id="guideText">L’accueil résume ce que tu fais sur le site et te permet de reprendre rapidement une activité.</p>
+      <ul class="guide-list" id="guideList"></ul>
+      <div class="guide-tip" id="guideTip">Tout ce panneau utilise des exemples fictifs.</div>
+      <div class="guide-actions"><button class="btn btn-ghost" id="prevStep" type="button">← Précédent</button><button class="btn btn-blue" id="nextStep" type="button">Suivant →</button></div>
+      <div class="guide-dots" id="guideDots" aria-label="Progression du tutoriel"></div>
+    </aside>
+  </div>
+</main>
+
+<footer><span class="footer-logo">BUBBLE INC.</span> · Visite guidée fictive</footer>
+<script>
+  const pages = [
+    {id:'home',label:'Accueil',color:'#2BB7F2',bg:['#F5FAFF','#DDEEFF'],title:'Ton point de départ',text:'L’accueil résume ce que tu fais sur le site et te permet de reprendre rapidement une activité.',list:['Reprendre une lecture','Voir sa progression','Découvrir les nouveautés'],tip:'Les vraies informations apparaîtront seulement après connexion.'},
+    {id:'scans',label:'Scans',color:'#35BF5B',bg:['#F1FFF3','#C9FBD5'],title:'Lis à ton rythme',text:'La bibliothèque regroupe les histoires disponibles selon ton abonnement.',list:['Ouvrir un scan','Mémoriser la page atteinte','Débloquer des lectures supplémentaires'],tip:'Dans cette simulation, les couvertures et histoires sont inventées.'},
+    {id:'games',label:'Games',color:'#5B8DEF',bg:['#EEF2FF','#CFD9FF'],title:'Entre dans Bubble Games',text:'Les jeux possèdent leur propre ambiance, mais restent reliés à ton profil Bubble.',list:['Jouer directement','Conserver ses meilleurs scores','Consulter les classements'],tip:'Clique sur « Simuler une partie » pour modifier le faux score.'},
+    {id:'gacha',label:'Coffres',color:'#A855F7',bg:['#FBF3FF','#E5CCFA'],title:'Construis ta collection',text:'Les coffres donnent des cartes et des objets de personnalisation.',list:['Ouvrir des coffres','Découvrir différentes raretés','Compléter sa collection'],tip:'Le coffre de cette démonstration ne consomme aucune clé réelle.'},
+    {id:'vlog',label:'Vlog',color:'#B45AA6',bg:['#FAF1F9','#E8CCE5'],title:'Suis les nouveautés',text:'Le Vlog rassemble les annonces, mises à jour et coulisses de création.',list:['Lire les annonces','Voir les nouvelles fonctionnalités','Découvrir les créations'],tip:'Les deux publications affichées ici sont entièrement fictives.'},
+    {id:'profile',label:'Profil',color:'#B76538',bg:['#FFF3E9','#E9C4A5'],title:'Retrouve tout ton parcours',text:'Le profil réunit ton identité, ton apparence, tes statistiques et la sécurité du compte.',list:['Personnaliser son avatar','Suivre son niveau et ses missions','Gérer son compte'],tip:'Les valeurs Alex, niveau 2 et les statistiques sont des exemples.'}
+  ];
+  let current = 0;
+  const viewport = document.getElementById('demoViewport');
+  const tabs = [...document.querySelectorAll('.demo-tab')];
+  function renderGuide(index, focusTab=false){
+    current = (index + pages.length) % pages.length;
+    const page = pages[current];
+    document.documentElement.style.setProperty('--demo-accent',page.color);
+    viewport.style.setProperty('--demo-bg1',page.bg[0]);
+    viewport.style.setProperty('--demo-bg2',page.bg[1]);
+    document.querySelectorAll('[data-fake-page]').forEach(el=>el.classList.toggle('active',el.dataset.fakePage===page.id));
+    tabs.forEach(tab=>{const active=tab.dataset.page===page.id;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;if(active&&focusTab)tab.focus()});
+    document.getElementById('demoAddress').textContent=`bubble-site.fr/${page.id}-demo`;
+    document.getElementById('guideStep').textContent=`ÉTAPE ${current+1} SUR ${pages.length}`;
+    document.getElementById('guideTitle').textContent=page.title;
+    document.getElementById('guideText').textContent=page.text;
+    document.getElementById('guideList').innerHTML=page.list.map(item=>`<li>${item}</li>`).join('');
+    document.getElementById('guideTip').textContent=page.tip;
+    document.getElementById('prevStep').disabled=current===0;
+    document.getElementById('nextStep').textContent=current===pages.length-1?'Terminer et entrer →':'Suivant →';
+    document.querySelectorAll('.guide-dots button').forEach((dot,i)=>dot.classList.toggle('active',i===current));
+  }
+  document.getElementById('guideDots').innerHTML=pages.map((p,i)=>`<button type="button" aria-label="Aller à l’étape ${i+1} : ${p.label}" data-step="${i}"></button>`).join('');
+  tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>renderGuide(i));tab.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();let n=e.key==='Home'?0:e.key==='End'?pages.length-1:e.key==='ArrowRight'?current+1:current-1;renderGuide((n+pages.length)%pages.length,true)})});
+  document.getElementById('prevStep').addEventListener('click',()=>renderGuide(Math.max(0,current-1)));
+  document.getElementById('nextStep').addEventListener('click',()=>{
+    if(current===pages.length-1){window.location.href='./index.html';return}
+    renderGuide(current+1);
+  });
+  document.getElementById('guideDots').addEventListener('click',e=>{const dot=e.target.closest('[data-step]');if(dot)renderGuide(Number(dot.dataset.step))});
+  document.addEventListener('click',e=>{
+    const action=e.target.closest('[data-demo-action]')?.dataset.demoAction;
+    if(action==='score'){const score=document.getElementById('demoScore');score.textContent=(Number(score.textContent.replace(/\s/g,''))+Math.floor(100+Math.random()*600)).toLocaleString('fr-FR');e.target.textContent='Nouvelle partie fictive !'}
+    if(action==='chest'){document.getElementById('fakeChest').classList.add('open')}
+    if(action==='read'){e.target.textContent='Page fictive ouverte ✓';e.target.disabled=true}
+  });
+  renderGuide(0);
+</script>
+</body>
+</html>
