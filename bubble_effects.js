@@ -4,6 +4,52 @@
    site reste cohérent quelle que soit la collection ou l'effet de l'utilisateur.
    ══════════════════════════════════════════════════════════════════ */
 
+/* Identité visuelle partagée par toutes les pages. */
+const BUBBLE_PAGE = (() => {
+  const root = document.documentElement;
+  const path = decodeURIComponent(window.location.pathname).toLowerCase();
+
+  function fromPath(value){
+    if (/bubble_site_abonnements\.html$/.test(value)) return 'subscriptions';
+    if (/jeux\/jeux\.html$/.test(value)) return 'games';
+    if (/bubble_site_scans\.html$/.test(value)) return 'scans';
+    if (/bubble_site_gacha\.html$/.test(value)) return 'gacha';
+    if (/bubble_site_vlog\.html$/.test(value)) return 'vlog';
+    if (/(bubble_site_profil|login)\.html$/.test(value)) return 'profile';
+    if (/(^|\/)index\.html$/.test(value) || value.endsWith('/')) return 'home';
+    return null;
+  }
+
+  const palettes = {
+    light:{
+      home:['#F5FAFF','#E7F2FC','#F1F6FB'],
+      subscriptions:['#FFF9E8','#FFE9A8','#F8E0A0'],
+      games:['#F4F7FA','#E3EAF0','#EEF2F6'],
+      scans:['#F1FFF3','#C9FBD5','#E5F9EA'],
+      gacha:['#FBF3FF','#E5CCFA','#F3E9FC'],
+      vlog:['#FAF1F9','#E8CCE5','#F4E5EF'],
+      profile:['#FFF3E9','#E9C4A5','#F6DDC8']
+    },
+    dark:{
+      home:['#101722','#172535','#111C29'],
+      subscriptions:['#1C170B','#3A2A0C','#241D0E'],
+      games:['#111821','#24303D','#171F29'],
+      scans:['#0B1C11','#123B20','#102718'],
+      gacha:['#1C1025','#38164A','#24142F'],
+      vlog:['#21101F','#3E1937','#291526'],
+      profile:['#24150F','#482718','#2D1A12']
+    }
+  };
+
+  const current = fromPath(path) || 'home';
+  root.dataset.page = current;
+  return {
+    current,
+    fromPath,
+    palette(page, mode){ return palettes[mode === 'dark' ? 'dark' : 'light'][page] || palettes.light.home; }
+  };
+})();
+
 (function initColorMode(){
   const STORAGE_KEY = 'bubble-color-mode';
   const root = document.documentElement;
@@ -53,6 +99,93 @@
   else installToggle();
 
   window.setBubbleColorMode = (mode) => setMode(mode, true);
+})();
+
+/* Navigation synchronisée : le dégradé se transforme avant le chargement,
+   puis révèle la destination sans masquer la barre de navigation. */
+(function initPageNavigation(){
+  const STORAGE_KEY = 'bubble-page-navigation';
+  const reducedMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function makeOverlay(colors){
+    const previous = document.getElementById('page-gradient-transition');
+    if (previous) previous.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'page-gradient-transition';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.style.setProperty('--transition-c1', colors[0]);
+    overlay.style.setProperty('--transition-c2', colors[1]);
+    overlay.style.setProperty('--transition-c3', colors[2]);
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+
+  function saveTransition(state){
+    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch (_) { /* Certains aperçus file:// isolent le stockage par page. */ }
+  }
+
+  function takeTransition(){
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      sessionStorage.removeItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) { return null; }
+  }
+
+  function eligible(link, event){
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return null;
+    if (link.target && link.target !== '_self' || link.hasAttribute('download')) return null;
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || /^(mailto:|tel:|javascript:)/i.test(href)) return null;
+    const destination = new URL(link.href, window.location.href);
+    if (destination.origin !== window.location.origin || destination.pathname === window.location.pathname) return null;
+    const page = BUBBLE_PAGE.fromPath(decodeURIComponent(destination.pathname).toLowerCase());
+    return page ? { destination, page } : null;
+  }
+
+  function revealEntry(){
+    const state = takeTransition();
+    if (!state || state.to !== BUBBLE_PAGE.current || Date.now() - state.at > 5000 || reducedMotion) return;
+    const mode = document.documentElement.dataset.colorMode;
+    const overlay = makeOverlay(BUBBLE_PAGE.palette(BUBBLE_PAGE.current, mode));
+    document.body.classList.add('page-is-entering');
+    requestAnimationFrame(() => requestAnimationFrame(() => overlay.classList.add('is-revealing')));
+    window.setTimeout(() => {
+      overlay.remove();
+      document.body.classList.remove('page-is-entering');
+    }, 720);
+  }
+
+  function start(){
+    if (!document.body || document.body.dataset.v2 === undefined) return;
+    revealEntry();
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest('a[href]');
+      if (!link) return;
+      const target = eligible(link, event);
+      if (!target || reducedMotion) return;
+
+      event.preventDefault();
+      const mode = document.documentElement.dataset.colorMode;
+      const from = BUBBLE_PAGE.palette(BUBBLE_PAGE.current, mode);
+      const to = BUBBLE_PAGE.palette(target.page, mode);
+      const overlay = makeOverlay(from);
+      link.classList.add('is-gate-opening');
+      document.body.classList.add('page-is-leaving');
+      saveTransition({ from:BUBBLE_PAGE.current, to:target.page, at:Date.now() });
+
+      void overlay.offsetWidth;
+      overlay.style.setProperty('--transition-c1', to[0]);
+      overlay.style.setProperty('--transition-c2', to[1]);
+      overlay.style.setProperty('--transition-c3', to[2]);
+      window.setTimeout(() => window.location.assign(target.destination.href), 640);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
 })();
 
 /* Bulles de fond par défaut — ce décor ne dépend d'aucun thème de profil. */
