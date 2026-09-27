@@ -4,39 +4,76 @@
 :root{
   --ink:#16130E; --cream:#F4EEE2; --pink:#FF5C8A; --green:#3DDC84;
   --blue:#5B8DEF; --yellow:#FFC93C;
+  --game-nav-h:77px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{
-  background:var(--cream);color:var(--ink);font-family:'Space Grotesk',sans-serif;
+  background:
+    linear-gradient(rgba(91,141,239,.08) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(91,141,239,.08) 1px,transparent 1px),
+    radial-gradient(circle at 18% 0%,rgba(255,92,138,.2),transparent 32%),
+    linear-gradient(145deg,var(--cream),color-mix(in srgb,var(--cream) 82%,var(--blue)));
+  background-size:24px 24px,24px 24px,auto,auto;
+  color:var(--ink);font-family:'Space Grotesk',sans-serif;
   min-height:100vh;overflow-x:hidden;
   visibility:hidden; /* révélé par firebase-init une fois l'accès validé */
 }
 
 /* --- Navigation --- */
-nav{display:flex;align-items:center;gap:14px;padding:16px 26px;background:#fff;
-  border-bottom:3px solid var(--ink);position:sticky;top:0;z-index:100}
+nav{display:flex;align-items:center;gap:14px;min-height:var(--game-nav-h);padding:12px 18px;
+  background:color-mix(in srgb,var(--cream) 88%,#fff);border-bottom:3px solid var(--ink);
+  position:sticky;top:0;z-index:1000;transition:background .5s,color .5s}
 .nav-logo{width:42px;height:42px;background:var(--pink);border:3px solid var(--ink);
   display:flex;align-items:center;justify-content:center;font-size:1.2rem;text-decoration:none;
   box-shadow:3px 3px 0 var(--ink);flex-shrink:0}
 .nav-burger{display:none;width:42px;height:42px;background:var(--yellow);border:3px solid var(--ink);
   box-shadow:3px 3px 0 var(--ink);font-size:1.2rem;cursor:pointer;flex-shrink:0}
 .brand{font-family:'Archivo Black',sans-serif;font-size:1.3rem;letter-spacing:-.5px}
-.nav-links{display:flex;gap:8px;margin-left:10px}
+.nav-links{display:flex;flex:1;gap:8px;margin-left:10px}
 .nav-links a{text-decoration:none;color:var(--ink);font-weight:600;font-size:.9rem;
-  padding:7px 14px;border:2px solid transparent;border-radius:8px}
+  flex:1;min-width:0;padding:9px 14px;border:2px solid transparent;border-radius:8px;text-align:center;
+  transition:flex .48s cubic-bezier(.22,1,.36,1),transform .42s cubic-bezier(.22,1,.36,1),opacity .3s}
 .nav-links a:hover{border-color:var(--ink)}
 .nav-links a.active{background:var(--yellow);border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink)}
 
 /* --- Profil --- */
 .nav-profile-widget{margin-left:auto;display:flex;align-items:center;gap:10px;
   padding:6px 8px 6px 14px;background:var(--blue);border:3px solid var(--ink);
-  box-shadow:3px 3px 0 var(--ink);cursor:pointer;text-decoration:none;color:var(--ink)}
+  box-shadow:3px 3px 0 var(--ink);cursor:pointer;text-decoration:none;color:var(--ink);flex-shrink:0}
 .nav-profile-info{display:flex;flex-direction:column;line-height:1}
 .nav-profile-name{font-weight:700;font-size:.82rem}
 .nav-profile-sub{font-size:.6rem;font-weight:600;opacity:.7}
 .nav-avatar-bubble{width:34px;height:34px;border-radius:50%;background:#fff;border:2px solid var(--ink);
   display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
 .nav-avatar-bubble img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+@media(min-width:1000px){ nav>.nav-profile-widget{width:174px;justify-content:flex-end}.nav-profile-info{width:104px;min-width:0}.nav-profile-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} }
+
+/* Transition de mode Site ↔ Game. */
+body.game-mode-entering{visibility:visible}
+#game-pixel-curtain{
+  position:fixed;inset:var(--game-nav-h) 0 0;z-index:999;display:grid;
+  grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(8,1fr);pointer-events:none;background:#12131d
+}
+#game-pixel-curtain span{background:var(--pixel,#20243a);animation-delay:var(--delay,0ms)!important}
+#game-pixel-curtain.revealing span{transform:scale(1.04);opacity:1;animation:gamePixelReveal .52s steps(5,end) forwards}
+#game-pixel-curtain.covering{background:transparent}
+#game-pixel-curtain.covering span{transform:scale(0);opacity:0;animation:gamePixelCover .4s steps(4,end) forwards}
+@keyframes gamePixelReveal{to{transform:scale(0);opacity:0}}
+@keyframes gamePixelCover{55%{opacity:1}to{transform:scale(1.04);opacity:1}}
+body.game-mode-entering nav .brand{animation:gameBrandIn .62s steps(5,end) both}
+body.game-mode-entering nav .nav-links a:nth-child(1),
+body.game-mode-entering nav .nav-links a:nth-child(2){animation:gamePrimaryIn .62s cubic-bezier(.22,1,.36,1) both}
+body.game-mode-entering nav .nav-links a:nth-child(3),
+body.game-mode-entering nav .nav-links a:nth-child(4){animation:gameExtraIn .54s .18s cubic-bezier(.2,1.25,.35,1) both}
+body.game-mode-entering>.wrap,body.game-mode-entering>footer{animation:gameWorldIn .68s steps(6,end) both}
+body.game-mode-leaving nav .nav-links a:nth-child(n+3){opacity:0;transform:translateY(-70px)}
+body.game-mode-leaving nav .nav-links a:nth-child(-n+2){flex:1.55}
+body.game-mode-leaving>.wrap,body.game-mode-leaving>footer{animation:gameWorldOut .62s steps(6,end) forwards}
+@keyframes gameBrandIn{from{opacity:0;letter-spacing:.45em;filter:blur(5px)}}
+@keyframes gamePrimaryIn{from{transform:scaleX(1.35)}}
+@keyframes gameExtraIn{from{opacity:0;transform:translateY(-60px) scale(.75)}}
+@keyframes gameWorldIn{from{opacity:.1;filter:contrast(2.2) saturate(0) blur(8px);transform:scale(.97)}}
+@keyframes gameWorldOut{to{opacity:.1;filter:contrast(2.2) saturate(0) blur(8px);transform:scale(.97)}}
 
 /* --- Menu mobile --- */
 .mobile-menu{display:none;position:fixed;inset:0;background:var(--cream);z-index:999;

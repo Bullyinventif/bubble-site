@@ -274,6 +274,54 @@ html[data-color-mode="dark"] nav{ background:rgba(27,38,53,.88); }
 @keyframes gateOpen{ 35%{ transform:scale(.88); filter:brightness(1.35); } 72%{ transform:scale(1.06); } }
 @property --gate-angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
 
+/* Passage de Bubble Site vers Bubble Games : la même barre change de mode. */
+nav.nav-to-game .nav-btn{
+  transition:flex-basis .5s cubic-bezier(.22,1,.36,1), opacity .34s ease,
+             transform .5s cubic-bezier(.22,1,.36,1), padding .4s ease,
+             border-width .4s ease, margin .4s ease;
+}
+nav.nav-to-game .nav-btn:not(.red):not(.gray):not(.game-arrival-link){
+  flex:0 0 0; min-width:0; padding-left:0; padding-right:0; border-width:0;
+  opacity:0; transform:translateY(-76px) scale(.72); pointer-events:none;
+}
+nav.nav-to-game .nav-btn.red,
+nav.nav-to-game .nav-btn.gray{ flex:1 1 32%; font-size:1rem; }
+nav.nav-to-game .game-arrival-link{
+  flex:1 1 20%; opacity:0; transform:translateY(-52px);
+  animation:gameNavArrive .48s .24s cubic-bezier(.2,1.25,.35,1) forwards;
+}
+nav.nav-to-game .game-arrival-link.rank{ --gate:#FFC93C; --gate-deep:#A96F00; }
+nav.nav-to-game .game-arrival-link.credits{ --gate:#FF5C8A; --gate-deep:#A92D55; }
+@keyframes gameNavArrive{ to{ opacity:1; transform:translateY(0); } }
+
+#game-pixel-curtain{
+  position:fixed; inset:var(--nav-h) 0 0; z-index:999; display:grid;
+  grid-template-columns:repeat(12,1fr); grid-template-rows:repeat(8,1fr);
+  pointer-events:none; background:#12131d;
+}
+#game-pixel-curtain span{
+  background:var(--pixel,#20243a); transform:scale(0); opacity:0;
+  animation-delay:var(--delay,0ms)!important;
+}
+#game-pixel-curtain.covering{ background:transparent; }
+#game-pixel-curtain.covering span{ animation:pixelCover .38s steps(4,end) forwards; }
+#game-pixel-curtain.revealing span{ transform:scale(1); opacity:1; animation:pixelReveal .5s steps(5,end) forwards; }
+@keyframes pixelCover{ 55%{opacity:1} to{transform:scale(1.04);opacity:1} }
+@keyframes pixelReveal{ to{transform:scale(0);opacity:0} }
+body.game-mode-leaving > :not(nav):not(#game-pixel-curtain){
+  animation:sitePixelOut .62s steps(6,end) forwards;
+}
+body.game-mode-entering-site > :not(nav):not(#game-pixel-curtain){
+  animation:sitePixelIn .58s steps(6,end) both;
+}
+@keyframes sitePixelOut{
+  35%{filter:contrast(1.8) saturate(.4) blur(1px);transform:scale(.995)}
+  to{filter:contrast(2.4) saturate(0) blur(9px);transform:scale(.96);opacity:.15}
+}
+@keyframes sitePixelIn{
+  from{filter:contrast(2.4) saturate(0) blur(9px);transform:scale(.97);opacity:.15}
+}
+
 /* Profil */
 .nav-profile{
   margin-left:4px; flex-shrink:0;
@@ -553,16 +601,14 @@ footer .footer-logo{ font-weight:800; color:var(--ink); }
 .tag-row{ display:flex; gap:7px; flex-wrap:wrap; }
 
 /* ── 14. TABLEAU DES RECORDS (bubble_scores.js) ─────────────────── */
-/* Rangée horizontale qui défile, une carte par jeu */
+/* Grille des jeux : trois cartes par ligne sur grand écran */
 .sb-row{
-  display:flex; gap:14px; overflow-x:auto; padding:2px 2px 10px;
-  scroll-snap-type:x proximity; scrollbar-width:none;
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px; padding:2px 2px 10px;
 }
-.sb-row::-webkit-scrollbar{ display:none; }
-.sb-row > *{ scroll-snap-align:start; }
 
 .sb-card{
-  flex-shrink:0; width:268px;
+  min-width:0; width:auto;
   display:flex; flex-direction:column;
   background:var(--surface);
   border:2px solid var(--line);
@@ -661,6 +707,9 @@ footer .footer-logo{ font-weight:800; color:var(--ink); }
 .sb-sheet-foot{ padding:14px 20px 18px; border-top:2px solid var(--line); }
 .sb-sheet-foot .btn{ width:100%; justify-content:center; color:#fff; }
 
+@media(max-width:980px){
+  .sb-row{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
 @media(max-width:760px){
-  .sb-card{ width:250px; }
+  .sb-row{ grid-template-columns:1fr; }
 }

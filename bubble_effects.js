@@ -116,6 +116,7 @@ const BUBBLE_PAGE = (() => {
    puis révèle la destination sans masquer la barre de navigation. */
 (function initPageNavigation(){
   const STORAGE_KEY = 'bubble-page-navigation';
+  const GAME_MODE_KEY = 'bubble-game-mode-transition';
   const reducedMotion = window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -145,6 +146,61 @@ const BUBBLE_PAGE = (() => {
     } catch (_) { return null; }
   }
 
+  function gameModeState(value){
+    try {
+      if (value) sessionStorage.setItem(GAME_MODE_KEY, JSON.stringify(value));
+      else {
+        const raw = sessionStorage.getItem(GAME_MODE_KEY);
+        sessionStorage.removeItem(GAME_MODE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      }
+    } catch (_) { return null; }
+  }
+
+  function makePixelCurtain(mode){
+    document.getElementById('game-pixel-curtain')?.remove();
+    const curtain = document.createElement('div');
+    curtain.id = 'game-pixel-curtain';
+    curtain.className = mode;
+    curtain.setAttribute('aria-hidden','true');
+    const colors = ['#12131D','#1C2440','#293A62','#FF5C8A','#5B8DEF','#FFC93C'];
+    for (let i = 0; i < 96; i++){
+      const pixel = document.createElement('span');
+      const row = Math.floor(i / 12), col = i % 12;
+      pixel.style.setProperty('--delay', `${(row * 24 + Math.abs(5.5 - col) * 9)}ms`);
+      pixel.style.setProperty('--pixel', colors[(i + row * 2) % colors.length]);
+      curtain.appendChild(pixel);
+    }
+    document.body.appendChild(curtain);
+    return curtain;
+  }
+
+  function addGameDestinationLinks(navLinks, gamesUrl){
+    if (!navLinks || navLinks.querySelector('.game-arrival-link')) return;
+    const rank = document.createElement('a');
+    rank.className = 'nav-btn game-arrival-link rank';
+    rank.href = new URL('classement.html', gamesUrl).href;
+    rank.innerHTML = '<span class="ico">🏆</span>Classement';
+    const credits = document.createElement('a');
+    credits.className = 'nav-btn game-arrival-link credits';
+    credits.href = new URL('credits.html', gamesUrl).href;
+    credits.innerHTML = '<span class="ico">👾</span>Crédits';
+    navLinks.append(rank, credits);
+  }
+
+  function leaveForGames(link, destination){
+    const nav = document.querySelector('body[data-v2] nav');
+    const navLinks = nav?.querySelector('.nav-links');
+    nav?.classList.add('nav-to-game');
+    addGameDestinationLinks(navLinks, destination);
+    link.classList.add('is-gate-opening');
+    document.body.classList.add('game-mode-leaving');
+    makePixelCurtain('covering');
+    gameModeState({ direction:'to-game', at:Date.now() });
+    destination.searchParams.set('bubble-transition','game');
+    window.setTimeout(() => window.location.assign(destination.href), 820);
+  }
+
   function eligible(link, event){
     if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return null;
     if (link.target && link.target !== '_self' || link.hasAttribute('download')) return null;
@@ -157,6 +213,22 @@ const BUBBLE_PAGE = (() => {
   }
 
   function revealEntry(){
+    const gameState = gameModeState();
+    const transitionMarker = new URL(window.location.href).searchParams.get('bubble-transition');
+    if ((gameState?.direction === 'to-site' && Date.now() - gameState.at < 5000 || transitionMarker === 'site') && !reducedMotion){
+      if (transitionMarker){
+        const clean = new URL(window.location.href);
+        clean.searchParams.delete('bubble-transition');
+        history.replaceState(null,'',clean.href);
+      }
+      const curtain = makePixelCurtain('revealing');
+      document.body.classList.add('game-mode-entering-site');
+      window.setTimeout(() => {
+        curtain.remove();
+        document.body.classList.remove('game-mode-entering-site');
+      }, 820);
+      return;
+    }
     const state = takeTransition();
     if (!state || state.to !== BUBBLE_PAGE.current || Date.now() - state.at > 5000 || reducedMotion) return;
     const mode = document.documentElement.dataset.colorMode;
@@ -179,6 +251,10 @@ const BUBBLE_PAGE = (() => {
       if (!target || reducedMotion) return;
 
       event.preventDefault();
+      if (target.page === 'games'){
+        leaveForGames(link, target.destination);
+        return;
+      }
       const mode = document.documentElement.dataset.colorMode;
       const from = BUBBLE_PAGE.palette(BUBBLE_PAGE.current, mode);
       const to = BUBBLE_PAGE.palette(target.page, mode);
