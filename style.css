@@ -254,6 +254,7 @@ html[data-color-mode="dark"] nav{ background:rgba(27,38,53,.88); }
   padding:4px 4px 4px 4px; border-radius:16px;
   transition: background .15s;
   -webkit-tap-highlight-color:transparent;
+  min-width:50px;
 }
 .nav-profile:hover{ background: var(--surface-2); }
 html[data-page="profile"] .nav-profile{
@@ -273,10 +274,15 @@ html[data-page="profile"] .profile-bubble{ border-color:#B76538; box-shadow:0 0 
 .profile-bubble img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
 .profile-bubble-icon{ font-size:1.25rem; }
 
-.nav-profile-meta{ display:none; flex-direction:column; line-height:1.15; }
-.nav-profile-name{ font-size:.9rem; font-weight:800; color:var(--ink); max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.nav-profile-meta{ display:none; flex-direction:column; line-height:1.15; min-width:0; }
+.nav-profile-name{ font-size:.9rem; font-weight:800; color:var(--ink); width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .nav-profile-sub{ font-size:.72rem; font-weight:700; color:var(--ink-soft); }
-@media(min-width:1000px){ .nav-profile-meta{ display:flex; } }
+@media(min-width:1000px){
+  /* La largeur est réservée avant le retour Firebase : passer de « Invité »
+     au pseudo réel ne décale plus les onglets de navigation. */
+  .nav-profile{ width:174px; }
+  .nav-profile-meta{ display:flex; width:111px; }
+}
 
 /* Menu mobile */
 .mobile-menu{
