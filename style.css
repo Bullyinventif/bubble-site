@@ -92,6 +92,34 @@ body{
   transition:background .7s ease, color .25s ease;
 }
 
+/* Basculement clair/sombre : le nouveau rendu balaie toute l'interface
+   de gauche à droite, avec un court mélange flouté au démarrage. */
+html.theme-transitioning::view-transition-old(root){
+  animation:none;
+  mix-blend-mode:normal;
+}
+html.theme-transitioning::view-transition-new(root){
+  animation:themeBlendSweep .78s cubic-bezier(.65,0,.2,1) both;
+  mix-blend-mode:normal;
+  transform-origin:left center;
+}
+@keyframes themeBlendSweep{
+  0%{
+    clip-path:polygon(0 0,0 0,0 100%,0 100%);
+    opacity:.55;
+    filter:blur(12px) saturate(.7) brightness(1.12);
+  }
+  42%{
+    opacity:.9;
+    filter:blur(5px) saturate(.9) brightness(1.04);
+  }
+  100%{
+    clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
+    opacity:1;
+    filter:none;
+  }
+}
+
 /* Voile utilisé pendant une navigation : il reste sous la barre fixe. */
 #page-gradient-transition{
   position:fixed; inset:var(--nav-h) 0 0; z-index:999;
@@ -462,6 +490,8 @@ html[data-page="profile"] .profile-bubble{ border-color:#B76538; box-shadow:0 0 
 
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+  html.theme-transitioning::view-transition-old(root),
+  html.theme-transitioning::view-transition-new(root){ animation-duration:.01ms !important; }
 }
 
 /* ── 11. LAYOUT ────────────────────────────────────────────────── */

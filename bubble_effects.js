@@ -87,7 +87,18 @@ const BUBBLE_PAGE = (() => {
     toggle.type = 'button';
     toggle.innerHTML = '<span aria-hidden="true"></span>';
     toggle.addEventListener('click', () => {
-      setMode(root.dataset.colorMode === 'dark' ? 'light' : 'dark', true);
+      const next = root.dataset.colorMode === 'dark' ? 'light' : 'dark';
+      const reducedMotion = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!document.startViewTransition || reducedMotion){
+        setMode(next, true);
+        return;
+      }
+
+      root.classList.add('theme-transitioning');
+      const transition = document.startViewTransition(() => setMode(next, true));
+      transition.finished.finally(() => root.classList.remove('theme-transitioning'));
     });
     nav.appendChild(toggle);
     setMode(root.dataset.colorMode);
