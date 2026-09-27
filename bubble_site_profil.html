@@ -997,7 +997,6 @@
         setSubUI(userSub);
         setFxChip(activeEffect);
         setAvatarUI(window.findIcon(activeIconId) || window.ALL_ICONS[0]);
-        if (window.applyTheme) window.applyTheme(activeEffect);
       });
     } catch(e){ toast('⚠️ ' + e.message, 'err'); }
 
@@ -1006,7 +1005,6 @@
     const icon = window.findIcon(activeIconId) || window.ALL_ICONS[0];
     setAvatarUI(icon);
 
-    if (window.applyTheme) window.applyTheme(activeEffect);
   });
 
   /* ── Sélecteur ── */
@@ -1025,7 +1023,6 @@
   window._closePicker = function(){
     document.getElementById('pickerOverlay').classList.remove('open');
     document.body.style.overflow = '';
-    if (window.applyTheme) window.applyTheme(activeEffect);   /* annule l'aperçu */
     window.applyFrame(userSub, window.__level || 1, activeFrame);
   };
 
@@ -1159,7 +1156,6 @@
       selectedEffect = 'none';
       grid.querySelectorAll('.fx-item').forEach(el => el.classList.remove('selected'));
       none.classList.add('selected');
-      if (window.applyTheme) window.applyTheme(null);
     });
     grid.appendChild(none);
 
@@ -1179,7 +1175,6 @@
           selectedEffect = fx.type;
           grid.querySelectorAll('.fx-item').forEach(el => el.classList.remove('selected'));
           item.classList.add('selected');
-          if (window.applyTheme) window.applyTheme(fx.type);   /* aperçu en direct */
         });
       }
       grid.appendChild(item);
@@ -1205,7 +1200,6 @@
       if (selectedEffect !== null) activeEffect = selectedEffect === 'none' ? null : selectedEffect;
       if (selectedFrame){ activeFrame = selectedFrame; window.applyFrame(userSub, window.__level || 1, activeFrame); }
       setFxChip(activeEffect);
-      if (window.applyTheme) window.applyTheme(activeEffect);
       document.getElementById('pickerOverlay').classList.remove('open');
       document.body.style.overflow = '';
       toast('✅ Profil mis à jour !', 'ok');

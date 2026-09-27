@@ -691,7 +691,6 @@ renderCollection();
       document.getElementById('navName').textContent = user.displayName || user.email.split('@')[0];
       document.getElementById('navSub').textContent  = window.SUB_LABELS[userSub];
 
-      if (window.applyTheme) window.applyTheme(d.activeEffect || null);
       window.__frameGrants = (d.framesUnlocked || []).slice();
       window.__iconGrants  = (d.iconsUnlocked  || []).slice();
       window.__userSub     = userSub;

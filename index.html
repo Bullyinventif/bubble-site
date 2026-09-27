@@ -162,9 +162,6 @@
     .stat-lbl{ font-size:.7rem; }
   }
 </style>
-  <meta property="og:image" content="https://bolt.new/static/og_default.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
 </head>
 <body data-v2>
 
@@ -467,8 +464,6 @@
       document.getElementById('navAvatar').innerHTML = avatarHTML;
       document.getElementById('meAvatar').innerHTML  = avatarHTML;
       document.getElementById('navSub').textContent  = window.SUB_LABELS[sub] || 'BASIC';
-
-      if (window.applyTheme) window.applyTheme(d.activeEffect || null);
 
       const lv = window.getLevel(xp, sub);
       window.__frameGrants = (d.framesUnlocked || []).slice();
