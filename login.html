@@ -68,6 +68,21 @@
   }
   .forgot:hover{ color:var(--ink); text-decoration:underline; }
 
+  .auth-divider{
+    display:flex; align-items:center; gap:12px; margin:20px 0 14px;
+    color:var(--ink-soft); font-size:.76rem; font-weight:800;
+  }
+  .auth-divider::before,.auth-divider::after{ content:''; flex:1; height:2px; background:var(--line); border-radius:999px; }
+  .google-btn{
+    display:flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:48px;
+    border:2px solid var(--line-strong); border-radius:14px; background:var(--surface); color:var(--ink);
+    font:800 .95rem 'Baloo 2',sans-serif; cursor:pointer; transition:transform .18s,border-color .18s,box-shadow .18s,background .18s;
+  }
+  .google-btn:hover{ transform:translateY(-2px); border-color:var(--blue); background:var(--surface-2); box-shadow:0 5px 0 var(--line); }
+  .google-btn:active{ transform:translateY(1px); box-shadow:none; }
+  .google-btn:disabled{ opacity:.58; cursor:wait; transform:none; box-shadow:none; }
+  .google-mark{ display:grid; place-items:center; width:24px; height:24px; border-radius:50%; background:#fff; color:#4285f4; font:800 1rem Arial,sans-serif; box-shadow:0 1px 4px rgba(0,0,0,.2); }
+
   .foot-note{ font-size:.8rem; font-weight:600; color:var(--ink-soft); text-align:center; }
 </style>
 </head>
@@ -126,6 +141,12 @@
       </div>
       <button class="btn btn-green btn-block btn-lg" id="btnRegister" onclick="handleRegister()">✨ Créer mon compte</button>
     </div>
+
+    <div class="auth-divider"><span>OU</span></div>
+    <button class="google-btn" id="btnGoogle" type="button" onclick="handleGoogle()">
+      <span class="google-mark" aria-hidden="true">G</span>
+      <span>Continuer avec Google</span>
+    </button>
   </div>
 
   <div class="foot-note fade-up d2">© BUBBLE INC. · 2026</div>
@@ -156,11 +177,13 @@
   /* Ponts vers le module */
   function handleLogin()   { window._handleLogin    && window._handleLogin(); }
   function handleRegister(){ window._handleRegister && window._handleRegister(); }
+  function handleGoogle()  { window._handleGoogle   && window._handleGoogle(); }
   function handleReset()   { window._handleReset    && window._handleReset(); }
 
   /* Entrée = valider le formulaire visible */
   document.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
+    if (e.target.closest('button')) return;
     if (document.getElementById('panelLogin').classList.contains('active')) handleLogin();
     else handleRegister();
   });
@@ -169,9 +192,10 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-           createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail }
+           createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail,
+           GoogleAuthProvider, signInWithPopup }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc }
+  import { getFirestore, doc, getDoc, setDoc }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const app = initializeApp({
@@ -204,13 +228,22 @@
     'auth/invalid-credential':   '❌ Email ou mot de passe incorrect.',
     'auth/network-request-failed':'❌ Pas de connexion internet.',
     'auth/missing-password':     '⚠️ Entre ton mot de passe.',
+    'auth/popup-closed-by-user': 'La fenêtre Google a été fermée avant la connexion.',
+    'auth/popup-blocked':        '❌ Le navigateur a bloqué la fenêtre Google. Autorise les pop-ups puis réessaie.',
+    'auth/cancelled-popup-request':'Une autre tentative de connexion Google est déjà ouverte.',
+    'auth/unauthorized-domain':  '❌ Ce domaine doit être ajouté aux domaines autorisés dans Firebase Authentication.',
+    'auth/account-exists-with-different-credential':'⚠️ Cette adresse utilise déjà une autre méthode de connexion. Connecte-toi d’abord avec ton mot de passe.',
   };
   const errMsg = e => ERRORS[e.code] || ('❌ ' + e.message);
 
-  const LABELS = { btnLogin:'🚀 Se connecter', btnRegister:'✨ Créer mon compte' };
+  const LABELS = { btnLogin:'🚀 Se connecter', btnRegister:'✨ Créer mon compte', btnGoogle:'Continuer avec Google' };
   function setLoading(id, on){
     const b = document.getElementById(id);
     b.disabled = on;
+    if(id === 'btnGoogle'){
+      b.querySelector('span:last-child').textContent = on ? 'Connexion à Google…' : LABELS[id];
+      return;
+    }
     b.textContent = on ? '⏳ Chargement...' : LABELS[id];
   }
 
@@ -255,6 +288,38 @@
       isRegistering = false;   // raté : on redonne la main à la redirection normale
       showError(errMsg(e));
       setLoading('btnRegister', false);
+    }
+  };
+
+  /* ── Connexion ou inscription avec Google ── */
+  window._handleGoogle = async function(){
+    hideError();
+    setLoading('btnGoogle', true);
+    isRegistering = true; // évite que l'observateur redirige avant la création du profil
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt:'select_account' });
+      const cred = await signInWithPopup(auth, provider);
+      const profileRef = doc(db, 'users', cred.user.uid);
+      const profileSnap = await getDoc(profileRef);
+      const isNewProfile = !profileSnap.exists();
+
+      if(isNewProfile){
+        const googleName = (cred.user.displayName || cred.user.email?.split('@')[0] || 'Nouveau membre').trim().slice(0, 32);
+        await setDoc(profileRef, {
+          pseudo: googleName, subscription: 'basic', avatarId: 'bully_1',
+          xp: 0, activeEffect: null,
+          gachaCollection: [], gachaHistory: [], gachaEffects: [], framesUnlocked: [], iconsUnlocked: []
+        });
+      }
+
+      window.location.href = isNewProfile
+        ? './bubble_site_tutoriel.html?onboarding=1'
+        : './index.html';
+    } catch(e){
+      isRegistering = false;
+      showError(errMsg(e));
+      setLoading('btnGoogle', false);
     }
   };
 
