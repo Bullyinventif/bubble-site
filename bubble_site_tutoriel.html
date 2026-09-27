@@ -60,9 +60,9 @@
 </head>
 <body data-v2>
 <nav>
-  <a class="nav-logo" href="index.html" aria-label="Passer la visite et aller à l’accueil">🫧</a>
+  <a class="nav-logo" href="index.html" data-tour-exit aria-label="Quitter la visite">🫧</a>
   <div class="nav-title"><span style="color:#1FA8E8">B</span><span style="color:#37C359">u</span><span style="color:#F5B700">b</span><span style="color:#4eb8ff">b</span><span style="color:#FF8A3D">l</span><span style="color:#7E93AC">e</span><span class="t-site">site.</span></div>
-  <div class="nav-links"><a href="index.html" class="nav-btn red"><span class="ico">→</span>Passer la visite</a></div>
+  <div class="nav-links"><a href="index.html" data-tour-exit class="nav-btn red"><span class="ico">→</span>Passer la visite</a></div>
 </nav>
 
 <main>
@@ -71,7 +71,7 @@
     <h1>Bienvenue sur Bubble Site !</h1>
     <p>Ton compte vient d’être créé. Avant de commencer, explore cette version miniature du site pour découvrir tout ce que tu peux y faire.</p>
     <span class="demo-warning">🧪 Démonstration — fausses données, rien ne sera enregistré</span>
-    <div class="tour-exit"><a href="index.html" class="btn btn-ghost">Je connais déjà, passer →</a></div>
+    <div class="tour-exit"><a href="index.html" data-tour-exit class="btn btn-ghost">Je connais déjà, passer →</a></div>
   </header>
 
   <div class="tour-layout">
@@ -157,6 +157,10 @@
     {id:'vlog',label:'Vlog',color:'#B45AA6',bg:['#FAF1F9','#E8CCE5'],title:'Suis les nouveautés',text:'Le Vlog rassemble les annonces, mises à jour et coulisses de création.',list:['Lire les annonces','Voir les nouvelles fonctionnalités','Découvrir les créations'],tip:'Les deux publications affichées ici sont entièrement fictives.'},
     {id:'profile',label:'Profil',color:'#B76538',bg:['#FFF3E9','#E9C4A5'],title:'Retrouve tout ton parcours',text:'Le profil réunit ton identité, ton apparence, tes statistiques et la sécurité du compte.',list:['Personnaliser son avatar','Suivre son niveau et ses missions','Gérer son compte'],tip:'Les valeurs Alex, niveau 2 et les statistiques sont des exemples.'}
   ];
+  const returnUrl = new URLSearchParams(window.location.search).get('return') === 'profile'
+    ? './bubble_site_profil.html#compte'
+    : './index.html';
+  document.querySelectorAll('[data-tour-exit]').forEach(link => { link.href = returnUrl; });
   let current = 0;
   const viewport = document.getElementById('demoViewport');
   const tabs = [...document.querySelectorAll('.demo-tab')];
@@ -182,7 +186,7 @@
   tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>renderGuide(i));tab.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();let n=e.key==='Home'?0:e.key==='End'?pages.length-1:e.key==='ArrowRight'?current+1:current-1;renderGuide((n+pages.length)%pages.length,true)})});
   document.getElementById('prevStep').addEventListener('click',()=>renderGuide(Math.max(0,current-1)));
   document.getElementById('nextStep').addEventListener('click',()=>{
-    if(current===pages.length-1){window.location.href='./index.html';return}
+    if(current===pages.length-1){window.location.href=returnUrl;return}
     renderGuide(current+1);
   });
   document.getElementById('guideDots').addEventListener('click',e=>{const dot=e.target.closest('[data-step]');if(dot)renderGuide(Number(dot.dataset.step))});

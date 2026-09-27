@@ -393,6 +393,12 @@
   .collection-fill{ width:0; height:100%; border-radius:999px; background:linear-gradient(90deg,var(--purple),var(--pink)); transition:width .7s ease; }
   .account-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   .account-grid .profile-section{ margin:0; }
+  .tour-help-card{
+    grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; gap:22px;
+    background:linear-gradient(135deg,var(--surface),var(--accent-soft)); border-color:var(--accent);
+  }
+  .tour-help-card .section-heading{ margin:0; }
+  .tour-help-card .btn{ flex:0 0 auto; white-space:nowrap; }
   .security-card{ grid-column:1/-1; border-color:rgba(255,95,95,.28); }
   .security-actions{ display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:22px; align-items:start; }
   .logout-zone{ padding:18px; border-radius:var(--r-md); background:rgba(255,95,95,.08); border:2px solid rgba(255,95,95,.18); }
@@ -412,7 +418,9 @@
     .profile-section{ padding:17px; }
     .profile-tab{ flex-basis:145px; }
     .account-grid{ grid-template-columns:1fr; }
-    .security-card{ grid-column:auto; }
+    .security-card,.tour-help-card{ grid-column:auto; }
+    .tour-help-card{ align-items:stretch; flex-direction:column; }
+    .tour-help-card .btn{ width:100%; }
     .profile-stats{ grid-template-columns:1fr 1fr; }
   }
 </style>
@@ -557,6 +565,11 @@
         <div class="section-heading"><div><h2>✨ Abonnement</h2><p id="accountSubLabel">Formule BASIC</p></div></div>
         <p class="muted-copy" id="subDesc">Accès gratuit</p>
         <a href="bubble_site_abonnements.html" class="btn btn-yellow btn-block" style="margin-top:18px">✨ Voir les offres</a>
+      </section>
+
+      <section class="profile-section tour-help-card">
+        <div class="section-heading"><div><h2>🧭 Visite guidée</h2><p>Revoir quand tu veux le fonctionnement des pages de Bubble Site.</p></div></div>
+        <a href="bubble_site_tutoriel.html?return=profile" class="btn btn-blue">Relancer le tutoriel →</a>
       </section>
 
       <section class="profile-section security-card">
