@@ -70,6 +70,14 @@ body{
   transition: background .5s ease;
 }
 
+/* Décor permanent du site, indépendant du mode clair/sombre. */
+#bubble-bg-canvas{
+  position:fixed; inset:0; z-index:0;
+  width:100%; height:100%; pointer-events:none;
+  opacity:.82;
+}
+html[data-color-mode="dark"] #bubble-bg-canvas{ opacity:.58; }
+
 a{ color:inherit; text-decoration:none; }
 img{ max-width:100%; }
 
