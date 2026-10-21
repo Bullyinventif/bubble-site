@@ -60,7 +60,7 @@ var GAMES = [
     gameType: "levelmaker",
     categories: [],
     requiredSubscription: "basic"
-  }
+  },
   {
     id: 7,
     name: "Metro Builder",
