@@ -61,5 +61,15 @@ var GAMES = [
     categories: [],
     requiredSubscription: "basic"
   }
+  {
+    id: 7,
+    name: "Metro Builder",
+    desc: "Amuser vous a creer des reseau de metro et les voir en mouvement, ils peuvent etre variés et compliqués !",
+    image: "metro_builder_1.png",
+    url: "https://bullyinventif.github.io/metro-builder/",
+    gameType: "metrobuilder",
+    categories: [],
+    requiredSubscription: "basic"
+  }
   
 ];
